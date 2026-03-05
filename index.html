@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Menu</title>
-
+<title>Market Prediction</title>
 <style>
 *{
   margin:0;
@@ -14,102 +13,60 @@
 }
 
 body{
-  background: linear-gradient(to bottom, #ffb6d9, #ff69b4);
+  background:#000;
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
   overflow:hidden;
+}
+
+.container{
   position:relative;
+  width:100%;
+  max-width:1400px;
 }
 
-/* 🌸 bunga jatuh */
-.flower{
+.container img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+.container a img {
+  cursor: pointer;
+}
+  .title{
   position:absolute;
-  top:-50px;
-  font-size:24px;
-  animation: fall linear infinite;
-  opacity:0.8;
-}
-
-@keyframes fall{
-  from{ transform: translateY(-50px); }
-  to{ transform: translateY(110vh); }
-}
-
-.menu-container{
-  width:85%;
-  max-width:1100px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:120px;
-  z-index:2;
-}
-
-.menu-item{
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  
+  width:90%;
   text-align:center;
-}
 
-.menu-item img{
-  width:230px;
-  max-width:42vw;
-  cursor:pointer;
-  transition:0.4s;
-  filter: drop-shadow(0 0 20px rgba(255,255,255,0.6));
-}
+  font-size:clamp(20px, 5vw, 100px);
+  font-weight:900;
 
-.menu-item img:hover{
-  transform:scale(1.15);
-  filter: drop-shadow(0 0 40px #fff);
-}
+  background: linear-gradient(90deg, #ff0000, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 
-.menu-title{
-  margin-top:25px;
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:3px;
-  color:white;
-  text-shadow:0 0 15px rgba(255,255,255,0.9);
-}
-
-/* Responsive HP */
-@media(max-width:768px){
-  .menu-container{
-    flex-direction:column;
-    gap:70px;
-  }
+  letter-spacing:2px;
 }
 </style>
+
+
+
 </head>
 
 <body>
 
-<!-- bunga -->
-<div class="flower" style="left:10%; animation-duration:10s;">🌸</div>
-<div class="flower" style="left:30%; animation-duration:12s;">🌸</div>
-<div class="flower" style="left:50%; animation-duration:9s;">🌸</div>
-<div class="flower" style="left:70%; animation-duration:14s;">🌸</div>
-<div class="flower" style="left:90%; animation-duration:11s;">🌸</div>
-
-<div class="menu-container">
-
-  <!-- PARLAY (KIRI) -->
-  <div class="menu-item">
-    <a href="parlay.html">
-      <img src="images/parlay.png" alt="Parlay">
-    </a>
-    <div class="menu-title">PARLAY</div>
+<div class="container">
+<a href="menu.html">
+  <img src="images/market.png" alt="Market Image">
+  <div class="title">
+    Wellcome to the Market Prediction
   </div>
-
-  <!-- MARKET (KANAN) -->
-  <div class="menu-item">
-    <a href="market.html">
-      <img src="images/market.png" alt="Market">
-    </a>
-    <div class="menu-title">MARKET</div>
-  </div>
-
 </div>
 
 </body>
