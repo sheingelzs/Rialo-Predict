@@ -91,9 +91,32 @@ line-height:1.6;
 .win{color:#00e676}
 .lose{color:#ff5252}
 
-.timer{
-font-size:14px;
-color:#ccc;
+/* POPUP */
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.popup-box{
+background:#1c1c1c;
+padding:25px;
+border-radius:10px;
+text-align:center;
+width:260px;
+}
+
+.popup-box button{
+background:#ff2e9f;
+color:white;
+margin-top:10px;
 }
 
 </style>
@@ -169,6 +192,20 @@ RIALO
 
 </div>
 
+<!-- POPUP -->
+
+<div id="popup" class="popup">
+
+<div class="popup-box">
+
+<div id="popupText"></div>
+
+<button onclick="closePopup()">OK</button>
+
+</div>
+
+</div>
+
 <script>
 
 let saldo = localStorage.getItem("rialoBalance")
@@ -176,7 +213,6 @@ let saldo = localStorage.getItem("rialoBalance")
 if(!saldo){
 
 saldo=500
-
 localStorage.setItem("rialoBalance",saldo)
 
 }
@@ -186,7 +222,26 @@ document.getElementById("saldo").innerText=saldo
 let btc,eth,sol
 let picks={}
 
+/* POPUP */
+
+function showPopup(text){
+
+document.getElementById("popupText").innerText=text
+document.getElementById("popup").style.display="flex"
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").style.display="none"
+
+}
+
+/* PRICE API */
+
 async function getPrice(){
+
+try{
 
 let r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd")
 
@@ -200,17 +255,39 @@ document.getElementById("btcPrice").innerText=btc
 document.getElementById("ethPrice").innerText=eth
 document.getElementById("solPrice").innerText=sol
 
+localStorage.setItem("btcPrice",btc)
+localStorage.setItem("ethPrice",eth)
+localStorage.setItem("solPrice",sol)
+
+}catch(e){
+
+btc = localStorage.getItem("btcPrice")
+eth = localStorage.getItem("ethPrice")
+sol = localStorage.getItem("solPrice")
+
+document.getElementById("btcPrice").innerText=btc
+document.getElementById("ethPrice").innerText=eth
+document.getElementById("solPrice").innerText=sol
+
+}
+
 }
 
 getPrice()
 
 setInterval(getPrice,10000)
 
+/* PICK */
+
 function pick(m,d){
 
 picks[m]=d
 
+showPopup(m.toUpperCase()+" "+d+" selected")
+
 }
+
+/* PLACE BET */
 
 function placeBet(){
 
@@ -220,7 +297,7 @@ let saldo = parseInt(localStorage.getItem("rialoBalance"))
 
 if(!picks.btc || !picks.eth || !picks.sol){
 
-alert("Pilih semua market")
+showPopup("Pilih semua market")
 
 return
 
@@ -228,7 +305,7 @@ return
 
 if(saldo<bet){
 
-alert("Saldo tidak cukup")
+showPopup("Saldo tidak cukup")
 
 return
 
@@ -268,6 +345,8 @@ setTimeout(()=>checkResult(history.length-1),300000)
 
 }
 
+/* CHECK RESULT */
+
 function checkResult(index){
 
 let history = JSON.parse(localStorage.getItem("parlayHistory"))
@@ -302,6 +381,12 @@ localStorage.setItem("rialoBalance",saldo)
 
 document.getElementById("saldo").innerText=saldo
 
+showPopup("YOU WIN")
+
+}else{
+
+showPopup("YOU LOSE")
+
 }
 
 localStorage.setItem("parlayHistory",JSON.stringify(history))
@@ -311,6 +396,8 @@ renderHistory()
 })
 
 }
+
+/* RENDER HISTORY */
 
 function renderHistory(){
 
