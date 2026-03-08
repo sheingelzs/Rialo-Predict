@@ -23,7 +23,21 @@ input{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid
 .history{background:white;border-radius:12px;padding:20px;margin-top:20px;}
 .history-item{border-bottom:1px solid #eee;padding:10px 0;}
 .activeBet{border-top:1px solid #ddd;margin-top:10px;padding-top:10px;}
-.vs{width:28px;height:28px;border-radius:50%;background:#ff3ea5;cursor:pointer;}
+.vs{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#ff3ea5;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.vs::before{
+  content:"⚔";
+  font-size:18px;
+  color:white;
+}
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;}
 .popup-box{background:white;padding:20px;border-radius:10px;}
 .popup-box button{margin:5px;}
@@ -82,6 +96,7 @@ input{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid
 <div id="info"></div>
 <div id="betList"></div>
 <div class="info-note">Multiple picks allowed, 1 point per pick</div>
+<div id="potentialWin" class="info-note"></div>
 <input id="amount" placeholder="Bet Amount (RIALO)">
 <button class="place" onclick="placeBet()">PLACE BET</button>
 <div id="activeBets"></div>
@@ -129,7 +144,6 @@ function getPrice(c){
   if(c=="SOL") return Number(solPrice.innerText.replace("$",""))
 }
 
-// Prediction & Versus logic with restrictions
 function addPick(text,coin,type){
   let price=getPrice(coin)
   if(type==="predict"){
@@ -170,6 +184,20 @@ function selectVersus(choice){
   renderPicks()
 }
 
+function updatePotentialWin(){
+  let amt = Number(amount.value)
+  let count = picks.length
+  if(amt && count>0){
+    let total = amt + (count*amt)
+    document.getElementById("potentialWin").innerText = 
+      "Potential Win (including bet): "+total+" RIALO"
+  }else{
+    document.getElementById("potentialWin").innerText = ""
+  }
+}
+
+amount.addEventListener("input", updatePotentialWin)
+
 function renderPicks(){
   let list=document.getElementById("betList")
   list.innerHTML=""
@@ -177,12 +205,13 @@ function renderPicks(){
     let div=document.createElement("div")
     div.className="pick"
     let entry=""
-    if(p.type==="predict"){entry=" ENTRY $"+p.entry}
-    if(p.type==="versus"){entry=" ENTRY "+p.coinA+" $"+p.entryA+" | "+p.coinB+" $"+p.entryB}
-    div.innerHTML=p.text+entry+"<span class='remove' onclick='removePick("+i+")'>✕</span>"
+    if(p.type==="predict"){entry=" ENTRY $"+p.entry.toFixed(2)}
+    if(p.type==="versus"){entry=" ENTRY "+p.coinA+" $"+p.entryA.toFixed(2)+" | "+p.coinB+" $"+p.entryB.toFixed(2)}
+    div.innerHTML=p.text+entry+" <span class='remove' onclick='removePick("+i+")'>✕</span>"
     list.appendChild(div)
   })
-  document.getElementById("info").innerHTML="Picks : "+picks.length
+  document.getElementById("info").innerText="Picks : "+picks.length
+  updatePotentialWin()
 }
 
 function removePick(i){picks.splice(i,1); renderPicks()}
@@ -219,8 +248,7 @@ function finishBet(bet){
   })
   let result=""
   if(win){
-    // Payout logic: modal + 1 RIALO per pick
-    let profit=bet.picks.length*1
+    let profit=bet.picks.length*bet.amount
     wallet+=profit+bet.amount
     updateWallet()
     result="WIN +"+profit+" RIALO"
@@ -275,5 +303,6 @@ function renderHistory(){
   })
 }
 </script>
+
 </body>
 </html>
