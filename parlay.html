@@ -24,16 +24,18 @@ input{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid
 .history-item{border-bottom:1px solid #eee;padding:10px 0;}
 .activeBet{border-top:1px solid #ddd;margin-top:10px;padding-top:10px;}
 .vs{
-  width:28px;
-  height:28px;
+  width:40px;
+  height:40px;
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
+  background:#ff3ea5;
+  border-radius:50%;
 }
 .vs::before{
   content:"⚔";
-  font-size:18px;
+  font-size:20px;
   color:white;
 }
 .popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;}
@@ -186,9 +188,10 @@ function updatePotentialWin(){
   let amt = Number(amount.value)
   let count = picks.length
   if(amt && count>0){
-    let total = amt + (count*amt)
+    let profit = count * amt
+    let total = amt + profit
     document.getElementById("potentialWin").innerText = 
-      "Potential Win (including bet): "+total+" RIALO"
+      "Potential Win (total = modal + profit): "+total+" RIALO"
   }else{
     document.getElementById("potentialWin").innerText = ""
   }
