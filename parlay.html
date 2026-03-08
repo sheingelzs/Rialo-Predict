@@ -154,13 +154,9 @@ margin:5px;
 <body>
 
 <header>
-
 <h2>RIALO CRYPTO PARLAY</h2>
-
 <div id="wallet" class="wallet"></div>
-
 </header>
-
 
 <div class="container">
 
@@ -196,7 +192,6 @@ SOL <span id="solPrice"></span>
 
 </div>
 
-
 <div class="market">
 
 <h3>Versus Market</h3>
@@ -218,24 +213,20 @@ ETH vs SOL
 
 </div>
 
-
 <div class="history">
 
 <h3>Bet History</h3>
-
 <div id="history"></div>
 
 </div>
 
 </div>
 
-
 <div class="betpanel">
 
 <h3>Bet Slip</h3>
 
 <div id="info"></div>
-
 <div id="betList"></div>
 
 <input id="amount" placeholder="Bet Amount (RIALO)">
@@ -248,14 +239,12 @@ ETH vs SOL
 
 </div>
 
-
 <div id="popup" class="popup">
 <div class="popup-box">
 <h4>Select Winner</h4>
 <div id="popupOptions"></div>
 </div>
 </div>
-
 
 <script>
 
@@ -371,10 +360,19 @@ list.innerHTML=""
 picks.forEach((p,i)=>{
 
 let div=document.createElement("div")
-
 div.className="pick"
 
-div.innerHTML=p.text+
+let entry=""
+
+if(p.type==="predict"){
+entry=" ENTRY $"+p.entry
+}
+
+if(p.type==="versus"){
+entry=" ENTRY "+p.coinA+" $"+p.entryA+" | "+p.coinB+" $"+p.entryB
+}
+
+div.innerHTML=p.text+entry+
 "<span class='remove' onclick='removePick("+i+")'>✕</span>"
 
 list.appendChild(div)
@@ -386,10 +384,8 @@ document.getElementById("info").innerHTML="Picks : "+picks.length
 }
 
 function removePick(i){
-
 picks.splice(i,1)
 renderPicks()
-
 }
 
 function placeBet(){
@@ -419,9 +415,7 @@ renderActive()
 }
 
 function percent(entry,final){
-
 return ((final-entry)/entry)*100
-
 }
 
 function finishBet(bet){
@@ -460,7 +454,6 @@ let result=""
 if(win){
 
 let profit=bet.picks.length*bet.amount
-
 wallet+=profit+bet.amount
 updateWallet()
 
@@ -489,7 +482,6 @@ box.innerHTML="<h4>Active Bets</h4>"
 activeBets.forEach(b=>{
 
 let div=document.createElement("div")
-
 div.className="activeBet"
 
 let html=""
@@ -508,7 +500,6 @@ html+="<br>Amount : "+b.amount+" RIALO"
 html+="<br>Timer : "+m+":"+(sec<10?"0":"")+sec
 
 div.innerHTML=html
-
 box.appendChild(div)
 
 })
@@ -522,10 +513,8 @@ let now=Date.now()
 activeBets=activeBets.filter(b=>{
 
 if(now>=b.end){
-
 finishBet(b)
 return false
-
 }
 
 return true
@@ -533,7 +522,6 @@ return true
 })
 
 localStorage.setItem("activeBets",JSON.stringify(activeBets))
-
 renderActive()
 
 },1000)
@@ -541,13 +529,11 @@ renderActive()
 function renderHistory(){
 
 let h=document.getElementById("history")
-
 h.innerHTML=""
 
 history.forEach(b=>{
 
 let div=document.createElement("div")
-
 div.className="history-item"
 
 let html=""
@@ -559,7 +545,6 @@ html+=p.text+"<br>"
 html+="<b>"+b.result+"</b>"
 
 div.innerHTML=html
-
 h.appendChild(div)
 
 })
@@ -570,3 +555,5 @@ h.appendChild(div)
 
 </body>
 </html>
+
+Ganti
