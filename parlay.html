@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -152,7 +151,6 @@ margin:5px;
 
 </head>
 
-
 <body>
 
 <header>
@@ -166,7 +164,6 @@ margin:5px;
 
 <div class="container">
 
-
 <div>
 
 <div class="market">
@@ -176,24 +173,24 @@ margin:5px;
 <div class="row">
 BTC <span id="btcPrice"></span>
 <div>
-<button class="up" onclick="addPick('BTC UP','BTC')">UP</button>
-<button class="down" onclick="addPick('BTC DOWN','BTC')">DOWN</button>
+<button class="up" onclick="addPick('BTC UP','BTC','predict')">UP</button>
+<button class="down" onclick="addPick('BTC DOWN','BTC','predict')">DOWN</button>
 </div>
 </div>
 
 <div class="row">
 ETH <span id="ethPrice"></span>
 <div>
-<button class="up" onclick="addPick('ETH UP','ETH')">UP</button>
-<button class="down" onclick="addPick('ETH DOWN','ETH')">DOWN</button>
+<button class="up" onclick="addPick('ETH UP','ETH','predict')">UP</button>
+<button class="down" onclick="addPick('ETH DOWN','ETH','predict')">DOWN</button>
 </div>
 </div>
 
 <div class="row">
 SOL <span id="solPrice"></span>
 <div>
-<button class="up" onclick="addPick('SOL UP','SOL')">UP</button>
-<button class="down" onclick="addPick('SOL DOWN','SOL')">DOWN</button>
+<button class="up" onclick="addPick('SOL UP','SOL','predict')">UP</button>
+<button class="down" onclick="addPick('SOL DOWN','SOL','predict')">DOWN</button>
 </div>
 </div>
 
@@ -233,7 +230,6 @@ ETH vs SOL
 </div>
 
 
-
 <div class="betpanel">
 
 <h3>Bet Slip</h3>
@@ -250,20 +246,14 @@ ETH vs SOL
 
 </div>
 
-
 </div>
 
 
 <div id="popup" class="popup">
-
 <div class="popup-box">
-
 <h4>Select Winner</h4>
-
 <div id="popupOptions"></div>
-
 </div>
-
 </div>
 
 
@@ -305,28 +295,22 @@ localStorage.setItem("wallet",wallet)
 
 function getPrice(c){
 
-if(c=="BTC") return btcPrice.innerText
-if(c=="ETH") return ethPrice.innerText
-if(c=="SOL") return solPrice.innerText
+if(c=="BTC") return Number(btcPrice.innerText.replace("$",""))
+if(c=="ETH") return Number(ethPrice.innerText.replace("$",""))
+if(c=="SOL") return Number(solPrice.innerText.replace("$",""))
 
 }
 
-function addPick(text,coin){
+function addPick(text,coin,type){
 
 let price=getPrice(coin)
 
-let exist=picks.find(p=>p.coin===coin)
-
-if(exist){
-
-exist.text=text
-exist.entry=price
-
-}else{
-
-picks.push({coin:coin,text:text,entry:price})
-
-}
+picks.push({
+type:type,
+coin:coin,
+text:text,
+entry:price
+})
 
 renderPicks()
 
@@ -360,13 +344,17 @@ popup.style.display="flex"
 
 function selectVersus(choice){
 
-let coin=choice
-let price=getPrice(coin)
+let a=versusData[0]
+let b=versusData[1]
 
 picks.push({
-coin:coin,
-text:"VERSUS "+versusData[0]+" vs "+versusData[1]+" → "+choice,
-entry:price
+type:"versus",
+coinA:a,
+coinB:b,
+choice:choice,
+entryA:getPrice(a),
+entryB:getPrice(b),
+text:"VERSUS "+a+" vs "+b+" → "+choice
 })
 
 popup.style.display="none"
@@ -386,7 +374,7 @@ let div=document.createElement("div")
 
 div.className="pick"
 
-div.innerHTML=p.text+" ENTRY "+p.entry+
+div.innerHTML=p.text+
 "<span class='remove' onclick='removePick("+i+")'>✕</span>"
 
 list.appendChild(div)
@@ -430,6 +418,68 @@ renderActive()
 
 }
 
+function percent(entry,final){
+
+return ((final-entry)/entry)*100
+
+}
+
+function finishBet(bet){
+
+let win=true
+
+bet.picks.forEach(p=>{
+
+if(p.type==="predict"){
+
+let final=getPrice(p.coin)
+
+if(p.text.includes("UP") && final<=p.entry) win=false
+if(p.text.includes("DOWN") && final>=p.entry) win=false
+
+}
+
+if(p.type==="versus"){
+
+let finalA=getPrice(p.coinA)
+let finalB=getPrice(p.coinB)
+
+let pctA=percent(p.entryA,finalA)
+let pctB=percent(p.entryB,finalB)
+
+let winner=pctA>pctB?p.coinA:p.coinB
+
+if(p.choice!==winner) win=false
+
+}
+
+})
+
+let result=""
+
+if(win){
+
+let profit=bet.picks.length*bet.amount
+
+wallet+=profit+bet.amount
+updateWallet()
+
+result="WIN +"+profit+" RIALO"
+
+}else{
+
+result="LOSE -"+bet.amount+" RIALO"
+
+}
+
+history.unshift({picks:bet.picks,result:result})
+
+localStorage.setItem("history",JSON.stringify(history))
+
+renderHistory()
+
+}
+
 function renderActive(){
 
 let box=document.getElementById("activeBets")
@@ -445,7 +495,7 @@ div.className="activeBet"
 let html=""
 
 b.picks.forEach(p=>{
-html+=p.text+" ENTRY "+p.entry+"<br>"
+html+=p.text+"<br>"
 })
 
 let left=b.end-Date.now()
@@ -488,35 +538,6 @@ renderActive()
 
 },1000)
 
-function finishBet(bet){
-
-let win=Math.random()>0.5
-
-let result=""
-
-if(win){
-
-let profit=bet.picks.length*bet.amount
-
-wallet+=profit+bet.amount
-updateWallet()
-
-result="WIN +"+profit+" RIALO"
-
-}else{
-
-result="LOSE -"+bet.amount+" RIALO"
-
-}
-
-history.unshift({picks:bet.picks,result:result})
-
-localStorage.setItem("history",JSON.stringify(history))
-
-renderHistory()
-
-}
-
 function renderHistory(){
 
 let h=document.getElementById("history")
@@ -532,7 +553,7 @@ div.className="history-item"
 let html=""
 
 b.picks.forEach(p=>{
-html+=p.text+" ENTRY "+p.entry+"<br>"
+html+=p.text+"<br>"
 })
 
 html+="<b>"+b.result+"</b>"
