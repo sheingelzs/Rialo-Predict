@@ -1,127 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RIALO BET</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rialo Crypto Parlay</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
 body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-padding:15px
+font-family:'Inter',sans-serif;
+background:#f4f6fb;
+margin:0;
+font-size:18px;
 }
 
-h2{
-margin-top:25px
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.wallet{
+font-weight:700;
+font-size:20px;
+}
+
+.container{
+display:grid;
+grid-template-columns:1fr 360px;
+gap:20px;
+padding:20px;
+}
+
+.market{
+background:white;
+border-radius:12px;
+padding:20px;
+margin-bottom:20px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
 }
 
 button{
-padding:10px;
-margin:3px;
+padding:10px 14px;
 border:none;
-border-radius:6px;
-background:#2563eb;
-color:white;
-cursor:pointer
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
 }
 
-button.down{
-background:#dc2626
+.up{background:#c8ffd9}
+.down{background:#ffd0d0}
+.vs{background:#dbe5ff}
+
+.betpanel{
+background:white;
+border-radius:12px;
+padding:20px;
+position:sticky;
+top:20px;
 }
 
-.card{
-background:#1e293b;
-padding:10px;
-margin:10px 0;
-border-radius:8px
+.pick{
+display:flex;
+justify-content:space-between;
+padding:8px;
+border-bottom:1px solid #eee;
+}
+
+.remove{
+color:red;
+cursor:pointer;
 }
 
 input{
 width:100%;
 padding:10px;
-margin-top:8px;
-border-radius:6px;
-border:none
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+.place{
+width:100%;
+margin-top:10px;
+background:black;
+color:white;
+}
+
+.timer{
+margin-top:10px;
+font-weight:700;
+}
+
+.history{
+background:white;
+border-radius:12px;
+padding:20px;
+margin-top:20px;
+}
+
+.history-item{
+border-bottom:1px solid #eee;
+padding:10px 0;
 }
 
 .activeBet{
-background:#020617;
-border:1px solid #334155;
-padding:10px;
+border-top:1px solid #ddd;
 margin-top:10px;
-border-radius:8px
+padding-top:10px;
 }
 
 </style>
+
 </head>
+
 
 <body>
 
-<h1>RIALO BET</h1>
+<header>
 
-<h2>Market</h2>
+<h2>RIALO CRYPTO PARLAY</h2>
 
-<div class="card">
+<div id="wallet" class="wallet"></div>
 
-BTC
+</header>
 
-<button onclick="addPick('BTC UP','BTC')">UP</button>
+
+<div class="container">
+
+
+<div>
+
+<div class="market">
+
+<h3>Prediction Market</h3>
+
+<div class="row">
+BTC <span id="btcPrice"></span>
+<div>
+<button class="up" onclick="addPick('BTC UP','BTC')">UP</button>
 <button class="down" onclick="addPick('BTC DOWN','BTC')">DOWN</button>
-
+</div>
 </div>
 
-<div class="card">
-
-ETH
-
-<button onclick="addPick('ETH UP','ETH')">UP</button>
+<div class="row">
+ETH <span id="ethPrice"></span>
+<div>
+<button class="up" onclick="addPick('ETH UP','ETH')">UP</button>
 <button class="down" onclick="addPick('ETH DOWN','ETH')">DOWN</button>
-
+</div>
 </div>
 
-<div class="card">
-
-SOL
-
-<button onclick="addPick('SOL UP','SOL')">UP</button>
+<div class="row">
+SOL <span id="solPrice"></span>
+<div>
+<button class="up" onclick="addPick('SOL UP','SOL')">UP</button>
 <button class="down" onclick="addPick('SOL DOWN','SOL')">DOWN</button>
+</div>
+</div>
 
 </div>
 
-<h2>Bet Slip</h2>
 
-<div id="picks"></div>
+<div class="history">
 
-<input id="amount" placeholder="Bet Amount (RIALO)" oninput="updateInfo()">
+<h3>Bet History</h3>
+
+<div id="history"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="betpanel">
+
+<h3>Bet Slip</h3>
 
 <div id="info"></div>
 
-<button onclick="placeBet()">PLACE BET</button>
+<div id="betList"></div>
 
-<h2>Active Bets</h2>
+<input id="amount" placeholder="Bet Amount (RIALO)">
 
-<div id="active"></div>
+<button class="place" onclick="placeBet()">PLACE BET</button>
+
+<div id="activeBets"></div>
+
+</div>
+
+
+</div>
+
 
 <script>
 
-let picks=[]
-let activeBets=[]
+let wallet = Number(localStorage.getItem("wallet")) || 500
+let history = JSON.parse(localStorage.getItem("history")||"[]")
+let picks = []
+let activeBets = JSON.parse(localStorage.getItem("activeBets")||"[]")
 
-let amount=document.getElementById("amount")
+updateWallet()
+renderHistory()
+renderActive()
 
-function getPrice(coin){
+async function loadPrices(){
 
-return Math.floor(Math.random()*10000)+100
+let r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd")
+let d = await r.json()
+
+btcPrice.innerText="$"+d.bitcoin.usd
+ethPrice.innerText="$"+d.ethereum.usd
+solPrice.innerText="$"+d.solana.usd
+
+}
+
+setInterval(loadPrices,10000)
+loadPrices()
+
+function updateWallet(){
+
+walletEl=document.getElementById("wallet")
+walletEl.innerText=wallet+" RIALO"
+
+localStorage.setItem("wallet",wallet)
+
+}
+
+function getPrice(c){
+
+if(c=="BTC") return btcPrice.innerText
+if(c=="ETH") return ethPrice.innerText
+if(c=="SOL") return solPrice.innerText
 
 }
 
 function addPick(text,coin){
 
-let exist=picks.find(p=>p.coin===coin)
-
 let price=getPrice(coin)
+
+let exist=picks.find(p=>p.coin===coin)
 
 if(exist){
 
@@ -130,61 +263,40 @@ exist.entry=price
 
 }else{
 
-picks.push({
-coin:coin,
-text:text,
-entry:price
-})
+picks.push({coin:coin,text:text,entry:price})
 
 }
 
 renderPicks()
-updateInfo()
 
 }
 
 function renderPicks(){
 
-let box=document.getElementById("picks")
+let list=document.getElementById("betList")
+list.innerHTML=""
 
-box.innerHTML=""
-
-picks.forEach(p=>{
+picks.forEach((p,i)=>{
 
 let div=document.createElement("div")
 
-div.className="card"
+div.className="pick"
 
-div.innerHTML=p.text+" ENTRY "+p.entry
+div.innerHTML=p.text+" ENTRY "+p.entry+
+"<span class='remove' onclick='removePick("+i+")'>✕</span>"
 
-box.appendChild(div)
+list.appendChild(div)
 
 })
 
-}
-
-function updateInfo(){
-
-let info=document.getElementById("info")
-
-let count=picks.length
-let amt=Number(amount.value)||0
-
-if(amt==0){
-
-info.innerHTML=
-"Picks : "+count
-
-}else{
-
-let profit=count*amt
-
-info.innerHTML=
-"Picks : "+count+
-"<br>Multiplier : x"+count+
-"<br>Potential Profit : "+profit+" RIALO"
+document.getElementById("info").innerHTML="Picks : "+picks.length
 
 }
+
+function removePick(i){
+
+picks.splice(i,1)
+renderPicks()
 
 }
 
@@ -192,39 +304,32 @@ function placeBet(){
 
 let amt=Number(amount.value)
 
-if(picks.length==0){
-alert("No pick")
-return
-}
+if(picks.length<1){alert("Pick first");return}
+if(!amt||amt>wallet){alert("Invalid amount");return}
 
-if(amt<=0){
-alert("Enter amount")
-return
-}
+wallet-=amt
+updateWallet()
 
 let bet={
-id:Date.now(),
 picks:[...picks],
-amount:amt,
-end:Date.now()+300000
+amount:amt
 }
 
 activeBets.push(bet)
 
-picks=[]
-amount.value=""
+localStorage.setItem("activeBets",JSON.stringify(activeBets))
 
+picks=[]
 renderPicks()
-updateInfo()
 renderActive()
 
 }
 
 function renderActive(){
 
-let box=document.getElementById("active")
+let box=document.getElementById("activeBets")
 
-box.innerHTML=""
+box.innerHTML="<h4>Active Bets</h4>"
 
 activeBets.forEach(b=>{
 
@@ -238,12 +343,9 @@ b.picks.forEach(p=>{
 html+=p.text+" ENTRY "+p.entry+"<br>"
 })
 
-let time=Math.max(0,Math.floor((b.end-Date.now())/1000))
+html+="<br>Amount : "+b.amount+" RIALO"
 
-div.innerHTML=
-html+
-"<br>Amount : "+b.amount+" RIALO"+
-"<br>Timer : "+time+"s"
+div.innerHTML=html
 
 box.appendChild(div)
 
@@ -251,13 +353,36 @@ box.appendChild(div)
 
 }
 
-setInterval(()=>{
+function renderHistory(){
 
-renderActive()
+let h=document.getElementById("history")
 
-},1000)
+h.innerHTML=""
+
+history.forEach(b=>{
+
+let div=document.createElement("div")
+
+div.className="history-item"
+
+let html=""
+
+b.picks.forEach(p=>{
+html+=p.text+" ENTRY "+p.entry+"<br>"
+})
+
+html+="<b>"+b.result+"</b>"
+
+div.innerHTML=html
+
+h.appendChild(div)
+
+})
+
+}
 
 </script>
+
 
 </body>
 </html>
