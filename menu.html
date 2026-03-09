@@ -6,6 +6,7 @@
 <title>Pink Flower Menu</title>
 
 <style>
+
 *{
   margin:0;
   padding:0;
@@ -14,7 +15,7 @@
 }
 
 body{
-  background: linear-gradient(to bottom, #ffb6d9, #ff69b4);
+  background: linear-gradient(to bottom,#ffb6d9,#ff69b4);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -29,22 +30,19 @@ body{
   position:absolute;
   top:-50px;
   font-size:24px;
-  animation: fall linear infinite;
+  animation:fall linear infinite;
   opacity:0.8;
 }
 
 @keyframes fall{
-  0%{
-    transform: translateY(-50px) translateX(0);
-  }
-  100%{
-    transform: translateY(110vh) translateX(30px);
-  }
+  0%{transform:translateY(-50px) translateX(0);}
+  100%{transform:translateY(110vh) translateX(30px);}
 }
 
 /* Menu Layout */
+
 .menu-container{
-  width:85%;
+  width:90%;
   max-width:1100px;
   display:flex;
   justify-content:center;
@@ -58,8 +56,9 @@ body{
 }
 
 .menu-item img{
-  width:25vw;
+  width:22vw;
   max-width:200px;
+  min-width:120px;
   height:auto;
   object-fit:contain;
   cursor:pointer;
@@ -68,12 +67,12 @@ body{
 
 .menu-item img:hover{
   transform:scale(1.15);
-  filter: drop-shadow(0 0 40px #fff);
+  filter:drop-shadow(0 0 40px #fff);
 }
 
 .menu-title{
   margin-top:25px;
-  font-size:28px;
+  font-size:clamp(18px,3vw,28px);
   font-weight:800;
   letter-spacing:3px;
   color:white;
@@ -81,6 +80,7 @@ body{
 }
 
 /* Footer */
+
 .footer{
   position:absolute;
   bottom:15px;
@@ -94,28 +94,47 @@ body{
   z-index:5;
 }
 
-.footer a{
-  color:white;
-  text-decoration:none;
-  transition:0.3s;
-}
-
-.footer a:hover{
-  text-shadow:0 0 10px white;
-}
-
 .footer-center{
   text-align:center;
   line-height:1.6;
 }
 
-/* Responsive */
-@media(max-width:768px){
-  .menu-container{
-    flex-direction:column;
-    gap:70px;
-  }
+.footer a{
+  text-decoration:none;
+  color:white;
 }
+
+/* Logo Social */
+
+.social-icon{
+  width:28px;
+  transition:0.3s;
+}
+
+.social-icon:hover{
+  transform:scale(1.2);
+  filter:drop-shadow(0 0 10px white);
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+.menu-container{
+  flex-direction:column;
+  gap:70px;
+}
+
+.footer{
+  font-size:14px;
+}
+
+.social-icon{
+  width:24px;
+}
+
+}
+
 </style>
 </head>
 
@@ -131,46 +150,51 @@ body{
 
 <div class="menu-container">
 
-  <!-- PARLAY -->
-  <div class="menu-item">
-    <a href="parlay.html">
-      <img src="images/parlay.png" alt="Parlay">
-    </a>
-    <div class="menu-title">PARLAY 🌸</div>
-  </div>
+<!-- PARLAY -->
+<div class="menu-item">
+<a href="parlay.html">
+<img src="images/parlay.png">
+</a>
+<div class="menu-title">PARLAY 🌸</div>
+</div>
 
-  <!-- MARKET -->
-  <div class="menu-item">
-    <a href="markett.html">
-      <img src="images/markett.png" alt="Market">
-    </a>
-    <div class="menu-title">MARKET 🌸</div>
-  </div>
+<!-- MARKET -->
+<div class="menu-item">
+<a href="markett.html">
+<img src="images/markett.png">
+</a>
+<div class="menu-title">MARKET 🌸</div>
+</div>
 
 </div>
 
 <!-- Footer -->
+
 <div class="footer">
 
-  <!-- Kiri -->
-  <div>
-    <a href="https://x.com/rialohq?s=21" target="_blank">𝕏</a>
-  </div>
+<!-- X -->
+<div>
+<a href="https://x.com/rialohq?s=21" target="_blank">
+<img src="image/x.png" class="social-icon">
+</a>
+</div>
 
-  <!-- Tengah -->
-  <div class="footer-center">
-    <div>
-      <a href="https://x.com/rayhn_1991?s=21" target="_blank">Gelz</a>
-    </div>
-    <div>
-      <a href="https://x.com/sheinasalisha?s=21" target="_blank">Sheina</a>
-    </div>
-  </div>
+<!-- Tengah -->
+<div class="footer-center">
+<div>
+<a href="https://x.com/rayhn_1991?s=21" target="_blank">Gelz</a>
+</div>
+<div>
+<a href="https://x.com/sheinasalisha?s=21" target="_blank">Sheina</a>
+</div>
+</div>
 
-  <!-- Kanan -->
-  <div>
-    <a href="https://discord.gg/rialoprotocol" target="_blank">Discord</a>
-  </div>
+<!-- Discord -->
+<div>
+<a href="https://discord.gg/rialoprotocol" target="_blank">
+<img src="image/discord.png" class="social-icon">
+</a>
+</div>
 
 </div>
 
