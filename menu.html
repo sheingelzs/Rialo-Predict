@@ -21,6 +21,7 @@ body{
   min-height:100vh;
   overflow:hidden;
   position:relative;
+  flex-direction:column;
 }
 
 /* 🌸 Flower animation */
@@ -79,6 +80,35 @@ body{
   text-shadow:0 0 15px rgba(255,255,255,0.9);
 }
 
+/* Footer */
+.footer{
+  position:absolute;
+  bottom:15px;
+  width:90%;
+  max-width:1100px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:white;
+  font-weight:bold;
+  z-index:5;
+}
+
+.footer a{
+  color:white;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+.footer a:hover{
+  text-shadow:0 0 10px white;
+}
+
+.footer-center{
+  text-align:center;
+  line-height:1.6;
+}
+
 /* Responsive */
 @media(max-width:768px){
   .menu-container{
@@ -101,7 +131,7 @@ body{
 
 <div class="menu-container">
 
-  <!-- PARLAY KIRI -->
+  <!-- PARLAY -->
   <div class="menu-item">
     <a href="parlay.html">
       <img src="images/parlay.png" alt="Parlay">
@@ -109,12 +139,37 @@ body{
     <div class="menu-title">PARLAY 🌸</div>
   </div>
 
-  <!-- MARKET KANAN -->
+  <!-- MARKET -->
   <div class="menu-item">
     <a href="markett.html">
       <img src="images/markett.png" alt="Market">
     </a>
     <div class="menu-title">MARKET 🌸</div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+
+  <!-- Kiri -->
+  <div>
+    <a href="https://x.com/rialohq?s=21" target="_blank">𝕏</a>
+  </div>
+
+  <!-- Tengah -->
+  <div class="footer-center">
+    <div>
+      <a href="https://x.com/rayhn_1991?s=21" target="_blank">Gelz</a>
+    </div>
+    <div>
+      <a href="https://x.com/sheinasalisha?s=21" target="_blank">Sheina</a>
+    </div>
+  </div>
+
+  <!-- Kanan -->
+  <div>
+    <a href="https://discord.gg/rialoprotocol" target="_blank">Discord</a>
   </div>
 
 </div>
