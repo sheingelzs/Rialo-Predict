@@ -3,84 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Predict - Alpha</title>
+    <title>Market Predict - System Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        marketBg: '#08090a',
-                        marketAccent: '#1e2023',
-                        marketLogoColor: '#FDFDD0'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-
-        /* --- ANIMASI LOGO MUTAR 3D (KAYAK KOIN) --- */
-        @keyframes mutar3D {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #08090a; }
+        
+        .menu-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid #1f2937; 
         }
-
-        .logo-3d {
-            /* 10 detik biar pelan dan elegan */
-            animation: mutar3D 10s linear infinite;
-            /* Penting agar terlihat 3D */
-            transform-style: preserve-3d;
+        .menu-card:hover {
+            border-color: #4ade80;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(74, 222, 128, 0.2);
         }
-
-        /* Tambahan perspektif di container agar efek 3D-nya berasa */
-        .perspective-container {
-            perspective: 1000px;
-        }
+        .menu-card:active { transform: scale(0.97); }
     </style>
 </head>
-<body class="bg-marketBg text-white antialiased flex flex-col min-h-screen">
+<body class="text-white antialiased flex flex-col min-h-screen">
 
-    <nav class="border-b border-gray-800 bg-marketBg sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-marketLogoColor flex items-center justify-center font-bold text-marketBg text-xl font-bold">M</div>
-                <span class="text-xl font-bold tracking-tight">Market <span class="text-gray-500 font-medium">Predict</span></span>
-            </div>
-            <div class="flex items-center space-x-2 bg-green-950/50 px-3 py-1 rounded-full border border-green-800">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                </span>
-                <p class="text-xs text-green-300 font-bold uppercase tracking-widest">Live</p>
-            </div>
+    <nav class="border-b border-gray-800 bg-[#08090a] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-[#FDFDD0] flex items-center justify-center font-bold text-black text-[10px]">M</div>
+            <span class="text-xs font-black uppercase tracking-widest text-white">System <span class="text-gray-500 font-medium">Terminal</span></span>
         </div>
+        <a href="index.html" class="text-[9px] font-bold text-gray-500 uppercase tracking-widest hover:text-white transition">Close</a>
     </nav>
 
-    <main class="flex-grow flex items-center justify-center px-6 py-20">
-        <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
-            
-            <div class="perspective-container mb-10 p-2 bg-marketAccent rounded-3xl border border-gray-800 shadow-2xl shadow-white/5 overflow-hidden">
-                <img src="images/market.png" alt="Logo" class="w-48 h-auto object-contain logo-3d">
-            </div>
-
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-10 text-white leading-tight uppercase italic">
-                Welcome to the <span class="text-gray-400">Market Prediction</span>
-            </h1>
-
-            <a href="parlay.html" class="inline-flex items-center gap-2.5 bg-white text-marketBg font-black px-10 py-4 rounded-full hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-xl shadow-white/10 uppercase tracking-tight">
-                Mulai Prediksi
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round
-                    " d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
+    <main class="max-w-md mx-auto p-6 flex-grow flex flex-col justify-center w-full">
+        
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-black italic uppercase leading-none tracking-tighter">Main <span class="text-green-500">Modules</span></h1>
+            <p class="text-gray-600 text-[10px] font-bold uppercase tracking-[0.3em] mt-2 italic">Authentication Success: User Admin</p>
         </div>
+
+        <div class="grid gap-5">
+            
+            <a href="ai.html" class="menu-card bg-[#111214] p-6 rounded-[2.5rem] block relative overflow-hidden group">
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-black italic uppercase group-hover:text-green-400 transition">Alpha Core AI</span>
+                            <span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                        </div>
+                        <p class="text-gray-500 text-[9px] uppercase font-bold tracking-widest">Knowledge & Network Base</p>
+                    </div>
+                    <div class="bg-white/5 p-2 rounded-xl group-hover:bg-green-500/10 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </div>
+                </div>
+                <p class="mt-4 text-[11px] text-gray-400 font-medium leading-relaxed opacity-70">Sistem AI pintar untuk menjawab semua pertanyaan seputar Rialo dan ekosistem Market Predict.</p>
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-green-500/5 blur-2xl rounded-full"></div>
+            </a>
+
+            <a href="parlay.html" class="menu-card bg-[#111214] p-6 rounded-[2.5rem] block relative overflow-hidden group">
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="space-y-1">
+                        <span class="text-xl font-black italic uppercase group-hover:text-blue-400 transition">Market Parlay</span>
+                        <p class="text-gray-500 text-[9px] uppercase font-bold tracking-widest">High-Accuracy Prediction</p>
+                    </div>
+                    <div class="bg-white/5 p-2 rounded-xl group-hover:bg-blue-500/10 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                        </svg>
+                    </div>
+                </div>
+                <p class="mt-4 text-[11px] text-gray-400 font-medium leading-relaxed opacity-70">Generate sinyal Alpha dan dapatkan hasil prediksi kemenangan parlay berbasis data Rialo.</p>
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/5 blur-2xl rounded-full"></div>
+            </a>
+
+        </div>
+
+        <div class="mt-16 flex flex-col items-center">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-gray-700 flex items-center justify-center shadow-2xl mb-4">
+                <div class="text-white font-black text-xl italic">M</div>
+            </div>
+            <p class="text-[7px] text-gray-700 font-black uppercase tracking-[0.5em]">Rialo Core Framework v2.4</p>
+        </div>
+
     </main>
 
 </body>
 </html>
-<a href="ai.html" class="...">Open Alpha AI</a>
 
