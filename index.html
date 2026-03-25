@@ -1,220 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Predict - Alpha</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #08090a; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RIALO — Prediction Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Syne:wght@800&display=swap" rel="stylesheet"/>
+<style>
+/* ... (Style dasar tetep sama) ... */
+:root {
+  --bg: #050810; --accent: #4ade80; --text: #e8eaf0; --border: #1a2a42;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; margin: 0; }
 
-        /* ANIMASI LOGO MUTAR 3D */
-        @keyframes mutar3D {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
+/* NAV STYLES */
+.nav { display: flex; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); position: sticky; top: 0; background: rgba(5,8,16,0.9); backdrop-filter: blur(10px); z-index: 100; }
+.nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
 
-        .logo-3d {
-            animation: mutar3D 10s linear infinite;
-            transform-style: preserve-3d;
-        }
+/* ANIMASI LOGO MUTER 3D */
+.hero-logo-container {
+    perspective: 1000px;
+    margin-bottom: 30px;
+}
+.floating-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -2px;
+    animation: rotate3D 5s infinite linear;
+    transform-style: preserve-3d;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+@keyframes rotate3D {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+}
 
-        .perspective-container {
-            perspective: 1000px;
-        }
-    </style>
+/* PAGES */
+.page { display: none; padding: 2rem; }
+.page.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* MARKET CARDS */
+.mkt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+.mkt-card { background: #0f1929; border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
+.btn-main { background: var(--accent); color: #000; padding: 12px 30px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; margin-top: 20px; }
+</style>
 </head>
-<body class="text-white antialiased flex flex-col min-h-screen">
+<body>
 
-    <nav class="border-b border-gray-800 bg-[#08090a] sticky top-0 z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="text-xl font-bold tracking-tight text-white uppercase italic">Market <span class="text-gray-500 font-medium italic">Predict</span></span>
-            </div>
-            
-            <div class="flex items-center space-x-2 bg-green-950/50 px-3 py-1 rounded-full border border-green-800">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                </span>
-                <p class="text-xs text-green-300 font-bold uppercase tracking-widest">Live</p>
-            </div>
-        </div>
-    </nav>
+<nav class="nav">
+  <div class="nav-logo" onclick="showPage('landing')"><div class="logo-dot"></div>RIALO</div>
+  <div style="display:flex; gap:10px;">
+    <button onclick="showPage('market')" style="background:none; border:none; color:#fff; cursor:pointer;">Market</button>
+    <button class="btn-main" style="margin:0; padding:5px 15px; font-size:0.8rem;">Connect</button>
+  </div>
+</nav>
 
-    <main class="flex-grow flex items-center justify-center px-6 py-20">
-        <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
-            
-            <div class="perspective-container mb-10 p-2 bg-[#1e2023] rounded-3xl border border-gray-800 shadow-2xl shadow-white/5 overflow-hidden">
-                <img src="images/market.png" alt="Logo" class="w-48 h-auto object-contain logo-3d">
-            </div>
-
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-10 text-white leading-tight uppercase italic">
-                Welcome to the <br><span class="text-gray-400">Market Prediction</span>
-            </h1>
-
-            <a href="menu.html" class="inline-flex items-center gap-2.5 bg-white text-black font-black px-10 py-4 rounded-full hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-xl shadow-white/10 uppercase tracking-tight">
-                Mulai Prediksi
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
-        </div>
-    </main>
-
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Predict - Alpha Core AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #08090a; overflow: hidden; margin: 0; }
-        
-        /* Cursor Efek Ngetik */
-        .cursor { display: inline-block; width: 8px; height: 15px; background: #4ade80; margin-left: 4px; animation: blink 0.8s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        
-        .chat-bubble { border-radius: 20px 20px 20px 4px; }
-        #chat-container { scroll-behavior: smooth; height: calc(100vh - 160px); overflow-y: auto; padding-bottom: 20px; }
-
-        /* --- TAMPILAN LOADING/SCANNING --- */
-        #scan-screen {
-            position: fixed; inset: 0; background: #08090a; z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-family: monospace; color: #4ade80; font-size: 10px; letter-spacing: 2px;
-        }
-        .scan-line { animation: scanPulse 1s infinite; font-weight: bold; color: white; font-size: 14px; margin: 10px 0; }
-        @keyframes scanPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        @keyframes progress { from { width: 0; } to { width: 100%; } }
-
-        /* Sembunyikan Chat di Awal */
-        #main-ui { display: none; opacity: 0; transition: opacity 1s; }
-    </style>
-</head>
-<body class="text-white antialiased flex flex-col min-h-screen">
-
-    <div id="scan-screen">
-        <div class="text-center space-y-2">
-            <div class="opacity-50 tracking-widest text-[8px]">ESTABLISHING SECURE CONNECTION...</div>
-            <div class="scan-line">[ INITIALIZING ALPHA CORE AI ]</div>
-            <div class="opacity-50 text-[8px]">DECRYPTING RIALO PROTOCOL v2.4</div>
-            <div class="mt-6 h-1 w-48 bg-gray-900 rounded-full overflow-hidden mx-auto border border-gray-800">
-                <div class="h-full bg-green-500 animate-[progress_3s_ease-in-out]"></div>
-            </div>
+<div class="page active" id="page-landing">
+  <div style="text-align:center; min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    
+    <div class="hero-logo-container">
+        <div class="floating-logo">
+            <div class="logo-dot" style="width:20px; height:20px;"></div>
+            RIALO
         </div>
     </div>
 
-    <div id="main-ui" class="flex flex-col min-h-screen">
-        <nav class="border-b border-gray-800 bg-[#08090a] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-black uppercase tracking-widest text-white">Alpha Core <span class="text-green-500 ml-1">AI</span></span>
-            </div>
-            <a href="menu.html" class="text-[9px] font-bold text-gray-500 uppercase tracking-widest hover:text-white transition">Exit Terminal</a>
-        </nav>
+    <h1 style="font-family:'Syne'; font-size:2.5rem;">Web3 Prediction <span style="color:var(--accent)">Engine</span></h1>
+    <p style="color:#5a7090; margin-top:10px;">Build by Gelz & Sheina</p>
+    <button class="btn-main" onclick="showPage('market')">Start Trading</button>
+  </div>
+</div>
 
-        <main class="flex-grow p-4 max-w-md mx-auto w-full space-y-6" id="chat-container">
-            <div id="welcome-msg" class="flex flex-col items-start hidden">
-                <div class="bg-[#1e2023] border border-gray-800 p-4 chat-bubble text-xs leading-relaxed max-w-[90%] text-green-400 font-mono shadow-2xl">
-                    [SYSTEM READY]<br><br>
-                    Greetings, User. I am **Alpha Core**, your decentralized intelligence unit. 
-                    I am specialized in **Rialo Ecosystem** analytics.
-                    <br><br>
-                    <span class="text-gray-500 uppercase font-bold tracking-tighter">Query hint: "What is Rialo?"</span>
-                </div>
-            </div>
-        </main>
+<div class="page" id="page-market">
+  <h2 style="font-family:'Syne'; margin-bottom:20px;">Live Prices (Binance)</h2>
+  <div class="mkt-grid" id="market-list">
+    <p>Loading market data...</p>
+  </div>
+</div>
 
-        <div class="p-4 border-t border-gray-800 bg-[#08090a] sticky bottom-0">
-            <div class="max-w-md mx-auto relative">
-                <input type="text" id="user-input" autocomplete="off" placeholder="Enter command..." 
-                    class="w-full bg-[#1e2023] border border-gray-700 rounded-full py-4 px-6 pr-14 text-sm focus:outline-none focus:border-green-500 transition shadow-inner placeholder:text-gray-600">
-                <button onclick="handleSend()" class="absolute right-2 top-2 bg-white text-black p-2.5 rounded-full hover:bg-gray-200 transition active:scale-90">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                    </svg>
-                </button>
-            </div>
-            <p class="text-[7px] text-center text-gray-800 mt-2.5 uppercase tracking-[0.3em]">Neural Verification Secured by Rialo</p>
-        </div>
-    </div>
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if(id === 'market') fetchPrices();
+}
 
-    <script>
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('scan-screen').style.display = 'none';
-                const mainUI = document.getElementById('main-ui');
-                mainUI.style.display = 'flex';
-                document.body.style.overflow = 'auto';
-                setTimeout(() => { 
-                    mainUI.style.opacity = '1'; 
-                    document.getElementById('welcome-msg').style.display = 'block';
-                }, 100);
-            }, 3000); 
-        };
+async function fetchPrices() {
+  const list = document.getElementById('market-list');
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://api.binance.com/api/v3/ticker/price')}`);
+    const raw = await res.json();
+    const data = JSON.parse(raw.contents);
+    const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT'];
+    
+    list.innerHTML = data.filter(c => symbols.includes(c.symbol)).map(c => `
+      <div class="mkt-card">
+        <div style="font-size:0.8rem; color:#5a7090;">${c.symbol}</div>
+        <div style="font-size:1.5rem; font-weight:700; color:var(--accent);">$${parseFloat(c.price).toLocaleString()}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = "Gagal ambil data.";
+  }
+}
 
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
+// Update tiap 10 detik
+setInterval(fetchPrices, 10000);
+</script>
 
-        const responses = {
-            "rialo": "RIALO is a next-generation Layer 1 Blockchain infrastructure specifically engineered to solve the 'Data Transparency Trilemma' in Web3. It operates as a high-performance decentralized ledger that ensures every byte of information—from market analytics to transaction hashes—is immutable and globally accessible. By utilizing a unique consensus mechanism, Rialo provides the foundational security layer for the Market Predict ecosystem.",
-            "what is rialo": "At its core, RIALO is the ultimate neural highway for decentralized intelligence. It isn't just a blockchain; it is a scalable network designed to process massive market data streams in milliseconds. Our 'Alpha Engine' lives on Rialo to ensure that every prediction is cross-referenced against real-time on-chain activity, providing institutional-grade data verification.",
-            "whats rialo": "RIALO stands as the definitive bridge between raw global market data and decentralized decision-making. Its primary mission is to democratize financial intelligence. By leveraging Rialo's Layer 1 capabilities, our platform can execute complex analytical scripts directly on the network, making outcomes 100% tamper-proof.",
-            "prediction": "The Alpha Core Prediction system is powered by a proprietary neural network architecture integrated deeply within the Rialo Mainnet. It constantly scans for 'Alpha'—hidden market patterns and liquidity shifts. Current performance metrics show a sustained success probability of 89.4%, all of which is cross-referenced and validated through Rialo nodes.",
-            "safe": "Security in the Rialo Ecosystem is non-negotiable and strictly non-custodial. The system architecture is built so that Alpha Core AI only provides 'Intelligence as a Service' (IaaS). We never request access to your private keys or personal assets. Your security is guaranteed by the mathematical certainty of the blockchain.",
-            "roadmap": "The Rialo Project is currently in the 'Alpha Integration' phase. Our roadmap includes: (Q2 2026) Expansion of the Rialo Validator Node network, (Q3 2026) Integration of Cross-chain Alpha Signals, and (Q4 2026) The launch of 'Rialo Shark Tank'—a community-driven builder event on our Layer 1.",
-            "hello": "Alpha Core Terminal: ONLINE. Synchronizing with Rialo Mainnet nodes... [OK]. Database Integrity: 100%. Protocol status: OPTIMAL. I am your primary interface for Rialo Ecosystem Intelligence. What is your command, User?"
-        };
-
-        function handleSend() {
-            const rawText = userInput.value.trim();
-            const text = rawText.toLowerCase();
-            if (text === "") return;
-
-            addBubble(rawText, 'user');
-            userInput.value = "";
-
-            setTimeout(() => {
-                let botMsg = "Access Denied: Query not found. Try: 'What is Rialo?' or 'Is it safe?'";
-                for (let key in responses) {
-                    if (text.includes(key)) { botMsg = responses[key]; break; }
-                }
-                addBubble(botMsg, 'bot');
-            }, 800);
-        }
-
-        function addBubble(msg, sender) {
-            const wrapper = document.createElement('div');
-            wrapper.className = sender === 'user' ? 'flex flex-col items-end' : 'flex flex-col items-start';
-            const bubble = document.createElement('div');
-            bubble.className = sender === 'user' 
-                ? 'bg-white text-black font-bold p-3 px-5 rounded-2xl rounded-tr-none text-xs max-w-[80%] shadow-lg' 
-                : 'bg-[#1e2023] border border-gray-800 p-4 chat-bubble text-xs text-green-400 font-mono leading-relaxed max-w-[90%] shadow-xl';
-            wrapper.appendChild(bubble);
-            chatContainer.appendChild(wrapper);
-            
-            if (sender === 'bot') typeEffect(bubble, msg);
-            else bubble.innerText = msg;
-
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function typeEffect(el, text) {
-            let i = 0; el.innerHTML = "";
-            function type() {
-                if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 20); }
-                else { el.innerHTML += '<span class="cursor"></span>'; chatContainer.scrollTop = chatContainer.scrollHeight; }
-            }
-            type();
-        }
-
-        userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
-    </script>
 </body>
 </html>
