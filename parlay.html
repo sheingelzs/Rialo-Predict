@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Predict - Alpha</title>
+    <title>Market Predict - Alpha Parlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,38 +28,60 @@
     <nav class="border-b border-gray-800 bg-marketBg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-marketLogoColor flex items-center justify-center font-bold text-marketBg text-xl">M</div>
-                <span class="text-xl font-bold tracking-tight">Market <span class="text-gray-500">Predict</span></span>
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-marketLogoColor flex items-center justify-center font-bold text-marketBg text-xl">M</div>
+                    <span class="text-xl font-bold tracking-tight text-white font-bold">Market <span class="text-gray-500">Predict</span></span>
+                </a>
             </div>
             
-            <div class="flex items-center space-x-2 bg-green-950/50 px-3 py-1 rounded-full border border-green-800">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                </span>
-                <p class="text-xs text-green-300 font-medium">LIVE</p>
+            <div class="flex items-center space-x-4 text-sm font-medium">
+                <a href="index.html" class="text-gray-400 hover:text-white transition">Home</a>
+                <a href="menu.html" class="text-gray-400 hover:text-white transition">Menu</a>
+                <div class="flex items-center space-x-2 bg-green-950/50 px-3 py-1 rounded-full border border-green-800">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <p class="text-[10px] text-green-300 font-bold uppercase tracking-wider">Live</p>
+                </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow flex items-center justify-center px-6 py-20">
-        <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
-            
-            <div class="mb-10 p-2 bg-marketAccent rounded-3xl border border-gray-800 shadow-2xl shadow-white/5">
-                <img src="images/market.png" alt="Market Logo" class="w-48 h-auto object-contain">
+    <main class="flex-grow flex flex-col items-center p-6 mt-10">
+        <div class="w-full max-w-md bg-marketAccent border border-gray-800 rounded-3xl p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold">Alpha Parlay</h2>
+                    <p class="text-gray-500 text-sm">Market Prediction System</p>
+                </div>
+                <img src="images/market.png" alt="Market" class="w-12 h-auto opacity-80">
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-10 text-white leading-tight">
-                Welcome to the <span class="text-gray-400">Market Prediction</span>
-            </h1>
+            <div class="space-y-4">
+                <div class="p-4 bg-gray-900/50 rounded-2xl border border-gray-800 flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">Market Alpha 1</span>
+                    <span class="text-green-400 font-bold font-mono">WINNER</span>
+                </div>
+                <div class="p-4 bg-gray-900/50 rounded-2xl border border-gray-800 flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">Market Alpha 2</span>
+                    <span class="text-green-400 font-bold font-mono">WINNER</span>
+                </div>
+            </div>
 
-            <a href="parlay.html" class="inline-flex items-center gap-2.5 bg-white text-marketBg font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-white/10">
-                Mulai Prediksi
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
+            <div class="mt-8">
+                <button class="w-full bg-white text-marketBg font-bold py-3 rounded-2xl hover:bg-gray-200 transition active:scale-95 shadow-lg shadow-white/5">
+                    Generate New Prediction
+                </button>
+            </div>
         </div>
+        
+        <a href="menu.html" class="mt-8 text-gray-500 hover:text-white text-sm flex items-center gap-2 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            Back to Menu
+        </a>
     </main>
 
 </body>
