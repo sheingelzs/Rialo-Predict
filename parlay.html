@@ -5,29 +5,51 @@
     <title>RIALO — Live Real-Time</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
     <style>
-        body { background: #050810; color: white; font-family: 'Space Grotesk', sans-serif; padding: 20px; }
-        .container { max-width: 900px; margin: auto; display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
-        .card { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .price { font-family: monospace; font-size: 1.2rem; color: #4ade80; font-weight: bold; }
-        .change { font-size: 0.9rem; margin-left: 10px; }
-        .btn-group { display: flex; gap: 10px; }
-        button { padding: 10px 15px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; cursor: pointer; font-weight: bold; }
-        button.active-up { background: #4ade80; color: #050810; border-color: #4ade80; }
-        button.active-down { background: #f87171; color: white; border-color: #f87171; }
-        .slip { background: #0b1120; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; height: fit-content; }
-        h2 { font-family: 'Syne', sans-serif; margin-bottom: 20px; }
-        .pick-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e293b; }
+        :root {
+            --bg: #050810; --card: #0f172a; --border: #1e293b;
+            --accent: #4ade80; --red: #f87171; --muted: #64748b;
+        }
+        body { background: var(--bg); color: white; font-family: 'Space Grotesk', sans-serif; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; display: grid; grid-template-columns: 1fr 320px; gap: 25px; }
+        
+        h2 { font-family: 'Syne', sans-serif; margin-bottom: 20px; letter-spacing: -1px; }
+        .section-title { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; }
+
+        /* MARKET CARDS */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .price { font-family: monospace; font-size: 1.1rem; color: var(--accent); font-weight: bold; display: block; }
+        .change { font-size: 0.85rem; }
+        
+        /* VERSUS MARKET */
+        .vs-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 10px; }
+        .vs-info { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
+        .vs-bar-bg { background: #1e293b; height: 6px; border-radius: 10px; overflow: hidden; position: relative; }
+        .vs-bar-fill { background: linear-gradient(90deg, var(--accent), #3b82f6); height: 100%; width: 50%; transition: width 0.5s ease; }
+
+        /* BUTTONS */
+        .btn-group { display: flex; gap: 8px; }
+        button { padding: 8px 14px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.2s; }
+        button.active-up { background: var(--accent); color: #050810; border-color: var(--accent); }
+        button.active-down { background: var(--red); color: white; border-color: var(--red); }
+
+        /* SLIP */
+        .slip { background: #0b1120; border: 1px solid var(--border); border-radius: 16px; padding: 20px; height: fit-content; position: sticky; top: 20px; }
+        .pick-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1e293b; font-size: 0.9rem; }
+        .place-btn { width: 100%; margin-top: 15px; background: var(--accent); color: #050810; border: none; padding: 12px; border-radius: 8px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <h2>Rialo Crypto Parlay</h2>
+    
     <div class="container">
-        <div class="markets">
-            <div class="card" id="row-btc">
+        <div class="main-content">
+            <div class="section-title">Prediction Market • 5M</div>
+            
+            <div class="card">
                 <div>
-                    <div style="font-weight: bold;">Bitcoin (BTC)</div>
-                    <span class="price" id="price-btc">Connecting...</span>
+                    <div style="font-weight: 700; font-size: 1rem;">Bitcoin (BTC)</div>
+                    <span class="price" id="price-btc">Loading...</span>
                     <span class="change" id="change-btc">0.00%</span>
                 </div>
                 <div class="btn-group">
@@ -36,10 +58,10 @@
                 </div>
             </div>
 
-            <div class="card" id="row-eth">
+            <div class="card">
                 <div>
-                    <div style="font-weight: bold;">Ethereum (ETH)</div>
-                    <span class="price" id="price-eth">Connecting...</span>
+                    <div style="font-weight: 700; font-size: 1rem;">Ethereum (ETH)</div>
+                    <span class="price" id="price-eth">Loading...</span>
                     <span class="change" id="change-eth">0.00%</span>
                 </div>
                 <div class="btn-group">
@@ -48,10 +70,10 @@
                 </div>
             </div>
 
-            <div class="card" id="row-sol">
+            <div class="card">
                 <div>
-                    <div style="font-weight: bold;">Solana (SOL)</div>
-                    <span class="price" id="price-sol">Connecting...</span>
+                    <div style="font-weight: 700; font-size: 1rem;">Solana (SOL)</div>
+                    <span class="price" id="price-sol">Loading...</span>
                     <span class="change" id="change-sol">0.00%</span>
                 </div>
                 <div class="btn-group">
@@ -59,75 +81,103 @@
                     <button id="btn-sol-down" onclick="select('sol', 'DOWN')">▼ DOWN</button>
                 </div>
             </div>
+
+            <div class="section-title">Versus Market • Live Performance</div>
+            
+            <div class="vs-card">
+                <div class="vs-info"><span>BTC</span><span>ETH</span></div>
+                <div class="vs-bar-bg"><div id="bar-btc-eth" class="vs-bar-fill"></div></div>
+            </div>
+            <div class="vs-card">
+                <div class="vs-info"><span>BTC</span><span>SOL</span></div>
+                <div class="vs-bar-bg"><div id="bar-btc-sol" class="vs-bar-fill"></div></div>
+            </div>
         </div>
 
         <div class="slip">
-            <h3 style="margin-bottom:15px;">Bet Slip</h3>
-            <div id="slip-list">No picks yet.</div>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #1e293b;">
-            <div id="total-picks">Total: 0 picks</div>
-            <button style="width:100%; margin-top:15px; background: #4ade80; color:#050810;">Place Bet</button>
+            <h3 style="margin-bottom:15px; font-family: 'Syne';">Bet Slip</h3>
+            <div id="slip-list" style="color: var(--muted); font-size: 0.85rem;">No picks yet.</div>
+            <div id="total-picks" style="margin-top: 20px; font-weight: bold; font-size: 0.9rem;">Total: 0 picks</div>
+            <button class="place-btn">Place Bet</button>
         </div>
     </div>
 
     <script>
-        // 1. KONEKSI WEBSOCKET BINANCE (HARGA ASLI)
         const symbols = ['btcusdt', 'ethusdt', 'solusdt'];
-        // Menggunakan stream @ticker untuk mendapatkan harga dan persentase 24 jam
         const wsUrl = `wss://stream.binance.com:9443/ws/${symbols.map(s => `${s}@ticker`).join('/')}`;
         const socket = new WebSocket(wsUrl);
 
+        // State untuk menyimpan harga terbaru guna keperluan Versus Market
+        let livePrices = { btc: 0, eth: 0, sol: 0 };
+        let liveChanges = { btc: 0, eth: 0, sol: 0 };
+
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            const coin = data.s.replace('USDT', '').toLowerCase(); // btc, eth, atau sol
+            const coin = data.s.replace('USDT', '').toLowerCase();
             
-            const price = parseFloat(data.c); // Harga penutupan terakhir
-            const change = parseFloat(data.P); // Persentase perubahan 24 jam
+            const price = parseFloat(data.c);
+            const change = parseFloat(data.P);
 
-            // Update ke HTML
+            livePrices[coin] = price;
+            liveChanges[coin] = change;
+
+            // Update Parlay UI
             const priceEl = document.getElementById(`price-${coin}`);
             const changeEl = document.getElementById(`change-${coin}`);
 
-            if (priceEl) {
-                priceEl.innerText = `$${price.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-            }
+            if (priceEl) priceEl.innerText = `$${price.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
             if (changeEl) {
                 changeEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
                 changeEl.style.color = change >= 0 ? '#4ade80' : '#f87171';
             }
+
+            updateVersusBars();
         };
 
-        // 2. LOGIKA PILIHAN (PARLAY)
-        let selections = {}; // Simpan pilihan user { btc: 'UP', eth: 'DOWN' }
+        // Fungsi untuk menggerakkan bar di Versus Market berdasarkan performa 24 jam
+        function updateVersusBars() {
+            updateBar('btc', 'eth', 'bar-btc-eth');
+            updateBar('btc', 'sol', 'bar-btc-sol');
+        }
+
+        function updateBar(coin1, coin2, barId) {
+            const bar = document.getElementById(barId);
+            if (!bar) return;
+
+            // Logika: Membandingkan persentase kenaikan harian
+            // Kita normalisasi agar 50% adalah titik tengah (imbang)
+            const diff = liveChanges[coin1] - liveChanges[coin2];
+            let percentage = 50 + (diff * 2); // 1% perbedaan = 2% pergeseran bar
+            
+            // Batasi agar tidak keluar dari 5% - 95%
+            percentage = Math.max(5, Math.min(95, percentage));
+            bar.style.width = percentage + '%';
+        }
+
+        // LOGIKA SELEKSI PARLAY
+        let selections = {};
 
         function select(coin, direction) {
-            // Jika klik tombol yang sama, hapus pilihan (toggle)
             if (selections[coin] === direction) {
                 delete selections[coin];
             } else {
                 selections[coin] = direction;
             }
-            updateUI(coin);
+            updateUI();
         }
 
-        function updateUI(activeCoin) {
-            // Update warna tombol
+        function updateUI() {
             ['btc', 'eth', 'sol'].forEach(c => {
-                const btnUp = document.getElementById(`btn-${c}-up`);
-                const btnDown = document.getElementById(`btn-${c}-down`);
-                
-                btnUp.className = selections[c] === 'UP' ? 'active-up' : '';
-                btnDown.className = selections[c] === 'DOWN' ? 'active-down' : '';
+                document.getElementById(`btn-${c}-up`).className = selections[c] === 'UP' ? 'active-up' : '';
+                document.getElementById(`btn-${c}-down`).className = selections[c] === 'DOWN' ? 'active-down' : '';
             });
 
-            // Update isi Bet Slip
             const slipList = document.getElementById('slip-list');
-            const totalPicks = document.getElementById('total-picks');
             const keys = Object.keys(selections);
 
             if (keys.length === 0) {
-                slipList.innerHTML = 'No picks yet.';
-                totalPicks.innerText = 'Total: 0 picks';
+                slipList.innerHTML = 'No picks yet. Select UP or DOWN above.';
+                document.getElementById('total-picks').innerText = 'Total: 0 picks';
             } else {
                 slipList.innerHTML = keys.map(k => `
                     <div class="pick-item">
@@ -135,11 +185,14 @@
                         <b style="color:${selections[k] === 'UP' ? '#4ade80' : '#f87171'}">${selections[k]}</b>
                     </div>
                 `).join('');
-                totalPicks.innerText = `Total: ${keys.length} picks`;
+                document.getElementById('total-picks').innerText = `Total: ${keys.length} picks`;
             }
         }
 
-        socket.onerror = (err) => console.error("WebSocket Error");
+        socket.onerror = () => console.error("Koneksi Error");
+        socket.onclose = () => console.log("Koneksi Terputus");
     </script>
 </body>
 </html>
+
+    
