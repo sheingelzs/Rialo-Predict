@@ -16,71 +16,61 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; overflow-x:hidden; }
 
-        /* ANIMATIONS */
-        @keyframes flash-green { 0% { background: rgba(74, 222, 128, 0.3); } 100% { background: transparent; } }
-        @keyframes flash-red { 0% { background: rgba(248, 113, 113, 0.3); } 100% { background: transparent; } }
+        @keyframes flash-green { 0% { background: rgba(74, 222, 128, 0.4); } 100% { background: transparent; } }
+        @keyframes flash-red { 0% { background: rgba(248, 113, 113, 0.4); } 100% { background: transparent; } }
         .up-flash { animation: flash-green 0.8s ease-out; }
         .down-flash { animation: flash-red 0.8s ease-out; }
 
-        /* NAV */
         .nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:100; background:rgba(5,8,16,0.92); backdrop-filter:blur(16px); }
         .nav-logo { font-family:var(--font-head); font-size:1.25rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; }
         .logo-dot { width:9px; height:9px; background:var(--accent); border-radius:50%; box-shadow: 0 0 10px var(--accent); }
 
-        /* LAYOUT */
         .page { padding:2rem 1.5rem; max-width:1000px; margin:0 auto; }
         .parlay-container { display:grid; grid-template-columns: 1fr 340px; gap:1.5rem; }
         @media(max-width:850px){ .parlay-container { grid-template-columns:1fr; } }
 
-        /* PREDICTION ROWS */
         .predict-row { display:flex; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; gap:1.2rem; margin-bottom:0.8rem; transition: 0.3s; }
         .predict-row:hover { border-color: var(--accent2); transform: translateX(5px); }
         
         .coin-info { width:150px; }
         .coin-name { font-weight:700; font-size:0.95rem; display:block; letter-spacing: 1px; color: var(--muted); }
-        .coin-price-sm { font-family:var(--font-mono); font-size:1.2rem; color:var(--text); font-weight:bold; display:inline-block; margin-top:4px; padding: 2px 6px; border-radius: 4px; }
-        .coin-change-sm { font-size:0.85rem; font-weight:700; padding:4px 10px; border-radius:6px; background: rgba(255,255,255,0.05); font-family: var(--font-mono); }
+        .coin-price-sm { font-family:var(--font-mono); font-size:1.15rem; color:var(--text); font-weight:bold; display:inline-block; margin-top:4px; padding: 2px 6px; border-radius: 4px; }
+        .coin-change-sm { font-size:0.8rem; font-weight:700; padding:4px 10px; border-radius:6px; background: rgba(255,255,255,0.05); }
 
         .predict-btns { display:flex; gap:0.6rem; margin-left:auto; }
         button.up-btn, button.dn-btn { padding:0.7rem 1.4rem; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-weight:800; cursor:pointer; transition:0.2s; font-family: var(--font-head); }
         
-        button.up-btn:hover { border-color: var(--green); color: var(--green); }
-        button.dn-btn:hover { border-color: var(--red); color: var(--red); }
-
         button.up-btn.selected { background:var(--green); color:black; border-color:var(--green); box-shadow: 0 0 20px rgba(74,222,128,0.2); }
         button.dn-btn.selected { background:var(--red); color:white; border-color:var(--red); box-shadow: 0 0 20px rgba(248,113,113,0.2); }
 
-        /* SIDEBAR SLIP */
-        .bet-slip { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:1.5rem; height:fit-content; position:sticky; top:85px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .bet-slip { background:var(--bg2); border:1px solid var(--border); border-radius:16px; padding:1.5rem; height:fit-content; position:sticky; top:85px; }
         .slip-header { display:flex; justify-content:space-between; margin-bottom:1.5rem; align-items: center; }
         .slip-count { background: var(--accent2); color:white; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
         
-        .slip-item { display:flex; justify-content:space-between; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:10px; margin-bottom:0.6rem; font-size:0.9rem; border-left: 4px solid var(--accent2); animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .slip-item { display:flex; justify-content:space-between; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:10px; margin-bottom:0.6rem; font-size:0.9rem; border-left: 4px solid var(--accent2); }
 
-        .place-btn { width:100%; padding:1.1rem; background:var(--accent); color:black; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:1.5rem; font-size:1rem; transition: 0.3s; font-family: var(--font-head); letter-spacing: 1px; }
-        .place-btn:hover { background: #86efac; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(74,222,128,0.4); }
-        .place-btn:disabled { background: #1a2a42; color: #5a7090; cursor: not-allowed; transform: none; box-shadow: none; }
+        .place-btn { width:100%; padding:1.1rem; background:var(--accent); color:black; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:1.5rem; font-size:1rem; transition: 0.3s; font-family: var(--font-head); }
+        .place-btn:disabled { background: #1a2a42; color: #5a7090; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="nav-logo"><div class="logo-dot"></div> RIALO</div>
-    <div style="font-size: 0.7rem; color: var(--muted); font-family: var(--font-mono); letter-spacing: 1px;">NETWORK: MAINNET-LIVE</div>
+    <div id="status" style="font-size: 0.7rem; color: var(--accent); font-family: var(--font-mono);">SYSTEM: LIVE</div>
 </nav>
 
 <div class="page">
     <div class="parlay-container">
         <div class="parlay-left">
-            <h2 style="font-family:var(--font-head); margin-bottom:1.5rem; font-size: 2rem;">Predict & Multiply</h2>
+            <h2 style="font-family:var(--font-head); margin-bottom:1.5rem; font-size: 2rem;">Predict 2026 Market</h2>
             
             <div class="predict-row">
                 <div class="coin-info">
-                    <span class="coin-name">BTC / USDT</span>
-                    <span class="coin-price-sm" id="price-btc">0.00</span>
+                    <span class="coin-name">BITCOIN</span>
+                    <span class="coin-price-sm" id="price-bitcoin">Connecting...</span>
                 </div>
-                <span class="coin-change-sm" id="change-btc">0.00%</span>
+                <span class="coin-change-sm" id="change-bitcoin">0.00%</span>
                 <div class="predict-btns">
                     <button class="up-btn" onclick="pick('BTC', 'UP', this)">UP</button>
                     <button class="dn-btn" onclick="pick('BTC', 'DOWN', this)">DOWN</button>
@@ -89,10 +79,10 @@
 
             <div class="predict-row">
                 <div class="coin-info">
-                    <span class="coin-name">ETH / USDT</span>
-                    <span class="coin-price-sm" id="price-eth">0.00</span>
+                    <span class="coin-name">ETHEREUM</span>
+                    <span class="coin-price-sm" id="price-ethereum">Connecting...</span>
                 </div>
-                <span class="coin-change-sm" id="change-eth">0.00%</span>
+                <span class="coin-change-sm" id="change-ethereum">0.00%</span>
                 <div class="predict-btns">
                     <button class="up-btn" onclick="pick('ETH', 'UP', this)">UP</button>
                     <button class="dn-btn" onclick="pick('ETH', 'DOWN', this)">DOWN</button>
@@ -101,10 +91,10 @@
 
             <div class="predict-row">
                 <div class="coin-info">
-                    <span class="coin-name">SOL / USDT</span>
-                    <span class="coin-price-sm" id="price-sol">0.00</span>
+                    <span class="coin-name">SOLANA</span>
+                    <span class="coin-price-sm" id="price-solana">Connecting...</span>
                 </div>
-                <span class="coin-change-sm" id="change-sol">0.00%</span>
+                <span class="coin-change-sm" id="change-solana">0.00%</span>
                 <div class="predict-btns">
                     <button class="up-btn" onclick="pick('SOL', 'UP', this)">UP</button>
                     <button class="dn-btn" onclick="pick('SOL', 'DOWN', this)">DOWN</button>
@@ -120,10 +110,7 @@
             <div id="slip-items">
                 <p style="color:var(--muted); font-size:0.85rem; text-align:center; padding: 30px 0;">No predictions selected</p>
             </div>
-            <button class="place-btn" id="place-btn" disabled onclick="alert('Parlay Placed Successfully!')">PLACE PARLAY</button>
-            <p style="font-size: 0.65rem; color: var(--muted); text-align: center; margin-top: 1rem; line-height: 1.4;">
-                Win probability depends on market movement. Trade responsibly.
-            </p>
+            <button class="place-btn" id="place-btn" disabled onclick="alert('Parlay Placed!')">PLACE PARLAY</button>
         </div>
     </div>
 </div>
@@ -131,51 +118,49 @@
 <script>
     let selections = {};
     let lastPrices = {};
+    const coins = ['bitcoin', 'ethereum', 'solana'];
 
-    function startLiveStream() {
-        const streams = ['btcusdt', 'ethusdt', 'solusdt'];
-        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streams.map(s => s + '@ticker').join('/')}`);
+    async function updatePrices() {
+        try {
+            const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(',')}&vs_currencies=usd&include_24hr_change=true`);
+            const data = await response.json();
 
-        ws.onmessage = (event) => {
-            const d = JSON.parse(event.data);
-            const coin = d.s.replace('USDT', '').toLowerCase();
-            const price = parseFloat(d.c);
-            const change = parseFloat(d.P);
+            coins.forEach(coin => {
+                const price = data[coin].usd;
+                const change = data[coin].usd_24h_change;
+                const pEl = document.getElementById(`price-${coin}`);
+                const cEl = document.getElementById(`change-${coin}`);
 
-            const pEl = document.getElementById(`price-${coin}`);
-            const cEl = document.getElementById(`change-${coin}`);
+                if (pEl) {
+                    // Flash Effect logic
+                    if (lastPrices[coin]) {
+                        pEl.classList.remove('up-flash', 'down-flash');
+                        void pEl.offsetWidth; 
+                        if (price > lastPrices[coin]) pEl.classList.add('up-flash');
+                        else if (price < lastPrices[coin]) pEl.classList.add('down-flash');
+                    }
+                    lastPrices[coin] = price;
 
-            if (pEl) {
-                // Flash effect logic
-                if (lastPrices[coin]) {
-                    pEl.classList.remove('up-flash', 'down-flash');
-                    void pEl.offsetWidth; // Trigger reflow
-                    if (price > lastPrices[coin]) pEl.classList.add('up-flash');
-                    else if (price < lastPrices[coin]) pEl.classList.add('down-flash');
+                    pEl.innerText = new Intl.NumberFormat('en-US', {
+                        style: 'currency', currency: 'USD'
+                    }).format(price);
                 }
-                lastPrices[coin] = price;
 
-                pEl.innerText = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 2
-                }).format(price);
-            }
-
-            if (cEl) {
-                const isPos = change >= 0;
-                cEl.innerText = `${isPos ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%`;
-                cEl.style.color = isPos ? 'var(--green)' : 'var(--red)';
-                cEl.style.background = isPos ? 'rgba(74,222,128,0.1)' : 'rgba(248,113,113,0.1)';
-            }
-        };
-
-        ws.onclose = () => setTimeout(startLiveStream, 2000);
+                if (cEl) {
+                    const isPos = change >= 0;
+                    cEl.innerText = `${isPos ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%`;
+                    cEl.style.color = isPos ? 'var(--green)' : 'var(--red)';
+                }
+            });
+            document.getElementById('status').innerText = "SYSTEM: LIVE (March 2026)";
+        } catch (err) {
+            console.error("API Error:", err);
+            document.getElementById('status').innerText = "SYSTEM: RECONNECTING...";
+        }
     }
 
     window.pick = function(coin, dir, btn) {
         const parent = btn.parentElement;
-        
         if (selections[coin] === dir) {
             delete selections[coin];
             btn.classList.remove('selected');
@@ -192,7 +177,6 @@
         const badge = document.getElementById('slip-count');
         const placeBtn = document.getElementById('place-btn');
         const keys = Object.keys(selections);
-        
         badge.innerText = keys.length;
         placeBtn.disabled = keys.length === 0;
 
@@ -201,7 +185,7 @@
         } else {
             box.innerHTML = keys.map(k => `
                 <div class="slip-item" style="border-left-color: ${selections[k] === 'UP' ? 'var(--green)' : 'var(--red)'}">
-                    <span style="font-weight:bold; letter-spacing:1px;">${k}/USDT</span>
+                    <span style="font-weight:bold;">${k}/USDT</span>
                     <span style="font-weight:800; color:${selections[k] === 'UP' ? 'var(--green)' : 'var(--red)'}">
                         ${selections[k]} ${selections[k] === 'UP' ? '▲' : '▼'}
                     </span>
@@ -210,9 +194,9 @@
         }
     }
 
-    // Initialize
-    startLiveStream();
+    // Update setiap 3 detik (Polling)
+    setInterval(updatePrices, 3000);
+    updatePrices(); // Initial call
 </script>
-
 </body>
 </html>
