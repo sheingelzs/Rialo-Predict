@@ -17,163 +17,134 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* NAV */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.92);backdrop-filter:blur(16px);}
-.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;}
-.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;}
-.nav-tabs{display:flex;gap:0.2rem;background:rgba(255,255,255,0.05);border-radius:9px;padding:3px;}
-.nav-tab{padding:0.35rem 0.85rem;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.45);font-size:0.78rem;font-weight:500;cursor:pointer;}
-.nav-tab.active{background:rgba(255,255,255,0.1);color:#fff;}
+.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;}
+.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%; box-shadow: 0 0 10px var(--accent);}
 
 /* PARLAY PAGE */
-.page{display:none; padding:2rem 1.5rem; max-width:900px; margin:0 auto;}
-.page.active{display:block;}
-
+.page{padding:2rem 1.5rem; max-width:950px; margin:0 auto;}
 .parlay-container{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;}
 @media(max-width:800px){.parlay-container{grid-template-columns:1fr;}}
 
-.predict-row{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;gap:1rem;margin-bottom:0.6rem;}
-.coin-info{width:100px;}
-.coin-name{font-weight:700;font-size:0.9rem;display:block;}
-.coin-price-sm{font-family:var(--font-mono);font-size:0.8rem;color:var(--accent);font-weight:bold;}
-.coin-change-sm{font-size:0.75rem;font-weight:600;}
+.predict-row{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;gap:1rem;margin-bottom:0.7rem; transition: 0.3s;}
+.predict-row:hover {border-color: var(--accent2);}
+.coin-info{width:130px;}
+.coin-name{font-weight:700;font-size:0.95rem;display:block; letter-spacing: 1px;}
+.coin-price-sm{font-family:var(--font-mono);font-size:1.1rem;color:var(--accent);font-weight:bold; display:block; margin-top:4px;}
+.coin-change-sm{font-size:0.85rem;font-weight:700; padding:4px 8px; border-radius:6px; background: rgba(255,255,255,0.05);}
 
 .predict-btns{display:flex;gap:0.5rem;margin-left:auto;}
-button.up-btn, button.dn-btn{padding:0.5rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-weight:700;cursor:pointer;transition:0.2s;}
-button.up-btn.selected{background:var(--green);color:black;border-color:var(--green);}
-button.dn-btn.selected{background:var(--red);color:white;border-color:var(--red);}
+button.up-btn, button.dn-btn{padding:0.6rem 1.2rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-weight:800;cursor:pointer;transition:0.2s;}
+button.up-btn.selected{background:var(--green);color:black;border-color:var(--green);box-shadow: 0 0 15px rgba(74,222,128,0.3);}
+button.dn-btn.selected{background:var(--red);color:white;border-color:var(--red);box-shadow: 0 0 15px rgba(248,113,113,0.3);}
 
-/* VERSUS BAR */
-.vs-row{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-top:2rem;}
-.vs-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:10px;margin-top:10px;overflow:hidden;}
-.vs-fill{height:100%;width:50%;background:linear-gradient(90deg, var(--accent), var(--accent2));transition:width 0.5s ease;}
-
-/* BET SLIP */
+/* SIDEBAR SLIP */
 .bet-slip{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.25rem;height:fit-content;position:sticky;top:85px;}
-.slip-header{display:flex;justify-content:space-between;margin-bottom:1rem;}
-.slip-item{display:flex;justify-content:space-between;padding:0.6rem;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:0.5rem;font-size:0.85rem;}
-.slip-badge.up{color:var(--green);}
-.slip-badge.down{color:var(--red);}
-.place-btn{width:100%;padding:0.8rem;background:var(--accent);color:black;border:none;border-radius:8px;font-weight:800;cursor:pointer;margin-top:1rem;}
+.slip-header{display:flex;justify-content:space-between;margin-bottom:1rem; align-items: center;}
+.slip-count{background: var(--accent2); color:white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: bold;}
+.slip-item{display:flex;justify-content:space-between;padding:0.7rem;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:0.5rem;font-size:0.85rem; border-left: 3px solid var(--accent2);}
+.place-btn{width:100%;padding:1rem;background:var(--accent);color:black;border:none;border-radius:8px;font-weight:800;cursor:pointer;margin-top:1rem; font-size: 0.9rem; transition: 0.2s;}
+.place-btn:hover {background: #86efac; transform: translateY(-2px);}
 </style>
 </head>
 <body>
 
 <nav class="nav">
   <div class="nav-logo"><div class="logo-dot"></div> RIALO</div>
-  <div class="nav-tabs">
-    <button class="nav-tab" onclick="showPage('landing')">Home</button>
-    <button class="nav-tab active" onclick="showPage('parlay')">Parlay</button>
-    <button class="nav-tab" onclick="showPage('market')">Market</button>
-  </div>
+  <div style="font-size: 0.7rem; color: var(--muted); font-family: var(--font-mono);">NETWORK: MAINNET-LIVE</div>
 </nav>
 
-<div class="page active" id="page-parlay">
+<div class="page">
   <div class="parlay-container">
     <div class="parlay-left">
-      <h2 style="font-family:var(--font-head); margin-bottom:1rem;">Live Parlay Market</h2>
+      <h2 style="font-family:var(--font-head); margin-bottom:1.5rem; font-size: 1.8rem;">Predict & Multiply</h2>
       
-      <div class="predict-row" id="row-btc">
+      <div class="predict-row">
         <div class="coin-info">
-          <span class="coin-name">BITCOIN</span>
-          <span class="coin-price-sm" id="price-btc">$0.00</span>
+          <span class="coin-name">BTC / USDT</span>
+          <span class="coin-price-sm" id="price-btc">Fetching...</span>
         </div>
         <span class="coin-change-sm" id="change-btc">0.00%</span>
         <div class="predict-btns">
-          <button class="up-btn" onclick="pick('btc', 'UP', this)">▲ UP</button>
-          <button class="dn-btn" onclick="pick('btc', 'DOWN', this)">▼ DOWN</button>
+          <button class="up-btn" onclick="pick('BTC', 'UP', this)">UP</button>
+          <button class="dn-btn" onclick="pick('BTC', 'DOWN', this)">DOWN</button>
         </div>
       </div>
 
-      <div class="predict-row" id="row-eth">
+      <div class="predict-row">
         <div class="coin-info">
-          <span class="coin-name">ETHEREUM</span>
-          <span class="coin-price-sm" id="price-eth">$0.00</span>
+          <span class="coin-name">ETH / USDT</span>
+          <span class="coin-price-sm" id="price-eth">Fetching...</span>
         </div>
         <span class="coin-change-sm" id="change-eth">0.00%</span>
         <div class="predict-btns">
-          <button class="up-btn" onclick="pick('eth', 'UP', this)">▲ UP</button>
-          <button class="dn-btn" onclick="pick('eth', 'DOWN', this)">▼ DOWN</button>
+          <button class="up-btn" onclick="pick('ETH', 'UP', this)">UP</button>
+          <button class="dn-btn" onclick="pick('ETH', 'DOWN', this)">DOWN</button>
         </div>
       </div>
 
-      <div class="predict-row" id="row-sol">
+      <div class="predict-row">
         <div class="coin-info">
-          <span class="coin-name">SOLANA</span>
-          <span class="coin-price-sm" id="price-sol">$0.00</span>
+          <span class="coin-name">SOL / USDT</span>
+          <span class="coin-price-sm" id="price-sol">Fetching...</span>
         </div>
         <span class="coin-change-sm" id="change-sol">0.00%</span>
         <div class="predict-btns">
-          <button class="up-btn" onclick="pick('sol', 'UP', this)">▲ UP</button>
-          <button class="dn-btn" onclick="pick('sol', 'DOWN', this)">▼ DOWN</button>
+          <button class="up-btn" onclick="pick('SOL', 'UP', this)">UP</button>
+          <button class="dn-btn" onclick="pick('SOL', 'DOWN', this)">DOWN</button>
         </div>
-      </div>
-
-      <div class="vs-row">
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:bold;">
-          <span>BTC Performance</span>
-          <span>ETH Performance</span>
-        </div>
-        <div class="vs-bar"><div class="vs-fill" id="vs-bar"></div></div>
       </div>
     </div>
 
     <div class="bet-slip">
       <div class="slip-header">
-        <h3 style="font-family:var(--font-head); font-size:1rem;">Bet Slip</h3>
+        <h3 style="font-family:var(--font-head); font-size:1.1rem;">Bet Slip</h3>
         <span class="slip-count" id="slip-count">0</span>
       </div>
       <div id="slip-items">
-        <p style="color:var(--muted); font-size:0.8rem; text-align:center;">No picks selected</p>
+        <p style="color:var(--muted); font-size:0.8rem; text-align:center; padding: 20px 0;">Pilih prediksi kamu</p>
       </div>
-      <button class="place-btn">PLACE PARLAY</button>
+      <button class="place-btn" onclick="alert('Parlay Placed!')">PLACE PARLAY</button>
     </div>
   </div>
 </div>
 
 <script>
     let selections = {};
-    let changes = { btc: 0, eth: 0, sol: 0 };
 
-    // 1. MESIN REALTIME (WEBSOCKET BINANCE)
-    function initLiveMarket() {
-        const symbols = ['btcusdt', 'ethusdt', 'solusdt'];
-        const wsUrl = `wss://stream.binance.com:9443/ws/${symbols.map(s => s + '@ticker').join('/')}`;
-        const ws = new WebSocket(wsUrl);
+    function startLiveStream() {
+        const streams = ['btcusdt', 'ethusdt', 'solusdt'];
+        const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${streams.map(s => s + '@ticker').join('/')}`);
 
         ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const coin = data.s.replace('USDT', '').toLowerCase();
-            const price = parseFloat(data.c).toLocaleString(undefined, { minimumFractionDigits: 2 });
-            const change = parseFloat(data.P);
+            const d = JSON.parse(event.data);
+            const coin = d.s.replace('USDT', '').toLowerCase();
+            const price = parseFloat(d.c);
+            const change = parseFloat(d.P);
 
-            changes[coin] = change;
-
-            // Update ke HTML secara langsung
+            // Update UI
             const pEl = document.getElementById(`price-${coin}`);
             const cEl = document.getElementById(`change-${coin}`);
 
-            if (pEl) pEl.innerText = `$${price}`;
+            if (pEl) {
+                // Gunakan Intl.NumberFormat agar ribuan dipisah koma dengan benar
+                pEl.innerText = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(price);
+            }
+            
             if (cEl) {
                 const isPos = change >= 0;
                 cEl.innerText = `${isPos ? '+' : ''}${change.toFixed(2)}%`;
                 cEl.style.color = isPos ? '#4ade80' : '#f87171';
             }
-
-            // Update Versus Bar (BTC vs ETH)
-            const vsBar = document.getElementById('vs-bar');
-            if (vsBar) {
-                let ratio = 50 + ((changes.btc - changes.eth) * 5);
-                ratio = Math.max(10, Math.min(90, ratio));
-                vsBar.style.width = ratio + '%';
-            }
         };
 
-        ws.onclose = () => setTimeout(initLiveMarket, 3000);
+        ws.onclose = () => setTimeout(startLiveStream, 2000);
     }
 
-    // 2. LOGIKA TOMBOL UP/DOWN
     window.pick = function(coin, dir, btn) {
         const parent = btn.parentElement;
-        
         if (selections[coin] === dir) {
             delete selections[coin];
             btn.classList.remove('selected');
@@ -182,41 +153,28 @@ button.dn-btn.selected{background:var(--red);color:white;border-color:var(--red)
             selections[coin] = dir;
             btn.classList.add('selected');
         }
-        updateSlip();
+        updateSlipUI();
     };
 
-    // 3. UPDATE TAMPILAN SLIP
-    function updateSlip() {
-        const slipBox = document.getElementById('slip-items');
-        const countBadge = document.getElementById('slip-count');
+    function updateSlipUI() {
+        const box = document.getElementById('slip-items');
+        const badge = document.getElementById('slip-count');
         const keys = Object.keys(selections);
-
-        countBadge.innerText = keys.length;
+        badge.innerText = keys.length;
 
         if (keys.length === 0) {
-            slipBox.innerHTML = '<p style="color:var(--muted); font-size:0.8rem; text-align:center;">No picks selected</p>';
+            box.innerHTML = '<p style="color:var(--muted); font-size:0.8rem; text-align:center; padding: 20px 0;">Pilih prediksi kamu</p>';
         } else {
-            slipBox.innerHTML = keys.map(k => `
+            box.innerHTML = keys.map(k => `
                 <div class="slip-item">
-                    <span style="font-weight:bold;">${k.toUpperCase()}</span>
-                    <span class="slip-badge ${selections[k].toLowerCase()}">${selections[k]}</span>
+                    <span style="font-weight:bold;">${k}</span>
+                    <span style="font-weight:800; color:${selections[k] === 'UP' ? '#4ade80' : '#f87171'}">${selections[k]}</span>
                 </div>
             `).join('');
         }
     }
 
-    // 4. FUNGSI NAVIGASI
-    window.showPage = function(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        const target = document.getElementById('page-' + pageId);
-        if(target) target.classList.add('active');
-        
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-    };
-
-    // JALANKAN MARKET!
-    initLiveMarket();
+    startLiveStream();
 </script>
 
 </body>
