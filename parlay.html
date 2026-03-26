@@ -1,318 +1,253 @@
-<div class="page active" id="page-landing">
-  <div class="landing">
-    <div class="badge">Live On-Chain Prediction Market</div>
-    <h1>Stack your picks.<br><span class="accent">Multiply</span> your odds.</h1>
-    <p class="hero-sub">Predict BTC, ETH, and SOL price movements in real-time. Build a parlay, earn points, and climb the leaderboard.</p>
-    <div class="parlay-hook">
-      <span>What's a parlay?</span> — Combine multiple predictions into one bet. Get them all right and your point reward multiplies.
-    </div>
-    <div class="cta-group">
-      <button class="btn-primary" onclick="showPage('parlay')">Get Started</button>
-      <button class="btn-ghost"   onclick="showPage('market')">Live Markets</button>
-    </div>
-    <div class="stats-row">
-      <div class="stat"><div class="stat-num">$2.4M</div><div class="stat-label">Total Volume</div></div>
-      <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Players</div></div>
-      <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Uptime</div></div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RIALO — Live Real-Time Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#050810; --bg2:#0b1120; --card:#0f1929; --border:#1a2a42;
+  --accent:#4ade80; --accent2:#7c5cfc; --red:#f87171; --text:#e8eaf0; --muted:#5a7090;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Space Grotesk', sans-serif; overflow-x:hidden; }
+
+/* ── BG CANVAS ── */
+#net-canvas { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.4; }
+
+/* ── NAV ── */
+.nav { display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:100; background:rgba(5,8,16,0.92); backdrop-filter:blur(16px); }
+.nav-logo { font-family:'Syne', sans-serif; font-size:1.2rem; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; }
+.logo-dot { width:10px; height:10px; background:var(--accent); border-radius:50%; box-shadow: 0 0 10px var(--accent); }
+.nav-tabs { display:flex; gap:10px; }
+.nav-tab { background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:600; font-size:0.85rem; padding:5px 10px; transition: 0.2s; }
+.nav-tab.active { color:var(--accent); }
+.wallet-btn { padding:0.5rem 1rem; border-radius:8px; border:1px solid var(--accent); color:var(--accent); background:rgba(74,222,128,0.1); cursor:pointer; font-weight:700; font-size:0.75rem; }
+
+/* ── PAGE LAYOUT ── */
+.page { display:none; position:relative; z-index:1; padding:2rem 1.5rem; max-width:1100px; margin:0 auto; }
+.page.active { display:block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── PARLAY BUILDER ── */
+.parlay-container { display:grid; grid-template-columns: 1fr 340px; gap:2rem; }
+@media (max-width: 850px) { .parlay-container { grid-template-columns: 1fr; } }
+
+.market-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.2rem; margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; transition: 0.2s; }
+.coin-info { display:flex; align-items:center; gap:12px; }
+.coin-icon { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; background:rgba(255,255,255,0.05); }
+.coin-name { font-weight:700; font-size:1rem; }
+.coin-price { font-family:monospace; font-size:1.1rem; color:var(--accent); margin-top:2px; min-width: 120px; }
+
+.btn-group { display:flex; gap:8px; }
+.btn-pick { padding:0.6rem 1.2rem; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.03); color:var(--text); cursor:pointer; font-weight:700; transition:0.2s; }
+.btn-pick.up:hover, .btn-pick.up.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+.btn-pick.down:hover, .btn-pick.down.active { background:var(--red); color:#fff; border-color:var(--red); }
+
+/* ── BET SLIP ── */
+.bet-slip { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:1.5rem; height:fit-content; position:sticky; top:100px; }
+.slip-title { font-family:'Syne', sans-serif; margin-bottom:1rem; display:flex; justify-content:space-between; }
+.slip-item { background:rgba(255,255,255,0.03); padding:0.8rem; border-radius:8px; margin-bottom:0.5rem; display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; border-left: 4px solid var(--accent2); }
+.mult-box { margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border); }
+.row-between { display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem; }
+.big-val { font-weight:800; color:var(--accent); font-size:1.2rem; }
+.place-btn { width:100%; padding:1rem; border-radius:10px; border:none; background:var(--accent2); color:#fff; font-weight:800; cursor:pointer; margin-top:1rem; transition:0.2s; }
+.place-btn:disabled { opacity:0.3; cursor:not-allowed; }
+</style>
+</head>
+<body>
+
+<canvas id="net-canvas"></canvas>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="location.reload()"><div class="logo-dot"></div> RIALO</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active">Parlay</button>
+    <button class="nav-tab">History</button>
   </div>
+  <button class="wallet-btn" id="wallet-btn" onclick="connectWallet()">Connect Wallet</button>
+</nav>
 
-  <div class="how-section">
-    <div class="how-label">How it works</div>
-    <div class="how-title">Simple to play, hard to master</div>
-    <div class="how-grid">
-      <div class="how-card"><div class="how-num">01 / PICK</div><h3>Choose outcomes</h3><p>Select UP or DOWN for BTC, ETH, SOL.</p></div>
-      <div class="how-card"><div class="how-num">02 / COMBINE</div><h3>Build your parlay</h3><p>Stack picks into one bet. More picks = higher reward.</p></div>
-      <div class="how-card"><div class="how-num">03 / EARN</div><h3>Collect points</h3><p>Each correct pick earns 1 point on-chain.</p></div>
-      <div class="how-card"><div class="how-num">04 / REDEEM</div><h3>Future rewards</h3><p>Points are redeemable at mainnet launch.</p></div>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-col">
-        <div class="footer-logo"><div class="logo-dot"></div>RIALO</div>
-        <div class="footer-tagline">The next generation of on-chain prediction markets. High stakes, real-time, fully decentralized.</div>
-      </div>
-      <div class="footer-col">
-        <h4>Protocol</h4>
-        <div class="footer-links">
-          <a onclick="showPage('market')">Markets</a>
-          <a onclick="showPage('parlay')">Parlay Builder</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Community</h4>
-        <div class="footer-links">
-          <a href="#">Twitter / X</a>
-          <a href="#">Discord</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 RIALO Protocol. All rights reserved.</p>
-      <div class="footer-builders">Built on <a class="builder-link">Solana</a></div>
-    </div>
-  </footer>
-</div>
-
-<div class="page" id="page-parlay">
-  <div class="parlay-page">
-    <div class="parlay-left">
-      <h2>Parlay Builder</h2>
-      <p class="parlay-desc">Select price direction for the next 5 minutes.</p>
+<div class="page active">
+  <div class="parlay-container">
+    
+    <div class="markets-list">
+      <h2 style="margin-bottom:1.5rem; font-family:'Syne';">Live Prediction</h2>
       
-      <div class="p-section-title">Standard Markets</div>
-      <div class="predict-grid">
-        <div class="predict-row">
-          <div class="coin-info">
-            <div class="coin-dot btc">₿</div>
-            <div>
-              <div class="coin-name">BTC</div>
-              <div class="coin-price-sm" id="price-btc">Loading...</div>
-            </div>
-          </div>
-          <div class="coin-change-sm" id="change-btc">--</div>
-          <div class="predict-btns">
-            <button class="up-btn" data-coin="BTC" data-dir="UP" onclick="togglePick('BTC', 'UP')">UP</button>
-            <button class="dn-btn" data-coin="BTC" data-dir="DOWN" onclick="togglePick('BTC', 'DOWN')">DOWN</button>
+      <div class="market-card">
+        <div class="coin-info">
+          <div class="coin-icon" style="color:#f7931a">₿</div>
+          <div>
+            <div class="coin-name">Bitcoin</div>
+            <div class="coin-price" id="price-btc">Connecting...</div>
           </div>
         </div>
+        <div class="btn-group">
+          <button class="btn-pick up" onclick="togglePick('BTC', 'UP')">UP</button>
+          <button class="btn-pick down" onclick="togglePick('BTC', 'DOWN')">DOWN</button>
+        </div>
+      </div>
 
-        <div class="predict-row">
-          <div class="coin-info">
-            <div class="coin-dot eth">Ξ</div>
-            <div>
-              <div class="coin-name">ETH</div>
-              <div class="coin-price-sm" id="price-eth">Loading...</div>
-            </div>
-          </div>
-          <div class="coin-change-sm" id="change-eth">--</div>
-          <div class="predict-btns">
-            <button class="up-btn" data-coin="ETH" data-dir="UP" onclick="togglePick('ETH', 'UP')">UP</button>
-            <button class="dn-btn" data-coin="ETH" data-dir="DOWN" onclick="togglePick('ETH', 'DOWN')">DOWN</button>
+      <div class="market-card">
+        <div class="coin-info">
+          <div class="coin-icon" style="color:#627eea">Ξ</div>
+          <div>
+            <div class="coin-name">Ethereum</div>
+            <div class="coin-price" id="price-eth">Connecting...</div>
           </div>
         </div>
+        <div class="btn-group">
+          <button class="btn-pick up" onclick="togglePick('ETH', 'UP')">UP</button>
+          <button class="btn-pick down" onclick="togglePick('ETH', 'DOWN')">DOWN</button>
+        </div>
+      </div>
 
-        <div class="predict-row">
-          <div class="coin-info">
-            <div class="coin-dot sol">S</div>
-            <div>
-              <div class="coin-name">SOL</div>
-              <div class="coin-price-sm" id="price-sol">Loading...</div>
-            </div>
+      <div class="market-card">
+        <div class="coin-info">
+          <div class="coin-icon" style="color:#14f195">S</div>
+          <div>
+            <div class="coin-name">Solana</div>
+            <div class="coin-price" id="price-sol">Connecting...</div>
           </div>
-          <div class="coin-change-sm" id="change-sol">--</div>
-          <div class="predict-btns">
-            <button class="up-btn" data-coin="SOL" data-dir="UP" onclick="togglePick('SOL', 'UP')">UP</button>
-            <button class="dn-btn" data-coin="SOL" data-dir="DOWN" onclick="togglePick('SOL', 'DOWN')">DOWN</button>
-          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn-pick up" onclick="togglePick('SOL', 'UP')">UP</button>
+          <button class="btn-pick down" onclick="togglePick('SOL', 'DOWN')">DOWN</button>
         </div>
       </div>
     </div>
 
     <div class="bet-slip">
-      <div class="slip-header">
-        <h3>Your Parlay</h3>
-        <span class="slip-count" id="slip-count">0 Picks</span>
+      <div class="slip-title">
+        <span>Parlay Builder</span>
+        <span id="count-tag" style="color:var(--muted); font-size:0.8rem;">0 Picks</span>
       </div>
       
-      <div id="slip-empty-msg" class="slip-empty">No picks selected. Start by picking UP or DOWN on the left.</div>
-      
-      <div class="slip-items" id="slip-items-container"></div>
-
-      <div class="slip-divider"></div>
-      
-      <div class="slip-info">
-        <span>Multiplier</span>
-        <span id="multiplier-val">1.0x</span>
-      </div>
-      <div class="slip-info">
-        <span>Est. Points</span>
-        <span id="est-points">0</span>
+      <div id="slip-container">
+        <p style="color:var(--muted); font-size:0.8rem; text-align:center; padding:20px 0;">Select a direction to start</p>
       </div>
 
-      <div class="bet-amount-row" style="margin-top:10px;">
-        <input type="number" class="bet-amount-input" value="10" id="bet-amount">
-        <span class="bet-amount-unit">POINTS</span>
-      </div>
-
-      <button class="place-btn" id="place-bet-btn" disabled onclick="placeParlay()">Place Parlay</button>
-      <button class="clear-btn" onclick="clearParlay()">Clear All</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="wallet-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <h3 class="modal-title">Connect Wallet</h3>
-    <div class="wallet-list">
-      <div class="wallet-item" onclick="mockConnect()">
-        <div class="wallet-logo">👻</div>
-        <div class="wallet-name">Phantom</div>
+      <div class="mult-box">
+        <div class="row-between">
+          <span>Multiplier</span>
+          <span class="big-val" id="mult-val">1.00x</span>
+        </div>
+        <div class="row-between">
+          <span>Potential Payout</span>
+          <span id="payout-val">0 Points</span>
+        </div>
+        <button class="place-btn" id="place-btn" disabled onclick="submitBet()">Place Prediction</button>
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
-// --- STATE ---
-let currentParlay = []; // [{coin: 'BTC', dir: 'UP'}]
+let parlay = [];
 let isConnected = false;
 
-// --- NAVIGATION ---
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(`page-${pageId}`).classList.add('active');
-    
-    // UI active tab state
-    const tabs = document.querySelectorAll('.nav-tab');
-    tabs.forEach(t => { if(t.innerText.toLowerCase() === pageId) t.classList.add('active'); });
-}
+// ── WEBSOCKET BINANCE (REAL-TIME) ──
+const symbols = ['btcusdt', 'ethusdt', 'solusdt'];
+const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbols.map(s => `${s}@ticker`).join('/')}`);
 
-// --- REALTIME PRICES (COINGECKO) ---
-async function fetchPrices() {
-    try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true');
-        const data = await res.json();
-        
-        updateCoinUI('btc', data.bitcoin);
-        updateCoinUI('eth', data.ethereum);
-        updateCoinUI('sol', data.solana);
-    } catch(e) { console.error("Price fetch failed"); }
-}
+ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    const coin = data.s.replace('USDT', '').toLowerCase();
+    const priceEl = document.getElementById(`price-${coin}`);
+    if(priceEl) {
+        const price = parseFloat(data.c).toLocaleString(undefined, {minimumFractionDigits: 2});
+        priceEl.innerText = `$${price}`;
+    }
+};
 
-function updateCoinUI(sym, data) {
-    const pEl = document.getElementById(`price-${sym}`);
-    const cEl = document.getElementById(`change-${sym}`);
-    if(!pEl) return;
-
-    pEl.innerText = `$${data.usd.toLocaleString()}`;
-    const change = data.usd_24h_change;
-    cEl.innerText = `${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%`;
-    cEl.style.color = change >= 0 ? 'var(--accent)' : 'var(--red)';
-}
-
-setInterval(fetchPrices, 8000);
-fetchPrices();
-
-// --- PARLAY LOGIC ---
+// ── LOGIKA PARLAY ──
 function togglePick(coin, dir) {
-    // Cari apakah koin sudah ada di parlay
-    const index = currentParlay.findIndex(p => p.coin === coin);
+    const existingIndex = parlay.findIndex(p => p.coin === coin);
     
-    if (index > -1) {
-        if (currentParlay[index].dir === dir) {
-            currentParlay.splice(index, 1); // Remove if clicking same button
+    if(existingIndex > -1) {
+        if(parlay[existingIndex].dir === dir) {
+            parlay.splice(existingIndex, 1); // Hapus jika klik tombol yang sama
         } else {
-            currentParlay[index].dir = dir; // Change direction
+            parlay[existingIndex].dir = dir; // Ganti arah (UP -> DOWN)
         }
     } else {
-        currentParlay.push({ coin, dir });
+        parlay.push({ coin, dir });
     }
-    renderParlay();
+    renderUI();
 }
 
-function renderParlay() {
-    const container = document.getElementById('slip-items-container');
-    const emptyMsg = document.getElementById('slip-empty-msg');
-    const btn = document.getElementById('place-bet-btn');
-    
-    container.innerHTML = '';
-    
-    // Update visual buttons di grid
-    document.querySelectorAll('.predict-btns button').forEach(b => b.classList.remove('selected'));
-    
-    currentParlay.forEach(p => {
-        // Highlight button
-        const activeBtn = document.querySelector(`button[data-coin="${p.coin}"][data-dir="${p.dir}"]`);
-        if(activeBtn) activeBtn.classList.add('selected');
+function renderUI() {
+    const container = document.getElementById('slip-container');
+    const multEl = document.getElementById('mult-val');
+    const payoutEl = document.getElementById('payout-val');
+    const btn = document.getElementById('place-btn');
+    const countTag = document.getElementById('count-tag');
 
-        // Create item in slip
-        const item = document.createElement('div');
-        item.className = 'slip-item';
-        item.innerHTML = `
-            <div class="slip-item-left">
-                <strong>${p.coin}</strong>
-                <span class="slip-badge ${p.dir.toLowerCase()}">${p.dir}</span>
-            </div>
-            <button class="remove" onclick="togglePick('${p.coin}', '${p.dir}')">&times;</button>
-        `;
-        container.appendChild(item);
+    // Update Buttons Highlight
+    document.querySelectorAll('.btn-pick').forEach(b => b.classList.remove('active'));
+    parlay.forEach(p => {
+        const selector = `.market-card:has(.coin-name:contains('${p.coin}')) .btn-pick.${p.dir.toLowerCase()}`;
+        // Manual selector fallback karena :has belum tentu support di semua browser
+        const cards = document.querySelectorAll('.market-card');
+        cards.forEach(card => {
+            if(card.querySelector('.coin-name').innerText.includes(p.coin)) {
+                card.querySelector(`.btn-pick.${p.dir.toLowerCase()}`).classList.add('active');
+            }
+        });
     });
 
-    const count = currentParlay.length;
-    document.getElementById('slip-count').innerText = `${count} Pick${count !== 1 ? 's' : ''}`;
-    emptyMsg.style.display = count > 0 ? 'none' : 'block';
-    
-    // Multiplier calculation (simple exponential for points)
-    const mult = count === 0 ? 1 : Math.pow(1.8, count).toFixed(1);
-    document.getElementById('multiplier-val').innerText = `${mult}x`;
-    
-    const betAmt = document.getElementById('bet-amount').value;
-    document.getElementById('est-points').innerText = Math.floor(betAmt * mult);
-    
-    btn.disabled = count === 0;
-}
-
-function clearParlay() {
-    currentParlay = [];
-    renderParlay();
-}
-
-function placeParlay() {
-    if(!isConnected) {
-        document.getElementById('wallet-modal').classList.add('open');
-        return;
+    // Render Slip
+    if(parlay.length === 0) {
+        container.innerHTML = `<p style="color:var(--muted); font-size:0.8rem; text-align:center; padding:20px 0;">Select a direction to start</p>`;
+        multEl.innerText = "1.00x";
+        payoutEl.innerText = "0 Points";
+        btn.disabled = true;
+        countTag.innerText = "0 Picks";
+    } else {
+        container.innerHTML = parlay.map(p => `
+            <div class="slip-item">
+                <strong>${p.coin}</strong>
+                <span style="color:${p.dir === 'UP' ? 'var(--accent)' : 'var(--red)'}; font-weight:bold;">${p.dir}</span>
+            </div>
+        `).join('');
+        
+        const multiplier = Math.pow(1.95, parlay.length).toFixed(2);
+        multEl.innerText = `${multiplier}x`;
+        payoutEl.innerText = `${Math.floor(100 * multiplier)} Points`;
+        btn.disabled = false;
+        countTag.innerText = `${parlay.length} Picks`;
     }
-    alert("Parlay placed! Good luck.");
-    clearParlay();
 }
 
-// --- WALLET ---
-function handleNavWallet() {
-    if(!isConnected) document.getElementById('wallet-modal').classList.add('open');
-}
-function closeModal() { document.getElementById('wallet-modal').classList.remove('open'); }
-function mockConnect() {
+function connectWallet() {
     isConnected = true;
-    const b = document.getElementById('nav-wallet-btn');
-    b.innerText = "0x72...4a2";
-    b.classList.add('connected');
-    closeModal();
+    document.getElementById('wallet-btn').innerText = "0x71...a29";
+    document.getElementById('wallet-btn').style.background = "var(--accent)";
+    document.getElementById('wallet-btn').style.color = "var(--bg)";
 }
 
-// --- BACKGROUND CANVAS ---
+function submitBet() {
+    if(!isConnected) return alert("Please connect wallet first!");
+    alert("Parlay Submitted! Good luck with your predictions.");
+    parlay = [];
+    renderUI();
+}
+
+// ── ANIMASI CANVAS ──
 const canvas = document.getElementById('net-canvas');
 const ctx = canvas.getContext('2d');
 let pts = [];
-function init() {
+
+function initCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    pts = Array.from({length: 50}, () => ({
+    pts = Array.from({length: 40}, () => ({
         x: Math.random()*canvas.width, y: Math.random()*canvas.height,
         vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5
     }));
 }
-function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.strokeStyle = "rgba(74,222,128,0.05)";
-    ctx.fillStyle = "rgba(74,222,128,0.3)";
-    pts.forEach((p,i) => {
-        p.x+=p.vx; p.y+=p.vy;
-        if(p.x<0||p.x>canvas.width)p.vx*=-1;
-        if(p.y<0||p.y>canvas.height)p.vy*=-1;
-        ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2); ctx.fill();
-        for(let j=i+1; j<pts.length; j++){
-            let d = Math.hypot(p.x-pts[j].x, p.y-pts[j].y);
-            if(d<150) { ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
-        }
-    });
-    requestAnimationFrame(draw);
-}
-window.onresize = init; init(); draw();
-</script>
-</body>
-</html>
+
+function animate() {
+    ctx.clearRect(0,0,canvas
