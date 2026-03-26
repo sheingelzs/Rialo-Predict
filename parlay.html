@@ -18,7 +18,7 @@ html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
 
 /* ── CANVAS BG ── */
-#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.55;}
+#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:1;width:100vw;height:100vh;}
 
 /* ── NAV ── */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.92);backdrop-filter:blur(16px);}
@@ -562,24 +562,24 @@ tr:hover td{background:rgba(124,92,252,0.04);}
       <div class="p-section-title">Prediction Market · 5m</div>
       <div class="predict-grid">
         <div class="predict-row">
-          <div class="coin-info"><div class="coin-dot btc">BTC</div><div><div class="coin-name">Bitcoin</div><div class="coin-price-sm" id="btc-price">$87,240</div></div></div>
-          <div class="coin-change-sm" id="btc-chg">+2.4%</div>
+          <div class="coin-info"><div class="coin-dot btc">BTC</div><div><div class="coin-name">Bitcoin</div><div class="coin-price-sm" id="btc-price">Fetching…</div></div></div>
+          <div class="coin-change-sm" id="btc-chg">—</div>
           <div class="predict-btns">
             <button class="up-btn" onclick="addBet('BTC','UP',this)">▲ UP</button>
             <button class="dn-btn" onclick="addBet('BTC','DOWN',this)">▼ DOWN</button>
           </div>
         </div>
         <div class="predict-row">
-          <div class="coin-info"><div class="coin-dot eth">ETH</div><div><div class="coin-name">Ethereum</div><div class="coin-price-sm" id="eth-price">$2,041</div></div></div>
-          <div class="coin-change-sm" id="eth-chg" style="color:var(--red)">-1.1%</div>
+          <div class="coin-info"><div class="coin-dot eth">ETH</div><div><div class="coin-name">Ethereum</div><div class="coin-price-sm" id="eth-price">Fetching…</div></div></div>
+          <div class="coin-change-sm" id="eth-chg">—</div>
           <div class="predict-btns">
             <button class="up-btn" onclick="addBet('ETH','UP',this)">▲ UP</button>
             <button class="dn-btn" onclick="addBet('ETH','DOWN',this)">▼ DOWN</button>
           </div>
         </div>
         <div class="predict-row">
-          <div class="coin-info"><div class="coin-dot sol">SOL</div><div><div class="coin-name">Solana</div><div class="coin-price-sm" id="sol-price">$136.50</div></div></div>
-          <div class="coin-change-sm" id="sol-chg">+0.8%</div>
+          <div class="coin-info"><div class="coin-dot sol">SOL</div><div><div class="coin-name">Solana</div><div class="coin-price-sm" id="sol-price">Fetching…</div></div></div>
+          <div class="coin-change-sm" id="sol-chg">—</div>
           <div class="predict-btns">
             <button class="up-btn" onclick="addBet('SOL','UP',this)">▲ UP</button>
             <button class="dn-btn" onclick="addBet('SOL','DOWN',this)">▼ DOWN</button>
@@ -670,75 +670,74 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 (function(){
   const canvas = document.getElementById('net-canvas');
   const ctx = canvas.getContext('2d');
-  let W, H, nodes = [], angle = 0;
-  const NODE_COUNT = 70, MAX_DIST = 140;
+  const NODE_COUNT = 90;
+  const MAX_DIST = 160;
+  let W, H, angle = 0;
+
+  // Each node has a base position in a local coordinate space
+  // We rotate the entire field around the screen center
+  const nodes = Array.from({length: NODE_COUNT}, () => ({
+    bx: (Math.random() - 0.5) * 2200,
+    by: (Math.random() - 0.5) * 1400,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r:  Math.random() * 2 + 1
+  }));
 
   function resize(){
-    W = canvas.width = window.innerWidth;
+    W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
   }
   window.addEventListener('resize', resize);
   resize();
 
-  for(let i = 0; i < NODE_COUNT; i++){
-    nodes.push({
-      x: Math.random() * 1400 - 200,
-      y: Math.random() * 900 - 100,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.8 + 0.6
-    });
-  }
-
   function draw(){
     ctx.clearRect(0, 0, W, H);
-    angle += 0.0015;
 
-    const cx = W / 2, cy = H / 2;
+    angle += 0.0008; // slow continuous rotation
     const cos = Math.cos(angle), sin = Math.sin(angle);
+    const cx = W / 2, cy = H / 2;
 
-    // transform nodes (slow rotation around center)
-    const transformed = nodes.map(n => {
-      const dx = n.x - cx, dy = n.y - cy;
-      return {
-        sx: cx + dx * cos - dy * sin,
-        sy: cy + dx * sin + dy * cos,
-        r: n.r
-      };
-    });
-
-    // drift nodes slightly (independent of rotation)
+    // drift base positions
     nodes.forEach(n => {
-      n.x += n.vx; n.y += n.vy;
-      if(n.x < -300) n.x = 1500;
-      if(n.x > 1500) n.x = -300;
-      if(n.y < -200) n.y = 1100;
-      if(n.y > 1100) n.y = -200;
+      n.bx += n.vx; n.by += n.vy;
+      // keep inside a big area so nodes don't escape after rotation
+      if(n.bx < -1200) n.bx = 1200;
+      if(n.bx >  1200) n.bx = -1200;
+      if(n.by < -800)  n.by = 800;
+      if(n.by >  800)  n.by = -800;
     });
 
-    // draw edges
-    for(let i = 0; i < transformed.length; i++){
-      for(let j = i+1; j < transformed.length; j++){
-        const a = transformed[i], b = transformed[j];
-        const dx = a.sx - b.sx, dy = a.sy - b.sy;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < MAX_DIST){
-          const alpha = (1 - dist / MAX_DIST) * 0.35;
+    // project rotated positions
+    const pts = nodes.map(n => ({
+      x: cx + n.bx * cos - n.by * sin,
+      y: cy + n.bx * sin + n.by * cos,
+      r: n.r
+    }));
+
+    // draw edges first
+    for(let i = 0; i < pts.length; i++){
+      for(let j = i + 1; j < pts.length; j++){
+        const dx = pts[i].x - pts[j].x;
+        const dy = pts[i].y - pts[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if(d < MAX_DIST){
+          const a = (1 - d / MAX_DIST) * 0.45;
           ctx.beginPath();
-          ctx.moveTo(a.sx, a.sy);
-          ctx.lineTo(b.sx, b.sy);
-          ctx.strokeStyle = `rgba(74,222,128,${alpha})`;
-          ctx.lineWidth = 0.6;
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = `rgba(74,222,128,${a})`;
+          ctx.lineWidth = 0.7;
           ctx.stroke();
         }
       }
     }
 
     // draw nodes
-    transformed.forEach(n => {
+    pts.forEach(p => {
       ctx.beginPath();
-      ctx.arc(n.sx, n.sy, n.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(74,222,128,0.55)';
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74,222,128,0.7)';
       ctx.fill();
     });
 
@@ -755,6 +754,7 @@ function showPage(id){
   document.getElementById('page-' + id).classList.add('active');
   PAGES.forEach((p,i) => { if(p===id) document.querySelectorAll('.nav-tab')[i].classList.add('active'); });
   if(id==='market' && !marketLoaded){ loadMarketData(); marketLoaded=true; }
+  if(id==='parlay'){ fetchParlayPrices(); if(!priceTickInterval) startPriceTick(); }
 }
 
 // ══ WALLET ══
@@ -828,21 +828,48 @@ function updateWalletUI(){
 
 // ══ PARLAY ══
 let bets={}, activeBetTimer=null, activeBetData=null, countdownSecs=60, priceTickInterval=null;
-const prices={BTC:87240,ETH:2041,SOL:136.5};
+const prices={BTC:0,ETH:0,SOL:0};
+const prevPrices={BTC:0,ETH:0,SOL:0};
+let parlayPricesLoaded=false;
+
+async function fetchParlayPrices(){
+  try{
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true');
+    const data=await res.json();
+    const map={BTC:data.bitcoin,ETH:data.ethereum,SOL:data.solana};
+    ['BTC','ETH','SOL'].forEach(c=>{
+      prevPrices[c]=prices[c]||map[c].usd;
+      prices[c]=map[c].usd;
+      const chg=map[c].usd_24h_change||0;
+      const el=document.getElementById(c.toLowerCase()+'-price');
+      const chgEl=document.getElementById(c.toLowerCase()+'-chg');
+      if(el) el.textContent='$'+(c==='BTC'?prices[c].toLocaleString('en',{maximumFractionDigits:0}):prices[c].toFixed(2));
+      if(chgEl){ chgEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%'; chgEl.style.color=chg>=0?'var(--accent)':'var(--red)'; }
+    });
+    parlayPricesLoaded=true;
+  }catch(e){ console.warn('Parlay price fetch failed',e); }
+}
 
 function startPriceTick(){
+  // fetch real prices immediately, then every 30s
+  fetchParlayPrices();
   if(priceTickInterval) return;
+  // small simulated micro-movements between fetches (realistic feel)
   priceTickInterval=setInterval(()=>{
+    if(!parlayPricesLoaded) return;
     ['BTC','ETH','SOL'].forEach(c=>{
-      const move=(Math.random()-0.48)*(c==='BTC'?150:c==='ETH'?8:0.5);
+      const volatility=c==='BTC'?80:c==='ETH'?5:0.4;
+      const move=(Math.random()-0.498)*volatility;
       prices[c]=Math.max(1,prices[c]+move);
-      const pct=((move/prices[c])*100).toFixed(2);
+      const pct=((move/prices[c])*100).toFixed(3);
       const el=document.getElementById(c.toLowerCase()+'-price');
       const chgEl=document.getElementById(c.toLowerCase()+'-chg');
       if(el) el.textContent='$'+(c==='BTC'?prices[c].toLocaleString('en',{maximumFractionDigits:0}):prices[c].toFixed(2));
       if(chgEl){ chgEl.textContent=(move>=0?'+':'')+pct+'%'; chgEl.style.color=move>=0?'var(--accent)':'var(--red)'; }
     });
   },2500);
+  // re-sync real price every 30s
+  setInterval(fetchParlayPrices, 30000);
 }
 
 function addBet(coin,dir,btn){
