@@ -1,62 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIALO — Live Predict</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <title>Rialo Predict - Realtime Parlay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --bg:#050810; --card:#0f1929; --accent:#4ade80; --red:#f87171; --text:#e8eaf0; }
-        body { background:var(--bg); color:var(--text); font-family:'Space Grotesk',sans-serif; margin:0; padding:20px; }
-        .predict-row { background:var(--card); border:1px solid #1a2a42; padding:20px; border-radius:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; transition: 0.3s; }
-        .price { font-weight:bold; font-size:1.2rem; transition: 0.3s; padding: 2px 8px; border-radius:5px; }
-        .up-flash { background: rgba(74, 222, 128, 0.3); color: #4ade80; }
-        .down-flash { background: rgba(248, 113, 113, 0.3); color: #f87171; }
-        .btn-group button { padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; margin-left:5px; }
-        .up-btn { background:#1a2a42; color:#4ade80; }
-        .dn-btn { background:#1a2a42; color:#f87171; }
-        .selected-up { background:#4ade80 !important; color:#000 !important; }
-        .selected-dn { background:#f87171 !important; color:#fff !important; }
+        .price-up { color: #22c55e; animation: flash-green 0.5s; }
+        .price-down { color: #ef4444; animation: flash-red 0.5s; }
+        @keyframes flash-green { from { background: rgba(34, 197, 94, 0.2); } to { background: transparent; } }
+        @keyframes flash-red { from { background: rgba(239, 68, 68, 0.2); } to { background: transparent; } }
+        .card-glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
-<body>
-    <h1 style="font-family:'Syne';">RIALO PREDICT</h1>
-    
-    <div class="predict-row">
-        <div><span>BTC/USDT</span><div id="price-btc" class="price">$92,000.00</div></div>
-        <div class="btn-group">
-            <button class="up-btn" onclick="this.classList.toggle('selected-up')">UP</button>
-            <button class="dn-btn" onclick="this.classList.toggle('selected-dn')">DOWN</button>
-        </div>
-    </div>
+<body class="bg-[#0f172a] text-white min-h-screen font-sans">
 
-    <div class="predict-row">
-        <div><span>ETH/USDT</span><div id="price-eth" class="price">$4,800.00</div></div>
-        <div class="btn-group">
-            <button class="up-btn" onclick="this.classList.toggle('selected-up')">UP</button>
-            <button class="dn-btn" onclick="this.classList.toggle('selected-dn')">DOWN</button>
+    <nav class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#1e293b]">
+        <h1 class="text-2xl font-bold tracking-tighter text-blue-400">RIALO <span class="text-white">PREDICT</span></h1>
+        <div class="flex gap-4 items-center">
+            <span id="connection-status" class="text-xs bg-red-500 px-2 py-1 rounded">Connecting...</span>
+            <button class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-semibold">Connect Wallet</button>
         </div>
-    </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 space-y-6">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                Live Crypto Parlay (5m)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card-glass p-5 rounded-2xl" id="card-btc">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="font-bold text-gray-400 text-sm">BTC/USDT</span>
+                        <span class="text-[10px] bg-gray-700 px-2 py-1 rounded">Live</span>
+                    </div>
+                    <div id="price-btc" class="text-2xl font-mono font-bold text-white tracking-widest">$0.00</div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button onclick="addToParlay('BTC', 'UP')" class="bg-green-600/20 hover:bg-green-600 border border-green-600 text-green-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▲ UP</button>
+                        <button onclick="addToParlay('BTC', 'DOWN')" class="bg-red-600/20 hover:bg-red-600 border border-red-600 text-red-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▼ DOWN</button>
+                    </div>
+                </div>
+
+                <div class="card-glass p-5 rounded-2xl" id="card-eth">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="font-bold text-gray-400 text-sm">ETH/USDT</span>
+                        <span class="text-[10px] bg-gray-700 px-2 py-1 rounded">Live</span>
+                    </div>
+                    <div id="price-eth" class="text-2xl font-mono font-bold text-white tracking-widest">$0.00</div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button onclick="addToParlay('ETH', 'UP')" class="bg-green-600/20 hover:bg-green-600 border border-green-600 text-green-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▲ UP</button>
+                        <button onclick="addToParlay('ETH', 'DOWN')" class="bg-red-600/20 hover:bg-red-600 border border-red-600 text-red-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▼ DOWN</button>
+                    </div>
+                </div>
+
+                <div class="card-glass p-5 rounded-2xl" id="card-sol">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="font-bold text-gray-400 text-sm">SOL/USDT</span>
+                        <span class="text-[10px] bg-gray-700 px-2 py-1 rounded">Live</span>
+                    </div>
+                    <div id="price-sol" class="text-2xl font-mono font-bold text-white tracking-widest">$0.00</div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button onclick="addToParlay('SOL', 'UP')" class="bg-green-600/20 hover:bg-green-600 border border-green-600 text-green-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▲ UP</button>
+                        <button onclick="addToParlay('SOL', 'DOWN')" class="bg-red-600/20 hover:bg-red-600 border border-red-600 text-red-400 hover:text-white py-2 rounded-lg transition text-sm font-bold">▼ DOWN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-[#1e293b] rounded-2xl p-6 border border-gray-700 min-h-[400px] flex flex-col">
+                <h3 class="text-lg font-bold mb-4 border-b border-gray-700 pb-2">Bet Slip (Parlay)</h3>
+                
+                <div id="parlay-list" class="flex-1 space-y-3 py-4 text-sm text-gray-400">
+                    Pilih prediksi UP atau DOWN untuk memulai.
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-gray-700 space-y-3">
+                    <div class="flex justify-between">
+                        <span>Win Multiplier</span>
+                        <span id="multiplier" class="text-green-400 font-bold">1.00x</span>
+                    </div>
+                    <input type="number" placeholder="Wager Amount" class="w-full bg-[#0f172a] border border-gray-600 rounded-lg p-2 text-white outline-none focus:border-blue-500">
+                    <button class="w-full bg-blue-600 py-3 rounded-xl font-bold hover:bg-blue-500 transition">Place Parlay Bet</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        let prices = { btc: 92000, eth: 4800 };
+        // === LOGIKA REALTIME WEBSOCKET (BINANCE) ===
+        const symbols = ['btcusdt', 'ethusdt', 'solusdt'];
+        const streamUrl = `wss://stream.binance.com:9443/ws/${symbols.join('@ticker/') }@ticker`;
+        const socket = new WebSocket(streamUrl);
 
-        function update() {
-            for (let coin in prices) {
-                let change = (Math.random() * 20) - 10; // Gerak acak
-                let oldPrice = prices[coin];
-                prices[coin] += change;
-                
-                let el = document.getElementById('price-' + coin);
-                el.innerText = '$' + prices[coin].toLocaleString(undefined, {minimumFractionDigits: 2});
-                
-                // Efek Warna Flash
-                el.classList.remove('up-flash', 'down-flash');
-                void el.offsetWidth; // Reset animasi
-                el.classList.add(change > 0 ? 'up-flash' : 'down-flash');
+        let prices = { btc: 0, eth: 0, sol: 0 };
+
+        socket.onopen = () => {
+            document.getElementById('connection-status').innerText = 'Connected';
+            document.getElementById('connection-status').classList.replace('bg-red-500', 'bg-green-600');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const coin = data.s.replace('USDT', '').toLowerCase();
+            const newPrice = parseFloat(data.c).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            
+            const priceEl = document.getElementById(`price-${coin}`);
+            const cardEl = document.getElementById(`card-${coin}`);
+
+            // Cek arah harga untuk animasi
+            const currentPrice = parseFloat(data.c);
+            if (currentPrice > prices[coin]) {
+                priceEl.className = 'text-2xl font-mono font-bold tracking-widest price-up';
+            } else if (currentPrice < prices[coin]) {
+                priceEl.className = 'text-2xl font-mono font-bold tracking-widest price-down';
             }
+
+            prices[coin] = currentPrice;
+            priceEl.innerText = newPrice;
+        };
+
+        // === LOGIKA PARLAY (BET SLIP) ===
+        let selections = [];
+
+        function addToParlay(coin, type) {
+            // Cek jika koin sudah ada, hapus dulu
+            selections = selections.filter(s => s.coin !== coin);
+            
+            selections.push({ coin, type, price: prices[coin.toLowerCase()] });
+            renderParlay();
         }
-        setInterval(update, 1000); // Update setiap 1 detik
+
+        function renderParlay() {
+            const listEl = document.getElementById('parlay-list');
+            const multiplierEl = document.getElementById('multiplier');
+            
+            if (selections.length === 0) {
+                listEl.innerHTML = "Pilih prediksi UP atau DOWN untuk memulai.";
+                multiplierEl.innerText = "1.00x";
+                return;
+            }
+
+            listEl.innerHTML = selections.map(s => `
+                <div class="bg-gray-800 p-3 rounded-lg flex justify-between items-center border-l-4 ${s.type === 'UP' ? 'border-green-500' : 'border-red-500'}">
+                    <div>
+                        <div class="font-bold text-white">${s.coin}/USDT</div>
+                        <div class="text-xs">Entry: $${s.price.toLocaleString()}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="${s.type === 'UP' ? 'text-green-500' : 'text-red-500'} font-bold">${s.type}</div>
+                        <button onclick="removeSelection('${s.coin}')" class="text-[10px] text-gray-500 hover:text-white underline">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Simulasi multiplier (2x lipat setiap tambah pilihan)
+            multiplierEl.innerText = (Math.pow(1.95, selections.length)).toFixed(2) + "x";
+        }
+
+        function removeSelection(coin) {
+            selections = selections.filter(s => s.coin !== coin);
+            renderParlay();
+        }
     </script>
 </body>
 </html>
