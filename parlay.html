@@ -8,10 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
-  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
-  --text:#e8eaf0;--muted:#5a7090;
-  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+  --bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
+  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
+  --text:#e8eaf0;--muted:#5a7090;
+  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
@@ -319,12 +319,12 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 .rb-val{font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--accent);}
 
 @media(max-width:700px){
-  .col-mktcap,.col-vol{display:none;}
-  .mkt-cards-grid{grid-template-columns:1fr 1fr;}
-  .stats-row{gap:1.5rem;}
-  .menu-cards{grid-template-columns:1fr;}
-  .team-grid{flex-direction:column;}
-  .footer-inner{grid-template-columns:1fr;}
+  .col-mktcap,.col-vol{display:none;}
+  .mkt-cards-grid{grid-template-columns:1fr 1fr;}
+  .stats-row{gap:1.5rem;}
+  .menu-cards{grid-template-columns:1fr;}
+  .team-grid{flex-direction:column;}
+  .footer-inner{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -335,52 +335,796 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo" onclick="showPage('landing')">
-    <div class="logo-dot"></div>RIALO
-  </div>
-  <div class="nav-right">
-    <div class="nav-tabs">
-      <button class="nav-tab active"  onclick="showPage('landing')">Home</button>
-      <button class="nav-tab"         onclick="showPage('explore')">Explore</button>
-      <button class="nav-tab"         onclick="showPage('parlay')">Parlay</button>
-      <button class="nav-tab"         onclick="showPage('market')">Market</button>
-      <button class="nav-tab"         onclick="showPage('about')">About</button>
-    </div>
-    <button class="wallet-nav-btn" id="nav-wallet-btn" onclick="handleNavWallet()">Connect Wallet</button>
-  </div>
+  <div class="nav-logo" onclick="showPage('landing')">
+    <div class="logo-dot"></div>RIALO
+  </div>
+  <div class="nav-right">
+    <div class="nav-tabs">
+      <button class="nav-tab active"  onclick="showPage('landing')">Home</button>
+      <button class="nav-tab"         onclick="showPage('explore')">Explore</button>
+      <button class="nav-tab"         onclick="showPage('parlay')">Parlay</button>
+      <button class="nav-tab"         onclick="showPage('market')">Market</button>
+      <button class="nav-tab"         onclick="showPage('about')">About</button>
+    </div>
+    <button class="wallet-nav-btn" id="nav-wallet-btn" onclick="handleNavWallet()">Connect Wallet</button>
+  </div>
 </nav>
 
 <!-- ══ LANDING ══ -->
 <div class="page active" id="page-landing">
-  <div class="landing">
-    <div class="badge">Live On-Chain Prediction Market</div>
-    <h1>Stack your picks.<br><span class="accent">Multiply</span> your odds.</h1>
-    <p class="hero-sub">Predict BTC, ETH, and SOL price movements in real-time. Build a parlay, earn points, and climb the leaderboard.</p>
-    <div class="parlay-hook">
-      <span>What's a parlay?</span> — Combine multiple predictions into one bet. Get them all right and your point reward multiplies.
-    </div>
-    <div class="cta-group">
-      <button class="btn-primary" onclick="showPage('parlay')">Get Started</button>
-      <button class="btn-ghost"   onclick="showPage('market')">Live Markets</button>
-    </div>
-    <div class="stats-row">
-      <div class="stat"><div class="stat-num">$2.4M</div><div class="stat-label">Total Volume</div></div>
-      <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Players</div></div>
-      <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Uptime</div></div>
-    </div>
-  </div>
-  <div class="how-section">
-    <div class="how-label">How it works</div>
-    <div class="how-title">Simple to play, hard to master</div>
-    <div class="how-grid">
-      <div class="how-card"><div class="how-num">01 / PICK</div><h3>Choose outcomes</h3><p>Select UP or DOWN for BTC, ETH, SOL — or pick a head-to-head Versus match.</p></div>
-      <div class="how-card"><div class="how-num">02 / COMBINE</div><h3>Build your parlay</h3><p>Stack picks into one bet. More picks = higher risk, bigger reward.</p></div>
-      <div class="how-card"><div class="how-num">03 / EARN</div><h3>Collect points</h3><p>Each correct pick earns 1 point on-chain. Get all right for a bonus multiplier.</p></div>
-      <div class="how-card"><div class="how-num">04 / REDEEM</div><h3>Future rewards</h3><p>Points are redeemable for protocol rewards at mainnet launch. Early players earn more.</p></div>
-    </div>
-  </div>
-  <!-- FOOTER on landing -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-col">
-        <div class="footer-logo"><div class="logo-dot"></div>RIAL
+  <div class="landing">
+    <div class="badge">Live On-Chain Prediction Market</div>
+    <h1>Stack your picks.<br><span class="accent">Multiply</span> your odds.</h1>
+    <p class="hero-sub">Predict BTC, ETH, and SOL price movements in real-time. Build a parlay, earn points, and climb the leaderboard.</p>
+    <div class="parlay-hook">
+      <span>What's a parlay?</span> — Combine multiple predictions into one bet. Get them all right and your point reward multiplies.
+    </div>
+    <div class="cta-group">
+      <button class="btn-primary" onclick="showPage('parlay')">Get Started</button>
+      <button class="btn-ghost"   onclick="showPage('market')">Live Markets</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">$2.4M</div><div class="stat-label">Total Volume</div></div>
+      <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Players</div></div>
+      <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Uptime</div></div>
+    </div>
+  </div>
+  <div class="how-section">
+    <div class="how-label">How it works</div>
+    <div class="how-title">Simple to play, hard to master</div>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01 / PICK</div><h3>Choose outcomes</h3><p>Select UP or DOWN for BTC, ETH, SOL — or pick a head-to-head Versus match.</p></div>
+      <div class="how-card"><div class="how-num">02 / COMBINE</div><h3>Build your parlay</h3><p>Stack picks into one bet. More picks = higher risk, bigger reward.</p></div>
+      <div class="how-card"><div class="how-num">03 / EARN</div><h3>Collect points</h3><p>Each correct pick earns 1 point on-chain. Get all right for a bonus multiplier.</p></div>
+      <div class="how-card"><div class="how-num">04 / REDEEM</div><h3>Future rewards</h3><p>Points are redeemable for protocol rewards at mainnet launch. Early players earn more.</p></div>
+    </div>
+  </div>
+  <!-- FOOTER on landing -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <div class="footer-logo"><div class="logo-dot"></div>RIALO</div>
+        <p class="footer-tagline">An on-chain prediction market dApp. Predict crypto price movements, build parlays, and earn on-chain points redeemable at mainnet launch.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <div class="footer-links">
+          <a onclick="showPage('parlay')">Parlay</a>
+          <a onclick="showPage('market')">Markets</a>
+          <a onclick="showPage('about')">About</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <div class="footer-links">
+          <a href="https://x.com/rialohq" target="_blank">Twitter / X</a>
+          <a href="https://discord.gg/rialoprotocol" target="_blank">Discord</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Rialo Protocol · Testnet · Prices via CoinGecko</p>
+      <div class="footer-builders">
+        Built by
+        <a class="builder-link" href="https://x.com/rayhn_1991" target="_blank">Gelz</a>
+        &amp;
+        <a class="builder-link" href="https://x.com/sheinasalisha" target="_blank">Sheina</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ══ EXPLORE ══ -->
+<div class="page" id="page-explore">
+  <div class="explore-page">
+    <h2>Explore</h2>
+    <p class="sub">Choose a product to get started</p>
+    <div class="menu-cards">
+      <div class="menu-card" onclick="showPage('parlay')">
+        <div class="card-icon green">🎯</div>
+        <div><div class="card-title">Parlay</div><div class="card-desc">Multi-pick prediction pools with boosted point rewards</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+      <div class="menu-card" onclick="showPage('market')">
+        <div class="card-icon cyan">📊</div>
+        <div><div class="card-title">Market</div><div class="card-desc">Live crypto prices, charts &amp; top movers</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+      <div class="menu-card" onclick="showPage('about')">
+        <div class="card-icon purple">ℹ️</div>
+        <div><div class="card-title">About</div><div class="card-desc">Learn about the protocol and the team behind it</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div class="page" id="page-about">
+  <div class="about-page">
+    <div class="how-label">About</div>
+    <h2>What is Rialo Predict?</h2>
+    <p>Rialo Predict is an on-chain prediction market dApp built on the Rialo Protocol. Players build parlays — multi-pick combinations of crypto price outcomes — and earn points for correct predictions.</p>
+    <p>Points are recorded on-chain and redeemable for protocol rewards at mainnet launch. This is currently a testnet deployment — all balances are simulated.</p>
+    <p>The goal: make prediction markets fun, composable, and accessible. No finance background needed — just your conviction on where the market moves next.</p>
+
+    <div class="about-sec-label">Points Explained</div>
+    <p>Every correct prediction earns <strong style="color:var(--text)">1 point</strong>. Points are stored on-chain and act as your score on the protocol. When mainnet launches, accumulated points will be convertible into protocol rewards. The more picks you stack correctly in a single parlay, the bigger the multiplier on your points.</p>
+
+    <div class="about-sec-label">Built by</div>
+    <div class="team-grid">
+      <a class="team-card" href="https://x.com/rayhn_1991" target="_blank">
+        <div class="t-av" style="background:rgba(74,222,128,0.15);color:#4ade80">GZ</div>
+        <div>
+          <div class="t-name">Gelz</div>
+          <div class="t-role">Builder</div>
+          <div class="t-handle">@rayhn_1991</div>
+        </div>
+      </a>
+      <a class="team-card" href="https://x.com/sheinasalisha" target="_blank">
+        <div class="t-av" style="background:rgba(244,114,182,0.15);color:#f472b6">SH</div>
+        <div>
+          <div class="t-name">Sheina</div>
+          <div class="t-role">Builder</div>
+          <div class="t-handle">@sheinasalisha</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MARKET ══ -->
+<div class="page" id="page-market">
+  <div class="market-page">
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="tickerTrack">
+        <span style="color:var(--muted);font-size:0.75rem;padding:0 1rem;">Loading ticker...</span>
+      </div>
+    </div>
+    <div class="market-inner">
+      <div class="market-top">
+        <div>
+          <div class="market-title">Crypto Market</div>
+          <div class="market-sub">Live prices by CoinGecko · Auto-refresh every 30s</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="live-badge">● LIVE</span>
+          <span class="last-update" id="lastUpdate">Updating...</span>
+        </div>
+      </div>
+      <div class="section-title">Top Coins</div>
+      <div class="mkt-cards-grid" id="cardsGrid">
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+      </div>
+      <div class="section-title">Price Chart &amp; Movers</div>
+      <div class="chart-section">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title-text" id="chartTitle">—</div>
+              <div><span class="chart-price-big" id="chartPrice">—</span><span class="chart-change-big" id="chartChangeBig">—</span></div>
+            </div>
+            <div class="time-btns">
+              <button class="time-btn active" onclick="setDay(1,this)">1D</button>
+              <button class="time-btn" onclick="setDay(7,this)">7D</button>
+              <button class="time-btn" onclick="setDay(30,this)">30D</button>
+            </div>
+          </div>
+          <div class="main-chart-wrap"><canvas id="mainChart"></canvas></div>
+        </div>
+        <div class="gainers-card">
+          <div class="gainers-tabs">
+            <button class="g-tab active gain" id="gainTab" onclick="showGainTab('gain')">▲ Top Gainers</button>
+            <button class="g-tab loss" id="lossTab" onclick="showGainTab('loss')">▼ Top Losers</button>
+          </div>
+          <div id="gainerList"></div>
+        </div>
+      </div>
+      <div class="section-title">All Markets</div>
+      <div class="table-wrap">
+        <div class="table-header-bar">
+          <span style="font-family:var(--font-head);font-weight:700;font-size:0.88rem;">Market Overview</span>
+          <input class="search-box" placeholder="🔍 Search coin..." id="searchInput" oninput="filterTable()"/>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="marketTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('rank')">#</th>
+                <th onclick="sortTable('name')">Coin</th>
+                <th onclick="sortTable('price')">Price</th>
+                <th onclick="sortTable('change24h')">24h %</th>
+                <th onclick="sortTable('change7d')">7d %</th>
+                <th class="col-mktcap" onclick="sortTable('mktcap')">Market Cap</th>
+                <th class="col-vol" onclick="sortTable('vol')">Volume (24h)</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="7"><div class="skeleton" style="height:40px;margin:4px 0;border-radius:6px;"></div></td></tr>
+              <tr><td colspan="7"><div class="skeleton" style="height:40px;margin:4px 0;border-radius:6px;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PARLAY ══ -->
+<div class="page" id="page-parlay">
+  <div class="parlay-page">
+    <div class="parlay-left">
+      <h2>Rialo Crypto Parlay</h2>
+      <p class="parlay-desc">Predict 5-minute price movements. Stack multiple picks into a parlay to multiply your point reward.</p>
+      <div class="p-section-title">Prediction Market · 5m</div>
+      <div class="predict-grid">
+        <div class="predict-row">
+          <div class="coin-info"><div class="coin-dot btc">BTC</div><div><div class="coin-name">Bitcoin</div><div class="coin-price-sm" id="btc-price">$87,240</div></div></div>
+          <div class="coin-change-sm" id="btc-chg">+2.4%</div>
+          <div class="predict-btns">
+            <button class="up-btn" onclick="addBet('BTC','UP',this)">▲ UP</button>
+            <button class="dn-btn" onclick="addBet('BTC','DOWN',this)">▼ DOWN</button>
+          </div>
+        </div>
+        <div class="predict-row">
+          <div class="coin-info"><div class="coin-dot eth">ETH</div><div><div class="coin-name">Ethereum</div><div class="coin-price-sm" id="eth-price">$2,041</div></div></div>
+          <div class="coin-change-sm" id="eth-chg" style="color:var(--red)">-1.1%</div>
+          <div class="predict-btns">
+            <button class="up-btn" onclick="addBet('ETH','UP',this)">▲ UP</button>
+            <button class="dn-btn" onclick="addBet('ETH','DOWN',this)">▼ DOWN</button>
+          </div>
+        </div>
+        <div class="predict-row">
+          <div class="coin-info"><div class="coin-dot sol">SOL</div><div><div class="coin-name">Solana</div><div class="coin-price-sm" id="sol-price">$136.50</div></div></div>
+          <div class="coin-change-sm" id="sol-chg">+0.8%</div>
+          <div class="predict-btns">
+            <button class="up-btn" onclick="addBet('SOL','UP',this)">▲ UP</button>
+            <button class="dn-btn" onclick="addBet('SOL','DOWN',this)">▼ DOWN</button>
+          </div>
+        </div>
+      </div>
+      <div class="p-section-title">Versus Market · 5m</div>
+      <div class="versus-grid">
+        <div class="versus-row">
+          <div class="vs-coins"><div class="vs-label">VERSUS</div>BTC vs ETH<div class="vs-bar"><div class="vs-fill" style="width:62%"></div></div></div>
+          <div class="vs-btns"><button class="vs-btn" onclick="addVsBet('BTC','BTC vs ETH',this)">BTC</button><button class="vs-btn" onclick="addVsBet('ETH','BTC vs ETH',this)">ETH</button></div>
+        </div>
+        <div class="versus-row">
+          <div class="vs-coins"><div class="vs-label">VERSUS</div>BTC vs SOL<div class="vs-bar"><div class="vs-fill" style="width:55%"></div></div></div>
+          <div class="vs-btns"><button class="vs-btn" onclick="addVsBet('BTC','BTC vs SOL',this)">BTC</button><button class="vs-btn" onclick="addVsBet('SOL','BTC vs SOL',this)">SOL</button></div>
+        </div>
+        <div class="versus-row">
+          <div class="vs-coins"><div class="vs-label">VERSUS</div>ETH vs SOL<div class="vs-bar"><div class="vs-fill" style="width:48%"></div></div></div>
+          <div class="vs-btns"><button class="vs-btn" onclick="addVsBet('ETH','ETH vs SOL',this)">ETH</button><button class="vs-btn" onclick="addVsBet('SOL','ETH vs SOL',this)">SOL</button></div>
+        </div>
+      </div>
+      <div class="active-bet-card" id="active-bet-card" style="display:none">
+        <div class="active-bet-title">⏳ Bet in Progress</div>
+        <div class="countdown-row">
+          <div><div class="countdown-num" id="countdown-num">60</div><div class="countdown-label">seconds remaining</div></div>
+          <div style="text-align:right"><div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">Wagered</div><div style="font-family:var(--font-head);font-size:1rem;font-weight:800;color:#facc15" id="wager-display">0 RIALO</div></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:100%"></div></div>
+        <div class="active-picks" id="active-picks-list"></div>
+      </div>
+    </div>
+
+    <!-- BET SLIP -->
+    <div class="bet-slip">
+      <div class="slip-header">
+        <h3>Bet Slip</h3>
+        <span class="slip-count" id="slip-count">0 picks</span>
+      </div>
+      <!-- Points explanation -->
+      <div class="points-box">
+        <div class="points-box-title">What are Points?</div>
+        <p>Each correct pick earns <strong>1 point</strong> on-chain. Points will be redeemable for <strong>protocol rewards</strong> at mainnet launch. Stack more correct picks for a bonus multiplier.</p>
+      </div>
+      <div id="wallet-strip"></div>
+      <div id="slip-body">
+        <div class="slip-empty" id="slip-empty">No picks yet.<br>Select UP or DOWN above.</div>
+        <div class="slip-items" id="slip-items"></div>
+      </div>
+      <div id="bet-amount-section" style="display:none">
+        <hr class="slip-divider">
+        <div class="bet-amount-row">
+          <span class="bet-amount-label">Bet Amount</span>
+          <input class="bet-amount-input" type="number" id="bet-amount" value="10" min="1" max="9999"/>
+          <span class="bet-amount-unit">RIALO</span>
+        </div>
+        <div class="quick-bets">
+          <button class="quick-bet" onclick="setAmount(10)">10</button>
+          <button class="quick-bet" onclick="setAmount(25)">25</button>
+          <button class="quick-bet" onclick="setAmount(50)">50</button>
+          <button class="quick-bet" onclick="setMaxAmount()">MAX</button>
+        </div>
+      </div>
+      <hr class="slip-divider">
+      <div class="slip-info"><span>Points per pick</span><span>1 pt</span></div>
+      <div class="slip-info"><span>Total picks</span><span id="total-picks">0</span></div>
+      <div class="slip-info" id="potential-win-row" style="display:none"><span>Potential win</span><span id="potential-win" style="color:var(--accent)">0 RIALO</span></div>
+      <div id="slip-action-area">
+        <button class="connect-btn" onclick="openWalletModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+          Connect Wallet to Bet
+        </button>
+      </div>
+      <button class="clear-btn" onclick="clearAll()">Clear all</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="wallet-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ══ NETWORK BG ══
+(function(){
+  const canvas = document.getElementById('net-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], angle = 0;
+  const NODE_COUNT = 70, MAX_DIST = 140;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for(let i = 0; i < NODE_COUNT; i++){
+    nodes.push({
+      x: Math.random() * 1400 - 200,
+      y: Math.random() * 900 - 100,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.8 + 0.6
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    angle += 0.0015;
+
+    const cx = W / 2, cy = H / 2;
+    const cos = Math.cos(angle), sin = Math.sin(angle);
+
+    // transform nodes (slow rotation around center)
+    const transformed = nodes.map(n => {
+      const dx = n.x - cx, dy = n.y - cy;
+      return {
+        sx: cx + dx * cos - dy * sin,
+        sy: cy + dx * sin + dy * cos,
+        r: n.r
+      };
+    });
+
+    // drift nodes slightly (independent of rotation)
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if(n.x < -300) n.x = 1500;
+      if(n.x > 1500) n.x = -300;
+      if(n.y < -200) n.y = 1100;
+      if(n.y > 1100) n.y = -200;
+    });
+
+    // draw edges
+    for(let i = 0; i < transformed.length; i++){
+      for(let j = i+1; j < transformed.length; j++){
+        const a = transformed[i], b = transformed[j];
+        const dx = a.sx - b.sx, dy = a.sy - b.sy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < MAX_DIST){
+          const alpha = (1 - dist / MAX_DIST) * 0.35;
+          ctx.beginPath();
+          ctx.moveTo(a.sx, a.sy);
+          ctx.lineTo(b.sx, b.sy);
+          ctx.strokeStyle = `rgba(74,222,128,${alpha})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // draw nodes
+    transformed.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.sx, n.sy, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74,222,128,0.55)';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══ NAV ══
+const PAGES = ['landing','explore','parlay','market','about'];
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  PAGES.forEach((p,i) => { if(p===id) document.querySelectorAll('.nav-tab')[i].classList.add('active'); });
+  if(id==='market' && !marketLoaded){ loadMarketData(); marketLoaded=true; }
+}
+
+// ══ WALLET ══
+let walletConnected=false, walletAddress='', balance=500;
+
+function openWalletModal(){
+  document.getElementById('modal-content').innerHTML=`
+    <div class="modal-title">Connect Wallet</div>
+    <div class="modal-sub">Choose your wallet to start placing bets</div>
+    <div class="wallet-list">
+      <div class="wallet-item" onclick="connectWallet('MetaMask','🦊')">
+        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
+        <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Browser Extension</div></div>
+        <div class="wallet-status installed">Detected</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('Phantom','👻')">
+        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
+        <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Solana · Browser Extension</div></div>
+        <div class="wallet-status popular">Popular</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('WalletConnect','🔗')">
+        <div class="wallet-logo" style="background:rgba(59,130,246,0.15)">🔗</div>
+        <div class="wallet-info-block"><div class="wallet-name">WalletConnect</div><div class="wallet-type">Mobile · QR Code</div></div>
+        <div class="wallet-status popular">Universal</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('Coinbase Wallet','🔵')">
+        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
+        <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Browser Extension · Mobile</div></div>
+        <div class="wallet-status popular">Popular</div>
+      </div>
+    </div>`;
+  document.getElementById('wallet-modal').classList.add('open');
+}
+
+function connectWallet(name,icon){
+  document.getElementById('modal-content').innerHTML=`
+    <div class="center-modal">
+      <div class="spinner"></div>
+      <div class="modal-big-title">Connecting to ${name}</div>
+      <div class="modal-desc">Approve the connection request in your wallet.</div>
+    </div>`;
+  setTimeout(()=>{
+    walletConnected=true;
+    walletAddress='0x'+Math.random().toString(16).slice(2,6).toUpperCase()+'..'+Math.random().toString(16).slice(2,6).toUpperCase();
+    document.getElementById('modal-content').innerHTML=`
+      <div class="center-modal">
+        <div style="font-size:3rem;margin-bottom:0.75rem">${icon}</div>
+        <div class="modal-big-title" style="color:var(--accent)">Connected!</div>
+        <div class="modal-desc">${walletAddress}<br><span style="color:var(--accent);font-weight:700">500 RIALO</span> available</div>
+        <button class="place-btn" style="max-width:180px;margin:0 auto" onclick="closeModal()">Start Betting →</button>
+      </div>`;
+    updateWalletUI();
+    startPriceTick();
+  },1600);
+}
+
+function closeModal(){ document.getElementById('wallet-modal').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===document.getElementById('wallet-modal')) closeModal(); }
+function handleNavWallet(){ if(walletConnected) disconnectWallet(); else openWalletModal(); }
+function disconnectWallet(){
+  walletConnected=false; walletAddress=''; balance=500;
+  if(priceTickInterval){ clearInterval(priceTickInterval); priceTickInterval=null; }
+  updateWalletUI(); renderSlip();
+}
+function updateWalletUI(){
+  const btn=document.getElementById('nav-wallet-btn');
+  if(walletConnected){ btn.classList.add('connected'); btn.innerHTML=`<span class="wdot"></span> ${walletAddress}`; }
+  else{ btn.classList.remove('connected'); btn.innerHTML='Connect Wallet'; }
+  renderSlip();
+}
+
+// ══ PARLAY ══
+let bets={}, activeBetTimer=null, activeBetData=null, countdownSecs=60, priceTickInterval=null;
+const prices={BTC:87240,ETH:2041,SOL:136.5};
+
+function startPriceTick(){
+  if(priceTickInterval) return;
+  priceTickInterval=setInterval(()=>{
+    ['BTC','ETH','SOL'].forEach(c=>{
+      const move=(Math.random()-0.48)*(c==='BTC'?150:c==='ETH'?8:0.5);
+      prices[c]=Math.max(1,prices[c]+move);
+      const pct=((move/prices[c])*100).toFixed(2);
+      const el=document.getElementById(c.toLowerCase()+'-price');
+      const chgEl=document.getElementById(c.toLowerCase()+'-chg');
+      if(el) el.textContent='$'+(c==='BTC'?prices[c].toLocaleString('en',{maximumFractionDigits:0}):prices[c].toFixed(2));
+      if(chgEl){ chgEl.textContent=(move>=0?'+':'')+pct+'%'; chgEl.style.color=move>=0?'var(--accent)':'var(--red)'; }
+    });
+  },2500);
+}
+
+function addBet(coin,dir,btn){
+  if(activeBetTimer) return;
+  const key=coin;
+  if(bets[key]&&bets[key].dir===dir){ delete bets[key]; btn.classList.remove('selected'); }
+  else{
+    bets[key]={coin,dir,label:coin+' '+dir,entryPrice:prices[coin]};
+    btn.closest('.predict-row').querySelectorAll('.up-btn,.dn-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  renderSlip();
+}
+
+function addVsBet(pick,matchup,btn){
+  if(activeBetTimer) return;
+  const key='vs_'+matchup;
+  if(bets[key]&&bets[key].dir===pick){ delete bets[key]; btn.classList.remove('selected'); }
+  else{
+    bets[key]={coin:pick,dir:pick,label:matchup+': '+pick,entryPrice:prices[pick]};
+    btn.closest('.versus-row').querySelectorAll('.vs-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  renderSlip();
+}
+
+function setAmount(v){ document.getElementById('bet-amount').value=v; renderSlip(); }
+function setMaxAmount(){ document.getElementById('bet-amount').value=Math.floor(balance); renderSlip(); }
+
+function renderSlip(){
+  const keys=Object.keys(bets);
+  const count=keys.length;
+  document.getElementById('slip-count').textContent=count+' pick'+(count!==1?'s':'');
+  document.getElementById('total-picks').textContent=count;
+  const empty=document.getElementById('slip-empty');
+  const items=document.getElementById('slip-items');
+  const amtSection=document.getElementById('bet-amount-section');
+  const potRow=document.getElementById('potential-win-row');
+  if(count===0){ empty.style.display='block'; items.innerHTML=''; amtSection.style.display='none'; potRow.style.display='none'; }
+  else{
+    empty.style.display='none';
+    items.innerHTML=keys.map(k=>{
+      const b=bets[k];
+      return`<div class="slip-item"><div class="slip-item-left"><span class="slip-badge ${b.dir==='DOWN'?'down':'up'}">${b.dir}</span><span>${b.label}</span></div><button class="remove" onclick="removeBet('${k}')">✕</button></div>`;
+    }).join('');
+    if(walletConnected){
+      amtSection.style.display='block'; potRow.style.display='flex';
+      const amt=parseFloat(document.getElementById('bet-amount').value)||0;
+      document.getElementById('potential-win').textContent=(amt*count*1.8).toFixed(0)+' RIALO';
+    }
+  }
+  const strip=document.getElementById('wallet-strip');
+  if(walletConnected){
+    strip.innerHTML=`<div class="saldo-strip"><div class="saldo-left"><div class="wdot"></div><div class="saldo-addr">${walletAddress}</div></div><div class="saldo-right"><div class="saldo-label">Balance</div><div class="saldo-amount">${balance.toFixed(0)} RIALO</div></div></div>`;
+  } else { strip.innerHTML=''; }
+  const actionArea=document.getElementById('slip-action-area');
+  if(activeBetTimer){
+    actionArea.innerHTML=`<button class="place-btn" disabled>Bet in Progress...</button>`;
+  } else if(walletConnected){
+    actionArea.innerHTML=`<button class="place-btn" id="place-btn" ${count===0?'disabled':''} onclick="placeBet()">Place Bet · ${count} Pick${count!==1?'s':''}</button>`;
+  } else {
+    actionArea.innerHTML=`<button class="connect-btn" onclick="openWalletModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>Connect Wallet to Bet</button>`;
+  }
+}
+
+function removeBet(key){
+  if(activeBetTimer) return;
+  if(!key.startsWith('vs_')){
+    document.querySelectorAll('.predict-row').forEach(row=>{
+      if(row.querySelector('.coin-dot').textContent===key) row.querySelectorAll('.up-btn,.dn-btn').forEach(b=>b.classList.remove('selected'));
+    });
+  } else {
+    document.querySelectorAll('.versus-row').forEach(row=>row.querySelectorAll('.vs-btn').forEach(b=>b.classList.remove('selected')));
+  }
+  delete bets[key]; renderSlip();
+}
+
+function clearAll(){
+  if(activeBetTimer) return;
+  bets={};
+  document.querySelectorAll('.up-btn,.dn-btn,.vs-btn').forEach(b=>b.classList.remove('selected'));
+  renderSlip();
+}
+
+function placeBet(){
+  const amt=parseFloat(document.getElementById('bet-amount').value)||0;
+  if(amt<=0||amt>balance){ alert(amt<=0?'Enter a bet amount!':'Insufficient balance!'); return; }
+  const keys=Object.keys(bets);
+  if(!keys.length) return;
+  balance-=amt;
+  activeBetData={picks:keys.map(k=>({...bets[k],entryPrice:prices[bets[k].coin]||prices[bets[k].dir]})),amount:amt};
+  countdownSecs=60;
+  document.getElementById('active-bet-card').style.display='block';
+  document.getElementById('wager-display').textContent=amt+' RIALO';
+  renderActivePicks();
+  clearAll(); renderSlip();
+  activeBetTimer=setInterval(()=>{
+    countdownSecs--;
+    document.getElementById('countdown-num').textContent=countdownSecs;
+    document.getElementById('progress-fill').style.width=((countdownSecs/60)*100)+'%';
+    renderActivePicks();
+    if(countdownSecs<=0){ clearInterval(activeBetTimer); activeBetTimer=null; showResult(); }
+  },1000);
+}
+
+function renderActivePicks(){
+  if(!activeBetData) return;
+  document.getElementById('active-picks-list').innerHTML=activeBetData.picks.map(p=>{
+    const cur=prices[p.coin]||p.entryPrice;
+    const winning=(cur>p.entryPrice)===(p.dir==='UP'||!['UP','DOWN'].includes(p.dir));
+    return`<div class="active-pick"><div class="active-pick-left"><span class="slip-badge ${p.dir==='DOWN'?'down':'up'}">${p.dir}</span><span style="font-size:0.78rem">${p.label}</span></div><span style="font-size:0.75rem;font-weight:700;color:${winning?'var(--accent)':'var(--red)'}">${winning?'▲ Winning':'▼ Losing'}</span></div>`;
+  }).join('');
+}
+
+function showResult(){
+  if(!activeBetData) return;
+  const {picks,amount:amt}=activeBetData;
+  let wonCount=0;
+  const rows=picks.map(p=>{
+    const cur=prices[p.coin]||p.entryPrice;
+    const win=(cur>p.entryPrice)===(p.dir==='UP'||!['UP','DOWN'].includes(p.dir));
+    if(win) wonCount++;
+    return{label:p.label,dir:p.dir,win};
+  });
+  const allWin=wonCount===picks.length,allLose=wonCount===0;
+  let payout=0;
+  if(allWin) payout=Math.round(amt*picks.length*1.8);
+  else if(!allLose) payout=Math.round(amt*(wonCount/picks.length)*1.2);
+  balance+=payout;
+  document.getElementById('active-bet-card').style.display='none';
+  activeBetData=null;
+  const icon=allWin?'🏆':allLose?'💔':'🎯';
+  const title=allWin?'You Won!':allLose?'Better Luck Next Time':'Partial Win!';
+  document.getElementById('modal-content').innerHTML=`
+    <div class="center-modal">
+      <div class="result-icon">${icon}</div>
+      <div class="modal-big-title" style="color:${allLose?'var(--red)':'var(--accent)'}">${title}</div>
+      <div class="modal-desc" style="margin-bottom:1rem">${wonCount}/${picks.length} picks correct</div>
+      <div class="result-rows">
+        ${rows.map(r=>`<div class="result-row"><div class="rl"><span class="slip-badge ${r.dir==='DOWN'?'down':'up'}">${r.dir}</span> ${r.label}</div><div class="rv ${r.win?'win':'lose'}">${r.win?'✓ WIN':'✗ LOSE'}</div></div>`).join('')}
+      </div>
+      <div class="result-balance">
+        <div><div class="rb-label">${payout>0?'Payout':'Loss'}</div><div style="font-family:var(--font-head);font-size:0.95rem;font-weight:800;color:${payout>0?'var(--accent)':'var(--red)'}">${payout>0?'+'+payout:'-'+amt} RIALO</div></div>
+        <div style="text-align:right"><div class="rb-label">New Balance</div><div class="rb-val">${balance} RIALO</div></div>
+      </div>
+      <button class="place-btn" onclick="closeModal();renderSlip()">Bet Again →</button>
+    </div>`;
+  document.getElementById('wallet-modal').classList.add('open');
+  renderSlip();
+}
+
+document.getElementById('bet-amount').addEventListener('input',renderSlip);
+
+// ══ MARKET DATA ══
+let allCoins=[],selectedCoinId='bitcoin',currentDays=1,mainChartInst=null,sparkCharts={};
+let sortKey='rank',sortDir=1,gainTabMode='gain',marketLoaded=false,marketRefreshInterval=null;
+
+const fmt=(n,d=2)=>n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtPrice=n=>{if(n==null)return'—';if(n>=1)return'$'+fmt(n);if(n>=0.01)return'$'+n.toFixed(4);return'$'+n.toFixed(8);};
+const fmtBig=n=>{if(n==null)return'—';if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmt(n);};
+const pctClass=v=>v>=0?'pos':'neg';
+const pctStr=v=>v==null?'—':(v>=0?'+':'')+fmt(v)+'%';
+
+async function fetchMarket(){
+  const url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d';
+  const res=await fetch(url); if(!res.ok) throw new Error('API error'); return res.json();
+}
+async function fetchChart(coinId,days){
+  const url=`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+  const res=await fetch(url); if(!res.ok) throw new Error('Chart error'); return res.json();
+}
+
+function renderMktCards(coins){
+  const top=coins.slice(0,8);
+  document.getElementById('cardsGrid').innerHTML=top.map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<div class="mkt-card${c.id===selectedCoinId?' active':''}" onclick="selectCoin('${c.id}',this)">
+      <div class="mkt-card-header">
+        <div class="mkt-coin-info"><img class="mkt-coin-icon" src="${c.image}" loading="lazy"/><div><div class="mkt-coin-sym">${c.symbol.toUpperCase()}</div><div class="mkt-coin-name">${c.name}</div></div></div>
+        <span class="rank-badge">#${c.market_cap_rank}</span>
+      </div>
+      <div class="mkt-card-price">${fmtPrice(c.current_price)}</div>
+      <span class="mkt-card-change ${pctClass(chg)}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span>
+      <div class="mkt-card-vol">Vol: ${fmtBig(c.total_volume)}</div>
+      <div class="sparkline"><canvas id="spark-${c.id}"></canvas></div>
+    </div>`;
+  }).join('');
+  top.forEach(c=>{
+    const spark=c.sparkline_in_7d?.price||[];
+    if(!spark.length) return;
+    const ctx2=document.getElementById(`spark-${c.id}`)?.getContext('2d');
+    if(!ctx2) return;
+    if(sparkCharts[c.id]) sparkCharts[c.id].destroy();
+    const chg=c.price_change_percentage_24h;
+    const color=chg>=0?'#4ade80':'#f87171';
+    sparkCharts[c.id]=new Chart(ctx2,{type:'line',data:{labels:spark.map((_,i)=>i),datasets:[{data:spark,borderColor:color,borderWidth:1.5,fill:true,backgroundColor:c2=>{const g=c2.chart.ctx.createLinearGradient(0,0,0,36);g.addColorStop(0,chg>=0?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');g.addColorStop(1,'rgba(0,0,0,0)');return g;},tension:0.4,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},animation:false,responsive:true,maintainAspectRatio:false}});
+  });
+}
+
+async function renderMainChart(){
+  const coin=allCoins.find(c=>c.id===selectedCoinId);
+  if(!coin) return;
+  document.getElementById('chartTitle').textContent=`${coin.name} (${coin.symbol.toUpperCase()})`;
+  document.getElementById('chartPrice').textContent=fmtPrice(coin.current_price);
+  const chg=coin.price_change_percentage_24h;
+  const bigEl=document.getElementById('chartChangeBig');
+  bigEl.textContent=pctStr(chg); bigEl.className='chart-change-big '+pctClass(chg);
+  try{
+    const data=await fetchChart(selectedCoinId,currentDays);
+    const pricesArr=data.prices;
+    const labels=pricesArr.map(p=>{const d=new Date(p[0]);return currentDays===1?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric'});});
+    const vals=pricesArr.map(p=>p[1]);
+    const isUp=vals[vals.length-1]>=vals[0];
+    const color=isUp?'#4ade80':'#f87171';
+    if(mainChartInst) mainChartInst.destroy();
+    const ctx3=document.getElementById('mainChart').getContext('2d');
+    const grad=ctx3.createLinearGradient(0,0,0,260);
+    grad.addColorStop(0,isUp?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    mainChartInst=new Chart(ctx3,{type:'line',data:{labels,datasets:[{data:vals,label:coin.name,borderColor:color,borderWidth:2,backgroundColor:grad,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:color}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f1929',borderColor:'#1a2a42',borderWidth:1,titleColor:'#5a7090',bodyColor:'#e8eaf0',callbacks:{label:c=>' '+fmtPrice(c.parsed.y)}}},scales:{x:{grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},maxTicksLimit:6}},y:{position:'right',grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},callback:v=>fmtPrice(v)}}}}});
+  }catch(e){console.error('Chart error',e);}
+}
+
+function renderGainers(){
+  const sorted=[...allCoins].sort((a,b)=>(b.price_change_percentage_24h||0)-(a.price_change_percentage_24h||0));
+  const list=gainTabMode==='gain'?sorted.slice(0,7):sorted.slice(-7).reverse();
+  document.getElementById('gainTab').className=`g-tab ${gainTabMode==='gain'?'active ':''} gain`;
+  document.getElementById('lossTab').className=`g-tab ${gainTabMode==='loss'?'active ':''} loss`;
+  document.getElementById('gainerList').innerHTML=list.map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<div class="gainer-row"><div class="gainer-coin"><img class="gainer-icon" src="${c.image}" loading="lazy"/><div><div class="gainer-sym">${c.symbol.toUpperCase()}</div><div class="gainer-name">${c.name}</div></div></div><span class="gainer-pct ${pctClass(chg)}" style="background:${chg>=0?'rgba(74,222,128,0.1)':'rgba(248,113,113,0.1)'}">${pctStr(chg)}</span></div>`;
+  }).join('');
+}
+
+function renderTable(coins){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filtered=q?coins.filter(c=>c.name.toLowerCase().includes(q)||c.symbol.toLowerCase().includes(q)):coins;
+  document.getElementById('tableBody').innerHTML=filtered.map(c=>{
+    const chg24=c.price_change_percentage_24h;
+    const chg7=c.price_change_percentage_7d_in_currency;
+    return`<tr onclick="selectCoin('${c.id}')" style="cursor:pointer"><td class="muted-num">${c.market_cap_rank}</td><td><div class="td-coin"><img class="td-icon" src="${c.image}" loading="lazy"/><div><div class="td-sym">${c.symbol.toUpperCase()}</div><div class="td-name">${c.name}</div></div></div></td><td class="td-price">${fmtPrice(c.current_price)}</td><td><span class="pct-pill ${pctClass(chg24)}">${pctStr(chg24)}</span></td><td><span class="pct-pill ${pctClass(chg7)}">${pctStr(chg7)}</span></td><td class="col-mktcap muted-num">${fmtBig(c.market_cap)}</td><td class="col-vol muted-num">${fmtBig(c.total_volume)}</td></tr>`;
+  }).join('');
+}
+
+function renderTicker(coins){
+  const items=coins.slice(0,20).map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<span class="ticker-item"><span class="ticker-name">${c.symbol.toUpperCase()}</span><span class="ticker-price">${fmtPrice(c.current_price)}</span><span class="ticker-change ${pctClass(chg)}">${pctStr(chg)}</span></span>`;
+  }).join('');
+  document.getElementById('tickerTrack').innerHTML=items+items;
+}
+
+function selectCoin(id,cardEl){
+  selectedCoinId=id;
+  document.querySelectorAll('.mkt-card').forEach(c=>c.classList.remove('active'));
+  if(cardEl) cardEl.classList.add('active');
+  renderMainChart();
+}
+function setDay(days,btn){ currentDays=days; document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderMainChart(); }
+function showGainTab(tab){ gainTabMode=tab; renderGainers(); }
+function sortTable(key){
+  if(sortKey===key) sortDir*=-1; else{sortKey=key;sortDir=1;}
+  const km={rank:'market_cap_rank',name:'name',price:'current_price',change24h:'price_change_percentage_24h',change7d:'price_change_percentage_7d_in_currency',mktcap:'market_cap',vol:'total_volume'};
+  const k=km[key];
+  allCoins.sort((a,b)=>{const av=a[k]??0,bv=b[k]??0;return typeof av==='string'?av.localeCompare(bv)*sortDir:(av-bv)*sortDir;});
+  renderTable(allCoins);
+}
+function filterTable(){ renderTable(allCoins); }
+
+async function loadMarketData(){
+  try{
+    const coins=await fetchMarket();
+    allCoins=coins;
+    renderTicker(coins); renderMktCards(coins); renderGainers(); renderTable(coins);
+    if(!mainChartInst) renderMainChart();
+    document.getElementById('lastUpdate').textContent='Updated '+new Date().toLocaleTimeString();
+    if(!marketRefreshInterval) marketRefreshInterval=setInterval(loadMarketData,30000);
+  }catch(e){
+    document.getElementById('cardsGrid').innerHTML=`<div class="error-msg" style="grid-column:1/-1">⚠ CoinGecko rate limit — try again in 60s.</div>`;
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
