@@ -1030,24 +1030,59 @@ function renderSwapWalletArea(){
 }
 
 async function swapConnectWallet(){
-  if(!window.ethereum){ showSwapError('MetaMask not detected. Please install MetaMask.'); return; }
   const btn=document.querySelector('.swap-connect-btn');
+  // No MetaMask → show install modal
+  if(typeof window.ethereum === 'undefined'){
+    showNoWalletModal(); return;
+  }
   if(btn){ btn.textContent='Connecting…'; btn.disabled=true; }
   try{
     const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    if(!accounts||accounts.length===0) throw new Error('No accounts returned');
     swapWallet=accounts[0];
-    const hexBal=await window.ethereum.request({method:'eth_getBalance',params:[swapWallet,'latest']});
-    swapBalances.ETH=parseInt(hexBal,16)/1e18;
+    // fetch real ETH balance
+    try{
+      const hexBal=await window.ethereum.request({method:'eth_getBalance',params:[swapWallet,'latest']});
+      swapBalances.ETH=parseInt(hexBal,16)/1e18;
+    }catch(e){ swapBalances.ETH=0; }
     swapBalances.USDC=Math.random()*500+100;
     swapBalances.SOL=Math.random()*10+1;
     swapBalances.RIALO=Math.random()*1000+50;
     renderSwapWalletArea();
-    window.ethereum.on('accountsChanged',accs=>{ if(!accs.length) swapDisconnect(); else { swapWallet=accs[0]; renderSwapWalletArea(); } });
+    window.ethereum.on('accountsChanged',accs=>{ if(!accs||!accs.length) swapDisconnect(); else { swapWallet=accs[0]; renderSwapWalletArea(); } });
   }catch(e){
     if(btn){ btn.textContent='Connect Wallet to Swap'; btn.disabled=false; }
-    if(e.code===4001) showSwapError('Connection rejected.');
-    else showSwapError('Connection failed.');
+    if(e.code===4001) showSwapError('Connection rejected by user.');
+    else if(e.code===-32002) showSwapError('Connection pending — check MetaMask popup.');
+    else showSwapError('Connection failed: '+e.message);
   }
+}
+
+function showNoWalletModal(){
+  // Show install options modal
+  const overlay=document.getElementById('wallet-modal');
+  document.getElementById('modal-content').innerHTML=`
+    <div class="modal-title">No Wallet Detected</div>
+    <div class="modal-sub">Install a Web3 wallet to connect and swap tokens.</div>
+    <div class="wallet-list">
+      <div class="wallet-item" onclick="window.open('https://metamask.io/download/','_blank')">
+        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
+        <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Browser Extension — Most popular</div></div>
+        <div class="wallet-status installed">Install ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.open('https://phantom.app/','_blank')">
+        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
+        <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Browser Extension — Solana & EVM</div></div>
+        <div class="wallet-status popular">Install ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.open('https://www.coinbase.com/wallet','_blank')">
+        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
+        <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Browser Extension & Mobile</div></div>
+        <div class="wallet-status popular">Install ↗</div>
+      </div>
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;line-height:1.5;">After installing, refresh this page and click Connect Wallet again.</p>`;
+  overlay.classList.add('open');
 }
 
 function swapDisconnect(){
