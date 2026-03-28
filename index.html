@@ -1,173 +1,86 @@
-/**
- * RIALO ALL-IN-ONE ENGINE v5.0 (Global Edition)
- * High-Density Visuals + English Technical Oracle
- * Repository: sheingelzs
- */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIALO - Alpha Core Technical Oracle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
-// ==========================================
-// 1. NEURAL GRID ENGINE (Interactive Visuals)
-// ==========================================
-const canvas = document.getElementById('neural-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let mouse = { x: null, y: null, radius: 180 };
+        body { font-family: 'Inter', sans-serif; background-color: #020202; color: white; margin: 0; overflow: hidden; }
+        #neural-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .ui-layer { position: relative; z-index: 10; }
+        .hidden-ui { display: none !important; }
+        .chat-bubble { border-radius: 4px; border-left: 3px solid #9333ea; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.05); }
+        #chat-container { scroll-behavior: smooth; height: calc(100vh - 200px); overflow-y: auto; }
+        .cursor { display: inline-block; width: 8px; height: 15px; background: #9333ea; margin-left: 4px; animation: blink 0.8s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        #scan-screen { position: fixed; inset: 0; background: #020202; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; color: #9333ea; }
+        .progress-bar { width: 240px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
+        .progress-fill { position: absolute; height: 100%; background: #9333ea; animation: fill 3s ease-in-out forwards; }
+        @keyframes fill { from { width: 0; } to { width: 100%; } }
+        @keyframes rotate3D { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+        .logo-3d { animation: rotate3D 15s linear infinite; transform-style: preserve-3d; filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.4)); }
+    </style>
+</head>
+<body class="antialiased">
 
-window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-window.addEventListener('resize', () => { initCanvas(); });
+    <canvas id="neural-canvas"></canvas>
 
-function initCanvas() {
-    if (!canvas) return;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    particles = [];
-    let numberOfParticles = (canvas.width * canvas.height) / 4000; 
-    for (let i = 0; i < numberOfParticles; i++) {
-        particles.push(new Particle());
-    }
-}
+    <div id="landing-page" class="ui-layer flex flex-col min-h-screen items-center justify-center p-6 text-center">
+        <div class="mb-10 p-6 bg-[#0a0a0a]/60 rounded-full border border-purple-900/30 shadow-2xl backdrop-blur-md">
+            <img src="images/market.png" alt="Rialo Logo" class="w-32 h-32 object-contain logo-3d">
+        </div>
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter italic uppercase mb-4 leading-none">RIALO <span class="text-purple-600">NETWORK</span></h1>
+        <p class="text-gray-400 font-mono text-[10px] tracking-[0.5em] uppercase mb-12">The Supermodular L1 Blockchain Stack</p>
+        <button onclick="startScanning()" class="px-12 py-5 bg-white text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-purple-600 hover:text-white transition-all active:scale-95">Initialize Alpha Core</button>
+    </div>
 
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 1.5 + 0.5;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
-    }
-    draw() {
-        ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    <div id="scan-screen">
+        <div class="text-[9px] tracking-[0.6em] mb-2 uppercase opacity-40">Security Protocol Alpha-7</div>
+        <div class="text-xs font-bold uppercase italic tracking-widest text-white">Establishing Neural Link...</div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
 
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < mouse.radius) {
-            const force = (mouse.radius - distance) / mouse.radius;
-            this.x -= (dx / distance) * force * 3;
-            this.y -= (dy / distance) * force * 3;
-        }
-    }
-}
+    <div id="terminal-ui" class="hidden-ui flex-col h-screen ui-layer">
+        <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-[#020202]/70 backdrop-blur-lg">
+            <span class="text-xs font-black uppercase tracking-widest italic">RIALO <span class="text-purple-600">ORACLE</span></span>
+            <button onclick="location.reload()" class="text-[9px] text-gray-600 hover:text-white uppercase font-mono tracking-widest border border-gray-900 px-3 py-1 rounded">Terminate</button>
+        </nav>
+        <main id="chat-container" class="flex-grow p-6 space-y-8 max-w-5xl mx-auto w-full">
+            <div class="chat-bubble p-6 text-[11px] font-mono leading-relaxed text-purple-300">
+                [SYSTEM]: DATA PROTOCOLS LOADED. RIALO CORE v2.4 ONLINE. <br><br>
+                Welcome, Builder. Query the Oracle using keywords like RIALO, BACKED, or ROADMAP.
+            </div>
+        </main>
+        <div class="p-6 bg-[#020202]/90 border-t border-white/5 backdrop-blur-xl">
+            <div class="max-w-5xl mx-auto flex gap-4">
+                <div class="relative flex-grow">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600 font-bold text-xs">>>></span>
+                    <input type="text" id="user-input" autocomplete="off" placeholder="Type your query..." class="w-full bg-[#0a0a0a]/60 border border-white/10 p-4 pl-14 text-xs font-mono focus:outline-none focus:border-purple-600 text-purple-100 transition-all">
+                </div>
+                <button onclick="handleSend()" class="bg-white text-black px-8 font-black uppercase text-xs hover:bg-purple-600 hover:text-white transition-all active:scale-95">EXECUTE</button>
+            </div>
+        </div>
+    </div>
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-        for (let j = i + 1; j < particles.length; j++) {
-            let dx = particles[i].x - particles[j].x;
-            let dy = particles[i].y - particles[j].y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < 140) { 
-                ctx.strokeStyle = `rgba(147, 51, 234, ${1 - (distance / 140)})`;
-                ctx.lineWidth = 0.7;
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-            }
-        }
-    }
-    requestAnimationFrame(animate);
-}
-
-// ==========================================
-// 2. RIALO ORACLE DATA (English Technical Specs)
-// ==========================================
-const RialoOracle = {
-    "rialo": "<b>[DEFINITION: RIALO NETWORK]</b><br><br>RIALO is a <b>Supermodular Layer 1 Blockchain</b> designed to seamlessly bridge Real-World Finance (RWF) with the Web3 ecosystem.<br><br>• <b>Mission:</b> Eliminate reliance on slow, expensive third-party middleware and oracles.<br>• <b>Rialo Edge:</b> Enables dApps to communicate directly with the internet without intermediaries.<br>• <b>Programmatic Privacy:</b> Native encrypted messaging mapped to Email, Phone, or Device IDs.",
-
-    "backed": "<b>[BACKING & LEADERSHIP]</b><br><br>Rialo is supported by top-tier institutional investors and led by elite cryptographers:<br><br>• <b>Funding:</b> Successfully raised a <b>$20 Million Seed Round</b> led by <span class='text-white'>Pantera Capital</span>.<br>• <b>Builder:</b> Developed by <span class='text-white'>Subzero Labs</span>.<br>• <b>Key Figure:</b> Led by <b>Jan Camenisch</b> (Former Head of Research at IBM & DFINITY).<br>• <b>Elite Team:</b> Engineers from Google, Apple, Microsoft, Amazon, Solana, and Near.",
-
-    "arch": "<b>[CORE ARCHITECTURE - TECHNICAL]</b><br><br>• <b>Rialo VM:</b> Built on <b>RISC-V</b>. Fully compatible with SVM (Solana), EVM (Ethereum), and MoveVM.<br>• <b>Consensus:</b> Parallel multi-concurrent proposer mechanism achieving <b>50ms Block Times</b>.<br>• <b>Execution Engine:</b> Event-driven with <i>Conditional Transactions</i> for nanosecond latency.",
-
-    "feat": "<b>[NATIVE CAPABILITIES]</b><br><br>• <b>Rialo Stream:</b> Native data feeds (Oracles) operating 40x faster than legacy solutions.<br>• <b>Rialo Interop:</b> Native interoperability protocol 10x faster than traditional bridges.<br>• <b>Rialo Cruise:</b> Native <b>Gas-less Transactions</b> for seamless user onboarding.<br>• <b>Rialo Read Path:</b> Direct validator data access (100ms) reducing operational overhead.",
-
-    "roadmap": "<b>[ROADMAP 2025-2026]</b><br><br>• <b>Q1-Q2 2025:</b> Seed Round Completion | Private Devnet.<br>• <b>Q3 2025:</b> Stealth Mode Exit | 20+ Data Providers Integrated.<br>• <b>Q4 2025:</b> Public Testnet v1 Launch | Global Builder Programs.<br>• <b>2026:</b> <b>OFFICIAL MAINNET GENESIS.</b>"
-};
-
-// ==========================================
-// 3. CHAT SYSTEM LOGIC
-// ==========================================
-window.handleSend = function() {
-    const input = document.getElementById('user-input');
-    const text = input.value.toLowerCase().trim();
-    if (text === "") return;
-
-    addBubble(input.value, 'user');
-    input.value = "";
-
-    setTimeout(() => {
-        let responses = [];
-        // Enhanced keyword matching
-        if (text.includes("rialo") || text.includes("what is") || text.includes("definition")) responses.push(RialoOracle.rialo);
-        if (text.includes("back") || text.includes("pantera") || text.includes("who") || text.includes("investor") || text.includes("fund")) responses.push(RialoOracle.backed);
-        if (text.includes("arch") || text.includes("tech") || text.includes("vm") || text.includes("stack")) responses.push(RialoOracle.arch);
-        if (text.includes("feat") || text.includes("feature") || text.includes("cruise") || text.includes("stream") || text.includes("capabilities")) responses.push(RialoOracle.feat);
-        if (text.includes("road") || text.includes("plan") || text.includes("2026") || text.includes("when")) responses.push(RialoOracle.roadmap);
-
-        let finalMsg = responses.length > 0 
-            ? responses.join("<br><br>") 
-            : "<b>[ERROR]</b>: Query outside technical parameters. Try keywords: <i>RIALO, BACKED, ARCHITECTURE, FEATURES,</i> or <i>ROADMAP.</i>";
-        
-        addBubble(finalMsg, 'bot');
-    }, 600);
-};
-
-function addBubble(msg, sender) {
-    const container = document.getElementById('chat-container');
-    if (!container) return;
-
-    const bubble = document.createElement('div');
-    if (sender === 'user') {
-        bubble.className = 'text-xs text-white uppercase font-bold text-right border-r-2 border-white pr-4 mb-6 relative z-20';
-        bubble.innerText = "QUERY: " + msg;
-    } else {
-        bubble.className = 'bg-[#0a0a0a]/80 border border-white/5 p-6 chat-bubble text-[11px] font-mono leading-relaxed text-purple-200 mb-8 shadow-2xl backdrop-blur-md relative z-20';
-        bubble.innerHTML = "<div class='text-purple-600 font-black mb-3 border-b border-purple-900/20 pb-1 flex justify-between uppercase tracking-widest text-[9px]'><span>[RIALO_DEEP_SCAN]</span><span>Mainnet_v2.4_Oracle</span></div>";
-        typeEffect(bubble, msg);
-    }
+    <script src="ai.js"></script>
     
-    container.appendChild(bubble);
-    container.scrollTop = container.scrollHeight;
-}
-
-function typeEffect(el, text) {
-    let i = 0;
-    const content = document.createElement('span');
-    el.appendChild(content);
-    function type() {
-        if (i < text.length) {
-            if (text.substr(i, 4) === "<br>") { content.innerHTML += "<br>"; i += 4; }
-            else if (text.startsWith("<b>", i)) { content.innerHTML += "<b>"; i += 3; }
-            else if (text.startsWith("</b>", i)) { content.innerHTML += "</b>"; i += 4; }
-            else if (text.startsWith("<i>", i)) { content.innerHTML += "<i>"; i += 3; }
-            else if (text.startsWith("</i>", i)) { content.innerHTML += "</i>"; i += 4; }
-            else if (text.startsWith("<span class='text-white'>", i)) { content.innerHTML += "<span class='text-white'>"; i += 25; }
-            else if (text.startsWith("</span>", i)) { content.innerHTML += "</span>"; i += 7; }
-            else { content.innerHTML += text.charAt(i); i++; }
-            setTimeout(type, 1);
-            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
-        } else { el.innerHTML += '<span class="cursor"></span>'; }
-    }
-    type();
-}
-
-// Initialization
-document.addEventListener('DOMContentLoaded', () => {
-    initCanvas();
-    animate();
-    const input = document.getElementById('user-input');
-    if (input) {
-        input.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
-    }
-});
-            
+    <script>
+        // Logika UI (Scan transition)
+        function startScanning() {
+            document.getElementById('landing-page').classList.add('hidden-ui');
+            const scanner = document.getElementById('scan-screen');
+            scanner.style.display = 'flex';
+            setTimeout(() => {
+                scanner.style.display = 'none';
+                const terminal = document.getElementById('terminal-ui');
+                terminal.classList.remove('hidden-ui');
+                terminal.classList.add('flex');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
