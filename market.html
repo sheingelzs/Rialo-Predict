@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rialo - Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Style khusus Marketplace */
+        .market-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .market-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .market-table th, .market-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        .market-table th {
+            background: #333;
+            color: #ffcc00;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        .price-tag {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .btn-buy {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-buy:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+        .back-nav {
+            margin-bottom: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="market-container">
+        <a href="menu.html" class="back-nav">← Back to Menu</a>
+        
+        <div class="market-header">
+            <h1>RIALO MARKETPLACE</h1>
+            <p>Upgrade aset kamu dengan teknologi terbaru</p>
+        </div>
+
+        <table class="market-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Turbo Engine V2</td>
+                    <td>Upgrade</td>
+                    <td class="price-tag">500 RIALO</td>
+                    <td><button class="btn-buy" onclick="buyItem('Turbo Engine')">BUY</button></td>
+                </tr>
+                <tr>
+                    <td>Neon Chassis</td>
+                    <td>Skin</td>
+                    <td class="price-tag">1,200 RIALO</td>
+                    <td><button class="btn-buy" onclick="buyItem('Neon Chassis')">BUY</button></td>
+                </tr>
+                <tr>
+                    <td>Nitro Boost</td>
+                    <td>Consumable</td>
+                    <td class="price-tag">150 RIALO</td>
+                    <td><button class="btn-buy" onclick="buyItem('Nitro Boost')">BUY</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function buyItem(itemName) {
+            alert("Kamu ingin membeli: " + itemName + ". Pastikan saldo Rialo kamu cukup!");
+        }
+    </script>
+</body>
+</html>
