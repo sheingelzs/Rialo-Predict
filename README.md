@@ -1,2 +1,2 @@
-# Rialo-Alpha ai core
+# Rialo-Alpha Core
 Rialo Market Predictor App (opsional)
