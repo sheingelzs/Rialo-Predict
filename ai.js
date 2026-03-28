@@ -1,15 +1,103 @@
-        const responses = {
-            "rialo": "RIALO is a next-generation Layer 1 Blockchain infrastructure specifically engineered to solve the 'Data Transparency Trilemma' in Web3. It operates as a high-performance decentralized ledger that ensures every byte of information—from market analytics to transaction hashes—is immutable and globally accessible. By utilizing a unique consensus mechanism, Rialo provides the foundational security layer for the Market Predict ecosystem, allowing for institutional-grade data verification without central authority interference.",
+/**
+ * RIALO NEURAL GRID ENGINE v2.0
+ * High-Density Interactive Particle System
+ * Designed for: sheingelzs GitHub Repository
+ */
+
+const canvas = document.getElementById('neural-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = { x: null, y: null, radius: 180 };
+
+// Tracking pergerakan mouse
+window.addEventListener('mousemove', (e) => { 
+    mouse.x = e.x; 
+    mouse.y = e.y; 
+});
+
+// Menyesuaikan ukuran jika jendela browser di-resize
+window.addEventListener('resize', () => { 
+    initCanvas(); 
+});
+
+function initCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particles = [];
+    
+    // JUMLAH JARING (Makin kecil pembaginya, makin ramai jaringnya)
+    let numberOfParticles = (canvas.width * canvas.height) / 4000; 
+    
+    for (let i = 0; i < numberOfParticles; i++) {
+        particles.push(new Particle());
+    }
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.5 + 0.5; // Ukuran titik
+        this.vx = (Math.random() - 0.5) * 0.4; // Kecepatan X
+        this.vy = (Math.random() - 0.5) * 0.4; // Kecepatan Y
+    }
+
+    draw() {
+        ctx.fillStyle = 'rgba(168, 85, 247, 0.8)'; // Warna Ungu Rialo
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    update() {
+        // Gerakan standar
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Memantul jika kena pinggir layar
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        // Interaksi dengan Mouse (Efek menghindar)
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < mouse.radius) {
+            const force = (mouse.radius - distance) / mouse.radius;
+            this.x -= (dx / distance) * force * 3;
+            this.y -= (dy / distance) * force * 3;
+        }
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        
+        // LOGIKA PENYAMBUNG GARIS (JARING-JARING)
+        for (let j = i + 1; j < particles.length; j++) {
+            let dx = particles[i].x - particles[j].x;
+            let dy = particles[i].y - particles[j].y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
             
-            "what is rialo": "At its core, RIALO is the ultimate neural highway for decentralized intelligence. It isn't just a blockchain; it is a scalable network designed to process massive market data streams in milliseconds. Our 'Alpha Engine' lives on Rialo to ensure that every prediction is cross-referenced against real-time on-chain activity. This architecture eliminates 'black-box' manipulation, providing users with a transparent window into market anomalies and high-probability Alpha signals that were previously only accessible to hedge funds.",
-            
-            "whats rialo": "RIALO stands as the definitive bridge between raw global market data and decentralized decision-making. Its primary mission is to democratize financial intelligence. By leveraging Rialo's Layer 1 capabilities, our platform can execute complex analytical scripts directly on the network. This ensures that the 'Market Predict' outcomes are 100% tamper-proof, verified by a distributed network of validator nodes, and secured by state-of-the-art cryptographic proofs. It is the backbone of the Alpha Revolution.",
-            
-            "prediction": "The Alpha Core Prediction system is powered by a proprietary neural network architecture integrated deeply within the Rialo Mainnet. It constantly scans for 'Alpha'—hidden market patterns and liquidity shifts—across multiple digital asset pairs. Every generated signal undergoes a three-tier verification process: (1) Historical Pattern Matching, (2) Real-time Liquidity Analysis, and (3) On-chain Validation via Rialo. Current performance metrics show a sustained success probability of 89.4%, making it one of the most accurate decentralized engines in the Web3 space.",
-            
-            "safety": "Security in the Rialo Ecosystem is non-negotiable and strictly non-custodial. The system architecture is built so that Alpha Core AI only provides 'Intelligence as a Service' (IaaS). We never request access to your private keys, seed phrases, or personal assets. All smart contracts governing the Rialo network are immutable and open-source, providing a 'Trust-less' environment. Your security is guaranteed by the mathematical certainty of the blockchain, protected against 51% attacks and unauthorized data tampering.",
-            
-            "roadmap": "The Rialo Project is currently in the 'Alpha Integration' phase. Our roadmap includes: (Q2 2026) Expansion of the Rialo Validator Node network to increase decentralization, (Q3 2026) Integration of Cross-chain Alpha Signals for Layer 2 scaling solutions, and (Q4 2026) The launch of 'Rialo Shark Tank'—a community-driven builder event to fund the next generation of decentralized apps on our Layer 1. We are building for the long-term stability of the decentralized economy.",
-            
-            "hello": "Alpha Core Terminal: ONLINE. Synchronizing with Rialo Mainnet nodes... [OK]. Database Integrity: 100%. I am your primary interface for Rialo Ecosystem Intelligence. I can explain our Layer 1 architecture, the Alpha Prediction mechanics, or our security protocols. What is your command, User?"
-        };
+            // Jarak maksimal antar titik untuk membuat garis
+            if (distance < 140) { 
+                ctx.strokeStyle = `rgba(147, 51, 234, ${1 - (distance / 140)})`;
+                ctx.lineWidth = 0.7;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+// Inisialisasi awal
+initCanvas();
+animate();
