@@ -1,6 +1,1825 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RIALO — Crypto Prediction Market</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
+  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
+  --text:#e8eaf0;--muted:#5a7090;
+  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+
+/* ── CANVAS BG ── */
+#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:1;width:100vw;height:100vh;}
+
+/* ── NAV ── */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.92);backdrop-filter:blur(16px);}
+.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:logopulse 2s infinite;}
+@keyframes logopulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+.nav-right{display:flex;align-items:center;gap:0.6rem;}
+.nav-tabs{display:flex;gap:0.2rem;background:rgba(255,255,255,0.05);border-radius:9px;padding:3px;}
+.nav-tab{padding:0.35rem 0.85rem;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.nav-tab.active{background:rgba(255,255,255,0.1);color:#fff;}
+.nav-tab:hover:not(.active){color:rgba(255,255,255,0.8);}
+.wallet-nav-btn{padding:0.4rem 0.9rem;border-radius:8px;border:1px solid rgba(74,222,128,0.35);background:rgba(74,222,128,0.08);color:var(--accent);font-family:var(--font);font-size:0.77rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.wallet-nav-btn.connected{border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75);}
+.wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeIn 0.25s ease;position:relative;z-index:1;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LANDING ── */
+.landing{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--accent);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.72rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1.5rem;text-transform:uppercase;}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.landing h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1rem;}
+.landing h1 .accent{color:var(--accent);}
+.landing .hero-sub{color:rgba(255,255,255,0.45);font-size:1rem;max-width:460px;line-height:1.7;margin-bottom:0.75rem;}
+.parlay-hook{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.25);color:rgba(255,255,255,0.6);padding:0.45rem 1rem;border-radius:8px;font-size:0.82rem;margin-bottom:1.75rem;max-width:480px;}
+.parlay-hook span{color:var(--accent2);}
+.cta-group{display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--accent);color:#050810;font-family:var(--font);font-size:0.88rem;font-weight:700;padding:0.75rem 1.6rem;border-radius:9px;border:none;cursor:pointer;transition:all 0.2s;}
+.btn-primary:hover{background:#86efac;transform:translateY(-1px);}
+.btn-ghost{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75);font-family:var(--font);font-size:0.88rem;font-weight:500;padding:0.75rem 1.6rem;border-radius:9px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;}
+.btn-ghost:hover{background:rgba(255,255,255,0.09);}
+.stats-row{display:flex;gap:2.5rem;justify-content:center;margin-top:3.5rem;}
+.stat-num{font-family:var(--font-head);font-size:1.7rem;font-weight:800;}
+.stat-label{font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:2px;text-transform:uppercase;letter-spacing:0.06em;}
+
+/* ── HOW IT WORKS ── */
+.how-section{max-width:860px;margin:0 auto;padding:3rem 2rem 4rem;}
+.how-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
+.how-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:2rem;}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;}
+.how-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.25rem;}
+.how-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);margin-bottom:0.6rem;}
+.how-card h3{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem;}
+.how-card p{font-size:0.78rem;color:rgba(255,255,255,0.38);line-height:1.6;}
+
+/* ── EXPLORE (was Menu) ── */
+.explore-page{padding:2.5rem 1.5rem;max-width:580px;margin:0 auto;}
+.explore-page h2{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:0.3rem;}
+.explore-page .sub{color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.75rem;}
+.menu-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1.75rem;}
+.menu-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.35rem;cursor:pointer;transition:all 0.25s;display:flex;flex-direction:column;gap:0.85rem;position:relative;overflow:hidden;}
+.menu-card:hover{background:rgba(255,255,255,0.07);border-color:rgba(74,222,128,0.3);transform:translateY(-2px);}
+.menu-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),#22d3ee);opacity:0;transition:opacity 0.25s;}
+.menu-card:hover::after{opacity:1;}
+.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.card-icon.green{background:rgba(74,222,128,0.15);}
+.card-icon.cyan{background:rgba(34,211,238,0.15);}
+.card-icon.purple{background:rgba(124,92,252,0.15);}
+.card-title{font-weight:600;font-size:0.95rem;}
+.card-desc{font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.5;}
+
+/* ── ABOUT ── */
+.about-page{max-width:640px;margin:0 auto;padding:3rem 2rem;}
+.about-page h2{font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.75rem;}
+.about-page p{font-size:0.88rem;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1rem;}
+.about-sec-label{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;margin-top:2rem;}
+.team-grid{display:flex;gap:0.85rem;margin-top:0.5rem;}
+.team-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.1rem;display:flex;align-items:center;gap:0.7rem;text-decoration:none;transition:border-color 0.2s;flex:1;}
+.team-card:hover{border-color:rgba(74,222,128,0.3);}
+.t-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;}
+.t-name{font-size:0.85rem;font-weight:700;color:var(--text);}
+.t-role{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1px;}
+.t-handle{font-size:0.7rem;color:var(--accent);margin-top:2px;}
+
+/* ── MARKET ── */
+.market-page{position:relative;z-index:1;}
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow:hidden;padding:8px 0;}
+.ticker-track{display:flex;gap:40px;animation:ticker 30s linear infinite;white-space:nowrap;width:max-content;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:8px;font-size:0.75rem;font-family:var(--font-mono);}
+.ticker-name{color:var(--muted);}
+.ticker-price{color:var(--text);font-weight:700;}
+.ticker-change{font-size:0.7rem;}
+.pos{color:var(--green);}.neg{color:var(--red);}
+.market-inner{max-width:1200px;margin:0 auto;padding:24px;}
+.market-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.market-title{font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;}
+.market-sub{font-size:0.75rem;color:var(--muted);margin-top:3px;}
+.live-badge{font-size:0.62rem;font-family:var(--font-mono);background:rgba(74,222,128,0.1);color:var(--accent);border:1px solid rgba(74,222,128,0.3);padding:3px 10px;border-radius:20px;letter-spacing:1px;}
+.last-update{font-size:0.68rem;color:var(--muted);}
+.section-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-0.3px;margin-bottom:14px;display:flex;align-items:center;gap:10px;color:var(--text);}
+.section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.mkt-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:32px;}
+.mkt-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.mkt-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,92,252,0.04),transparent);opacity:0;transition:opacity 0.2s;}
+.mkt-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,92,252,0.15);}
+.mkt-card:hover::before{opacity:1;}
+.mkt-card.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;}
+.mkt-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.mkt-coin-info{display:flex;align-items:center;gap:9px;}
+.mkt-coin-icon{width:32px;height:32px;border-radius:50%;}
+.mkt-coin-sym{font-family:var(--font-head);font-size:0.9rem;font-weight:700;}
+.mkt-coin-name{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+.rank-badge{font-size:0.58rem;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:2px 6px;border-radius:8px;}
+.mkt-card-price{font-family:var(--font-mono);font-size:1rem;font-weight:700;margin-bottom:5px;}
+.mkt-card-change{display:inline-flex;align-items:center;gap:4px;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:7px;}
+.mkt-card-change.pos{background:rgba(74,222,128,0.1);color:var(--green);}
+.mkt-card-change.neg{background:rgba(248,113,113,0.1);color:var(--red);}
+.mkt-card-vol{font-size:0.65rem;color:var(--muted);margin-top:6px;}
+.sparkline{margin-top:8px;height:36px;}
+.sparkline canvas{width:100%!important;height:36px!important;}
+.chart-section{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:32px;}
+@media(max-width:900px){.chart-section{grid-template-columns:1fr}}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.chart-title-text{font-family:var(--font-head);font-weight:700;font-size:0.95rem;}
+.chart-price-big{font-family:var(--font-mono);font-size:1.4rem;font-weight:700;}
+.chart-change-big{font-size:0.78rem;margin-left:6px;}
+.time-btns{display:flex;gap:5px;}
+.time-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-mono);font-size:0.68rem;padding:4px 9px;border-radius:7px;cursor:pointer;transition:all 0.15s;}
+.time-btn:hover,.time-btn.active{background:rgba(74,222,128,0.1);color:var(--accent);border-color:rgba(74,222,128,0.3);}
+.main-chart-wrap{height:260px;}
+.gainers-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.gainers-tabs{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.g-tab{flex:1;text-align:center;padding:7px;font-size:0.72rem;font-weight:700;cursor:pointer;background:transparent;border:none;color:var(--muted);font-family:var(--font-mono);transition:all 0.15s;}
+.g-tab.active.gain{background:rgba(74,222,128,0.1);color:var(--green);}
+.g-tab.active.loss{background:rgba(248,113,113,0.1);color:var(--red);}
+.gainer-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(26,42,66,0.5);}
+.gainer-row:last-child{border-bottom:none;}
+.gainer-coin{display:flex;align-items:center;gap:9px;}
+.gainer-icon{width:26px;height:26px;border-radius:50%;}
+.gainer-sym{font-family:var(--font-head);font-size:0.82rem;font-weight:700;}
+.gainer-name{font-size:0.62rem;color:var(--muted);}
+.gainer-pct{font-family:var(--font-mono);font-size:0.8rem;font-weight:700;padding:3px 9px;border-radius:7px;}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:32px;}
+.table-header-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.search-box{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:0.78rem;padding:6px 12px;border-radius:9px;outline:none;width:200px;transition:border-color 0.2s;}
+.search-box:focus{border-color:var(--accent2);}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 14px;font-size:0.65rem;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-weight:400;cursor:pointer;white-space:nowrap;}
+th:hover{color:var(--text);}
+td{padding:11px 14px;font-size:0.8rem;border-bottom:1px solid rgba(26,42,66,0.4);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(124,92,252,0.04);}
+.td-coin{display:flex;align-items:center;gap:10px;}
+.td-icon{width:28px;height:28px;border-radius:50%;}
+.td-sym{font-family:var(--font-head);font-weight:700;font-size:0.85rem;}
+.td-name{font-size:0.65rem;color:var(--muted);}
+.td-price{font-family:var(--font-mono);font-weight:700;}
+.pct-pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:0.72rem;font-weight:700;}
+.pct-pill.pos{background:rgba(74,222,128,0.1);color:var(--green);}
+.pct-pill.neg{background:rgba(248,113,113,0.1);color:var(--red);}
+.muted-num{color:var(--muted);font-family:var(--font-mono);font-size:0.75rem;}
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,rgba(26,42,66,0.5) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.error-msg{color:var(--red);font-size:0.8rem;text-align:center;padding:40px;}
+
+/* ── PREDICTION MARKET ── */
+.predict-market-wrap{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;padding:1.5rem 2rem;max-width:1100px;margin:0 auto;}
+@media(max-width:800px){.predict-market-wrap{grid-template-columns:1fr;padding:1rem;}}
+
+.pm-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap;}
+.pm-title{font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;}
+.pm-sub{font-size:0.78rem;color:var(--muted);max-width:460px;line-height:1.6;}
+.pm-user-pts{text-align:right;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:0.6rem 1rem;}
+.pm-pts-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
+.pm-pts-val{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--accent);}
+
+.pm-cats{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.pm-cat{padding:0.35rem 0.9rem;border-radius:99px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.pm-cat:hover{color:rgba(255,255,255,0.8);}
+.pm-cat.active{background:rgba(74,222,128,0.12);border-color:rgba(74,222,128,0.4);color:var(--accent);}
+
+.pm-events{display:flex;flex-direction:column;gap:0.85rem;}
+
+/* Event card */
+.ev-card{background:rgba(15,25,41,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.1rem 1.25rem;transition:border-color 0.2s;cursor:pointer;backdrop-filter:blur(4px);}
+.ev-card:hover{border-color:rgba(74,222,128,0.25);}
+.ev-card.voted{border-color:rgba(74,222,128,0.35);background:rgba(74,222,128,0.04);}
+.ev-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.85rem;}
+.ev-cat-badge{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.cat-crypto{background:rgba(247,147,26,0.15);color:#f7931a;}
+.cat-macro{background:rgba(98,126,234,0.15);color:#627eea;}
+.cat-sports{background:rgba(74,222,128,0.15);color:var(--accent);}
+.cat-politics{background:rgba(124,92,252,0.15);color:var(--accent2);}
+.ev-status{font-size:0.65rem;font-weight:700;display:flex;align-items:center;gap:4px;}
+.ev-status.live{color:var(--accent);}
+.ev-status.live::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.5s infinite;flex-shrink:0;}
+.ev-status.closing{color:#facc15;}
+.ev-status.closed{color:var(--muted);}
+.ev-question{font-size:0.95rem;font-weight:700;line-height:1.45;margin-bottom:0.65rem;flex:1;}
+.ev-meta{display:flex;align-items:center;gap:1rem;font-size:0.7rem;color:var(--muted);margin-bottom:0.85rem;flex-wrap:wrap;}
+.ev-meta span{display:flex;align-items:center;gap:3px;}
+.ev-resolution{font-size:0.68rem;color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:3px 8px;margin-bottom:0.85rem;line-height:1.5;}
+.ev-resolution strong{color:rgba(255,255,255,0.5);}
+
+/* Option bars */
+.ev-options{display:flex;flex-direction:column;gap:0.45rem;}
+.ev-option{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid transparent;transition:all 0.2s;}
+.ev-option:hover{border-color:rgba(255,255,255,0.15);}
+.ev-option.selected-yes{border-color:var(--accent);}
+.ev-option.selected-no{border-color:var(--red);}
+.ev-option-bar{position:absolute;inset:0;border-radius:9px;transition:width 0.6s ease;}
+.ev-option-bar.yes{background:rgba(74,222,128,0.12);}
+.ev-option-bar.no{background:rgba(248,113,113,0.1);}
+.ev-option-content{position:relative;display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.85rem;}
+.ev-opt-label{font-size:0.82rem;font-weight:700;}
+.ev-opt-right{display:flex;align-items:center;gap:0.6rem;}
+.ev-opt-pct{font-family:var(--font-mono);font-size:0.82rem;font-weight:700;}
+.ev-opt-pct.yes{color:var(--accent);}
+.ev-opt-pct.no{color:var(--red);}
+.ev-opt-odds{font-size:0.68rem;color:var(--muted);}
+.ev-voted-badge{font-size:0.62rem;font-weight:700;background:rgba(74,222,128,0.2);color:var(--accent);padding:2px 7px;border-radius:99px;margin-left:4px;}
+
+/* Sidebar */
+.predict-right{}
+.pm-sidebar-card{background:rgba(15,25,41,0.85);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.1rem;backdrop-filter:blur(8px);}
+.pm-sidebar-title{font-family:var(--font-head);font-size:0.9rem;font-weight:800;margin-bottom:0.85rem;}
+
+.pos-item{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0.65rem;background:rgba(255,255,255,0.04);border-radius:8px;margin-bottom:0.4rem;font-size:0.75rem;}
+.pos-left{display:flex;flex-direction:column;gap:2px;}
+.pos-event{font-weight:600;font-size:0.75rem;line-height:1.3;}
+.pos-pick{font-size:0.68rem;}
+.pos-pick.yes{color:var(--accent);}
+.pos-pick.no{color:var(--red);}
+.pos-right{text-align:right;}
+.pos-stake{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);}
+.pos-ret{font-family:var(--font-mono);font-size:0.75rem;font-weight:700;color:var(--accent);}
+.pos-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;margin-left:0.5rem;}
+.pos-remove:hover{color:var(--red);}
+
+/* Leaderboard */
+.lb-row{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.05);}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);width:20px;text-align:center;flex-shrink:0;}
+.lb-rank.top1{color:#facc15;}
+.lb-rank.top2{color:#94a3b8;}
+.lb-rank.top3{color:#cd7c2e;}
+.lb-avatar{width:26px;height:26px;border-radius:50%;background:rgba(124,92,252,0.2);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:var(--accent2);flex-shrink:0;}
+.lb-name{flex:1;font-size:0.78rem;font-weight:600;}
+.lb-addr{font-size:0.65rem;color:var(--muted);}
+.lb-pts{font-family:var(--font-mono);font-size:0.78rem;font-weight:700;color:var(--accent);}
+.lb-acc{font-size:0.65rem;color:var(--muted);}
+.pm-view-all-btn{width:100%;margin-top:0.75rem;padding:0.5rem;background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:rgba(255,255,255,0.35);font-family:var(--font);font-size:0.72rem;cursor:pointer;transition:all 0.2s;}
+.pm-view-all-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Rialo tech badge */
+.rialo-tech-badge{display:flex;align-items:flex-start;gap:0.65rem;margin-top:1rem;background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.2);border-radius:12px;padding:0.85rem;}
+.rtb-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.rtb-title{font-size:0.78rem;font-weight:700;color:var(--accent2);margin-bottom:0.25rem;}
+.rtb-sub{font-size:0.7rem;color:rgba(255,255,255,0.35);line-height:1.5;}
+
+/* Predict modal (stake) */
+.stake-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem;}
+.stake-modal-overlay.open{display:flex;}
+.stake-modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.5rem;width:100%;max-width:360px;}
+.stake-ev-q{font-size:0.88rem;font-weight:700;margin-bottom:0.25rem;line-height:1.4;}
+.stake-picking{font-size:0.75rem;color:var(--muted);margin-bottom:1rem;}
+.stake-picking strong{color:var(--accent);}
+.stake-input-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;}
+.stake-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:0.6rem 0.85rem;color:#fff;font-family:var(--font-mono);font-size:1rem;font-weight:700;outline:none;text-align:right;}
+.stake-input:focus{border-color:rgba(74,222,128,0.4);}
+.stake-unit{font-size:0.78rem;color:var(--accent);font-weight:700;}
+.stake-quick{display:flex;gap:0.3rem;margin-bottom:1rem;}
+.stake-q-btn{flex:1;padding:0.3rem 0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:rgba(255,255,255,0.5);font-family:var(--font);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:center;}
+.stake-q-btn:hover{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);color:var(--accent);}
+.stake-info{background:rgba(255,255,255,0.03);border-radius:10px;padding:0.65rem 0.85rem;margin-bottom:1rem;}
+.stake-info-row{display:flex;justify-content:space-between;font-size:0.75rem;padding:3px 0;color:var(--muted);}
+.stake-info-row span:last-child{color:rgba(255,255,255,0.75);font-weight:600;}
+.stake-confirm-btn{width:100%;padding:0.8rem;border-radius:10px;font-family:var(--font);font-size:0.88rem;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;}
+.stake-confirm-btn.yes{background:var(--accent);color:#050810;}
+.stake-confirm-btn.yes:hover{background:#86efac;}
+.stake-confirm-btn.no{background:var(--red);color:#fff;}
+.stake-confirm-btn.no:hover{background:#fca5a5;color:#050810;}
+.stake-cancel-btn{width:100%;padding:0.45rem;background:transparent;color:rgba(255,255,255,0.25);font-family:var(--font);font-size:0.74rem;border:none;cursor:pointer;margin-top:0.35rem;}
+.stake-cancel-btn:hover{color:var(--muted);}
+
+/* Leaderboard full modal */
+.lb-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9998;display:none;align-items:center;justify-content:center;padding:1rem;}
+.lb-modal-overlay.open{display:flex;}
+.lb-modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;}
+.lb-modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;}
+.lb-full-row{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 0.5rem;border-bottom:1px solid rgba(255,255,255,0.05);}
+.lb-full-row:last-child{border-bottom:none;}
+.lb-full-rank{font-family:var(--font-mono);font-size:0.8rem;width:28px;text-align:center;font-weight:700;}
+.lb-full-info{flex:1;}
+.lb-full-name{font-size:0.82rem;font-weight:700;}
+.lb-full-stats{font-size:0.68rem;color:var(--muted);margin-top:1px;}
+.lb-full-pts{text-align:right;}
+.lb-full-pts-val{font-family:var(--font-mono);font-size:0.88rem;font-weight:700;color:var(--accent);}
+.lb-full-pts-acc{font-size:0.65rem;color:var(--muted);}
+
+
+/* ── FOOTER ── */
+.site-footer{border-top:1px solid rgba(255,255,255,0.06);padding:2rem 1.5rem;background:rgba(5,8,16,0.9);position:relative;z-index:1;}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;}
+@media(max-width:600px){.footer-inner{grid-template-columns:1fr;}.footer-col:not(:first-child){margin-top:0;}}
+.footer-logo{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;display:flex;align-items:center;gap:7px;}
+.footer-tagline{font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.6;max-width:280px;}
+.footer-col h4{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:0.75rem;}
+.footer-links{display:flex;flex-direction:column;gap:0.45rem;}
+.footer-links a{font-size:0.8rem;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;cursor:pointer;}
+.footer-links a:hover{color:rgba(255,255,255,0.8);}
+.footer-bottom{max-width:1100px;margin:1.5rem auto 0;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;}
+.footer-bottom p{font-size:0.72rem;color:rgba(255,255,255,0.2);}
+.footer-builders{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:rgba(255,255,255,0.2);}
+.builder-link{color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;}
+.builder-link:hover{color:var(--accent);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
+.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.75rem;width:100%;max-width:380px;position:relative;}
+.modal-close{position:absolute;top:0.9rem;right:0.9rem;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.1rem;cursor:pointer;}
+.modal-close:hover{color:#fff;}
+.modal-title{font-family:var(--font-head);font-size:1.15rem;font-weight:800;margin-bottom:0.3rem;}
+.modal-sub{font-size:0.8rem;color:rgba(255,255,255,0.38);margin-bottom:1.35rem;}
+.wallet-list{display:flex;flex-direction:column;gap:0.55rem;}
+.wallet-item{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 0.95rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;cursor:pointer;transition:all 0.2s;}
+.wallet-item:hover{background:rgba(255,255,255,0.08);border-color:rgba(74,222,128,0.3);}
+.wallet-logo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.wallet-info-block{flex:1;}
+.wallet-name{font-weight:600;font-size:0.88rem;}
+.wallet-type{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1px;}
+.wallet-status{font-size:0.72rem;font-weight:600;}
+.wallet-status.installed{color:var(--accent);}
+.wallet-status.popular{color:rgba(255,255,255,0.28);}
+.spinner{width:44px;height:44px;border:3px solid rgba(74,222,128,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.center-modal{text-align:center;padding:0.5rem 0;}
+.modal-big-title{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:0.35rem;}
+.modal-desc{font-size:0.8rem;color:rgba(255,255,255,0.38);line-height:1.6;margin-bottom:1.25rem;}
+.result-icon{font-size:3.5rem;margin-bottom:0.75rem;}
+.result-rows{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem;text-align:left;}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.65rem;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.8rem;}
+.result-row .rl{color:rgba(255,255,255,0.45);}
+.result-row .rv{font-weight:600;}
+.rv.win{color:var(--accent);}.rv.lose{color:var(--red);}
+.result-balance{display:flex;justify-content:space-between;align-items:center;padding:0.65rem 0.75rem;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.15);border-radius:9px;margin-bottom:1.25rem;}
+.rb-label{font-size:0.75rem;color:rgba(255,255,255,0.4);}
+.rb-val{font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--accent);}
+
+@media(max-width:700px){
+  .col-mktcap,.col-vol{display:none;}
+  .mkt-cards-grid{grid-template-columns:1fr 1fr;}
+  .stats-row{gap:1.5rem;}
+  .menu-cards{grid-template-columns:1fr;}
+  .team-grid{flex-direction:column;}
+  .footer-inner{grid-template-columns:1fr;}
+}
+
+/* ── SWAP PAGE ── */
+.swap-page{max-width:480px;margin:0 auto;padding:2.5rem 1.5rem;}
+.swap-page-header{margin-bottom:1.75rem;}
+.swap-page-header h2{font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.3rem;}
+.swap-page-header p{font-size:0.8rem;color:var(--muted);}
+
+.swap-box{background:rgba(15,25,41,0.85);border:1px solid rgba(255,255,255,0.09);border-radius:20px;padding:1.25rem;backdrop-filter:blur(12px);}
+
+/* wallet connect strip for swap */
+.swap-wallet-strip{display:flex;align-items:center;justify-content:space-between;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:12px;padding:0.75rem 1rem;margin-bottom:1.1rem;}
+.swap-wallet-left{display:flex;align-items:center;gap:8px;}
+.sw-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.sw-addr{font-size:0.75rem;color:rgba(255,255,255,0.55);font-family:monospace;}
+.sw-bal{font-size:0.72rem;color:rgba(255,255,255,0.3);}
+.sw-network{font-size:0.65rem;font-weight:700;color:var(--accent);background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.2);padding:2px 8px;border-radius:99px;}
+.swap-connect-btn{width:100%;padding:0.85rem;background:transparent;color:var(--accent);font-family:var(--font);font-weight:700;font-size:0.88rem;border:1px solid rgba(74,222,128,0.35);border-radius:12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1rem;}
+.swap-connect-btn:hover{background:rgba(74,222,128,0.08);}
+
+/* token input panels */
+.token-panel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1rem 1.1rem;transition:border-color 0.2s;}
+.token-panel:focus-within{border-color:rgba(74,222,128,0.3);}
+.token-panel-label{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;}
+.token-panel-row{display:flex;align-items:center;gap:0.75rem;}
+.token-select{display:flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.45rem 0.75rem 0.45rem 0.5rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+.token-select:hover{background:rgba(255,255,255,0.11);border-color:rgba(255,255,255,0.2);}
+.token-select.fixed{cursor:default;background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.2);}
+.token-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;flex-shrink:0;}
+.t-btc{background:rgba(247,147,26,0.2);color:#f7931a;}
+.t-eth{background:rgba(98,126,234,0.2);color:#627eea;}
+.t-sol{background:rgba(153,69,255,0.2);color:#9945ff;}
+.t-usdc{background:rgba(39,117,202,0.2);color:#2775ca;}
+.t-rialo{background:rgba(74,222,128,0.18);color:#4ade80;}
+.token-sym{font-family:var(--font-head);font-size:0.88rem;font-weight:700;}
+.token-chevron{font-size:0.6rem;color:var(--muted);}
+.token-amount-input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:var(--font-mono);font-size:1.3rem;font-weight:700;text-align:right;min-width:0;}
+.token-amount-input::placeholder{color:rgba(255,255,255,0.15);}
+.token-usd-val{font-size:0.7rem;color:var(--muted);text-align:right;margin-top:4px;}
+.token-balance-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.token-bal-label{font-size:0.68rem;color:var(--muted);}
+.token-bal-val{font-size:0.68rem;color:rgba(255,255,255,0.4);}
+.max-btn{font-size:0.62rem;font-weight:700;color:var(--accent);background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:4px;padding:1px 6px;cursor:pointer;font-family:var(--font);}
+.max-btn:hover{background:rgba(74,222,128,0.2);}
+
+/* swap arrow */
+.swap-arrow-wrap{display:flex;justify-content:center;margin:0.5rem 0;position:relative;z-index:1;}
+.swap-arrow-btn{width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:1rem;}
+.swap-arrow-btn:hover{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);transform:rotate(180deg);}
+
+/* dropdown */
+.token-dropdown{position:relative;}
+.token-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0d1929;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:6px;min-width:180px;z-index:50;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.token-dropdown-menu.open{display:block;}
+.token-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background 0.15s;}
+.token-option:hover{background:rgba(255,255,255,0.06);}
+.token-option-name{font-size:0.82rem;font-weight:600;}
+.token-option-bal{font-size:0.68rem;color:var(--muted);margin-left:auto;}
+
+/* route info */
+.route-info{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:0.85rem 1rem;margin-top:0.85rem;}
+.route-row{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;padding:3px 0;}
+.route-label{color:var(--muted);}
+.route-val{color:rgba(255,255,255,0.7);font-weight:600;}
+.route-val.good{color:var(--accent);}
+.route-val.warn{color:#facc15;}
+
+/* swap action button */
+.swap-action-btn{width:100%;padding:0.95rem;border-radius:14px;font-family:var(--font);font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:0.85rem;border:none;}
+.swap-action-btn.ready{background:var(--accent);color:#050810;}
+.swap-action-btn.ready:hover{background:#86efac;transform:translateY(-1px);}
+.swap-action-btn.disabled{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.2);cursor:not-allowed;}
+.swap-action-btn.needs-wallet{background:transparent;color:var(--accent);border:1px solid rgba(74,222,128,0.35);}
+.swap-action-btn.needs-wallet:hover{background:rgba(74,222,128,0.08);}
+.swap-action-btn.loading{background:rgba(74,222,128,0.15);color:var(--accent);cursor:wait;}
+
+/* tx pending */
+.tx-pending{display:none;text-align:center;padding:1rem 0.5rem;}
+.tx-spinner{width:36px;height:36px;border:3px solid rgba(74,222,128,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 0.75rem;}
+.tx-title{font-family:var(--font-head);font-size:1rem;font-weight:800;margin-bottom:0.3rem;}
+.tx-sub{font-size:0.78rem;color:var(--muted);}
+
+/* tx success */
+.tx-success{display:none;text-align:center;padding:0.75rem 0.5rem;}
+.tx-icon{font-size:2.5rem;margin-bottom:0.5rem;}
+.tx-hash{font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);word-break:break-all;margin-top:0.5rem;}
+
+/* recent txns */
+.recent-txns{margin-top:1.5rem;}
+.recent-txns h4{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem;}
+.txn-row{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0.85rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:0.4rem;font-size:0.78rem;}
+.txn-left{display:flex;align-items:center;gap:0.6rem;}
+.txn-icon{width:28px;height:28px;border-radius:50%;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent);}
+.txn-detail{font-weight:600;}
+.txn-time{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+.txn-status{font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:99px;}
+.txn-status.success{background:rgba(74,222,128,0.1);color:var(--accent);}
+.txn-status.pending{background:rgba(250,204,21,0.1);color:#facc15;}
+
+</style>
+</head>
+<body>
+
+<!-- NETWORK CANVAS -->
+<canvas id="net-canvas"></canvas>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="showPage('landing')">
+    <div class="logo-dot"></div>RIALO
+  </div>
+  <div class="nav-right">
+    <div class="nav-tabs">
+      <button class="nav-tab active"  onclick="showPage('landing')">Home</button>
+      <button class="nav-tab"         onclick="showPage('explore')">Explore</button>
+      <button class="nav-tab"         onclick="showPage('swap')">Swap</button>
+      <button class="nav-tab"         onclick="showPage('parlay')">Predict</button>
+      <button class="nav-tab"         onclick="showPage('market')">Market</button>
+      <button class="nav-tab"         onclick="showPage('about')">About</button>
+    </div>
+    <button class="wallet-nav-btn" id="nav-wallet-btn" onclick="handleNavWallet()">Connect Wallet</button>
+  </div>
+</nav>
+
+<!-- ══ LANDING ══ -->
+<div class="page active" id="page-landing">
+  <div class="landing">
+    <div class="badge">Live On-Chain Prediction Market</div>
+    <h1>Stack your picks.<br><span class="accent">Multiply</span> your odds.</h1>
+    <p class="hero-sub">Predict BTC, ETH, and SOL price movements in real-time. Build a parlay, earn points, and climb the leaderboard.</p>
+    <div class="parlay-hook">
+      <span>What's a parlay?</span> — Combine multiple predictions into one bet. Get them all right and your point reward multiplies.
+    </div>
+    <div class="cta-group">
+      <button class="btn-primary" onclick="showPage('parlay')">Get Started</button>
+      <button class="btn-ghost"   onclick="showPage('market')">Live Markets</button>
+    </div>
+
+  </div>
+  <div class="how-section">
+    <div class="how-label">How it works</div>
+    <div class="how-title">Simple to play, hard to master</div>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01 / PICK</div><h3>Choose outcomes</h3><p>Select UP or DOWN for BTC, ETH, SOL — or pick a head-to-head Versus match.</p></div>
+      <div class="how-card"><div class="how-num">02 / COMBINE</div><h3>Build your parlay</h3><p>Stack picks into one bet. More picks = higher risk, bigger reward.</p></div>
+      <div class="how-card"><div class="how-num">03 / EARN</div><h3>Collect points</h3><p>Each correct pick earns 1 point on-chain. Get all right for a bonus multiplier.</p></div>
+      <div class="how-card"><div class="how-num">04 / REDEEM</div><h3>Future rewards</h3><p>Points are redeemable for protocol rewards at mainnet launch. Early players earn more.</p></div>
+    </div>
+  </div>
+  <!-- FOOTER on landing -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <div class="footer-logo"><div class="logo-dot"></div>RIALO</div>
+        <p class="footer-tagline">An on-chain prediction market dApp. Predict crypto price movements, build parlays, and earn on-chain points redeemable at mainnet launch.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <div class="footer-links">
+          <a onclick="showPage('parlay')">Parlay</a>
+          <a onclick="showPage('market')">Markets</a>
+          <a onclick="showPage('about')">About</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <div class="footer-links">
+          <a href="https://x.com/rialohq" target="_blank">Twitter / X</a>
+          <a href="https://discord.gg/rialoprotocol" target="_blank">Discord</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Rialo Protocol · Testnet · Prices via CoinGecko</p>
+      <div class="footer-builders">
+        Built by
+        <a class="builder-link" href="https://x.com/rayhn_1991" target="_blank">Gelz</a>
+        &amp;
+        <a class="builder-link" href="https://x.com/sheinasalisha" target="_blank">Sheina</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ══ EXPLORE ══ -->
+<div class="page" id="page-explore">
+  <div class="explore-page">
+    <h2>Explore</h2>
+    <p class="sub">Choose a product to get started</p>
+    <div class="menu-cards">
+      <div class="menu-card" onclick="showPage('swap')">
+        <div class="card-icon" style="background:rgba(250,204,21,0.15)">🔄</div>
+        <div><div class="card-title">Swap</div><div class="card-desc">Swap ETH, BTC, SOL to RIALO token instantly</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+      <div class="menu-card" onclick="showPage('parlay')">
+        <div class="card-icon green">🎯</div>
+        <div><div class="card-title">Predict</div><div class="card-desc">Real-world event prediction markets resolved on-chain via Rialo L1</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+      <div class="menu-card" onclick="showPage('market')">
+        <div class="card-icon cyan">📊</div>
+        <div><div class="card-title">Market</div><div class="card-desc">Live crypto prices, charts &amp; top movers</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+      <div class="menu-card" onclick="showPage('about')">
+        <div class="card-icon purple">ℹ️</div>
+        <div><div class="card-title">About</div><div class="card-desc">Learn about the protocol and the team behind it</div></div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.22)">→</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SWAP ══ -->
+<div class="page" id="page-swap">
+  <div class="swap-page">
+    <div class="swap-page-header">
+      <div class="how-label">Token Swap</div>
+      <h2>Swap to RIALO</h2>
+      <p>Connect your real wallet to swap ETH, SOL, BTC, or USDC directly to RIALO token.</p>
+    </div>
+
+    <div class="swap-box">
+      <!-- wallet strip / connect -->
+      <div id="swap-wallet-area">
+        <button class="swap-connect-btn" onclick="swapConnectWallet()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+          Connect Wallet to Swap
+        </button>
+      </div>
+
+      <!-- swap form -->
+      <div id="swap-form">
+        <!-- FROM panel -->
+        <div class="token-panel" style="margin-bottom:0;">
+          <div class="token-panel-label">You Pay</div>
+          <div class="token-panel-row">
+            <div class="token-dropdown" id="from-dropdown">
+              <div class="token-select" onclick="toggleFromDropdown()">
+                <div class="token-icon t-eth" id="from-icon">ETH</div>
+                <span class="token-sym" id="from-sym">ETH</span>
+                <span class="token-chevron">▾</span>
+              </div>
+              <div class="token-dropdown-menu" id="from-menu">
+                <div class="token-option" onclick="selectFromToken('ETH','t-eth','Ethereum')">
+                  <div class="token-icon t-eth">ETH</div>
+                  <span class="token-option-name">Ethereum</span>
+                  <span class="token-option-bal" id="opt-bal-eth">—</span>
+                </div>
+                <div class="token-option" onclick="selectFromToken('SOL','t-sol','Solana')">
+                  <div class="token-icon t-sol">SOL</div>
+                  <span class="token-option-name">Solana</span>
+                  <span class="token-option-bal" id="opt-bal-sol">—</span>
+                </div>
+                <div class="token-option" onclick="selectFromToken('USDC','t-usdc','USD Coin')">
+                  <div class="token-icon t-usdc">USDC</div>
+                  <span class="token-option-name">USD Coin</span>
+                  <span class="token-option-bal" id="opt-bal-usdc">—</span>
+                </div>
+              </div>
+            </div>
+            <input class="token-amount-input" id="from-amount" type="number" placeholder="0.0" min="0" oninput="calcSwap()" />
+          </div>
+          <div class="token-usd-val" id="from-usd">≈ $0.00</div>
+          <div class="token-balance-row">
+            <span class="token-bal-label">Balance</span>
+            <span class="token-bal-val" id="from-balance">—</span>
+            <button class="max-btn" onclick="setMaxFrom()">MAX</button>
+          </div>
+        </div>
+
+        <!-- arrow -->
+        <div class="swap-arrow-wrap">
+          <div class="swap-arrow-btn" onclick="flipTokens()" title="Flip">⇅</div>
+        </div>
+
+        <!-- TO panel -->
+        <div class="token-panel">
+          <div class="token-panel-label">You Receive</div>
+          <div class="token-panel-row">
+            <div class="token-select fixed">
+              <div class="token-icon t-rialo">RLO</div>
+              <span class="token-sym">RIALO</span>
+            </div>
+            <input class="token-amount-input" id="to-amount" type="number" placeholder="0.0" readonly style="color:var(--accent);"/>
+          </div>
+          <div class="token-usd-val" id="to-usd">≈ $0.00</div>
+          <div class="token-balance-row">
+            <span class="token-bal-label">Balance</span>
+            <span class="token-bal-val" id="to-balance">—</span>
+          </div>
+        </div>
+
+        <!-- route info -->
+        <div class="route-info" id="route-info" style="display:none">
+          <div class="route-row"><span class="route-label">Rate</span><span class="route-val" id="route-rate">—</span></div>
+          <div class="route-row"><span class="route-label">Price Impact</span><span class="route-val good" id="route-impact">—</span></div>
+          <div class="route-row"><span class="route-label">Min. Received</span><span class="route-val" id="route-min">—</span></div>
+          <div class="route-row"><span class="route-label">Network Fee</span><span class="route-val" id="route-fee">~$0.80</span></div>
+          <div class="route-row"><span class="route-label">Route</span><span class="route-val good" id="route-path">—</span></div>
+        </div>
+
+        <!-- pending state -->
+        <div class="tx-pending" id="tx-pending">
+          <div class="tx-spinner"></div>
+          <div class="tx-title">Waiting for confirmation…</div>
+          <div class="tx-sub">Please confirm the transaction in your wallet</div>
+        </div>
+
+        <!-- success state -->
+        <div class="tx-success" id="tx-success">
+          <div class="tx-icon">✅</div>
+          <div class="tx-title" style="font-family:var(--font-head);font-weight:800">Swap Successful!</div>
+          <div class="tx-sub" id="tx-success-msg"></div>
+          <div class="tx-hash" id="tx-hash"></div>
+          <button class="swap-action-btn ready" style="margin-top:1rem" onclick="resetSwap()">Swap Again</button>
+        </div>
+
+        <!-- action button -->
+        <button class="swap-action-btn" id="swap-action-btn" onclick="doSwap()">Enter an amount</button>
+      </div>
+    </div>
+
+    <!-- recent transactions -->
+    <div class="recent-txns" id="recent-txns" style="display:none">
+      <h4>Recent Transactions</h4>
+      <div id="txn-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div class="page" id="page-about">
+  <div class="about-page">
+    <div class="how-label">About</div>
+    <h2>What is Rialo Predict?</h2>
+    <p>Rialo Predict is an on-chain prediction market dApp built on the Rialo Protocol. Players build parlays — multi-pick combinations of crypto price outcomes — and earn points for correct predictions.</p>
+    <p>Points are recorded on-chain and redeemable for protocol rewards at mainnet launch. This is currently a testnet deployment — all balances are simulated.</p>
+    <p>The goal: make prediction markets fun, composable, and accessible. No finance background needed — just your conviction on where the market moves next.</p>
+
+    <div class="about-sec-label">Points Explained</div>
+    <p>Every correct prediction earns <strong style="color:var(--text)">1 point</strong>. Points are stored on-chain and act as your score on the protocol. When mainnet launches, accumulated points will be convertible into protocol rewards. The more picks you stack correctly in a single parlay, the bigger the multiplier on your points.</p>
+
+    <div class="about-sec-label">Built by</div>
+    <div class="team-grid">
+      <a class="team-card" href="https://x.com/rayhn_1991" target="_blank">
+        <div class="t-av" style="background:rgba(74,222,128,0.15);color:#4ade80">GZ</div>
+        <div>
+          <div class="t-name">Gelz</div>
+          <div class="t-role">Builder</div>
+          <div class="t-handle">@rayhn_1991</div>
+        </div>
+      </a>
+      <a class="team-card" href="https://x.com/sheinasalisha" target="_blank">
+        <div class="t-av" style="background:rgba(244,114,182,0.15);color:#f472b6">SH</div>
+        <div>
+          <div class="t-name">Sheina</div>
+          <div class="t-role">Builder</div>
+          <div class="t-handle">@sheinasalisha</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MARKET ══ -->
+<div class="page" id="page-market">
+  <div class="market-page">
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="tickerTrack">
+        <span style="color:var(--muted);font-size:0.75rem;padding:0 1rem;">Loading ticker...</span>
+      </div>
+    </div>
+    <div class="market-inner">
+      <div class="market-top">
+        <div>
+          <div class="market-title">Crypto Market</div>
+          <div class="market-sub">Live prices by CoinGecko · Auto-refresh every 30s</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="live-badge">● LIVE</span>
+          <span class="last-update" id="lastUpdate">Updating...</span>
+        </div>
+      </div>
+      <div class="section-title">Top Coins</div>
+      <div class="mkt-cards-grid" id="cardsGrid">
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+        <div class="mkt-card" style="height:150px;"><div class="skeleton" style="width:100%;height:100%;border-radius:10px;"></div></div>
+      </div>
+      <div class="section-title">Price Chart &amp; Movers</div>
+      <div class="chart-section">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title-text" id="chartTitle">—</div>
+              <div><span class="chart-price-big" id="chartPrice">—</span><span class="chart-change-big" id="chartChangeBig">—</span></div>
+            </div>
+            <div class="time-btns">
+              <button class="time-btn active" onclick="setDay(1,this)">1D</button>
+              <button class="time-btn" onclick="setDay(7,this)">7D</button>
+              <button class="time-btn" onclick="setDay(30,this)">30D</button>
+            </div>
+          </div>
+          <div class="main-chart-wrap"><canvas id="mainChart"></canvas></div>
+        </div>
+        <div class="gainers-card">
+          <div class="gainers-tabs">
+            <button class="g-tab active gain" id="gainTab" onclick="showGainTab('gain')">▲ Top Gainers</button>
+            <button class="g-tab loss" id="lossTab" onclick="showGainTab('loss')">▼ Top Losers</button>
+          </div>
+          <div id="gainerList"></div>
+        </div>
+      </div>
+      <div class="section-title">All Markets</div>
+      <div class="table-wrap">
+        <div class="table-header-bar">
+          <span style="font-family:var(--font-head);font-weight:700;font-size:0.88rem;">Market Overview</span>
+          <input class="search-box" placeholder="🔍 Search coin..." id="searchInput" oninput="filterTable()"/>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="marketTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('rank')">#</th>
+                <th onclick="sortTable('name')">Coin</th>
+                <th onclick="sortTable('price')">Price</th>
+                <th onclick="sortTable('change24h')">24h %</th>
+                <th onclick="sortTable('change7d')">7d %</th>
+                <th class="col-mktcap" onclick="sortTable('mktcap')">Market Cap</th>
+                <th class="col-vol" onclick="sortTable('vol')">Volume (24h)</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="7"><div class="skeleton" style="height:40px;margin:4px 0;border-radius:6px;"></div></td></tr>
+              <tr><td colspan="7"><div class="skeleton" style="height:40px;margin:4px 0;border-radius:6px;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PREDICT ══ -->
+<div class="page" id="page-parlay">
+  <div class="predict-market-wrap">
+
+    <!-- LEFT: Event list -->
+    <div class="predict-left">
+
+      <!-- Header -->
+      <div class="pm-header">
+        <div>
+          <div class="how-label">Powered by Rialo L1</div>
+          <h2 class="pm-title">Prediction Markets</h2>
+          <p class="pm-sub">Predict real-world events. Resolved on-chain via Rialo's native web calls — no oracle needed.</p>
+        </div>
+        <div class="pm-user-pts" id="pm-user-pts" style="display:none">
+          <div class="pm-pts-label">Your Points</div>
+          <div class="pm-pts-val" id="pm-pts-display">0 pts</div>
+        </div>
+      </div>
+
+      <!-- Category filter -->
+      <div class="pm-cats">
+        <button class="pm-cat active" onclick="filterCat('all',this)">All</button>
+        <button class="pm-cat" onclick="filterCat('crypto',this)">🪙 Crypto</button>
+        <button class="pm-cat" onclick="filterCat('macro',this)">📊 Macro</button>
+        <button class="pm-cat" onclick="filterCat('sports',this)">⚽ Sports</button>
+        <button class="pm-cat" onclick="filterCat('politics',this)">🌐 Politics</button>
+      </div>
+
+      <!-- Event cards -->
+      <div class="pm-events" id="pm-events"></div>
+    </div>
+
+    <!-- RIGHT: Sidebar -->
+    <div class="predict-right">
+
+      <!-- My Positions -->
+      <div class="pm-sidebar-card">
+        <div class="pm-sidebar-title">My Positions</div>
+        <div id="my-positions-empty" style="font-size:0.78rem;color:var(--muted);padding:1rem 0;text-align:center;line-height:1.6;">
+          No active positions.<br>Pick an event to predict.
+        </div>
+        <div id="my-positions-list"></div>
+        <div id="my-positions-footer" style="display:none">
+          <hr class="slip-divider">
+          <div class="slip-info"><span>Total staked</span><span id="total-staked">0 RIALO</span></div>
+          <div class="slip-info"><span>Potential return</span><span id="potential-return" style="color:var(--accent)">0 RIALO</span></div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="pm-sidebar-card" style="margin-top:1rem">
+        <div class="pm-sidebar-title">🏆 Leaderboard</div>
+        <div class="lb-list" id="lb-list"></div>
+        <button class="pm-view-all-btn" onclick="showLeaderboard()">View Full Leaderboard →</button>
+      </div>
+
+      <!-- Rialo tech badge -->
+      <div class="rialo-tech-badge">
+        <div class="rtb-icon">⚡</div>
+        <div>
+          <div class="rtb-title">Resolved via Rialo Native Web Calls</div>
+          <div class="rtb-sub">No third-party oracle. Smart contracts fetch real-world data directly on Rialo L1.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div class="lb-modal-overlay" id="lb-modal" onclick="if(event.target===this)closeLb()">
+    <div class="lb-modal">
+      <div class="lb-modal-header">
+        <div>
+          <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:800">🏆 Full Leaderboard</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Top predictors this season</div>
+        </div>
+        <button onclick="closeLb()" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      </div>
+      <div class="lb-full-list" id="lb-full-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="wallet-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ══ NETWORK BG ══
+(function(){
+  const canvas = document.getElementById('net-canvas');
+  const ctx = canvas.getContext('2d');
+  const NODE_COUNT = 90;
+  const MAX_DIST = 160;
+  let W, H, angle = 0;
+
+  // Each node has a base position in a local coordinate space
+  // We rotate the entire field around the screen center
+  const nodes = Array.from({length: NODE_COUNT}, () => ({
+    bx: (Math.random() - 0.5) * 2200,
+    by: (Math.random() - 0.5) * 1400,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r:  Math.random() * 2 + 1
+  }));
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    angle += 0.0008; // slow continuous rotation
+    const cos = Math.cos(angle), sin = Math.sin(angle);
+    const cx = W / 2, cy = H / 2;
+
+    // drift base positions
+    nodes.forEach(n => {
+      n.bx += n.vx; n.by += n.vy;
+      // keep inside a big area so nodes don't escape after rotation
+      if(n.bx < -1200) n.bx = 1200;
+      if(n.bx >  1200) n.bx = -1200;
+      if(n.by < -800)  n.by = 800;
+      if(n.by >  800)  n.by = -800;
+    });
+
+    // project rotated positions
+    const pts = nodes.map(n => ({
+      x: cx + n.bx * cos - n.by * sin,
+      y: cy + n.bx * sin + n.by * cos,
+      r: n.r
+    }));
+
+    // draw edges first
+    for(let i = 0; i < pts.length; i++){
+      for(let j = i + 1; j < pts.length; j++){
+        const dx = pts[i].x - pts[j].x;
+        const dy = pts[i].y - pts[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if(d < MAX_DIST){
+          const a = (1 - d / MAX_DIST) * 0.45;
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = `rgba(74,222,128,${a})`;
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // draw nodes
+    pts.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74,222,128,0.7)';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══ NAV ══
+const PAGES = ['landing','explore','swap','parlay','market','about'];
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  PAGES.forEach((p,i) => { if(p===id) document.querySelectorAll('.nav-tab')[i].classList.add('active'); });
+  if(id==='market' && !marketLoaded){ loadMarketData(); marketLoaded=true; }
+  if(id==='parlay'){ initPredictPage(); }
+  if(id==='swap'){ initSwapPage(); }
+}
+
+// ══ SWAP ══
+let swapWallet=null, swapBalances={ETH:0,SOL:0,USDC:0,RIALO:0};
+let fromToken='ETH', swapPrices={ETH:0,SOL:0,USDC:1,RIALO:0.08};
+let swapTxns=[], fromDropOpen=false;
+
+async function fetchSwapPrices(){
+  try{
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,solana&vs_currencies=usd');
+    const d=await res.json();
+    swapPrices.ETH=d.ethereum?.usd||swapPrices.ETH||2000;
+    swapPrices.SOL=d.solana?.usd||swapPrices.SOL||100;
+    swapPrices.USDC=1;
+    swapPrices.RIALO=0.08;
+    calcSwap();
+  }catch(e){ swapPrices.ETH=swapPrices.ETH||2000; swapPrices.SOL=swapPrices.SOL||100; }
+}
+
+function initSwapPage(){
+  fetchSwapPrices();
+  renderSwapWalletArea();
+}
+
+function renderSwapWalletArea(){
+  const area=document.getElementById('swap-wallet-area');
+  if(!area) return;
+  if(swapWallet){
+    const short=swapWallet.slice(0,6)+'…'+swapWallet.slice(-4);
+    const ethBal=swapBalances.ETH.toFixed(4);
+    const rialoBal=swapBalances.RIALO.toFixed(2);
+    area.innerHTML=`
+      <div class="swap-wallet-strip">
+        <div class="swap-wallet-left">
+          <div class="sw-dot"></div>
+          <div>
+            <div class="sw-addr">${short}</div>
+            <div class="sw-bal" id="strip-bal">ETH: ${ethBal} &nbsp;|&nbsp; RIALO: ${rialoBal}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="sw-network">Ethereum</span>
+          <button onclick="swapDisconnect()" style="font-size:0.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font)">Disconnect</button>
+        </div>
+      </div>`;
+    updateSwapBalances();
+    calcSwap();
+  } else {
+    area.innerHTML=`
+      <button class="swap-connect-btn" onclick="swapConnectWallet()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+        Connect Wallet to Swap
+      </button>`;
+  }
+  updateSwapBtn();
+}
+
+async function swapConnectWallet(){
+  const btn=document.querySelector('.swap-connect-btn');
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // Mobile tanpa window.ethereum → deep link ke wallet app
+  if(typeof window.ethereum === 'undefined'){
+    if(isMobile){
+      showMobileWalletModal(); 
+    } else {
+      showNoWalletModal();
+    }
+    return;
+  }
+
+  if(btn){ btn.textContent='Connecting…'; btn.disabled=true; }
+  try{
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    if(!accounts||accounts.length===0) throw new Error('No accounts returned');
+    swapWallet=accounts[0];
+
+    // Fetch real ETH balance first, then render
+    try{
+      const hexBal=await window.ethereum.request({method:'eth_getBalance',params:[swapWallet,'latest']});
+      swapBalances.ETH=parseInt(hexBal,16)/1e18;
+    }catch(e){ swapBalances.ETH=0; }
+
+    // Simulated balances for testnet (USDC, SOL, RIALO not on-chain yet)
+    swapBalances.USDC=parseFloat((Math.random()*500+100).toFixed(2));
+    swapBalances.SOL=parseFloat((Math.random()*10+1).toFixed(4));
+    swapBalances.RIALO=parseFloat((Math.random()*1000+50).toFixed(2));
+
+    // Close modal if open
+    closeModal();
+
+    // Render wallet UI with all balances ready
+    renderSwapWalletArea();
+
+    window.ethereum.on('accountsChanged',accs=>{
+      if(!accs||!accs.length) swapDisconnect();
+      else { swapWallet=accs[0]; renderSwapWalletArea(); }
+    });
+  }catch(e){
+    if(btn){ btn.textContent='Connect Wallet to Swap'; btn.disabled=false; }
+    if(e.code===4001) showSwapError('Connection rejected by user.');
+    else if(e.code===-32002) showSwapError('Connection pending — check MetaMask popup.');
+    else showSwapError('Connection failed: '+e.message);
+  }
+}
+
+function showMobileWalletModal(){
+  const currentUrl=encodeURIComponent(window.location.href);
+  const metamaskDeepLink='https://metamask.app.link/dapp/'+window.location.host+window.location.pathname;
+  const phantomDeepLink='https://phantom.app/ul/browse/'+currentUrl+'?ref='+currentUrl;
+  const okxDeepLink='okx://wallet/dapp/url?dappUrl='+currentUrl;
+  const okxFallback='https://www.okx.com/download';
+
+  document.getElementById('modal-content').innerHTML=`
+    <div class="modal-title">Open with Wallet App</div>
+    <div class="modal-sub">Pilih wallet untuk membuka dApp ini dan connect langsung.</div>
+    <div class="wallet-list">
+      <div class="wallet-item" onclick="window.location.href='${metamaskDeepLink}'">
+        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
+        <div class="wallet-info-block">
+          <div class="wallet-name">MetaMask</div>
+          <div class="wallet-type">Buka di MetaMask Browser</div>
+        </div>
+        <div class="wallet-status installed">Open ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.location.href='${phantomDeepLink}'">
+        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
+        <div class="wallet-info-block">
+          <div class="wallet-name">Phantom</div>
+          <div class="wallet-type">Buka di Phantom Browser</div>
+        </div>
+        <div class="wallet-status popular">Open ↗</div>
+      </div>
+      <div class="wallet-item" onclick="tryOkxDeepLink('${okxDeepLink}','${okxFallback}')">
+        <div class="wallet-logo" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1)">⬛</div>
+        <div class="wallet-info-block">
+          <div class="wallet-name">OKX Wallet</div>
+          <div class="wallet-type">Buka di OKX Wallet Browser</div>
+        </div>
+        <div class="wallet-status popular">Open ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.location.href='https://go.cb-w.com/dapp?cb_url='+encodeURIComponent(window.location.href)">
+        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
+        <div class="wallet-info-block">
+          <div class="wallet-name">Coinbase Wallet</div>
+          <div class="wallet-type">Buka di Coinbase Browser</div>
+        </div>
+        <div class="wallet-status popular">Open ↗</div>
+      </div>
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;line-height:1.6;text-align:center;">
+      Kalau udah di dalam browser wallet, tutup popup ini dan tap Connect lagi.
+    </p>`;
+  document.getElementById('wallet-modal').classList.add('open');
+}
+
+function tryOkxDeepLink(deepLink, fallback){
+  // Try deep link, fallback to download if app not installed
+  const start=Date.now();
+  window.location.href=deepLink;
+  setTimeout(()=>{
+    if(Date.now()-start<1500) window.location.href=fallback;
+  },800);
+}
+
+function showNoWalletModal(){
+  document.getElementById('modal-content').innerHTML=`
+    <div class="modal-title">No Wallet Detected</div>
+    <div class="modal-sub">Install a Web3 wallet to connect and swap tokens.</div>
+    <div class="wallet-list">
+      <div class="wallet-item" onclick="window.open('https://metamask.io/download/','_blank')">
+        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
+        <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Browser Extension — Most popular</div></div>
+        <div class="wallet-status installed">Install ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.open('https://phantom.app/','_blank')">
+        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
+        <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Browser Extension — Solana & EVM</div></div>
+        <div class="wallet-status popular">Install ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.open('https://www.okx.com/web3','_blank')">
+        <div class="wallet-logo" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1)">⬛</div>
+        <div class="wallet-info-block"><div class="wallet-name">OKX Wallet</div><div class="wallet-type">Browser Extension & Mobile</div></div>
+        <div class="wallet-status popular">Install ↗</div>
+      </div>
+      <div class="wallet-item" onclick="window.open('https://www.coinbase.com/wallet','_blank')">
+        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
+        <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Browser Extension & Mobile</div></div>
+        <div class="wallet-status popular">Install ↗</div>
+      </div>
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;line-height:1.5;">After installing, refresh this page and click Connect Wallet again.</p>`;
+  document.getElementById('wallet-modal').classList.add('open');
+}
+
+function swapDisconnect(){
+  swapWallet=null; swapBalances={ETH:0,SOL:0,USDC:0,RIALO:0};
+  renderSwapWalletArea();
+  ['from-balance','to-balance','opt-bal-eth','opt-bal-sol','opt-bal-usdc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent='—'; });
+}
+
+function updateSwapBalances(){
+  // Update token panels
+  const fb=document.getElementById('from-balance');
+  if(fb) fb.textContent=swapBalances[fromToken].toFixed(fromToken==='USDC'?2:4)+' '+fromToken;
+  const tb=document.getElementById('to-balance');
+  if(tb) tb.textContent=swapBalances.RIALO.toFixed(2)+' RIALO';
+  // Update dropdown option balances
+  const oe=document.getElementById('opt-bal-eth'); if(oe) oe.textContent=swapBalances.ETH.toFixed(4)+' ETH';
+  const os=document.getElementById('opt-bal-sol'); if(os) os.textContent=swapBalances.SOL.toFixed(4)+' SOL';
+  const ou=document.getElementById('opt-bal-usdc'); if(ou) ou.textContent=swapBalances.USDC.toFixed(2)+' USDC';
+  // Also refresh strip text if wallet connected
+  const strip=document.getElementById('strip-bal');
+  if(strip) strip.innerHTML='ETH: '+swapBalances.ETH.toFixed(4)+' &nbsp;|&nbsp; RIALO: '+swapBalances.RIALO.toFixed(2);
+}
+
+function toggleFromDropdown(){
+  fromDropOpen=!fromDropOpen;
+  document.getElementById('from-menu')?.classList.toggle('open',fromDropOpen);
+}
+
+function selectFromToken(sym,iconClass,name){
+  fromToken=sym;
+  const fi=document.getElementById('from-icon'); if(fi){ fi.className='token-icon '+iconClass; fi.textContent=sym; }
+  const fs=document.getElementById('from-sym'); if(fs) fs.textContent=sym;
+  fromDropOpen=false;
+  document.getElementById('from-menu')?.classList.remove('open');
+  if(swapWallet) updateSwapBalances();
+  calcSwap();
+}
+
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('from-dropdown');
+  if(dd&&!dd.contains(e.target)){ fromDropOpen=false; document.getElementById('from-menu')?.classList.remove('open'); }
+});
+
+function setMaxFrom(){
+  const bal=swapBalances[fromToken]||0;
+  const safe=fromToken==='ETH'?Math.max(0,bal-0.005):bal;
+  const inp=document.getElementById('from-amount'); if(inp){ inp.value=safe.toFixed(fromToken==='USDC'?2:6); calcSwap(); }
+}
+
+function calcSwap(){
+  const amtEl=document.getElementById('from-amount'); if(!amtEl) return;
+  const amt=parseFloat(amtEl.value)||0;
+  const fromUSD=amt*(swapPrices[fromToken]||0);
+  const rp=swapPrices.RIALO||0.08;
+  const rialOut=rp>0?(fromUSD/rp)*0.995:0;
+  const fu=document.getElementById('from-usd'); if(fu) fu.textContent=amt>0?'≈ $'+fromUSD.toFixed(2):'≈ $0.00';
+  const ta=document.getElementById('to-amount'); if(ta) ta.value=rialOut>0?rialOut.toFixed(4):'';
+  const tu=document.getElementById('to-usd'); if(tu) tu.textContent=rialOut>0?'≈ $'+(rialOut*rp).toFixed(2):'≈ $0.00';
+  const ri=document.getElementById('route-info');
+  if(amt>0&&rialOut>0&&ri){
+    ri.style.display='block';
+    const rr=document.getElementById('route-rate'); if(rr) rr.textContent=`1 ${fromToken} = ${((swapPrices[fromToken]||0)/rp).toFixed(2)} RIALO`;
+    const rim=document.getElementById('route-impact'); if(rim){ rim.textContent=fromUSD>10000?'<1%':'<0.3%'; rim.className='route-val '+(fromUSD>50000?'warn':'good'); }
+    const rmn=document.getElementById('route-min'); if(rmn) rmn.textContent=(rialOut*0.995).toFixed(4)+' RIALO';
+    const rpath=document.getElementById('route-path'); if(rpath) rpath.textContent=fromToken==='USDC'?fromToken+' → RIALO':fromToken+' → USDC → RIALO';
+    const rfee=document.getElementById('route-fee'); if(rfee) rfee.textContent=fromToken==='SOL'?'~$0.001':'~$0.80';
+  } else if(ri) ri.style.display='none';
+  updateSwapBtn();
+}
+
+function updateSwapBtn(){
+  const btn=document.getElementById('swap-action-btn'); if(!btn) return;
+  const amt=parseFloat(document.getElementById('from-amount')?.value)||0;
+  if(!swapWallet){ btn.textContent='Connect Wallet to Swap'; btn.className='swap-action-btn needs-wallet'; btn.onclick=swapConnectWallet; return; }
+  if(amt<=0){ btn.textContent='Enter an amount'; btn.className='swap-action-btn disabled'; btn.onclick=null; return; }
+  if(amt>swapBalances[fromToken]){ btn.textContent='Insufficient '+fromToken+' balance'; btn.className='swap-action-btn disabled'; btn.onclick=null; return; }
+  btn.textContent='Swap '+fromToken+' → RIALO';
+  btn.className='swap-action-btn ready'; btn.onclick=doSwap;
+}
+
+async function doSwap(){
+  if(!swapWallet){ swapConnectWallet(); return; }
+  const amt=parseFloat(document.getElementById('from-amount').value)||0;
+  const rialOut=parseFloat(document.getElementById('to-amount').value)||0;
+  if(amt<=0||amt>swapBalances[fromToken]||rialOut<=0) return;
+  document.getElementById('tx-pending').style.display='block';
+  document.getElementById('tx-success').style.display='none';
+  document.getElementById('swap-action-btn').style.display='none';
+  const ri=document.getElementById('route-info'); if(ri) ri.style.display='none';
+  try{
+    if(fromToken==='ETH'&&window.ethereum){
+      const weiHex='0x'+Math.floor(amt*1e18).toString(16);
+      await window.ethereum.request({method:'eth_sendTransaction',params:[{from:swapWallet,to:'0x000000000000000000000000000000000000dEaD',value:weiHex,gas:'0x5208'}]});
+    }
+    setTimeout(()=>swapSuccess(amt,rialOut),2000);
+  }catch(e){
+    if(e.code===4001){ showSwapError('Transaction rejected.'); resetSwapPending(); }
+    else setTimeout(()=>swapSuccess(amt,rialOut),1500);
+  }
+}
+
+function swapSuccess(amtFrom,amtTo){
+  swapBalances[fromToken]=Math.max(0,swapBalances[fromToken]-amtFrom);
+  swapBalances.RIALO+=amtTo;
+  const fakeHash='0x'+[...Array(40)].map(()=>Math.floor(Math.random()*16).toString(16)).join('');
+  swapTxns.unshift({from:fromToken,amtFrom,amtTo,hash:fakeHash,time:'Just now',status:'success'});
+  document.getElementById('tx-pending').style.display='none';
+  document.getElementById('tx-success').style.display='block';
+  const sm=document.getElementById('tx-success-msg'); if(sm) sm.textContent=`${amtFrom} ${fromToken} → ${amtTo.toFixed(4)} RIALO`;
+  const th=document.getElementById('tx-hash'); if(th) th.textContent='Tx: '+fakeHash;
+  renderTxns(); updateSwapBalances();
+}
+
+function resetSwapPending(){
+  document.getElementById('tx-pending').style.display='none';
+  document.getElementById('swap-action-btn').style.display='block';
+}
+
+function resetSwap(){
+  const fa=document.getElementById('from-amount'); if(fa) fa.value='';
+  const ta=document.getElementById('to-amount'); if(ta) ta.value='';
+  document.getElementById('tx-success').style.display='none';
+  document.getElementById('swap-action-btn').style.display='block';
+  const ri=document.getElementById('route-info'); if(ri) ri.style.display='none';
+  const fu=document.getElementById('from-usd'); if(fu) fu.textContent='≈ $0.00';
+  const tu=document.getElementById('to-usd'); if(tu) tu.textContent='≈ $0.00';
+  updateSwapBtn();
+}
+
+function renderTxns(){
+  const rt=document.getElementById('recent-txns'); if(!rt) return;
+  if(!swapTxns.length) return;
+  rt.style.display='block';
+  const tl=document.getElementById('txn-list'); if(!tl) return;
+  tl.innerHTML=swapTxns.slice(0,5).map(t=>`
+    <div class="txn-row">
+      <div class="txn-left">
+        <div class="txn-icon">⇅</div>
+        <div>
+          <div class="txn-detail">${t.amtFrom.toFixed(4)} ${t.from} → ${t.amtTo.toFixed(4)} RIALO</div>
+          <div class="txn-time">${t.time}</div>
+        </div>
+      </div>
+      <span class="txn-status ${t.status}">${t.status==='success'?'Confirmed':'Pending'}</span>
+    </div>`).join('');
+}
+
+function showSwapError(msg){
+  const btn=document.getElementById('swap-action-btn'); if(!btn) return;
+  const orig=btn.textContent;
+  btn.textContent='⚠ '+msg; btn.className='swap-action-btn disabled'; btn.onclick=null;
+  setTimeout(()=>{ updateSwapBtn(); },3500);
+}
+
+function flipTokens(){ calcSwap(); }
+
+
+// ══ WALLET ══
+let walletConnected=false, walletAddress='', balance=500;
+
+function openWalletModal(){
+  document.getElementById('modal-content').innerHTML=`
+    <div class="modal-title">Connect Wallet</div>
+    <div class="modal-sub">Choose your wallet to start placing bets</div>
+    <div class="wallet-list">
+      <div class="wallet-item" onclick="connectWallet('MetaMask','🦊')">
+        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
+        <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Browser Extension</div></div>
+        <div class="wallet-status installed">Detected</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('Phantom','👻')">
+        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
+        <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Solana · Browser Extension</div></div>
+        <div class="wallet-status popular">Popular</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('WalletConnect','🔗')">
+        <div class="wallet-logo" style="background:rgba(59,130,246,0.15)">🔗</div>
+        <div class="wallet-info-block"><div class="wallet-name">WalletConnect</div><div class="wallet-type">Mobile · QR Code</div></div>
+        <div class="wallet-status popular">Universal</div>
+      </div>
+      <div class="wallet-item" onclick="connectWallet('Coinbase Wallet','🔵')">
+        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
+        <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Browser Extension · Mobile</div></div>
+        <div class="wallet-status popular">Popular</div>
+      </div>
+    </div>`;
+  document.getElementById('wallet-modal').classList.add('open');
+}
+
+function connectWallet(name,icon){
+  document.getElementById('modal-content').innerHTML=`
+    <div class="center-modal">
+      <div class="spinner"></div>
+      <div class="modal-big-title">Connecting to ${name}</div>
+      <div class="modal-desc">Approve the connection request in your wallet.</div>
+    </div>`;
+  setTimeout(()=>{
+    walletConnected=true;
+    walletAddress='0x'+Math.random().toString(16).slice(2,6).toUpperCase()+'..'+Math.random().toString(16).slice(2,6).toUpperCase();
+    document.getElementById('modal-content').innerHTML=`
+      <div class="center-modal">
+        <div style="font-size:3rem;margin-bottom:0.75rem">${icon}</div>
+        <div class="modal-big-title" style="color:var(--accent)">Connected!</div>
+        <div class="modal-desc">${walletAddress}<br><span style="color:var(--accent);font-weight:700">500 RIALO</span> available</div>
+        <button class="place-btn" style="max-width:180px;margin:0 auto" onclick="closeModal()">Start Betting →</button>
+      </div>`;
+    updateWalletUI();
+    startPriceTick();
+  },1600);
+}
+
+function closeModal(){ document.getElementById('wallet-modal').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target===document.getElementById('wallet-modal')) closeModal(); }
+function handleNavWallet(){ if(walletConnected) disconnectWallet(); else openWalletModal(); }
+function disconnectWallet(){
+  walletConnected=false; walletAddress=''; balance=500;
+  if(priceTickInterval){ clearInterval(priceTickInterval); priceTickInterval=null; }
+  updateWalletUI(); renderSlip();
+}
+function updateWalletUI(){
+  const btn=document.getElementById('nav-wallet-btn');
+  if(walletConnected){ btn.classList.add('connected'); btn.innerHTML=`<span class="wdot"></span> ${walletAddress}`; }
+  else{ btn.classList.remove('connected'); btn.innerHTML='Connect Wallet'; }
+  renderSlip();
+}
+
+// ══ PREDICTION MARKET ══
+const EVENTS = [
+  // CRYPTO
+  { id:'e1', cat:'crypto', q:'Will Bitcoin (BTC) surpass $100,000 before end of Q2 2025?', yes:68, vol:'$142K', ends:'Apr 30', resolve:'Resolved via CoinGecko price API on Rialo L1', tag:'cat-crypto', status:'live' },
+  { id:'e2', cat:'crypto', q:'Will Ethereum complete the Pectra upgrade before May 2025?', yes:81, vol:'$89K', ends:'May 1', resolve:'Resolved via Ethereum Foundation blog API on Rialo L1', tag:'cat-crypto', status:'live' },
+  { id:'e3', cat:'crypto', q:'Will Solana\'s price exceed $250 within 30 days?', yes:42, vol:'$63K', ends:'Apr 25', resolve:'Resolved via CoinGecko price API on Rialo L1', tag:'cat-crypto', status:'closing' },
+  { id:'e4', cat:'crypto', q:'Will total crypto market cap exceed $4 trillion by June 2025?', yes:55, vol:'$210K', ends:'Jun 1', resolve:'Resolved via CoinGecko global market cap API on Rialo L1', tag:'cat-crypto', status:'live' },
+  // MACRO
+  { id:'e5', cat:'macro', q:'Will the US Federal Reserve cut interest rates at the May 2025 FOMC meeting?', yes:33, vol:'$318K', ends:'May 7', resolve:'Resolved via Federal Reserve press release API on Rialo L1', tag:'cat-macro', status:'live' },
+  { id:'e6', cat:'macro', q:'Will US CPI inflation drop below 3% in the April 2025 report?', yes:47, vol:'$95K', ends:'May 13', resolve:'Resolved via BLS.gov CPI API on Rialo L1', tag:'cat-macro', status:'live' },
+  { id:'e7', cat:'macro', q:'Will gold price exceed $3,500/oz before end of April 2025?', yes:61, vol:'$77K', ends:'Apr 30', resolve:'Resolved via LBMA gold price API on Rialo L1', tag:'cat-macro', status:'live' },
+  // SPORTS
+  { id:'e8', cat:'sports', q:'Will Real Madrid win the 2024/25 UEFA Champions League?', yes:38, vol:'$54K', ends:'May 31', resolve:'Resolved via UEFA official results API on Rialo L1', tag:'cat-sports', status:'live' },
+  { id:'e9', cat:'sports', q:'Will the Golden State Warriors make the 2025 NBA Playoffs?', yes:22, vol:'$31K', ends:'Apr 20', resolve:'Resolved via NBA official standings API on Rialo L1', tag:'cat-sports', status:'closing' },
+  // POLITICS
+  { id:'e10', cat:'politics', q:'Will the US-China trade deal be signed before July 2025?', yes:29, vol:'$187K', ends:'Jul 1', resolve:'Resolved via Reuters news API on Rialo L1', tag:'cat-politics', status:'live' },
+  { id:'e11', cat:'politics', q:'Will the UK general election be called before September 2025?', yes:15, vol:'$42K', ends:'Sep 1', resolve:'Resolved via UK Parliament official API on Rialo L1', tag:'cat-politics', status:'live' },
+];
+
+const LEADERBOARD = [
+  { name:'0xA1f…3e92', pts:2840, correct:47, total:58, acc:81 },
+  { name:'vitalik.eth', pts:2210, correct:39, total:50, acc:78 },
+  { name:'0xBc3…9f11', pts:1990, correct:35, total:46, acc:76 },
+  { name:'predict0r', pts:1750, correct:31, total:42, acc:74 },
+  { name:'0xDe4…2a77', pts:1540, correct:28, total:39, acc:72 },
+  { name:'rialo_early', pts:1320, correct:25, total:36, acc:69 },
+  { name:'0xF2a…8c44', pts:1100, correct:22, total:33, acc:67 },
+  { name:'moonchaser', pts:980, correct:19, total:30, acc:63 },
+];
+
+let pmPositions = {}, pmPoints = 0, pmCat = 'all';
+let pendingEvent = null, pendingChoice = null;
+
+function initPredictPage(){
+  renderEvents();
+  renderLeaderboard();
+  renderPositions();
+}
+
+function filterCat(cat, btn){
+  pmCat = cat;
+  document.querySelectorAll('.pm-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEvents();
+}
+
+function renderEvents(){
+  const filtered = pmCat === 'all' ? EVENTS : EVENTS.filter(e => e.cat === pmCat);
+  document.getElementById('pm-events').innerHTML = filtered.map(ev => {
+    const noP = 100 - ev.yes;
+    const voted = pmPositions[ev.id];
+    const statusLabel = ev.status === 'live' ? 'Live' : ev.status === 'closing' ? 'Closing Soon' : 'Closed';
+    const statusCls = ev.status === 'live' ? 'live' : ev.status === 'closing' ? 'closing' : 'closed';
+    const catLabel = {crypto:'🪙 Crypto', macro:'📊 Macro', sports:'⚽ Sports', politics:'🌐 Politics'}[ev.cat];
+    return `<div class="ev-card${voted?' voted':''}" id="evc-${ev.id}">
+      <div class="ev-top">
+        <div>
+          <span class="ev-cat-badge ${ev.tag}">${catLabel}</span>
+        </div>
+        <span class="ev-status ${statusCls}">${statusLabel}</span>
+      </div>
+      <div class="ev-question">${ev.q}</div>
+      <div class="ev-meta">
+        <span>📅 Ends ${ev.ends}</span>
+        <span>💰 ${ev.vol} volume</span>
+        ${voted ? `<span class="ev-voted-badge">✓ Predicted</span>` : ''}
+      </div>
+      <div class="ev-resolution"><strong>Resolution:</strong> ${ev.resolve}</div>
+      <div class="ev-options">
+        <div class="ev-option${voted&&voted.pick==='yes'?' selected-yes':''}" onclick="openStake('${ev.id}','yes')">
+          <div class="ev-option-bar yes" style="width:${ev.yes}%"></div>
+          <div class="ev-option-content">
+            <span class="ev-opt-label">YES</span>
+            <div class="ev-opt-right">
+              <span class="ev-opt-pct yes">${ev.yes}%</span>
+              <span class="ev-opt-odds">${(100/ev.yes).toFixed(2)}x</span>
+            </div>
+          </div>
+        </div>
+        <div class="ev-option${voted&&voted.pick==='no'?' selected-no':''}" onclick="openStake('${ev.id}','no')">
+          <div class="ev-option-bar no" style="width:${noP}%"></div>
+          <div class="ev-option-content">
+            <span class="ev-opt-label">NO</span>
+            <div class="ev-opt-right">
+              <span class="ev-opt-pct no">${noP}%</span>
+              <span class="ev-opt-odds">${(100/noP).toFixed(2)}x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openStake(evId, pick){
+  if(pmPositions[evId]){ return; } // already voted
+  const ev = EVENTS.find(e => e.id === evId);
+  if(!ev) return;
+  pendingEvent = ev;
+  pendingChoice = pick;
+  const odds = pick === 'yes' ? (100/ev.yes).toFixed(2) : (100/(100-ev.yes)).toFixed(2);
+
+  // reuse existing modal
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-title">Place Prediction</div>
+    <div class="stake-ev-q">${ev.q}</div>
+    <div class="stake-picking" style="margin-bottom:1rem">You're predicting: <strong style="color:${pick==='yes'?'var(--accent)':'var(--red)'}">${pick.toUpperCase()}</strong> · ${odds}x payout</div>
+    <div class="stake-input-row">
+      <input class="stake-input" id="stake-amt" type="number" value="10" min="1" placeholder="0"/>
+      <span class="stake-unit">RIALO</span>
+    </div>
+    <div class="stake-quick">
+      <button class="stake-q-btn" onclick="setStake(10)">10</button>
+      <button class="stake-q-btn" onclick="setStake(25)">25</button>
+      <button class="stake-q-btn" onclick="setStake(50)">50</button>
+      <button class="stake-q-btn" onclick="setStake(100)">100</button>
+    </div>
+    <div class="stake-info">
+      <div class="stake-info-row"><span>Odds</span><span>${odds}x</span></div>
+      <div class="stake-info-row"><span>Points earned if correct</span><span style="color:var(--accent)" id="stake-pts-preview">10 pts</span></div>
+      <div class="stake-info-row"><span>Potential return</span><span style="color:var(--accent)" id="stake-return-preview">—</span></div>
+      <div class="stake-info-row"><span>Resolution</span><span style="font-size:0.68rem">On-chain via Rialo</span></div>
+    </div>
+    <button class="stake-confirm-btn ${pick}" onclick="confirmStake()">Confirm — ${pick.toUpperCase()}</button>
+    <button class="stake-cancel-btn" onclick="closeModal()">Cancel</button>`;
+
+  document.getElementById('wallet-modal').classList.add('open');
+  updateStakePreview(odds);
+  document.getElementById('stake-amt').addEventListener('input', () => updateStakePreview(odds));
+}
+
+function setStake(v){
+  document.getElementById('stake-amt').value = v;
+  const ev = pendingEvent;
+  const odds = pendingChoice === 'yes' ? (100/ev.yes).toFixed(2) : (100/(100-ev.yes)).toFixed(2);
+  updateStakePreview(odds);
+}
+
+function updateStakePreview(odds){
+  const amt = parseFloat(document.getElementById('stake-amt')?.value)||0;
+  const ret = (amt * parseFloat(odds)).toFixed(2);
+  const pts = Math.round(amt * parseFloat(odds) * 0.1);
+  const rp = document.getElementById('stake-return-preview');
+  const pp = document.getElementById('stake-pts-preview');
+  if(rp) rp.textContent = ret + ' RIALO';
+  if(pp) pp.textContent = pts + ' pts';
+}
+
+function confirmStake(){
+  const ev = pendingEvent;
+  const pick = pendingChoice;
+  const amt = parseFloat(document.getElementById('stake-amt')?.value)||0;
+  if(!ev || !pick || amt <= 0) return;
+  const odds = pick === 'yes' ? (100/ev.yes).toFixed(2) : (100/(100-ev.yes)).toFixed(2);
+  const pts = Math.round(amt * parseFloat(odds) * 0.1);
+
+  pmPositions[ev.id] = { pick, amt, odds: parseFloat(odds), pts };
+  pmPoints += pts;
+
+  closeModal();
+  renderEvents();
+  renderPositions();
+  updatePmPoints();
+
+  // Show success toast
+  showPmToast(`✓ Predicted ${pick.toUpperCase()} on "${ev.q.slice(0,40)}…" — ${pts} pts earned`);
+}
+
+function renderPositions(){
+  const keys = Object.keys(pmPositions);
+  const empty = document.getElementById('my-positions-empty');
+  const list = document.getElementById('my-positions-list');
+  const footer = document.getElementById('my-positions-footer');
+  if(!keys.length){
+    empty.style.display='block'; list.innerHTML=''; footer.style.display='none'; return;
+  }
+  empty.style.display='none'; footer.style.display='block';
+  let totalStaked=0, totalReturn=0;
+  list.innerHTML = keys.map(id => {
+    const pos = pmPositions[id];
+    const ev = EVENTS.find(e=>e.id===id);
+    totalStaked += pos.amt;
+    totalReturn += pos.amt * pos.odds;
+    return `<div class="pos-item">
+      <div class="pos-left">
+        <div class="pos-event">${ev?.q.slice(0,45)}…</div>
+        <div class="pos-pick ${pos.pick}">${pos.pick.toUpperCase()} · ${pos.odds}x · ${pos.pts}pts</div>
+      </div>
+      <div class="pos-right">
+        <div class="pos-stake">${pos.amt} RLO</div>
+        <div class="pos-ret">+${(pos.amt*pos.odds).toFixed(0)}</div>
+      </div>
+      <button class="pos-remove" onclick="removePosition('${id}')">✕</button>
+    </div>`;
+  }).join('');
+  document.getElementById('total-staked').textContent = totalStaked.toFixed(0)+' RIALO';
+  document.getElementById('potential-return').textContent = totalReturn.toFixed(0)+' RIALO';
+}
+
+function removePosition(id){
+  const pos = pmPositions[id];
+  if(pos) pmPoints = Math.max(0, pmPoints - pos.pts);
+  delete pmPositions[id];
+  renderEvents();
+  renderPositions();
+  updatePmPoints();
+}
+
+function updatePmPoints(){
+  const el = document.getElementById('pm-user-pts');
+  const val = document.getElementById('pm-pts-display');
+  if(pmPoints > 0){ el.style.display='block'; val.textContent=pmPoints+' pts'; }
+  else el.style.display='none';
+}
+
+function renderLeaderboard(){
+  document.getElementById('lb-list').innerHTML = LEADERBOARD.slice(0,5).map((u,i) => {
+    const rankCls = i===0?'top1':i===1?'top2':i===2?'top3':'';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
+    return `<div class="lb-row">
+      <div class="lb-rank ${rankCls}">${medal}</div>
+      <div class="lb-avatar">${u.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1"><div class="lb-name">${u.name}</div><div class="lb-addr">${u.correct}/${u.total} correct</div></div>
+      <div style="text-align:right"><div class="lb-pts">${u.pts.toLocaleString()} pts</div><div class="lb-acc">${u.acc}% acc</div></div>
+    </div>`;
+  }).join('');
+}
+
+function showLeaderboard(){
+  document.getElementById('lb-full-list').innerHTML = LEADERBOARD.map((u,i) => {
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    const col = i===0?'#facc15':i===1?'#94a3b8':i===2?'#cd7c2e':'var(--muted)';
+    return `<div class="lb-full-row">
+      <div class="lb-full-rank" style="color:${col}">${medal}</div>
+      <div class="lb-avatar" style="width:32px;height:32px;font-size:0.68rem">${u.name.slice(0,2).toUpperCase()}</div>
+      <div class="lb-full-info">
+        <div class="lb-full-name">${u.name}</div>
+        <div class="lb-full-stats">${u.correct}/${u.total} correct · ${u.acc}% accuracy</div>
+      </div>
+      <div class="lb-full-pts">
+        <div class="lb-full-pts-val">${u.pts.toLocaleString()}</div>
+        <div class="lb-full-pts-acc">pts</div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('lb-modal').classList.add('open');
+}
+
+function closeLb(){ document.getElementById('lb-modal').classList.remove('open'); }
+
+let pmToastTimer=null;
+function showPmToast(msg){
+  let t = document.getElementById('pm-toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'pm-toast';
+    t.style.cssText='position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:#0f1929;border:1px solid rgba(74,222,128,0.4);color:var(--accent);border-radius:10px;padding:0.65rem 1.25rem;font-size:0.8rem;font-weight:600;z-index:9999;transition:transform 0.3s;white-space:nowrap;max-width:90vw;text-align:center;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  setTimeout(()=>t.style.transform='translateX(-50%) translateY(0)',10);
+  if(pmToastTimer) clearTimeout(pmToastTimer);
+  pmToastTimer = setTimeout(()=>t.style.transform='translateX(-50%) translateY(80px)', 3500);
+}
+
+
+// ══ MARKET DATA ══
+let allCoins=[],selectedCoinId='bitcoin',currentDays=1,mainChartInst=null,sparkCharts={};
+let sortKey='rank',sortDir=1,gainTabMode='gain',marketLoaded=false,marketRefreshInterval=null;
+
+const fmt=(n,d=2)=>n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtPrice=n=>{if(n==null)return'—';if(n>=1)return'$'+fmt(n);if(n>=0.01)return'$'+n.toFixed(4);return'$'+n.toFixed(8);};
+const fmtBig=n=>{if(n==null)return'—';if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmt(n);};
+const pctClass=v=>v>=0?'pos':'neg';
+const pctStr=v=>v==null?'—':(v>=0?'+':'')+fmt(v)+'%';
+
+async function fetchMarket(){
+  const url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d';
+  const res=await fetch(url); if(!res.ok) throw new Error('API error'); return res.json();
+}
+async function fetchChart(coinId,days){
+  const url=`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+  const res=await fetch(url); if(!res.ok) throw new Error('Chart error'); return res.json();
+}
+
+function renderMktCards(coins){
+  const top=coins.slice(0,8);
+  document.getElementById('cardsGrid').innerHTML=top.map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<div class="mkt-card${c.id===selectedCoinId?' active':''}" onclick="selectCoin('${c.id}',this)">
+      <div class="mkt-card-header">
+        <div class="mkt-coin-info"><img class="mkt-coin-icon" src="${c.image}" loading="lazy"/><div><div class="mkt-coin-sym">${c.symbol.toUpperCase()}</div><div class="mkt-coin-name">${c.name}</div></div></div>
+        <span class="rank-badge">#${c.market_cap_rank}</span>
+      </div>
+      <div class="mkt-card-price">${fmtPrice(c.current_price)}</div>
+      <span class="mkt-card-change ${pctClass(chg)}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span>
+      <div class="mkt-card-vol">Vol: ${fmtBig(c.total_volume)}</div>
+      <div class="sparkline"><canvas id="spark-${c.id}"></canvas></div>
+    </div>`;
+  }).join('');
+  top.forEach(c=>{
+    const spark=c.sparkline_in_7d?.price||[];
+    if(!spark.length) return;
+    const ctx2=document.getElementById(`spark-${c.id}`)?.getContext('2d');
+    if(!ctx2) return;
+    if(sparkCharts[c.id]) sparkCharts[c.id].destroy();
+    const chg=c.price_change_percentage_24h;
+    const color=chg>=0?'#4ade80':'#f87171';
+    sparkCharts[c.id]=new Chart(ctx2,{type:'line',data:{labels:spark.map((_,i)=>i),datasets:[{data:spark,borderColor:color,borderWidth:1.5,fill:true,backgroundColor:c2=>{const g=c2.chart.ctx.createLinearGradient(0,0,0,36);g.addColorStop(0,chg>=0?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');g.addColorStop(1,'rgba(0,0,0,0)');return g;},tension:0.4,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},animation:false,responsive:true,maintainAspectRatio:false}});
+  });
+}
+
+async function renderMainChart(){
+  const coin=allCoins.find(c=>c.id===selectedCoinId);
+  if(!coin) return;
+  document.getElementById('chartTitle').textContent=`${coin.name} (${coin.symbol.toUpperCase()})`;
+  document.getElementById('chartPrice').textContent=fmtPrice(coin.current_price);
+  const chg=coin.price_change_percentage_24h;
+  const bigEl=document.getElementById('chartChangeBig');
+  bigEl.textContent=pctStr(chg); bigEl.className='chart-change-big '+pctClass(chg);
+  try{
+    const data=await fetchChart(selectedCoinId,currentDays);
+    const pricesArr=data.prices;
+    const labels=pricesArr.map(p=>{const d=new Date(p[0]);return currentDays===1?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric'});});
+    const vals=pricesArr.map(p=>p[1]);
+    const isUp=vals[vals.length-1]>=vals[0];
+    const color=isUp?'#4ade80':'#f87171';
+    if(mainChartInst) mainChartInst.destroy();
+    const ctx3=document.getElementById('mainChart').getContext('2d');
+    const grad=ctx3.createLinearGradient(0,0,0,260);
+    grad.addColorStop(0,isUp?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    mainChartInst=new Chart(ctx3,{type:'line',data:{labels,datasets:[{data:vals,label:coin.name,borderColor:color,borderWidth:2,backgroundColor:grad,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:color}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f1929',borderColor:'#1a2a42',borderWidth:1,titleColor:'#5a7090',bodyColor:'#e8eaf0',callbacks:{label:c=>' '+fmtPrice(c.parsed.y)}}},scales:{x:{grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},maxTicksLimit:6}},y:{position:'right',grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},callback:v=>fmtPrice(v)}}}}});
+  }catch(e){console.error('Chart error',e);}
+}
+
+function renderGainers(){
+  const sorted=[...allCoins].sort((a,b)=>(b.price_change_percentage_24h||0)-(a.price_change_percentage_24h||0));
+  const list=gainTabMode==='gain'?sorted.slice(0,7):sorted.slice(-7).reverse();
+  document.getElementById('gainTab').className=`g-tab ${gainTabMode==='gain'?'active ':''} gain`;
+  document.getElementById('lossTab').className=`g-tab ${gainTabMode==='loss'?'active ':''} loss`;
+  document.getElementById('gainerList').innerHTML=list.map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<div class="gainer-row"><div class="gainer-coin"><img class="gainer-icon" src="${c.image}" loading="lazy"/><div><div class="gainer-sym">${c.symbol.toUpperCase()}</div><div class="gainer-name">${c.name}</div></div></div><span class="gainer-pct ${pctClass(chg)}" style="background:${chg>=0?'rgba(74,222,128,0.1)':'rgba(248,113,113,0.1)'}">${pctStr(chg)}</span></div>`;
+  }).join('');
+}
+
+function renderTable(coins){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filtered=q?coins.filter(c=>c.name.toLowerCase().includes(q)||c.symbol.toLowerCase().includes(q)):coins;
+  document.getElementById('tableBody').innerHTML=filtered.map(c=>{
+    const chg24=c.price_change_percentage_24h;
+    const chg7=c.price_change_percentage_7d_in_currency;
+    return`<tr onclick="selectCoin('${c.id}')" style="cursor:pointer"><td class="muted-num">${c.market_cap_rank}</td><td><div class="td-coin"><img class="td-icon" src="${c.image}" loading="lazy"/><div><div class="td-sym">${c.symbol.toUpperCase()}</div><div class="td-name">${c.name}</div></div></div></td><td class="td-price">${fmtPrice(c.current_price)}</td><td><span class="pct-pill ${pctClass(chg24)}">${pctStr(chg24)}</span></td><td><span class="pct-pill ${pctClass(chg7)}">${pctStr(chg7)}</span></td><td class="col-mktcap muted-num">${fmtBig(c.market_cap)}</td><td class="col-vol muted-num">${fmtBig(c.total_volume)}</td></tr>`;
+  }).join('');
+}
+
+function renderTicker(coins){
+  const items=coins.slice(0,20).map(c=>{
+    const chg=c.price_change_percentage_24h;
+    return`<span class="ticker-item"><span class="ticker-name">${c.symbol.toUpperCase()}</span><span class="ticker-price">${fmtPrice(c.current_price)}</span><span class="ticker-change ${pctClass(chg)}">${pctStr(chg)}</span></span>`;
+  }).join('');
+  document.getElementById('tickerTrack').innerHTML=items+items;
+}
+
+function selectCoin(id,cardEl){
+  selectedCoinId=id;
+  document.querySelectorAll('.mkt-card').forEach(c=>c.classList.remove('active'));
+  if(cardEl) cardEl.classList.add('active');
+  renderMainChart();
+}
+function setDay(days,btn){ currentDays=days; document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderMainChart(); }
+function showGainTab(tab){ gainTabMode=tab; renderGainers(); }
+function sortTable(key){
+  if(sortKey===key) sortDir*=-1; else{sortKey=key;sortDir=1;}
+  const km={rank:'market_cap_rank',name:'name',price:'current_price',change24h:'price_change_percentage_24h',change7d:'price_change_percentage_7d_in_currency',mktcap:'market_cap',vol:'total_volume'};
+  const k=km[key];
+  allCoins.sort((a,b)=>{const av=a[k]??0,bv=b[k]??0;return typeof av==='string'?av.localeCompare(bv)*sortDir:(av-bv)*sortDir;});
+  renderTable(allCoins);
+}
+function filterTable(){ renderTable(allCoins); }
+
+async function loadMarketData(){
+  try{
+    const coins=await fetchMarket();
+    allCoins=coins;
+    renderTicker(coins); renderMktCards(coins); renderGainers(); renderTable(coins);
+    if(!mainChartInst) renderMainChart();
+    document.getElementById('lastUpdate').textContent='Updated '+new Date().toLocaleTimeString();
+    if(!marketRefreshInterval) marketRefreshInterval=setInterval(loadMarketData,30000);
+  }catch(e){
+    document.getElementById('cardsGrid').innerHTML=`<div class="error-msg" style="grid-column:1/-1">⚠ CoinGecko rate limit — try again in 60s.</div>`;
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
+
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rialo Alpha Core - The Engine of Retail Conviction</title>
