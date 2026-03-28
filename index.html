@@ -38,7 +38,6 @@
 
         /* HIGHLIGHTS */
         .tech-label { color: #a855f7; font-weight: bold; }
-        .data-value { color: #d8b4fe; }
     </style>
 </head>
 <body class="antialiased">
@@ -73,13 +72,13 @@
         <main id="chat-container" class="flex-grow p-6 space-y-8 max-w-5xl mx-auto w-full">
             <div class="bg-[#0a0a0a] border border-white/5 p-6 chat-bubble text-[11px] font-mono leading-relaxed text-purple-300 shadow-2xl">
                 [SYSTEM]: DATA PROTOCOLS FULLY LOADED. RIALO CORE v2.4 ONLINE. <br><br>
-                Welcome, Developer. I contain the comprehensive dataset of the Rialo Supermodular Stack.<br><br>
+                Welcome, Builder. I am synced with the official Rialo technical documentation.<br><br>
                 <span class="text-white">COMMAND DIRECTORY:</span><br>
                 > <span class="tech-label">RIALO</span>: Core Definition & Vision<br>
-                > <span class="tech-label">BACKED</span>: Investors, Funding, & Leadership<br>
+                > <span class="tech-label">BACKED</span>: Funding, Investors & Leadership<br>
                 > <span class="tech-label">ARCHITECTURE</span>: RISC-V VM & Parallel Consensus<br>
-                > <span class="tech-label">FEATURES</span>: Stream, Cruise, & Read Path<br>
-                > <span class="tech-label">ROADMAP</span>: 2025-2026 Milestones
+                > <span class="tech-label">FEATURES</span>: Stream, Cruise & Read Path<br>
+                > <span class="tech-label">ROADMAP</span>: 2025-2026 Development Cycle
             </div>
         </main>
 
@@ -87,7 +86,7 @@
             <div class="max-w-5xl mx-auto flex gap-4">
                 <div class="relative flex-grow">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600 font-bold text-xs">>>></span>
-                    <input type="text" id="user-input" autocomplete="off" placeholder="Query the Oracle (e.g. 'Who is backed Rialo?')..." 
+                    <input type="text" id="user-input" autocomplete="off" placeholder="Query the Oracle (e.g. 'Who is backing Rialo?')..." 
                         class="w-full bg-[#0a0a0a] border border-white/10 p-4 pl-14 text-xs font-mono focus:outline-none focus:border-purple-600 text-purple-100 placeholder:text-gray-800 transition-all">
                 </div>
                 <button onclick="handleSend()" class="bg-white text-black px-8 font-black uppercase text-xs hover:bg-purple-600 hover:text-white transition-all rounded-sm active:scale-95">EXECUTE</button>
@@ -96,39 +95,39 @@
     </div>
 
     <script>
-        // PURE RIALO TECHNICAL DATASET
+        // PURE RIALO TECHNICAL DATASET (FULL ENGLISH)
         const RialoOracle = {
-            "rialo": "<b>[DEFINISI: RIALO NETWORK]</b><br><br>" +
-                     "RIALO adalah <b>Supermodular Layer 1 Blockchain</b> yang dirancang khusus untuk menjembatani Real-World Finance (RWF) dengan ekosistem Web3 secara efisien.<br><br>" +
-                     "• <b>Misi:</b> Menghapus ketergantungan pada middleware/perantara yang lambat dan mahal.<br>" +
-                     "• <b>Real-World Connectivity:</b> Melalui <i>Rialo Edge</i>, aplikasi dapat berbicara langsung dengan internet tanpa perantara.<br>" +
-                     "• <b>Privasi Terprogram:</b> Pesan terenkripsi dikirim langsung ke Email/Phone tanpa wallet setup yang rumit.",
+            "rialo": "<b>[DEFINITION: RIALO NETWORK]</b><br><br>" +
+                     "RIALO is a <b>Supermodular Layer 1 Blockchain</b> specifically engineered to bridge Real-World Finance (RWF) with the Web3 ecosystem.<br><br>" +
+                     "• <b>Mission:</b> To eliminate dependence on slow, expensive middleware and oracles.<br>" +
+                     "• <b>Real-World Connectivity:</b> <i>Rialo Edge</i> allows dApps to communicate directly with the internet without intermediaries.<br>" +
+                     "• <b>Programmatic Privacy:</b> Native encrypted messaging mapped to Email/Phone/Device IDs, removing complex wallet barriers for new users.",
 
-            "backed": "<b>[BACKED & LEADERSHIP: THE ELITE FOUNDATION]</b><br><br>" +
-                      "Rialo didukung oleh investor institusional terbesar dan ilmuwan kriptografi terbaik dunia:<br><br>" +
-                      "• <b>Investor:</b> Berhasil mengumpulkan dana <b>$20 Juta (Seed Round)</b> yang dipimpin oleh <span class='text-white'>Pantera Capital</span>.<br>" +
-                      "• <b>Pembangun:</b> Dikembangkan oleh <span class='text-white'>Subzero Labs</span>.<br>" +
-                      "• <b>Tokoh Kunci:</b> Dipimpin oleh <b>Jan Camenisch</b>, ilmuwan kriptografi legendaris (Mantan pimpinan riset IBM & DFINITY).<br>" +
-                      "• <b>Tim:</b> Insinyur berpengalaman dari <b>Google, Apple, Microsoft, Amazon</b>, Solana, Near, dan EigenLayer.",
+            "backed": "<b>[BACKING & LEADERSHIP: THE ELITE FOUNDATION]</b><br><br>" +
+                      "Rialo is supported by premier institutional investors and led by world-class cryptographers:<br><br>" +
+                      "• <b>Funding:</b> Successfully raised a <b>$20 Million Seed Round</b> led by <span class='text-white'>Pantera Capital</span>.<br>" +
+                      "• <b>Builder:</b> Developed by <span class='text-white'>Subzero Labs</span>.<br>" +
+                      "• <b>Key Figure:</b> Led by <b>Jan Camenisch</b>, a legendary cryptographer (Former Head of Research at IBM & DFINITY).<br>" +
+                      "• <b>Elite Team:</b> Engineers hailing from <b>Google, Apple, Microsoft, Amazon</b>, Solana, Near, and EigenLayer.",
 
             "arch": "<b>[CORE ARCHITECTURE - TECHNICAL STACK]</b><br><br>" +
-                    "Rialo membangun infrastruktur L1 yang sangat efisien:<br><br>" +
-                    "• <b>Rialo VM:</b> Berbasis <b>RISC-V</b>. Kompatibel dengan SVM (Solana), dan segera mendukung EVM serta MoveVM.<br>" +
-                    "• <b>Rialo Consensus:</b> Mekanisme parallel multi-concurrent proposer dengan <b>Block Time 50ms</b>.<br>" +
-                    "• <b>Execution Engine:</b> Event-driven dengan <i>Conditional Transactions</i> untuk latensi tingkat nanidetik.<br>" +
-                    "• <b>Rialo IPC:</b> Identitas dan Privasi bawaan yang memungkinkan pengelolaan data sensitif sesuai hukum.",
+                    "Rialo implements a high-efficiency Supermodular infrastructure:<br><br>" +
+                    "• <b>Rialo VM:</b> Built on <b>RISC-V</b>. Fully compatible with SVM (Solana), with upcoming support for EVM and MoveVM.<br>" +
+                    "• <b>Rialo Consensus:</b> Parallel multi-concurrent proposer mechanism with <b>50ms Block Time</b>.<br>" +
+                    "• <b>Execution Engine:</b> Event-driven processing with <i>Conditional Transactions</i> for nanosecond-level latency.<br>" +
+                    "• <b>Rialo IPC:</b> Native Identity, Privacy, and Compliance for secure PII management.",
 
             "feat": "<b>[NATIVE CAPABILITIES - MIDDLEWARE REMOVAL]</b><br><br>" +
-                    "Fitur unggulan untuk performa maksimal:<br><br>" +
-                    "• <b>Rialo Stream:</b> Data feeds (Oracle) 40x lebih cepat karena terintegrasi langsung di validator.<br>" +
-                    "• <b>Rialo Interop:</b> Solusi interoperabilitas asli yang 10x lebih cepat dari jembatan konvensional.<br>" +
-                    "• <b>Rialo Cruise:</b> Fitur <b>Gas-less Transactions</b> untuk pengalaman pengguna tanpa biaya gas.<br>" +
-                    "• <b>Rialo Read Path:</b> Akses data validator langsung (100ms) yang memangkas biaya operasional pengembang secara drastis.",
+                    "Optimized for maximum throughput and developer efficiency:<br><br>" +
+                    "• <b>Rialo Stream:</b> Validator-integrated data feeds (Oracles) operating 40x faster than legacy solutions.<br>" +
+                    "• <b>Rialo Interop:</b> Native interoperability protocol 10x faster than traditional cross-chain bridges.<br>" +
+                    "• <b>Rialo Cruise:</b> Native <b>Gas-less Transactions</b> for a seamless Web2-like user onboarding experience.<br>" +
+                    "• <b>Rialo Read Path:</b> Direct validator data access (100ms) reducing operational costs for developers significantly.",
 
             "roadmap": "<b>[MILESTONES & ROADMAP 2025-2026]</b><br><br>" +
-                       "• <b>Q1-Q2 2025:</b> Seed Round | Private Devnet | Native Wallet Support.<br>" +
+                       "• <b>Q1-Q2 2025:</b> Seed Round Completion | Private Devnet | Native Wallet Support.<br>" +
                        "• <b>Q3 2025:</b> Stealth Mode Exit | 20+ Data Providers | 30+ Validator Node Testing.<br>" +
-                       "• <b>Q4 2025:</b> Testnet v1 Launch | Program Komunitas & Pembangunan dApps.<br>" +
+                       "• <b>Q4 2025:</b> Testnet v1 Launch | Community Builder Programs & dApp Incubation.<br>" +
                        "• <b>2026:</b> <b>MAINNET GENESIS LAUNCH.</b>"
         };
 
@@ -154,14 +153,14 @@
 
             setTimeout(() => {
                 let responses = [];
-                // DEEP SEARCH LOGIC
-                if (text.includes("apa") || text.includes("apa itu") || text.includes("rialo") || text.includes("what")) { responses.push(RialoOracle.rialo); }
-                if (text.includes("back") || text.includes("investor") || text.includes("pantera") || text.includes("fund") || text.includes("siapa") || text.includes("dana")) { responses.push(RialoOracle.backed); }
-                if (text.includes("arch") || text.includes("teknis") || text.includes("vm") || text.includes("risc") || text.includes("infra")) { responses.push(RialoOracle.arch); }
-                if (text.includes("feat") || text.includes("fitur") || text.includes("cruise") || text.includes("stream")) { responses.push(RialoOracle.feat); }
-                if (text.includes("roadmap") || text.includes("kapan") || text.includes("plan") || text.includes("2026")) { responses.push(RialoOracle.roadmap); }
+                // KEYWORD DETECTION LOGIC
+                if (text.includes("what") || text.includes("define") || text.includes("rialo")) { responses.push(RialoOracle.rialo); }
+                if (text.includes("back") || text.includes("investor") || text.includes("pantera") || text.includes("fund") || text.includes("who") || text.includes("subzero")) { responses.push(RialoOracle.backed); }
+                if (text.includes("arch") || text.includes("tech") || text.includes("vm") || text.includes("risc") || text.includes("infra")) { responses.push(RialoOracle.arch); }
+                if (text.includes("feat") || text.includes("cruise") || text.includes("stream")) { responses.push(RialoOracle.feat); }
+                if (text.includes("roadmap") || text.includes("when") || text.includes("plan") || text.includes("2026")) { responses.push(RialoOracle.roadmap); }
 
-                let finalMsg = responses.length > 0 ? responses.join("<br><br>") : "ERROR: Query outside technical parameters. Gunakan kata kunci: 'Apa itu Rialo?', 'Siapa Backed Rialo?', 'Architecture', 'Features', atau 'Roadmap'.";
+                let finalMsg = responses.length > 0 ? responses.join("<br><br>") : "ERROR: Query outside technical parameters. Use keywords: 'What is Rialo?', 'Who is backing Rialo?', 'Architecture', or 'Roadmap'.";
                 addBubble(finalMsg, 'bot');
             }, 600);
         }
@@ -178,25 +177,46 @@
                 container.appendChild(bubble);
                 typeEffect(bubble, msg);
             } else {
-                bubble.innerText = "USER_REQUEST: " + msg;
+                bubble.innerText = "QUERY: " + msg;
                 container.appendChild(bubble);
             }
             container.scrollTop = container.scrollHeight;
         }
 
+        // IMPROVED TYPE EFFECT: Handles HTML tags correctly to prevent styling bugs
         function typeEffect(el, text) {
             let i = 0;
             const content = document.createElement('span');
             el.appendChild(content);
+
             function type() {
                 if (i < text.length) {
-                    if (text.substr(i, 4) === "<br>") { content.innerHTML += "<br>"; i += 4; }
-                    else if (text.substr(i, 3) === "<b>") { content.innerHTML += "<b>"; i += 3; }
-                    else if (text.substr(i, 4) === "</b>") { content.innerHTML += "</b>"; i += 4; }
-                    else if (text.substr(i, 16) === "<span class='text-white'>") { content.innerHTML += "<span class='text-white'>"; i += 25; }
-                    else if (text.substr(i, 7) === "</span>") { content.innerHTML += "</span>"; i += 7; }
-                    else { content.innerHTML += text.charAt(i); i++; }
-                    setTimeout(type, 3);
+                    if (text.substr(i, 4) === "<br>") {
+                        content.innerHTML += "<br>";
+                        i += 4;
+                    } else if (text.startsWith("<b>", i)) {
+                        content.innerHTML += "<b>";
+                        i += 3;
+                    } else if (text.startsWith("</b>", i)) {
+                        content.innerHTML += "</b>";
+                        i += 4;
+                    } else if (text.startsWith("<span class='text-white'>", i)) {
+                        content.innerHTML += "<span class='text-white'>";
+                        i += 25;
+                    } else if (text.startsWith("</span>", i)) {
+                        content.innerHTML += "</span>";
+                        i += 7;
+                    } else if (text.startsWith("<i>", i)) {
+                        content.innerHTML += "<i>";
+                        i += 3;
+                    } else if (text.startsWith("</i>", i)) {
+                        content.innerHTML += "</i>";
+                        i += 4;
+                    } else {
+                        content.innerHTML += text.charAt(i);
+                        i++;
+                    }
+                    setTimeout(type, 2); // Fast typing for better UX
                     document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
                 } else {
                     el.innerHTML += '<span class="cursor"></span>';
