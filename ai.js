@@ -1,10 +1,12 @@
 /**
- * RIALO ALL-IN-ONE ENGINE v3.0
- * Neural Grid Visuals + Oracle Chat Logic
- * Author: sheingelzs (GitHub)
+ * RIALO ALL-IN-ONE ENGINE v4.0 (FIXED)
+ * High-Density Visuals + Accurate Oracle Data
+ * Repository: sheingelzs
  */
 
-// --- 1. NEURAL GRID ENGINE ---
+// ==========================================
+// 1. NEURAL GRID ENGINE (Visual Jaring-Jaring)
+// ==========================================
 const canvas = document.getElementById('neural-canvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
@@ -77,49 +79,64 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// --- 2. RIALO ORACLE LOGIC ---
+// ==========================================
+// 2. RIALO ORACLE DATA (Data Akurat & Lengkap)
+// ==========================================
 const RialoOracle = {
-    "rialo": "<b>[DEFINITION: RIALO NETWORK]</b><br><br>RIALO is a <b>Supermodular Layer 1 Blockchain</b> bridging Real-World Finance (RWF) with Web3.<br><br>• <b>Mission:</b> Remove expensive middleware.<br>• <b>Rialo Edge:</b> Direct internet communication for dApps.",
-    "backed": "<b>[BACKING & LEADERSHIP]</b><br><br>• <b>Funding:</b> $20M Seed Round led by <b>Pantera Capital</b>.<br>• <b>Builder:</b> Subzero Labs.<br>• <b>Key Figure:</b> Jan Camenisch (Cryptography Legend).",
-    "arch": "<b>[ARCHITECTURE]</b><br><br>• <b>VM:</b> RISC-V (Compatible with SVM, EVM, Move).<br>• <b>Consensus:</b> 50ms Block Time.<br>• <b>Interop:</b> 10x faster than traditional bridges.",
-    "roadmap": "<b>[ROADMAP]</b><br><br>• <b>2025:</b> Seed Round & Testnet v1.<br>• <b>2026:</b> <b>MAINNET GENESIS.</b>"
+    "rialo": "<b>[DEFINITION: RIALO NETWORK]</b><br><br>RIALO adalah <b>Supermodular Layer 1 Blockchain</b> yang dirancang untuk menghubungkan Real-World Finance (RWF) ke Web3 secara langsung.<br><br>• <b>Misi:</b> Menghilangkan ketergantungan pada middleware/oracle yang lambat.<br>• <b>Rialo Edge:</b> Memungkinkan dApps berkomunikasi langsung dengan internet tanpa perantara.<br>• <b>Privacy:</b> Enkripsi pesan native yang terhubung ke Email/Phone/Device ID.",
+
+    "backed": "<b>[BACKING & LEADERSHIP]</b><br><br>Rialo didukung oleh institusi papan atas dan tim kriptografer elit:<br><br>• <b>Pendanaan:</b> Berhasil mengumpulkan <b>$20 Juta Seed Round</b> yang dipimpin oleh <span class='text-white'>Pantera Capital</span>.<br>• <b>Builder:</b> Dikembangkan oleh <span class='text-white'>Subzero Labs</span>.<br>• <b>Tokoh Kunci:</b> Dipimpin oleh <b>Jan Camenisch</b> (Mantan Head of Research di IBM & DFINITY).<br>• <b>Tim Elit:</b> Insinyur dari Google, Apple, Microsoft, Amazon, Solana, dan Near.",
+
+    "arch": "<b>[CORE ARCHITECTURE - TECHNICAL]</b><br><br>• <b>Rialo VM:</b> Berbasis <b>RISC-V</b>. Kompatibel dengan SVM (Solana), EVM, dan MoveVM.<br>• <b>Konsensus:</b> Mekanisme multi-concurrent proposer dengan <b>50ms Block Time</b>.<br>• <b>Execution:</b> Event-driven dengan <i>Conditional Transactions</i> untuk latensi nanosekon.",
+
+    "feat": "<b>[NATIVE CAPABILITIES]</b><br><br>• <b>Rialo Stream:</b> Data feeds (Oracles) native yang 40x lebih cepat.<br>• <b>Rialo Interop:</b> Protokol interoperabilitas 10x lebih cepat dari bridge biasa.<br>• <b>Rialo Cruise:</b> Fitur <b>Gas-less Transactions</b> untuk user baru.<br>• <b>Rialo Read Path:</b> Akses data validator langsung (100ms) untuk menekan biaya.",
+
+    "roadmap": "<b>[ROADMAP 2025-2026]</b><br><br>• <b>Q1-Q2 2025:</b> Penyelesaian Seed Round | Private Devnet.<br>• <b>Q3 2025:</b> Keluar dari Stealth Mode | 20+ Data Providers.<br>• <b>Q4 2025:</b> Peluncuran Testnet v1 | Builder Programs.<br>• <b>2026:</b> <b>MAINNET GENESIS LAUNCH.</b>"
 };
 
+// ==========================================
+// 3. CHAT SYSTEM LOGIC
+// ==========================================
 window.handleSend = function() {
     const input = document.getElementById('user-input');
-    const text = input.value.toLowerCase();
-    if (text.trim() === "") return;
+    const text = input.value.toLowerCase().trim();
+    if (text === "") return;
 
     addBubble(input.value, 'user');
     input.value = "";
 
     setTimeout(() => {
-        let r = [];
-        if (text.includes("rialo") || text.includes("what")) r.push(RialoOracle.rialo);
-        if (text.includes("back") || text.includes("pantera") || text.includes("who")) r.push(RialoOracle.backed);
-        if (text.includes("arch") || text.includes("tech")) r.push(RialoOracle.arch);
-        if (text.includes("road") || text.includes("2026")) r.push(RialoOracle.roadmap);
+        let responses = [];
+        // Pencarian keyword yang lebih akurat
+        if (text.includes("rialo") || text.includes("apa") || text.includes("what")) responses.push(RialoOracle.rialo);
+        if (text.includes("back") || text.includes("pantera") || text.includes("who") || text.includes("dana")) responses.push(RialoOracle.backed);
+        if (text.includes("arch") || text.includes("tech") || text.includes("vm") || text.includes("arsitektur")) responses.push(RialoOracle.arch);
+        if (text.includes("feat") || text.includes("fitur") || text.includes("cruise") || text.includes("stream")) responses.push(RialoOracle.feat);
+        if (text.includes("road") || text.includes("plan") || text.includes("2026") || text.includes("kapan")) responses.push(RialoOracle.roadmap);
 
-        let finalMsg = r.length > 0 ? r.join("<br><br>") : "ERROR: Query outside technical parameters. Try: RIALO, BACKED, or ARCHITECTURE.";
+        let finalMsg = responses.length > 0 
+            ? responses.join("<br><br>") 
+            : "<b>[ERROR]</b>: Query di luar parameter teknis. Gunakan keyword: <i>RIALO, BACKED, ARCHITECTURE, FEATURES,</i> atau <i>ROADMAP.</i>";
+        
         addBubble(finalMsg, 'bot');
     }, 600);
 };
 
 function addBubble(msg, sender) {
     const container = document.getElementById('chat-container');
+    if (!container) return;
+
     const bubble = document.createElement('div');
-    bubble.className = sender === 'user' 
-        ? 'text-xs text-white uppercase font-bold text-right border-r-2 border-white pr-4 mb-6 relative z-20' 
-        : 'bg-[#0a0a0a]/80 border border-white/5 p-6 chat-bubble text-[11px] font-mono leading-relaxed text-purple-200 mb-8 relative z-20';
-    
-    if (sender === 'bot') {
-        bubble.innerHTML = "<div class='text-purple-600 font-black mb-3 border-b border-purple-900/20 pb-1 flex justify-between uppercase tracking-widest text-[9px]'><span>[RIALO_SCAN]</span><span>Mainnet_v2.4</span></div>";
-        container.appendChild(bubble);
-        typeEffect(bubble, msg);
-    } else {
+    if (sender === 'user') {
+        bubble.className = 'text-xs text-white uppercase font-bold text-right border-r-2 border-white pr-4 mb-6 relative z-20';
         bubble.innerText = "QUERY: " + msg;
-        container.appendChild(bubble);
+    } else {
+        bubble.className = 'bg-[#0a0a0a]/80 border border-white/5 p-6 chat-bubble text-[11px] font-mono leading-relaxed text-purple-200 mb-8 shadow-2xl backdrop-blur-md relative z-20';
+        bubble.innerHTML = "<div class='text-purple-600 font-black mb-3 border-b border-purple-900/20 pb-1 flex justify-between uppercase tracking-widest text-[9px]'><span>[RIALO_DEEP_SCAN]</span><span>Mainnet_v2.4_Oracle</span></div>";
+        typeEffect(bubble, msg);
     }
+    
+    container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
 }
 
@@ -132,18 +149,24 @@ function typeEffect(el, text) {
             if (text.substr(i, 4) === "<br>") { content.innerHTML += "<br>"; i += 4; }
             else if (text.startsWith("<b>", i)) { content.innerHTML += "<b>"; i += 3; }
             else if (text.startsWith("</b>", i)) { content.innerHTML += "</b>"; i += 4; }
+            else if (text.startsWith("<i>", i)) { content.innerHTML += "<i>"; i += 3; }
+            else if (text.startsWith("</i>", i)) { content.innerHTML += "</i>"; i += 4; }
+            else if (text.startsWith("<span class='text-white'>", i)) { content.innerHTML += "<span class='text-white'>"; i += 25; }
+            else if (text.startsWith("</span>", i)) { content.innerHTML += "</span>"; i += 7; }
             else { content.innerHTML += text.charAt(i); i++; }
-            setTimeout(type, 2);
+            setTimeout(type, 1); // Dipercepat biar gak nunggu lama
             document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
         } else { el.innerHTML += '<span class="cursor"></span>'; }
     }
     type();
 }
 
-// Init Visuals
+// Jalankan Inisialisasi
 document.addEventListener('DOMContentLoaded', () => {
     initCanvas();
     animate();
     const input = document.getElementById('user-input');
-    if (input) input.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
+    if (input) {
+        input.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
+    }
 });
