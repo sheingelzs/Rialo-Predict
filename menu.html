@@ -1076,7 +1076,6 @@ function tryOkxDeepLink(deepLink,fallback){
   window.location.href=deepLink;
   setTimeout(()=>{if(Date.now()-start<1500)window.location.href=fallback;},800);
 }
-
 async function connectEthWallet(name,icon,destination){
   document.getElementById('modal-content').innerHTML=`
     <div class="center-modal">
@@ -1086,15 +1085,29 @@ async function connectEthWallet(name,icon,destination){
     </div>`;
 
   if(typeof window.ethereum==='undefined'){
+    // Siapkan link download sesuai dengan wallet yang dipilih user
+    let downloadLink = 'https://metamask.io/download/'; // Default
+    if(name.includes('MetaMask')) downloadLink = 'https://metamask.io/download/';
+    else if(name.includes('Phantom')) downloadLink = 'https://phantom.app/download';
+    else if(name.includes('OKX')) downloadLink = 'https://www.okx.com/web3';
+    else if(name.includes('Coinbase')) downloadLink = 'https://www.coinbase.com/wallet';
+
+    // Beri sedikit jeda loading agar terlihat natural, lalu tampilkan peringatan Download
     setTimeout(()=>{
-      // Simulate for demo
-      const fakeAddr='0x'+Math.random().toString(16).slice(2,6).toUpperCase()+'…'+Math.random().toString(16).slice(2,6).toUpperCase();
-      globalWallet=fakeAddr;
-      closeModal();
-      afterWalletConnected(fakeAddr,destination);
-    },1800);
+      document.getElementById('modal-content').innerHTML=`
+        <div class="center-modal">
+          <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
+          <div class="modal-big-title">${name} Not Found</div>
+          <div class="modal-desc" style="margin-bottom:1.5rem; line-height:1.5;">You need to install the ${name} extension to mount your Validator Key on desktop.</div>
+          <a href="${downloadLink}" target="_blank" style="display:inline-block; padding:0.85rem 1.5rem; background:var(--accent); color:#050810; text-decoration:none; font-family:var(--font); font-weight:700; border-radius:10px; transition:all 0.2s; font-size: 0.9rem;">
+            Download ${name}
+          </a>
+        </div>`;
+    }, 600);
     return;
   }
+
+
 
   try{
     const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
