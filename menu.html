@@ -990,22 +990,6 @@ function handleOverlayClick(e){if(e.target===document.getElementById('wallet-mod
 // ══ WALLET — shared connect modal (MetaMask, Phantom, OKX, Coinbase) ══
 let globalWallet=null;
 
-function openWalletModal(onConnected){
-  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  if(typeof window.ethereum==='undefined'){
-    if(isMobile){
-      showMobileWalletModal(onConnected);
-    } else {
-      showDesktopWalletModal(onConnected);
-    }
-    return;
-  }
-
-  // Has injected wallet — show picker
-  showDesktopWalletModal(onConnected);
-}
-
 function showDesktopWalletModal(onConnected){
   document.getElementById('modal-content').innerHTML=`
     <div class="modal-title">Insert Validator Key</div>
