@@ -506,6 +506,9 @@ async function connectWallet(walletKey, walletName){
     const msg = e.code===4001 ? 'Connection rejected.' : (e.message||'Unknown error');
     document.getElementById('modal-content').innerHTML=`<div class="center-modal"><div style="font-size:2rem;margin-bottom:.75rem">⚠️</div><div class="modal-big-title">Connection Failed</div><div class="modal-desc">${msg}</div><button onclick="showDesktopModal()" style="margin-top:1rem;padding:.6rem 1.5rem;background:var(--accent);color:#050810;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font)">Try Again</button></div>`;
   }
+      closeModal();
+    runAssembly(globalWallet); // <--- HARDCODED
+
 }
 
 // ── GARAGE LOGIC ──
