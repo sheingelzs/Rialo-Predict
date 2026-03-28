@@ -126,8 +126,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .mkt-card-change.pos{background:rgba(74,222,128,0.1);color:var(--green);}
 .mkt-card-change.neg{background:rgba(248,113,113,0.1);color:var(--red);}
 .mkt-card-vol{font-size:0.65rem;color:var(--muted);margin-top:6px;}
-.sparkline{margin-top:8px;height:36px;}
-.sparkline canvas{width:100%!important;height:36px!important;}
+.sparkline{margin-top:8px;height:36px;position:relative;}
 .chart-section{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:32px;}
 @media(max-width:900px){.chart-section{grid-template-columns:1fr}}
 .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
@@ -193,21 +192,27 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 /* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
-.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.75rem;width:100%;max-width:400px;position:relative;}
+.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.75rem;width:100%;max-width:420px;position:relative;}
 .modal-close{position:absolute;top:0.9rem;right:0.9rem;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.1rem;cursor:pointer;}
 .modal-close:hover{color:#fff;}
 .modal-title{font-family:var(--font-head);font-size:1.15rem;font-weight:800;margin-bottom:0.3rem;}
 .modal-sub{font-size:0.8rem;color:rgba(255,255,255,0.38);margin-bottom:1.35rem;}
 .wallet-list{display:flex;flex-direction:column;gap:0.55rem;}
-.wallet-item{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 0.95rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;cursor:pointer;transition:all 0.2s;}
+.wallet-item{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 0.95rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;cursor:pointer;transition:all 0.2s;position:relative;}
 .wallet-item:hover{background:rgba(255,255,255,0.08);border-color:rgba(74,222,128,0.3);}
+.wallet-item.not-installed{opacity:0.5;cursor:not-allowed;}
+.wallet-item.not-installed:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
 .wallet-logo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
 .wallet-info-block{flex:1;}
 .wallet-name{font-weight:600;font-size:0.88rem;}
 .wallet-type{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1px;}
 .wallet-status{font-size:0.72rem;font-weight:600;}
 .wallet-status.installed{color:var(--accent);}
+.wallet-status.not-found{color:var(--red);}
 .wallet-status.popular{color:rgba(255,255,255,0.28);}
+.install-hint{font-size:0.65rem;color:var(--muted);margin-top:0.75rem;text-align:center;line-height:1.6;}
+.install-hint a{color:var(--accent2);text-decoration:none;}
+.install-hint a:hover{text-decoration:underline;}
 .spinner{width:44px;height:44px;border:3px solid rgba(74,222,128,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .center-modal{text-align:center;padding:0.5rem 0;}
@@ -257,13 +262,6 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 .swap-arrow-wrap{display:flex;justify-content:center;margin:0.5rem 0;}
 .swap-arrow-btn{width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:1rem;}
 .swap-arrow-btn:hover{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);transform:rotate(180deg);}
-.token-dropdown{position:relative;}
-.token-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);left:0;background:#0d1929;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:6px;min-width:180px;z-index:50;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
-.token-dropdown-menu.open{display:block;}
-.token-option{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background 0.15s;}
-.token-option:hover{background:rgba(255,255,255,0.06);}
-.token-option-name{font-size:0.82rem;font-weight:600;}
-.token-option-bal{font-size:0.68rem;color:var(--muted);margin-left:auto;}
 .route-info{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:0.85rem 1rem;margin-top:0.85rem;}
 .route-row{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;padding:3px 0;}
 .route-label{color:var(--muted);}
@@ -300,9 +298,7 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 .network-alert-text{font-size:0.78rem;color:rgba(248,113,113,0.8);line-height:1.5;}
 .network-alert-text strong{color:var(--red);}
 
-/* ══════════════════════════════════════════
-   VALIDATOR GARAGE
-══════════════════════════════════════════ */
+/* ══ VALIDATOR GARAGE ══ */
 .garage-standby{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:2rem;}
 .node-status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);color:var(--red);padding:0.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:0.7rem;font-weight:700;letter-spacing:0.1em;margin-bottom:2rem;}
 .node-status-badge.online{background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.25);color:var(--accent);}
@@ -596,7 +592,7 @@ tr:hover td{background:rgba(124,92,252,0.04);}
           <a id="tx-explorer-link" class="tx-explorer-link" href="#" target="_blank">View on Sepolia Etherscan ↗</a>
           <button class="swap-action-btn ready" style="margin-top:1rem" onclick="resetSwap()">Swap Again</button>
         </div>
-        <button class="swap-action-btn" id="swap-action-btn" onclick="handleSwapBtn()">Connect Wallet</button>
+        <button class="swap-action-btn" id="swap-action-btn">Connect Wallet</button>
       </div>
     </div>
     <div class="recent-txns" id="recent-txns" style="display:none">
@@ -698,7 +694,6 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 
 <!-- ══ VALIDATOR GARAGE ══ -->
 <div class="page" id="page-garage">
-  <!-- PHASE 1: STANDBY -->
   <div class="garage-standby" id="garage-standby">
     <div class="node-status-badge" id="node-badge">
       <div class="node-status-dot"></div>
@@ -712,7 +707,6 @@ tr:hover td{background:rgba(124,92,252,0.04);}
     </button>
   </div>
 
-  <!-- PHASE 2: ASSEMBLY ANIMATION -->
   <div class="assembly-screen" id="assembly-screen">
     <div class="assembly-title">Mounting Validator Key…<br><span style="color:var(--muted);font-size:0.9rem;font-family:var(--font-mono)">Assembling Supermodular Stack</span></div>
     <div class="assembly-layers">
@@ -745,7 +739,6 @@ tr:hover td{background:rgba(124,92,252,0.04);}
     <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;font-family:var(--font-mono)" id="asm-log">Initializing…</p>
   </div>
 
-  <!-- PHASE 3: DASHBOARD -->
   <div class="garage-dashboard" id="garage-dashboard">
     <div class="garage-header">
       <div class="garage-header-left">
@@ -867,100 +860,151 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 </div>
 
 <script>
-// ══ CONSTANTS ══
-const SEPOLIA_CHAIN_ID = '0xaa36a7'; // 11155111 in hex
+// ══════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════
+const SEPOLIA_CHAIN_ID     = '0xaa36a7';
 const SEPOLIA_CHAIN_ID_DEC = 11155111;
-const SEPOLIA_EXPLORER = 'https://sepolia.etherscan.io/tx/';
-// Mock RIALO contract on Sepolia (dead address as placeholder for testnet)
-const RIALO_SWAP_ADDR = '0x0000000000000000000000000000000000000001';
-const RIALO_RATE = 1250; // 1 SepoliaETH = 1250 RIALO (testnet rate)
+const SEPOLIA_EXPLORER     = 'https://sepolia.etherscan.io/tx/';
+const RIALO_SWAP_ADDR      = '0x0000000000000000000000000000000000000001';
+const RIALO_RATE           = 1250;
 
-// ══ NETWORK CANVAS ══
+// ══════════════════════════════════════════
+// WALLET DETECTION — per-provider, no guessing
+// ══════════════════════════════════════════
+function detectProviders() {
+  // EIP-6963 would be ideal but we use the classic approach + provider flags
+  const eth = window.ethereum;
+  if (!eth) return { metamask: false, phantom: false, okx: false, coinbase: false, any: false };
+
+  // Multiple injected providers (EIP-1193 multi-provider)
+  const providers = eth.providers || [eth];
+
+  const find = (flag) => providers.find(p => p && p[flag]) || null;
+
+  return {
+    metamask : find('isMetaMask') && !find('isPhantom') ? find('isMetaMask') && providers.find(p=>p.isMetaMask && !p.isPhantom) : null,
+    phantom  : find('isPhantom') || null,
+    okx      : (window.okxwallet || find('isOKExWallet') || find('isOKXWallet')) || null,
+    coinbase : find('isCoinbaseWallet') || find('isCoinbaseBrowser') || null,
+    any      : eth,
+  };
+}
+
+// Get the right provider object for a given wallet
+function getProviderFor(walletKey) {
+  const eth = window.ethereum;
+  if (!eth) return null;
+  const providers = eth.providers || [eth];
+
+  if (walletKey === 'okx' && window.okxwallet) return window.okxwallet;
+  if (walletKey === 'metamask') return providers.find(p => p.isMetaMask && !p.isPhantom) || eth;
+  if (walletKey === 'phantom')  return providers.find(p => p.isPhantom) || eth;
+  if (walletKey === 'coinbase') return providers.find(p => p.isCoinbaseWallet || p.isCoinbaseBrowser) || eth;
+  return eth;
+}
+
+// ══════════════════════════════════════════
+// NETWORK CANVAS
+// ══════════════════════════════════════════
 (function(){
-  const canvas=document.getElementById('net-canvas');
-  const ctx=canvas.getContext('2d');
-  const NODE_COUNT=90,MAX_DIST=160;
-  let W,H,angle=0;
-  const nodes=Array.from({length:NODE_COUNT},()=>({
-    bx:(Math.random()-0.5)*2200,by:(Math.random()-0.5)*1400,
-    vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,
-    r:Math.random()*2+1
+  const canvas = document.getElementById('net-canvas');
+  const ctx    = canvas.getContext('2d');
+  const NODE_COUNT = 90, MAX_DIST = 160;
+  let W, H, angle = 0;
+  const nodes = Array.from({length: NODE_COUNT}, () => ({
+    bx: (Math.random()-0.5)*2200, by: (Math.random()-0.5)*1400,
+    vx: (Math.random()-0.5)*0.4,  vy: (Math.random()-0.5)*0.4,
+    r:  Math.random()*2+1
   }));
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  window.addEventListener('resize',resize);resize();
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
   function draw(){
     ctx.clearRect(0,0,W,H);
-    angle+=0.0008;
-    const cos=Math.cos(angle),sin=Math.sin(angle),cx=W/2,cy=H/2;
-    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1200)n.bx=1200;if(n.bx>1200)n.bx=-1200;if(n.by<-800)n.by=800;if(n.by>800)n.by=-800;});
-    const pts=nodes.map(n=>({x:cx+n.bx*cos-n.by*sin,y:cy+n.bx*sin+n.by*cos,r:n.r}));
-    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<MAX_DIST){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/MAX_DIST)*0.45})`;ctx.lineWidth=0.7;ctx.stroke();}}}
-    pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(74,222,128,0.7)';ctx.fill();});
+    angle += 0.0008;
+    const cos = Math.cos(angle), sin = Math.sin(angle), cx = W/2, cy = H/2;
+    nodes.forEach(n => {
+      n.bx += n.vx; n.by += n.vy;
+      if(n.bx < -1200) n.bx = 1200; if(n.bx > 1200) n.bx = -1200;
+      if(n.by < -800)  n.by = 800;  if(n.by > 800)  n.by = -800;
+    });
+    const pts = nodes.map(n => ({ x: cx + n.bx*cos - n.by*sin, y: cy + n.bx*sin + n.by*cos, r: n.r }));
+    for(let i=0; i<pts.length; i++){
+      for(let j=i+1; j<pts.length; j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<MAX_DIST){
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle = `rgba(74,222,128,${(1-d/MAX_DIST)*0.45})`; ctx.lineWidth = 0.7; ctx.stroke();
+        }
+      }
+    }
+    pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(74,222,128,0.7)'; ctx.fill(); });
     requestAnimationFrame(draw);
   }
   draw();
 })();
 
-// ══ NAV ══
-const PAGES=['landing','explore','swap','garage','market','about'];
+// ══════════════════════════════════════════
+// NAV / PAGE ROUTING
+// ══════════════════════════════════════════
+const PAGES = ['landing','explore','swap','garage','market','about'];
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  PAGES.forEach((p,i)=>{if(p===id)document.querySelectorAll('.nav-tab')[i].classList.add('active');});
-  if(id==='market'&&!marketLoaded){loadMarketData();marketLoaded=true;}
-  if(id==='swap'){initSwapPage();}
+  PAGES.forEach((p,i) => { if(p===id) document.querySelectorAll('.nav-tab')[i].classList.add('active'); });
+  if(id==='market' && !marketLoaded){ loadMarketData(); marketLoaded=true; }
+  if(id==='swap'){ initSwapPage(); }
 }
 
-// ══ MODAL ══
-function closeModal(){document.getElementById('wallet-modal').classList.remove('open');}
-function handleOverlayClick(e){if(e.target===document.getElementById('wallet-modal'))closeModal();}
+// ══════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════
+function closeModal(){ document.getElementById('wallet-modal').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target === document.getElementById('wallet-modal')) closeModal(); }
 
-// ══ WALLET STATE ══
-let globalWallet = null;
-let globalChainId = null;
+// ══════════════════════════════════════════
+// GLOBAL WALLET STATE
+// ══════════════════════════════════════════
+let globalWallet   = null;
+let globalChainId  = null;
+let activeProvider = null;   // the actual provider object we're using
 
-// Listen for account/chain changes
-if(typeof window.ethereum !== 'undefined'){
-  window.ethereum.on('accountsChanged', (accounts) => {
-    if(accounts.length === 0){
-      disconnectAll();
-    } else {
-      globalWallet = accounts[0];
-      updateNavWalletBtn(globalWallet);
-      if(swapWallet) { swapWallet = accounts[0]; refreshSwapBalance(); renderSwapWalletArea(); }
-    }
+// Listen for events on the active provider
+function bindProviderEvents(provider){
+  if(!provider) return;
+  provider.on && provider.on('accountsChanged', accounts => {
+    if(!accounts || accounts.length === 0){ disconnectAll(); return; }
+    globalWallet = accounts[0];
+    updateNavWalletBtn(globalWallet);
+    if(swapWallet){ swapWallet = accounts[0]; refreshSwapBalance(); renderSwapWalletArea(); }
   });
-  window.ethereum.on('chainChanged', (chainId) => {
+  provider.on && provider.on('chainChanged', chainId => {
     globalChainId = chainId;
-    if(swapWallet){ checkNetworkAndUpdateSwap(); }
+    if(swapWallet) checkNetworkAndUpdateSwap();
   });
 }
 
 async function getCurrentChainId(){
-  if(typeof window.ethereum === 'undefined') return null;
+  if(!activeProvider) return null;
   try{
-    const chainId = await window.ethereum.request({method:'eth_chainId'});
+    const chainId = await activeProvider.request({method:'eth_chainId'});
     globalChainId = chainId;
     return chainId;
   }catch(e){ return null; }
 }
 
 async function switchToSepolia(){
-  if(typeof window.ethereum === 'undefined') return false;
+  if(!activeProvider) return false;
   try{
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: SEPOLIA_CHAIN_ID }]
-    });
+    await activeProvider.request({ method:'wallet_switchEthereumChain', params:[{chainId:SEPOLIA_CHAIN_ID}] });
     globalChainId = SEPOLIA_CHAIN_ID;
     return true;
-  }catch(switchError){
-    if(switchError.code === 4902){
-      // Chain not added, add it
+  }catch(err){
+    if(err.code === 4902){
       try{
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+        await activeProvider.request({
+          method:'wallet_addEthereumChain',
           params:[{
             chainId: SEPOLIA_CHAIN_ID,
             chainName: 'Sepolia Testnet',
@@ -978,129 +1022,203 @@ async function switchToSepolia(){
 }
 
 function isOnSepolia(){
-  return globalChainId === SEPOLIA_CHAIN_ID || globalChainId === '0x' + SEPOLIA_CHAIN_ID_DEC.toString(16);
+  if(!globalChainId) return false;
+  const id = globalChainId.toLowerCase();
+  return id === SEPOLIA_CHAIN_ID || id === '0x' + SEPOLIA_CHAIN_ID_DEC.toString(16);
 }
 
-// ══ WALLET MODAL ══
+// ══════════════════════════════════════════
+// WALLET MODAL — smart detection
+// ══════════════════════════════════════════
 function openWalletModal(destination){
-  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(typeof window.ethereum==='undefined'){
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(typeof window.ethereum === 'undefined' && !window.okxwallet){
     if(isMobile){ showMobileWalletModal(destination); }
-    else { showDesktopWalletModal(destination); }
+    else         { showNoWalletModal(destination); }
     return;
   }
-  showDesktopWalletModal(destination);
+  if(isMobile){ showMobileWalletModal(destination); }
+  else         { showDesktopWalletModal(destination); }
 }
 
 function showDesktopWalletModal(destination){
-  document.getElementById('modal-content').innerHTML=`
+  const d = detectProviders();
+
+  // Build wallet entries with real detection
+  const wallets = [
+    {
+      key: 'metamask',
+      icon: '🦊', bg: 'rgba(247,147,26,0.15)',
+      name: 'MetaMask', type: 'Browser Extension',
+      detected: !!d.metamask,
+      downloadUrl: 'https://metamask.io/download/'
+    },
+    {
+      key: 'phantom',
+      icon: '👻', bg: 'rgba(153,69,255,0.15)',
+      name: 'Phantom', type: 'Solana & EVM · Browser Extension',
+      detected: !!d.phantom,
+      downloadUrl: 'https://phantom.app/download'
+    },
+    {
+      key: 'okx',
+      icon: '⬛', bg: 'rgba(0,0,0,0.3)',
+      name: 'OKX Wallet', type: 'Browser Extension & Mobile',
+      detected: !!(window.okxwallet || d.okx),
+      downloadUrl: 'https://www.okx.com/web3'
+    },
+    {
+      key: 'coinbase',
+      icon: '🔵', bg: 'rgba(22,82,240,0.15)',
+      name: 'Coinbase Wallet', type: 'Browser Extension · Mobile',
+      detected: !!d.coinbase,
+      downloadUrl: 'https://www.coinbase.com/wallet'
+    },
+  ];
+
+  const anyDetected = wallets.some(w => w.detected);
+
+  const items = wallets.map(w => {
+    if(w.detected){
+      return `
+        <div class="wallet-item" onclick="connectWallet('${w.key}','${w.name}','${destination}')">
+          <div class="wallet-logo" style="background:${w.bg}">${w.icon}</div>
+          <div class="wallet-info-block">
+            <div class="wallet-name">${w.name}</div>
+            <div class="wallet-type">${w.type}</div>
+          </div>
+          <div class="wallet-status installed">● Detected</div>
+        </div>`;
+    } else {
+      return `
+        <div class="wallet-item not-installed" onclick="openInstallLink('${w.downloadUrl}','${w.name}')">
+          <div class="wallet-logo" style="background:${w.bg};opacity:0.5">${w.icon}</div>
+          <div class="wallet-info-block">
+            <div class="wallet-name">${w.name}</div>
+            <div class="wallet-type">${w.type}</div>
+          </div>
+          <div class="wallet-status not-found">Install ↗</div>
+        </div>`;
+    }
+  }).join('');
+
+  const hint = !anyDetected
+    ? `<p class="install-hint">No wallet extension detected. Install one of the wallets above, refresh the page, and try again.</p>`
+    : `<p class="install-hint">Only wallets marked <span style="color:var(--accent)">● Detected</span> are installed in your browser.</p>`;
+
+  document.getElementById('modal-content').innerHTML = `
     <div class="modal-title">Insert Validator Key</div>
-    <div class="modal-sub">Choose wallet untuk mount Validator Key dan akses Garage / Swap.</div>
-    <div class="wallet-list">
-      <div class="wallet-item" onclick="connectEthWallet('MetaMask','🦊','${destination}')">
-        <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
-        <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Browser Extension — Most popular</div></div>
-        <div class="wallet-status installed">Detected</div>
+    <div class="modal-sub">Connect wallet kamu untuk mount Validator Key dan akses Garage / Swap.</div>
+    <div class="wallet-list">${items}</div>
+    ${hint}`;
+  document.getElementById('wallet-modal').classList.add('open');
+}
+
+function showNoWalletModal(destination){
+  document.getElementById('modal-content').innerHTML = `
+    <div class="center-modal">
+      <div style="font-size:2.5rem;margin-bottom:1rem">🔑</div>
+      <div class="modal-big-title">No Wallet Detected</div>
+      <div class="modal-desc">Install a browser wallet extension to connect. MetaMask is the most common option.</div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+        <a href="https://metamask.io/download/" target="_blank" style="display:block;padding:0.75rem 1.25rem;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);color:#f7931a;text-decoration:none;font-family:var(--font);font-weight:600;border-radius:10px;font-size:0.88rem;text-align:center">🦊 Install MetaMask</a>
+        <a href="https://phantom.app/download" target="_blank" style="display:block;padding:0.75rem 1.25rem;background:rgba(153,69,255,0.1);border:1px solid rgba(153,69,255,0.3);color:#9945ff;text-decoration:none;font-family:var(--font);font-weight:600;border-radius:10px;font-size:0.88rem;text-align:center">👻 Install Phantom</a>
+        <a href="https://www.okx.com/web3" target="_blank" style="display:block;padding:0.75rem 1.25rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);text-decoration:none;font-family:var(--font);font-weight:600;border-radius:10px;font-size:0.88rem;text-align:center">⬛ Install OKX Wallet</a>
       </div>
-      <div class="wallet-item" onclick="connectEthWallet('Phantom','👻','${destination}')">
-        <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
-        <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Solana &amp; EVM · Browser Extension</div></div>
-        <div class="wallet-status popular">Popular</div>
-      </div>
-      <div class="wallet-item" onclick="connectEthWallet('OKX Wallet','⬛','${destination}')">
-        <div class="wallet-logo" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1)">⬛</div>
-        <div class="wallet-info-block"><div class="wallet-name">OKX Wallet</div><div class="wallet-type">Browser Extension &amp; Mobile</div></div>
-        <div class="wallet-status popular">Popular</div>
-      </div>
-      <div class="wallet-item" onclick="connectEthWallet('Coinbase Wallet','🔵','${destination}')">
-        <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
-        <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Browser Extension · Mobile</div></div>
-        <div class="wallet-status popular">Popular</div>
-      </div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem">After installing, refresh this page and try again.</p>
     </div>`;
   document.getElementById('wallet-modal').classList.add('open');
 }
 
 function showMobileWalletModal(destination){
-  const currentUrl=encodeURIComponent(window.location.href);
-  const metamaskDeepLink='https://metamask.app.link/dapp/'+window.location.host+window.location.pathname;
-  const phantomDeepLink='https://phantom.app/ul/browse/'+currentUrl+'?ref='+currentUrl;
-  const okxDeepLink='okx://wallet/dapp/url?dappUrl='+currentUrl;
-  const okxFallback='https://www.okx.com/download';
-  document.getElementById('modal-content').innerHTML=`
+  const currentUrl     = encodeURIComponent(window.location.href);
+  const metamaskDeep   = 'https://metamask.app.link/dapp/'+window.location.host+window.location.pathname;
+  const phantomDeep    = 'https://phantom.app/ul/browse/'+currentUrl+'?ref='+currentUrl;
+  const okxDeep        = 'okx://wallet/dapp/url?dappUrl='+currentUrl;
+  const coinbaseDeep   = 'https://go.cb-w.com/dapp?cb_url='+encodeURIComponent(window.location.href);
+
+  document.getElementById('modal-content').innerHTML = `
     <div class="modal-title">Open with Wallet App</div>
-    <div class="modal-sub">Pilih wallet untuk membuka dApp dan mount Validator Key.</div>
+    <div class="modal-sub">Pilih wallet untuk membuka dApp di dalam browser wallet kamu.</div>
     <div class="wallet-list">
-      <div class="wallet-item" onclick="window.location.href='${metamaskDeepLink}'">
+      <div class="wallet-item" onclick="window.location.href='${metamaskDeep}'">
         <div class="wallet-logo" style="background:rgba(247,147,26,0.15)">🦊</div>
         <div class="wallet-info-block"><div class="wallet-name">MetaMask</div><div class="wallet-type">Buka di MetaMask Browser</div></div>
         <div class="wallet-status installed">Open ↗</div>
       </div>
-      <div class="wallet-item" onclick="window.location.href='${phantomDeepLink}'">
+      <div class="wallet-item" onclick="window.location.href='${phantomDeep}'">
         <div class="wallet-logo" style="background:rgba(153,69,255,0.15)">👻</div>
         <div class="wallet-info-block"><div class="wallet-name">Phantom</div><div class="wallet-type">Buka di Phantom Browser</div></div>
-        <div class="wallet-status popular">Open ↗</div>
+        <div class="wallet-status installed">Open ↗</div>
       </div>
-      <div class="wallet-item" onclick="tryOkxDeepLink('${okxDeepLink}','${okxFallback}')">
+      <div class="wallet-item" onclick="tryOkxDeepLink('${okxDeep}','https://www.okx.com/download')">
         <div class="wallet-logo" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1)">⬛</div>
         <div class="wallet-info-block"><div class="wallet-name">OKX Wallet</div><div class="wallet-type">Buka di OKX Wallet Browser</div></div>
-        <div class="wallet-status popular">Open ↗</div>
+        <div class="wallet-status installed">Open ↗</div>
       </div>
-      <div class="wallet-item" onclick="window.location.href='https://go.cb-w.com/dapp?cb_url='+encodeURIComponent(window.location.href)">
+      <div class="wallet-item" onclick="window.location.href='${coinbaseDeep}'">
         <div class="wallet-logo" style="background:rgba(22,82,240,0.15)">🔵</div>
         <div class="wallet-info-block"><div class="wallet-name">Coinbase Wallet</div><div class="wallet-type">Buka di Coinbase Browser</div></div>
-        <div class="wallet-status popular">Open ↗</div>
+        <div class="wallet-status installed">Open ↗</div>
       </div>
     </div>
     <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;line-height:1.6;text-align:center;">Kalau udah di dalam browser wallet, tutup popup ini dan tap lagi.</p>`;
   document.getElementById('wallet-modal').classList.add('open');
 }
 
-function tryOkxDeepLink(deepLink,fallback){
-  const start=Date.now();window.location.href=deepLink;
-  setTimeout(()=>{if(Date.now()-start<1500)window.location.href=fallback;},800);
+function openInstallLink(url, name){
+  window.open(url, '_blank');
+}
+function tryOkxDeepLink(deepLink, fallback){
+  const start = Date.now();
+  window.location.href = deepLink;
+  setTimeout(() => { if(Date.now()-start < 1500) window.location.href = fallback; }, 800);
 }
 
-async function connectEthWallet(name,icon,destination){
-  document.getElementById('modal-content').innerHTML=`
+// ══════════════════════════════════════════
+// CONNECT WALLET — real per-provider flow
+// ══════════════════════════════════════════
+async function connectWallet(walletKey, walletName, destination){
+  // Show loading
+  document.getElementById('modal-content').innerHTML = `
     <div class="center-modal">
       <div class="spinner"></div>
-      <div class="modal-big-title">Mounting ${name}…</div>
+      <div class="modal-big-title">Mounting ${walletName}…</div>
       <div class="modal-desc">Approve the connection request in your wallet.</div>
     </div>`;
 
-  if(typeof window.ethereum==='undefined'){
-    let downloadLink='https://metamask.io/download/';
-    if(name.includes('Phantom')) downloadLink='https://phantom.app/download';
-    else if(name.includes('OKX')) downloadLink='https://www.okx.com/web3';
-    else if(name.includes('Coinbase')) downloadLink='https://www.coinbase.com/wallet';
-    setTimeout(()=>{
-      document.getElementById('modal-content').innerHTML=`
-        <div class="center-modal">
-          <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
-          <div class="modal-big-title">${name} Not Found</div>
-          <div class="modal-desc" style="margin-bottom:1.5rem;line-height:1.5;">Install ${name} extension dulu untuk mount Validator Key.</div>
-          <a href="${downloadLink}" target="_blank" style="display:inline-block;padding:0.85rem 1.5rem;background:var(--accent);color:#050810;text-decoration:none;font-family:var(--font);font-weight:700;border-radius:10px;font-size:0.9rem;">Download ${name}</a>
-        </div>`;
-    },600);
+  const provider = getProviderFor(walletKey);
+  if(!provider){
+    document.getElementById('modal-content').innerHTML = `
+      <div class="center-modal">
+        <div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>
+        <div class="modal-big-title">${walletName} Not Available</div>
+        <div class="modal-desc">Could not find the ${walletName} provider. Make sure the extension is enabled.</div>
+        <button onclick="showDesktopWalletModal('${destination}')" style="margin-top:1rem;padding:0.6rem 1.5rem;background:var(--accent);color:#050810;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font)">Back</button>
+      </div>`;
     return;
   }
 
   try{
-    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
-    if(!accounts||accounts.length===0) throw new Error('No accounts returned');
-    globalWallet=accounts[0];
-    // Get current chain
-    globalChainId = await window.ethereum.request({method:'eth_chainId'});
+    const accounts = await provider.request({ method:'eth_requestAccounts' });
+    if(!accounts || accounts.length === 0) throw new Error('No accounts returned');
+
+    globalWallet   = accounts[0];
+    activeProvider = provider;
+    globalChainId  = await provider.request({ method:'eth_chainId' });
+
+    bindProviderEvents(provider);
     closeModal();
     afterWalletConnected(globalWallet, destination);
+
   }catch(e){
-    document.getElementById('modal-content').innerHTML=`
+    const msg = e.code === 4001 ? 'Connection rejected by user.' : (e.message || 'Unknown error');
+    document.getElementById('modal-content').innerHTML = `
       <div class="center-modal">
         <div style="font-size:2rem;margin-bottom:0.75rem">⚠️</div>
         <div class="modal-big-title">Connection Failed</div>
-        <div class="modal-desc">${e.code===4001?'Rejected by user.':e.message||'Unknown error'}</div>
-        <button onclick="showDesktopWalletModal('${destination}')" style="margin-top:1rem;padding:0.6rem 1.5rem;background:var(--accent);color:#050810;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font);">Try Again</button>
+        <div class="modal-desc">${msg}</div>
+        <button onclick="showDesktopWalletModal('${destination}')" style="margin-top:1rem;padding:0.6rem 1.5rem;background:var(--accent);color:#050810;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font)">Try Again</button>
       </div>`;
   }
 }
@@ -1118,128 +1236,134 @@ function afterWalletConnected(addr, destination){
 }
 
 function updateNavWalletBtn(addr){
-  const btn=document.getElementById('nav-wallet-btn');
-  const short=addr.slice(0,6)+'…'+addr.slice(-4);
+  const btn   = document.getElementById('nav-wallet-btn');
+  const short = addr.slice(0,6)+'…'+addr.slice(-4);
   btn.classList.add('connected');
-  btn.innerHTML=`<span class="wdot"></span> ${short}`;
+  btn.innerHTML = `<span class="wdot"></span> ${short}`;
 }
 
 function handleNavWallet(){
-  if(globalWallet){disconnectAll();}
-  else{openWalletModal('garage');}
+  if(globalWallet){ disconnectAll(); }
+  else             { openWalletModal('garage'); }
 }
 
 function disconnectAll(){
-  globalWallet=null; swapWallet=null; globalChainId=null;
-  const btn=document.getElementById('nav-wallet-btn');
-  btn.classList.remove('connected'); btn.innerHTML='Insert Validator Key';
+  globalWallet = null; swapWallet = null; globalChainId = null; activeProvider = null;
+  const btn = document.getElementById('nav-wallet-btn');
+  btn.classList.remove('connected'); btn.innerHTML = 'Insert Validator Key';
   renderSwapWalletArea();
-  // Reset garage to standby
-  document.getElementById('garage-standby').style.display='flex';
-  document.getElementById('assembly-screen').style.display='none';
-  document.getElementById('garage-dashboard').style.display='none';
-  const badge=document.getElementById('node-badge');
-  badge.classList.remove('online');
-  badge.innerHTML='<div class="node-status-dot"></div>NODE_STATUS: DISCONNECTED';
+  resetGarageToStandby();
 }
 
-// ══ VALIDATOR GARAGE IGNITION ══
+function resetGarageToStandby(){
+  document.getElementById('garage-standby').style.display   = 'flex';
+  document.getElementById('assembly-screen').style.display  = 'none';
+  document.getElementById('garage-dashboard').style.display = 'none';
+  const badge = document.getElementById('node-badge');
+  badge.classList.remove('online');
+  badge.innerHTML = '<div class="node-status-dot"></div>NODE_STATUS: DISCONNECTED';
+}
+
+// ══════════════════════════════════════════
+// VALIDATOR GARAGE
+// ══════════════════════════════════════════
 function startIgnition(){
-  // FIX: If wallet already connected globally, skip modal and go straight to assembly
-  if(globalWallet){
-    runAssembly(globalWallet);
-  } else {
-    openWalletModal('garage');
-  }
+  if(globalWallet){ runAssembly(globalWallet); }
+  else             { openWalletModal('garage'); }
 }
 
 function runAssembly(addr){
-  // FIX: properly reset all phases
-  document.getElementById('garage-standby').style.display='none';
-  document.getElementById('assembly-screen').style.display='flex';
-  document.getElementById('garage-dashboard').style.display='none';
+  document.getElementById('garage-standby').style.display   = 'none';
+  document.getElementById('assembly-screen').style.display  = 'flex';
+  document.getElementById('garage-dashboard').style.display = 'none';
 
-  const steps=[
-    {layerId:'asm-l1',statusId:'asm-s1',text:'RISC-V Engine Loaded',progress:'33%',log:'[L1] Mounting RISC-V execution engine…'},
-    {layerId:'asm-l2',statusId:'asm-s2',text:'Ethereum Integrity Verified',progress:'66%',log:'[L2] Verifying Ethereum settlement layer…'},
-    {layerId:'asm-l3',statusId:'asm-s3',text:'Data Availability Synced',progress:'100%',log:'[L3] Syncing DA layer… Finality: 50ms ✓'},
+  // Reset all layers
+  ['asm-l1','asm-l2','asm-l3'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('loaded');
+  });
+  ['asm-s1','asm-s2','asm-s3'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.className = 'asm-layer-status pending'; el.textContent = 'Waiting…'; }
+  });
+  const prog = document.getElementById('asm-progress');
+  if(prog) prog.style.width = '0%';
+  const log = document.getElementById('asm-log');
+  if(log) log.textContent = 'Initializing…';
+
+  const steps = [
+    { layerId:'asm-l1', statusId:'asm-s1', text:'RISC-V Engine Loaded',           progress:'33%',  log:'[L1] Mounting RISC-V execution engine…' },
+    { layerId:'asm-l2', statusId:'asm-s2', text:'Ethereum Integrity Verified',    progress:'66%',  log:'[L2] Verifying Ethereum settlement layer…' },
+    { layerId:'asm-l3', statusId:'asm-s3', text:'Data Availability Synced',       progress:'100%', log:'[L3] Syncing DA layer… Finality: 50ms ✓' },
   ];
 
-  // Reset layer states
-  steps.forEach(s=>{
-    const l=document.getElementById(s.layerId);
-    if(l) l.classList.remove('loaded');
-    const st=document.getElementById(s.statusId);
-    if(st){ st.className='asm-layer-status pending'; st.textContent='Waiting…'; }
-  });
-  const prog=document.getElementById('asm-progress');
-  if(prog) prog.style.width='0%';
-
-  let i=0;
+  let i = 0;
   function nextStep(){
-    if(i>=steps.length){ setTimeout(()=>showDashboard(addr),600); return; }
-    const s=steps[i];
-    const logEl=document.getElementById('asm-log');
-    if(logEl) logEl.textContent=s.log;
-    const stEl=document.getElementById(s.statusId);
-    if(stEl){ stEl.className='asm-layer-status loading'; stEl.textContent='Loading…'; }
-    setTimeout(()=>{
-      const layer=document.getElementById(s.layerId);
+    if(i >= steps.length){ setTimeout(() => showDashboard(addr), 600); return; }
+    const s   = steps[i];
+    const log = document.getElementById('asm-log');
+    if(log) log.textContent = s.log;
+    const stEl = document.getElementById(s.statusId);
+    if(stEl){ stEl.className = 'asm-layer-status loading'; stEl.textContent = 'Loading…'; }
+    setTimeout(() => {
+      const layer = document.getElementById(s.layerId);
       if(layer) layer.classList.add('loaded');
-      if(stEl){ stEl.className='asm-layer-status done'; stEl.textContent=s.text; }
-      const progEl=document.getElementById('asm-progress');
-      if(progEl) progEl.style.width=s.progress;
+      if(stEl){ stEl.className = 'asm-layer-status done'; stEl.textContent = s.text; }
+      const progEl = document.getElementById('asm-progress');
+      if(progEl) progEl.style.width = s.progress;
       i++;
-      setTimeout(nextStep,700);
-    },900);
+      setTimeout(nextStep, 700);
+    }, 900);
   }
-  setTimeout(nextStep,400);
+  setTimeout(nextStep, 400);
 }
 
 function showDashboard(addr){
-  document.getElementById('assembly-screen').style.display='none';
-  document.getElementById('garage-dashboard').style.display='block';
-  const short=addr.slice(0,10)+'…'+addr.slice(-6);
-  document.getElementById('gkb-addr').textContent=short;
-  const badge=document.getElementById('node-badge');
+  document.getElementById('assembly-screen').style.display  = 'none';
+  document.getElementById('garage-dashboard').style.display = 'block';
+  const short = addr.slice(0,10)+'…'+addr.slice(-6);
+  document.getElementById('gkb-addr').textContent = short;
+  const badge = document.getElementById('node-badge');
   badge.classList.add('online');
-  badge.innerHTML='<div class="node-status-dot"></div>NODE_STATUS: ONLINE';
+  badge.innerHTML = '<div class="node-status-dot"></div>NODE_STATUS: ONLINE';
 }
 
 function disconnectGarage(){ disconnectAll(); }
 
-// VM Switcher
-const vmDescriptions={
-  EVM:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.',
-  SVM:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing. Rust-based programs.',
-  MOVE:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management. Aptos/Sui compatible.'
+const vmDescriptions = {
+  EVM:  'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.',
+  SVM:  'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing. Rust-based programs.',
+  MOVE: 'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management. Aptos/Sui compatible.'
 };
-function switchVM(vm,btn){
-  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));
+function switchVM(vm, btn){
+  document.querySelectorAll('.vm-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('vm-status-text').innerHTML=vmDescriptions[vm];
-  document.getElementById('dash-vm-label').textContent=vm;
+  document.getElementById('vm-status-text').innerHTML = vmDescriptions[vm];
+  document.getElementById('dash-vm-label').textContent = vm;
 }
 
-// ══ SWAP — SEPOLIA SYSTEM ══
-let swapWallet = null;
+// ══════════════════════════════════════════
+// SWAP — Sepolia
+// ══════════════════════════════════════════
+let swapWallet   = null;
 let swapBalances = { ETH: 0, RIALO: 0 };
-let swapTxns = [];
+let swapTxns     = [];
+let swapBusy     = false; // prevent double-fire
 
 async function refreshSwapBalance(){
-  if(!swapWallet || typeof window.ethereum === 'undefined') return;
+  if(!swapWallet || !activeProvider) return;
   try{
-    const hex = await window.ethereum.request({method:'eth_getBalance', params:[swapWallet,'latest']});
-    swapBalances.ETH = parseInt(hex,16) / 1e18;
+    const hex = await activeProvider.request({ method:'eth_getBalance', params:[swapWallet,'latest'] });
+    swapBalances.ETH = parseInt(hex, 16) / 1e18;
   }catch(e){ swapBalances.ETH = 0; }
-  swapBalances.RIALO = parseFloat((Math.random()*500+100).toFixed(2)); // Mock RIALO balance
+  swapBalances.RIALO = parseFloat((Math.random()*500+100).toFixed(2));
   updateSwapUI();
 }
 
 function checkNetworkAndUpdateSwap(){
   const onSepolia = isOnSepolia();
-  const alertEl = document.getElementById('network-alert');
-  if(alertEl){ alertEl.style.display = (swapWallet && !onSepolia) ? 'block' : 'none'; }
+  const alertEl   = document.getElementById('network-alert');
+  if(alertEl) alertEl.style.display = (swapWallet && !onSepolia) ? 'block' : 'none';
   updateSwapBtn();
 }
 
@@ -1253,16 +1377,17 @@ function updateSwapUI(){
 
 function initSwapPage(){
   renderSwapWalletArea();
-  if(swapWallet){ refreshSwapBalance(); checkNetworkAndUpdateSwap(); }
+  if(swapWallet && activeProvider){ refreshSwapBalance(); checkNetworkAndUpdateSwap(); }
+  else { updateSwapBtn(); }
 }
 
 function renderSwapWalletArea(){
   const area = document.getElementById('swap-wallet-area');
   if(!area) return;
   if(swapWallet){
-    const short = swapWallet.slice(0,6)+'…'+swapWallet.slice(-4);
+    const short     = swapWallet.slice(0,6)+'…'+swapWallet.slice(-4);
     const onSepolia = isOnSepolia();
-    area.innerHTML=`
+    area.innerHTML = `
       <div class="swap-wallet-strip">
         <div class="swap-wallet-left">
           <div class="sw-dot"></div>
@@ -1272,19 +1397,20 @@ function renderSwapWalletArea(){
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <span class="sw-network" style="${onSepolia?'':'color:var(--red);border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08)'}">${onSepolia?'Sepolia ✓':'Wrong Network ⚠'}</span>
+          <span class="sw-network" style="${onSepolia ? '' : 'color:var(--red);border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08)'}">
+            ${onSepolia ? 'Sepolia ✓' : 'Wrong Network ⚠'}
+          </span>
           <button onclick="swapDisconnect()" style="font-size:0.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font)">Disconnect</button>
         </div>
       </div>`;
     checkNetworkAndUpdateSwap();
     updateSwapUI();
   } else {
-    area.innerHTML=`
+    area.innerHTML = `
       <button class="swap-connect-btn" onclick="swapConnectWallet()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
         Connect Wallet to Swap (Sepolia)
       </button>`;
-    // Hide network alert when not connected
     const alertEl = document.getElementById('network-alert');
     if(alertEl) alertEl.style.display = 'none';
     updateSwapBtn();
@@ -1292,8 +1418,7 @@ function renderSwapWalletArea(){
 }
 
 function swapConnectWallet(){
-  // FIX: if already globally connected, reuse that wallet for swap
-  if(globalWallet){
+  if(globalWallet && activeProvider){
     swapWallet = globalWallet;
     refreshSwapBalance();
     renderSwapWalletArea();
@@ -1304,24 +1429,25 @@ function swapConnectWallet(){
 }
 
 function swapDisconnect(){
-  swapWallet=null; swapBalances={ETH:0,RIALO:0};
-  const alertEl=document.getElementById('network-alert');
-  if(alertEl) alertEl.style.display='none';
+  swapWallet = null;
+  swapBalances = { ETH:0, RIALO:0 };
+  const alertEl = document.getElementById('network-alert');
+  if(alertEl) alertEl.style.display = 'none';
   renderSwapWalletArea();
 }
 
 function setMaxFrom(){
-  const bal = swapBalances.ETH;
-  const safe = Math.max(0, bal - 0.001); // keep 0.001 for gas (even if subsidized, keep small buffer)
-  const inp = document.getElementById('from-amount');
+  const bal  = swapBalances.ETH;
+  const safe = Math.max(0, bal - 0.001);
+  const inp  = document.getElementById('from-amount');
   if(inp){ inp.value = safe.toFixed(6); calcSwap(); }
 }
 
 function calcSwap(){
   const amtEl = document.getElementById('from-amount');
   if(!amtEl) return;
-  const amt = parseFloat(amtEl.value) || 0;
-  const rialOut = amt * RIALO_RATE * 0.995; // 0.5% protocol fee
+  const amt     = parseFloat(amtEl.value) || 0;
+  const rialOut = amt * RIALO_RATE * 0.995;
 
   const fu = document.getElementById('from-usd');
   if(fu) fu.textContent = amt > 0 ? `≈ ${amt.toFixed(6)} SepoliaETH (testnet)` : '≈ $0.00 (testnet)';
@@ -1352,93 +1478,84 @@ function updateSwapBtn(){
   const amt = parseFloat(document.getElementById('from-amount')?.value) || 0;
 
   if(!swapWallet){
-    btn.textContent = 'Connect Wallet'; btn.className = 'swap-action-btn needs-wallet';
-    btn.onclick = swapConnectWallet; return;
+    btn.textContent = 'Connect Wallet';
+    btn.className   = 'swap-action-btn needs-wallet';
+    btn.onclick     = swapConnectWallet;
+    return;
   }
   if(!isOnSepolia()){
-    btn.textContent = '⚡ Switch to Sepolia Testnet'; btn.className = 'swap-action-btn needs-network';
-    btn.onclick = handleSwitchNetwork; return;
+    btn.textContent = '⚡ Switch to Sepolia Testnet';
+    btn.className   = 'swap-action-btn needs-network';
+    btn.onclick     = handleSwitchNetwork;
+    return;
   }
   if(amt <= 0){
-    btn.textContent = 'Enter an amount'; btn.className = 'swap-action-btn disabled';
-    btn.onclick = null; return;
+    btn.textContent = 'Enter an amount';
+    btn.className   = 'swap-action-btn disabled';
+    btn.onclick     = null;
+    return;
   }
   if(amt > swapBalances.ETH){
-    btn.textContent = 'Insufficient SepoliaETH balance'; btn.className = 'swap-action-btn disabled';
-    btn.onclick = null; return;
+    btn.textContent = 'Insufficient SepoliaETH balance';
+    btn.className   = 'swap-action-btn disabled';
+    btn.onclick     = null;
+    return;
   }
   btn.textContent = `Swap ${amt.toFixed(4)} SepoliaETH → RIALO`;
-  btn.className = 'swap-action-btn ready';
-  btn.onclick = doSwap;
-}
-
-function handleSwapBtn(){
-  if(!swapWallet){ swapConnectWallet(); return; }
-  if(!isOnSepolia()){ handleSwitchNetwork(); return; }
-  doSwap();
+  btn.className   = 'swap-action-btn ready';
+  btn.onclick     = doSwap;   // assigned directly — no double-fire
 }
 
 async function handleSwitchNetwork(){
   const btn = document.getElementById('swap-action-btn');
-  if(btn){ btn.textContent = 'Switching network…'; btn.className = 'swap-action-btn disabled'; }
+  if(btn){ btn.textContent = 'Switching network…'; btn.className = 'swap-action-btn disabled'; btn.onclick = null; }
   const ok = await switchToSepolia();
-  if(ok){
-    globalChainId = SEPOLIA_CHAIN_ID;
-    checkNetworkAndUpdateSwap();
-    renderSwapWalletArea();
-  } else {
-    if(btn){ btn.textContent = '⚡ Switch to Sepolia Testnet'; btn.className = 'swap-action-btn needs-network'; btn.onclick = handleSwitchNetwork; }
-  }
+  if(ok){ checkNetworkAndUpdateSwap(); renderSwapWalletArea(); }
+  else  { updateSwapBtn(); }
 }
 
 async function doSwap(){
-  if(!swapWallet){ swapConnectWallet(); return; }
+  if(swapBusy) return;
+  if(!swapWallet || !activeProvider){ swapConnectWallet(); return; }
   if(!isOnSepolia()){ handleSwitchNetwork(); return; }
 
-  const amt = parseFloat(document.getElementById('from-amount').value) || 0;
+  const amt     = parseFloat(document.getElementById('from-amount').value) || 0;
   const rialOut = parseFloat(document.getElementById('to-amount').value) || 0;
   if(amt <= 0 || amt > swapBalances.ETH || rialOut <= 0) return;
 
-  // Show pending state
-  document.getElementById('tx-pending').style.display = 'block';
-  document.getElementById('tx-success').style.display = 'none';
+  swapBusy = true;
+  document.getElementById('tx-pending').style.display   = 'block';
+  document.getElementById('tx-success').style.display   = 'none';
   document.getElementById('swap-action-btn').style.display = 'none';
   const ri = document.getElementById('route-info');
   if(ri) ri.style.display = 'none';
 
   let txHash = null;
   try{
-    if(typeof window.ethereum !== 'undefined'){
-      const weiHex = '0x' + Math.floor(amt * 1e18).toString(16);
-      // Send on Sepolia — to a placeholder testnet address
-      txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params:[{
-          from: swapWallet,
-          to: RIALO_SWAP_ADDR,
-          value: weiHex,
-          chainId: SEPOLIA_CHAIN_ID,
-          gas: '0x5208' // 21000
-        }]
-      });
-    }
-    // Success after tx broadcast
-    setTimeout(()=>swapSuccess(amt, rialOut, txHash), 1500);
+    const weiHex = '0x' + Math.floor(amt * 1e18).toString(16);
+    txHash = await activeProvider.request({
+      method: 'eth_sendTransaction',
+      params:[{ from: swapWallet, to: RIALO_SWAP_ADDR, value: weiHex, chainId: SEPOLIA_CHAIN_ID, gas: '0x5208' }]
+    });
+    setTimeout(() => swapSuccess(amt, rialOut, txHash), 1500);
   }catch(e){
-    document.getElementById('tx-pending').style.display = 'none';
+    swapBusy = false;
+    document.getElementById('tx-pending').style.display   = 'none';
     document.getElementById('swap-action-btn').style.display = 'block';
+    updateSwapBtn();
     if(e.code !== 4001){
-      // Non-rejection error — still show success for testnet demo
-      setTimeout(()=>swapSuccess(amt, rialOut, null), 1000);
+      // non-rejection: show success demo anyway
+      setTimeout(() => swapSuccess(amt, rialOut, null), 800);
     }
   }
 }
 
 function swapSuccess(amtFrom, amtTo, realTxHash){
-  swapBalances.ETH = Math.max(0, swapBalances.ETH - amtFrom);
+  swapBusy = false;
+  swapBalances.ETH   = Math.max(0, swapBalances.ETH - amtFrom);
   swapBalances.RIALO += amtTo;
 
-  const fakeHash = realTxHash || ('0x' + [...Array(64)].map(()=>Math.floor(Math.random()*16).toString(16)).join(''));
+  const fakeHash  = realTxHash || ('0x' + [...Array(64)].map(()=>Math.floor(Math.random()*16).toString(16)).join(''));
   const explorerUrl = SEPOLIA_EXPLORER + fakeHash;
 
   swapTxns.unshift({ amtFrom, amtTo, hash: fakeHash, time: 'Just now', status: 'success', url: explorerUrl });
@@ -1448,28 +1565,26 @@ function swapSuccess(amtFrom, amtTo, realTxHash){
 
   const sm = document.getElementById('tx-success-msg');
   if(sm) sm.textContent = `${amtFrom.toFixed(4)} SepoliaETH → ${amtTo.toFixed(4)} RIALO`;
-
   const th = document.getElementById('tx-hash');
   if(th) th.textContent = 'Tx: ' + fakeHash;
-
   const el = document.getElementById('tx-explorer-link');
-  if(el){ el.href = explorerUrl; }
+  if(el) el.href = explorerUrl;
 
   renderTxns();
   updateSwapUI();
-  // Update wallet strip balance
   const strip = document.getElementById('strip-bal');
-  if(strip) strip.innerHTML = `SepoliaETH: ${swapBalances.ETH.toFixed(4)} | RIALO: ${swapBalances.RIALO.toFixed(2)}`;
+  if(strip) strip.textContent = `SepoliaETH: ${swapBalances.ETH.toFixed(4)} | RIALO: ${swapBalances.RIALO.toFixed(2)}`;
 }
 
 function resetSwap(){
-  const fa = document.getElementById('from-amount'); if(fa) fa.value='';
-  const ta = document.getElementById('to-amount'); if(ta) ta.value='';
-  document.getElementById('tx-success').style.display='none';
-  document.getElementById('swap-action-btn').style.display='block';
-  const ri = document.getElementById('route-info'); if(ri) ri.style.display='none';
-  const fu = document.getElementById('from-usd'); if(fu) fu.textContent='≈ $0.00 (testnet)';
-  const tu = document.getElementById('to-usd'); if(tu) tu.textContent='≈ $0.00 (testnet)';
+  swapBusy = false;
+  const fa = document.getElementById('from-amount'); if(fa) fa.value = '';
+  const ta = document.getElementById('to-amount');   if(ta) ta.value = '';
+  document.getElementById('tx-success').style.display      = 'none';
+  document.getElementById('swap-action-btn').style.display = 'block';
+  const ri = document.getElementById('route-info'); if(ri) ri.style.display = 'none';
+  const fu = document.getElementById('from-usd');   if(fu) fu.textContent = '≈ $0.00 (testnet)';
+  const tu = document.getElementById('to-usd');     if(tu) tu.textContent = '≈ $0.00 (testnet)';
   updateSwapBtn();
 }
 
@@ -1479,7 +1594,7 @@ function renderTxns(){
   rt.style.display = 'block';
   const tl = document.getElementById('txn-list');
   if(!tl) return;
-  tl.innerHTML = swapTxns.slice(0,5).map(t=>`
+  tl.innerHTML = swapTxns.slice(0,5).map(t => `
     <div class="txn-row">
       <div class="txn-left">
         <div class="txn-icon">⇅</div>
@@ -1494,77 +1609,220 @@ function renderTxns(){
     </div>`).join('');
 }
 
-// ══ MARKET ══
-let allCoins=[],selectedCoinId='bitcoin',currentDays=1,mainChartInst=null,sparkCharts={};
-let sortKey='rank',sortDir=1,gainTabMode='gain',marketLoaded=false,marketRefreshInterval=null;
-const fmt=(n,d=2)=>n==null?'—':Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-const fmtPrice=n=>{if(n==null)return'—';if(n>=1)return'$'+fmt(n);if(n>=0.01)return'$'+n.toFixed(4);return'$'+n.toFixed(8);};
-const fmtBig=n=>{if(n==null)return'—';if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T';if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+fmt(n);};
-const pctClass=v=>v>=0?'pos':'neg';
-const pctStr=v=>v==null?'—':(v>=0?'+':'')+fmt(v)+'%';
-async function fetchMarket(){const url='https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d';const res=await fetch(url);if(!res.ok)throw new Error('API error');return res.json();}
-async function fetchChart(coinId,days){const url=`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;const res=await fetch(url);if(!res.ok)throw new Error('Chart error');return res.json();}
+// ══════════════════════════════════════════
+// MARKET
+// ══════════════════════════════════════════
+let allCoins=[], selectedCoinId='bitcoin', currentDays=1, mainChartInst=null, sparkCharts={};
+let sortKey='rank', sortDir=1, gainTabMode='gain', marketLoaded=false, marketRefreshInterval=null;
+
+const fmt     = (n,d=2) => n==null ? '—' : Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtPrice = n => { if(n==null)return'—'; if(n>=1)return'$'+fmt(n); if(n>=0.01)return'$'+n.toFixed(4); return'$'+n.toFixed(8); };
+const fmtBig   = n => { if(n==null)return'—'; if(n>=1e12)return'$'+(n/1e12).toFixed(2)+'T'; if(n>=1e9)return'$'+(n/1e9).toFixed(2)+'B'; if(n>=1e6)return'$'+(n/1e6).toFixed(2)+'M'; return'$'+fmt(n); };
+const pctClass = v => v >= 0 ? 'pos' : 'neg';
+const pctStr   = v => v == null ? '—' : (v>=0?'+':'')+fmt(v)+'%';
+
+async function fetchMarket(){
+  const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=true&price_change_percentage=24h,7d';
+  const res = await fetch(url); if(!res.ok) throw new Error('API error'); return res.json();
+}
+async function fetchChart(coinId, days){
+  const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+  const res = await fetch(url); if(!res.ok) throw new Error('Chart error'); return res.json();
+}
+
 function renderMktCards(coins){
-  const top=coins.slice(0,8);
-  document.getElementById('cardsGrid').innerHTML=top.map(c=>{const chg=c.price_change_percentage_24h;return`<div class="mkt-card${c.id===selectedCoinId?' active':''}" onclick="selectCoin('${c.id}',this)"><div class="mkt-card-header"><div class="mkt-coin-info"><img class="mkt-coin-icon" src="${c.image}" loading="lazy"/><div><div class="mkt-coin-sym">${c.symbol.toUpperCase()}</div><div class="mkt-coin-name">${c.name}</div></div></div><span class="rank-badge">#${c.market_cap_rank}</span></div><div class="mkt-card-price">${fmtPrice(c.current_price)}</div><span class="mkt-card-change ${pctClass(chg)}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span><div class="mkt-card-vol">Vol: ${fmtBig(c.total_volume)}</div><div class="sparkline"><canvas id="spark-${c.id}"></canvas></div></div>`;}).join('');
-  top.forEach(c=>{const spark=c.sparkline_in_7d?.price||[];if(!spark.length)return;const ctx2=document.getElementById(`spark-${c.id}`)?.getContext('2d');if(!ctx2)return;if(sparkCharts[c.id])sparkCharts[c.id].destroy();const chg=c.price_change_percentage_24h;const color=chg>=0?'#4ade80':'#f87171';sparkCharts[c.id]=new Chart(ctx2,{type:'line',data:{labels:spark.map((_,i)=>i),datasets:[{data:spark,borderColor:color,borderWidth:1.5,fill:true,backgroundColor:c2=>{const g=c2.chart.ctx.createLinearGradient(0,0,0,36);g.addColorStop(0,chg>=0?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');g.addColorStop(1,'rgba(0,0,0,0)');return g;},tension:0.4,pointRadius:0}]},options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},animation:false,responsive:true,maintainAspectRatio:false}});});
+  const top = coins.slice(0,8);
+  document.getElementById('cardsGrid').innerHTML = top.map(c => {
+    const chg = c.price_change_percentage_24h;
+    return `<div class="mkt-card${c.id===selectedCoinId?' active':''}" onclick="selectCoin('${c.id}',this)">
+      <div class="mkt-card-header">
+        <div class="mkt-coin-info">
+          <img class="mkt-coin-icon" src="${c.image}" loading="lazy"/>
+          <div><div class="mkt-coin-sym">${c.symbol.toUpperCase()}</div><div class="mkt-coin-name">${c.name}</div></div>
+        </div>
+        <span class="rank-badge">#${c.market_cap_rank}</span>
+      </div>
+      <div class="mkt-card-price">${fmtPrice(c.current_price)}</div>
+      <span class="mkt-card-change ${pctClass(chg)}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span>
+      <div class="mkt-card-vol">Vol: ${fmtBig(c.total_volume)}</div>
+      <div class="sparkline"><canvas id="spark-${c.id}" style="width:100%;height:36px"></canvas></div>
+    </div>`;
+  }).join('');
+
+  // FIX: Chart.js v4 sparklines — use plugin.filler properly
+  top.forEach(c => {
+    const spark = c.sparkline_in_7d?.price || [];
+    if(!spark.length) return;
+    const canvas = document.getElementById(`spark-${c.id}`);
+    if(!canvas) return;
+    const ctx2 = canvas.getContext('2d');
+    if(sparkCharts[c.id]){ sparkCharts[c.id].destroy(); delete sparkCharts[c.id]; }
+    const chg   = c.price_change_percentage_24h;
+    const color = chg >= 0 ? '#4ade80' : '#f87171';
+    const fillColor = chg >= 0 ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)';
+    sparkCharts[c.id] = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: spark.map((_,i) => i),
+        datasets:[{
+          data: spark,
+          borderColor: color,
+          borderWidth: 1.5,
+          fill: true,
+          backgroundColor: fillColor,   // FIX: plain string, not callback
+          tension: 0.4,
+          pointRadius: 0
+        }]
+      },
+      options:{
+        plugins:{ legend:{display:false} },
+        scales:{ x:{display:false}, y:{display:false} },
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  });
 }
+
 async function renderMainChart(){
-  const coin=allCoins.find(c=>c.id===selectedCoinId);if(!coin)return;
-  document.getElementById('chartTitle').textContent=`${coin.name} (${coin.symbol.toUpperCase()})`;
-  document.getElementById('chartPrice').textContent=fmtPrice(coin.current_price);
-  const chg=coin.price_change_percentage_24h;
-  const bigEl=document.getElementById('chartChangeBig');bigEl.textContent=pctStr(chg);bigEl.className='chart-change-big '+pctClass(chg);
+  const coin = allCoins.find(c => c.id === selectedCoinId);
+  if(!coin) return;
+  document.getElementById('chartTitle').textContent  = `${coin.name} (${coin.symbol.toUpperCase()})`;
+  document.getElementById('chartPrice').textContent  = fmtPrice(coin.current_price);
+  const chg    = coin.price_change_percentage_24h;
+  const bigEl  = document.getElementById('chartChangeBig');
+  bigEl.textContent = pctStr(chg); bigEl.className = 'chart-change-big '+pctClass(chg);
   try{
-    const data=await fetchChart(selectedCoinId,currentDays);
-    const pricesArr=data.prices;
-    const labels=pricesArr.map(p=>{const d=new Date(p[0]);return currentDays===1?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([],{month:'short',day:'numeric'});});
-    const vals=pricesArr.map(p=>p[1]);
-    const isUp=vals[vals.length-1]>=vals[0];const color=isUp?'#4ade80':'#f87171';
-    if(mainChartInst)mainChartInst.destroy();
-    const ctx3=document.getElementById('mainChart').getContext('2d');
-    const grad=ctx3.createLinearGradient(0,0,0,260);grad.addColorStop(0,isUp?'rgba(74,222,128,0.2)':'rgba(248,113,113,0.2)');grad.addColorStop(1,'rgba(0,0,0,0)');
-    mainChartInst=new Chart(ctx3,{type:'line',data:{labels,datasets:[{data:vals,label:coin.name,borderColor:color,borderWidth:2,backgroundColor:grad,fill:true,tension:0.3,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:color}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f1929',borderColor:'#1a2a42',borderWidth:1,titleColor:'#5a7090',bodyColor:'#e8eaf0',callbacks:{label:c=>' '+fmtPrice(c.parsed.y)}}},scales:{x:{grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},maxTicksLimit:6}},y:{position:'right',grid:{color:'rgba(26,42,66,0.5)',drawBorder:false},ticks:{color:'#5a7090',font:{family:'Space Mono',size:10},callback:v=>fmtPrice(v)}}}}});
-  }catch(e){console.error('Chart error',e);}
+    const data      = await fetchChart(selectedCoinId, currentDays);
+    const pricesArr = data.prices;
+    const labels    = pricesArr.map(p => {
+      const d = new Date(p[0]);
+      return currentDays===1
+        ? d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+        : d.toLocaleDateString([], {month:'short',day:'numeric'});
+    });
+    const vals = pricesArr.map(p => p[1]);
+    const isUp = vals[vals.length-1] >= vals[0];
+    const color = isUp ? '#4ade80' : '#f87171';
+    const fillColor = isUp ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)';
+    if(mainChartInst) mainChartInst.destroy();
+    const ctx3 = document.getElementById('mainChart').getContext('2d');
+    mainChartInst = new Chart(ctx3, {
+      type: 'line',
+      data:{
+        labels,
+        datasets:[{
+          data: vals, label: coin.name,
+          borderColor: color, borderWidth: 2,
+          backgroundColor: fillColor,   // FIX: plain string
+          fill: true, tension: 0.3,
+          pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: color
+        }]
+      },
+      options:{
+        responsive: true, maintainAspectRatio: false,
+        interaction:{ mode:'index', intersect:false },
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            backgroundColor:'#0f1929', borderColor:'#1a2a42', borderWidth:1,
+            titleColor:'#5a7090', bodyColor:'#e8eaf0',
+            callbacks:{ label: c => ' '+fmtPrice(c.parsed.y) }
+          }
+        },
+        scales:{
+          x:{ grid:{ color:'rgba(26,42,66,0.5)' }, ticks:{ color:'#5a7090', font:{family:'Space Mono',size:10}, maxTicksLimit:6 } },
+          y:{ position:'right', grid:{ color:'rgba(26,42,66,0.5)' }, ticks:{ color:'#5a7090', font:{family:'Space Mono',size:10}, callback: v => fmtPrice(v) } }
+        }
+      }
+    });
+  }catch(e){ console.error('Chart error', e); }
 }
+
 function renderGainers(){
-  const sorted=[...allCoins].sort((a,b)=>(b.price_change_percentage_24h||0)-(a.price_change_percentage_24h||0));
-  const list=gainTabMode==='gain'?sorted.slice(0,7):sorted.slice(-7).reverse();
-  document.getElementById('gainTab').className=`g-tab ${gainTabMode==='gain'?'active ':''} gain`;
-  document.getElementById('lossTab').className=`g-tab ${gainTabMode==='loss'?'active ':''} loss`;
-  document.getElementById('gainerList').innerHTML=list.map(c=>{const chg=c.price_change_percentage_24h;return`<div class="gainer-row"><div class="gainer-coin"><img class="gainer-icon" src="${c.image}" loading="lazy"/><div><div class="gainer-sym">${c.symbol.toUpperCase()}</div><div class="gainer-name">${c.name}</div></div></div><span class="gainer-pct ${pctClass(chg)}" style="background:${chg>=0?'rgba(74,222,128,0.1)':'rgba(248,113,113,0.1)'}">${pctStr(chg)}</span></div>`;}).join('');
+  const sorted = [...allCoins].sort((a,b) => (b.price_change_percentage_24h||0) - (a.price_change_percentage_24h||0));
+  const list   = gainTabMode==='gain' ? sorted.slice(0,7) : sorted.slice(-7).reverse();
+  document.getElementById('gainTab').className = `g-tab${gainTabMode==='gain'?' active':''} gain`;
+  document.getElementById('lossTab').className = `g-tab${gainTabMode==='loss'?' active':''} loss`;
+  document.getElementById('gainerList').innerHTML = list.map(c => {
+    const chg = c.price_change_percentage_24h;
+    return `<div class="gainer-row">
+      <div class="gainer-coin">
+        <img class="gainer-icon" src="${c.image}" loading="lazy"/>
+        <div><div class="gainer-sym">${c.symbol.toUpperCase()}</div><div class="gainer-name">${c.name}</div></div>
+      </div>
+      <span class="gainer-pct ${pctClass(chg)}" style="background:${chg>=0?'rgba(74,222,128,0.1)':'rgba(248,113,113,0.1)'}">
+        ${pctStr(chg)}
+      </span>
+    </div>`;
+  }).join('');
 }
+
 function renderTable(coins){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  const filtered=q?coins.filter(c=>c.name.toLowerCase().includes(q)||c.symbol.toLowerCase().includes(q)):coins;
-  document.getElementById('tableBody').innerHTML=filtered.map(c=>{const chg24=c.price_change_percentage_24h;const chg7=c.price_change_percentage_7d_in_currency;return`<tr onclick="selectCoin('${c.id}')" style="cursor:pointer"><td class="muted-num">${c.market_cap_rank}</td><td><div class="td-coin"><img class="td-icon" src="${c.image}" loading="lazy"/><div><div class="td-sym">${c.symbol.toUpperCase()}</div><div class="td-name">${c.name}</div></div></div></td><td class="td-price">${fmtPrice(c.current_price)}</td><td><span class="pct-pill ${pctClass(chg24)}">${pctStr(chg24)}</span></td><td><span class="pct-pill ${pctClass(chg7)}">${pctStr(chg7)}</span></td><td class="col-mktcap muted-num">${fmtBig(c.market_cap)}</td><td class="col-vol muted-num">${fmtBig(c.total_volume)}</td></tr>`;}).join('');
+  const q        = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = q ? coins.filter(c => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q)) : coins;
+  document.getElementById('tableBody').innerHTML = filtered.map(c => {
+    const chg24 = c.price_change_percentage_24h;
+    const chg7  = c.price_change_percentage_7d_in_currency;
+    return `<tr onclick="selectCoin('${c.id}')" style="cursor:pointer">
+      <td class="muted-num">${c.market_cap_rank}</td>
+      <td><div class="td-coin"><img class="td-icon" src="${c.image}" loading="lazy"/><div><div class="td-sym">${c.symbol.toUpperCase()}</div><div class="td-name">${c.name}</div></div></div></td>
+      <td class="td-price">${fmtPrice(c.current_price)}</td>
+      <td><span class="pct-pill ${pctClass(chg24)}">${pctStr(chg24)}</span></td>
+      <td><span class="pct-pill ${pctClass(chg7)}">${pctStr(chg7)}</span></td>
+      <td class="col-mktcap muted-num">${fmtBig(c.market_cap)}</td>
+      <td class="col-vol muted-num">${fmtBig(c.total_volume)}</td>
+    </tr>`;
+  }).join('');
 }
-function renderTicker(coins){const items=coins.slice(0,20).map(c=>{const chg=c.price_change_percentage_24h;return`<span class="ticker-item"><span class="ticker-name">${c.symbol.toUpperCase()}</span><span class="ticker-price">${fmtPrice(c.current_price)}</span><span class="ticker-change ${pctClass(chg)}">${pctStr(chg)}</span></span>`;}).join('');document.getElementById('tickerTrack').innerHTML=items+items;}
-function selectCoin(id,cardEl){selectedCoinId=id;document.querySelectorAll('.mkt-card').forEach(c=>c.classList.remove('active'));if(cardEl)cardEl.classList.add('active');renderMainChart();}
-function setDay(days,btn){currentDays=days;document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMainChart();}
-function showGainTab(tab){gainTabMode=tab;renderGainers();}
+
+function renderTicker(coins){
+  const items = coins.slice(0,20).map(c => {
+    const chg = c.price_change_percentage_24h;
+    return `<span class="ticker-item"><span class="ticker-name">${c.symbol.toUpperCase()}</span><span class="ticker-price">${fmtPrice(c.current_price)}</span><span class="ticker-change ${pctClass(chg)}">${pctStr(chg)}</span></span>`;
+  }).join('');
+  document.getElementById('tickerTrack').innerHTML = items + items;
+}
+
+function selectCoin(id, cardEl){
+  selectedCoinId = id;
+  document.querySelectorAll('.mkt-card').forEach(c => c.classList.remove('active'));
+  if(cardEl) cardEl.classList.add('active');
+  renderMainChart();
+}
+function setDay(days, btn){
+  currentDays = days;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMainChart();
+}
+function showGainTab(tab){ gainTabMode = tab; renderGainers(); }
 function sortTable(key){
-  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=1;}
-  const km={rank:'market_cap_rank',name:'name',price:'current_price',change24h:'price_change_percentage_24h',change7d:'price_change_percentage_7d_in_currency',mktcap:'market_cap',vol:'total_volume'};
-  const k=km[key];
-  allCoins.sort((a,b)=>{const av=a[k]??0,bv=b[k]??0;return typeof av==='string'?av.localeCompare(bv)*sortDir:(av-bv)*sortDir;});
+  if(sortKey===key) sortDir*=-1; else { sortKey=key; sortDir=1; }
+  const km = { rank:'market_cap_rank', name:'name', price:'current_price', change24h:'price_change_percentage_24h', change7d:'price_change_percentage_7d_in_currency', mktcap:'market_cap', vol:'total_volume' };
+  const k  = km[key];
+  allCoins.sort((a,b) => { const av=a[k]??0, bv=b[k]??0; return typeof av==='string' ? av.localeCompare(bv)*sortDir : (av-bv)*sortDir; });
   renderTable(allCoins);
 }
-function filterTable(){renderTable(allCoins);}
+function filterTable(){ renderTable(allCoins); }
+
 async function loadMarketData(){
   try{
-    const coins=await fetchMarket();allCoins=coins;
-    renderTicker(coins);renderMktCards(coins);renderGainers();renderTable(coins);
-    if(!mainChartInst)renderMainChart();
-    document.getElementById('lastUpdate').textContent='Updated '+new Date().toLocaleTimeString();
-    if(!marketRefreshInterval)marketRefreshInterval=setInterval(loadMarketData,30000);
+    const coins = await fetchMarket();
+    allCoins = coins;
+    renderTicker(coins); renderMktCards(coins); renderGainers(); renderTable(coins);
+    if(!mainChartInst) renderMainChart();
+    document.getElementById('lastUpdate').textContent = 'Updated '+new Date().toLocaleTimeString();
+    if(!marketRefreshInterval) marketRefreshInterval = setInterval(loadMarketData, 30000);
   }catch(e){
-    document.getElementById('cardsGrid').innerHTML=`<div class="error-msg" style="grid-column:1/-1">⚠ CoinGecko rate limit — try again in 60s.</div>`;
+    document.getElementById('cardsGrid').innerHTML = `<div class="error-msg" style="grid-column:1/-1">⚠ CoinGecko rate limit — try again in 60s.</div>`;
   }
 }
 
-// Init swap wallet area on load
+// ── Init ──
 renderSwapWalletArea();
+updateSwapBtn();
 </script>
 </body>
 </html>
