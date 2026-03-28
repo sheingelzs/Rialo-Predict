@@ -3,31 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Predict - Alpha Core AI</title>
+    <title>Rialo - Alpha Core AI Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
         body { font-family: 'Inter', sans-serif; background-color: #08090a; color: white; margin: 0; overflow-x: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* ANIMASI LOGO MUTAR 3D */
-        @keyframes mutar3D {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-        .logo-3d { animation: mutar3D 10s linear infinite; transform-style: preserve-3d; }
+        /* 3D LOGO ANIMATION */
+        @keyframes mutar3D { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+        .logo-3d { animation: mutar3D 12s linear infinite; transform-style: preserve-3d; }
         .perspective-container { perspective: 1000px; }
 
-        /* UI TERMINAL STYLES */
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        /* TERMINAL EFFECTS */
         .cursor { display: inline-block; width: 8px; height: 15px; background: #a855f7; margin-left: 4px; animation: blink 0.8s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        
-        .chat-bubble { border-radius: 20px 20px 20px 4px; }
         #chat-container { scroll-behavior: smooth; height: calc(100vh - 200px); overflow-y: auto; }
 
-        /* LOADING SCANNER */
+        /* SCANNER LOADING */
         #scan-screen {
             position: fixed; inset: 0; background: #08090a; z-index: 100;
             display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -37,15 +32,12 @@
         @keyframes scanPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
         @keyframes progress { from { width: 0; } to { width: 100%; } }
 
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
-
-        /* TRANSITIONS */
+        /* UTILS */
         .hidden-ui { display: none !important; }
         .fade-in { animation: fadeIn 0.8s forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -54,31 +46,33 @@
         <nav class="border-b border-gray-800 bg-[#08090a] sticky top-0 z-50 px-6 py-4">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-xl font-bold tracking-tight text-white uppercase italic">Market <span class="text-purple-500 font-medium italic">Predict</span></span>
+                    <span class="text-xl font-bold tracking-tight text-white uppercase italic">RIALO <span class="text-purple-500 font-medium italic">NETWORK</span></span>
                 </div>
-                <div class="flex items-center space-x-2 bg-purple-950/30 px-3 py-1 rounded-full border border-purple-800">
-                    <span class="relative flex h-2.5 w-2.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
-                    </span>
-                    <p class="text-[10px] text-purple-300 font-bold uppercase tracking-widest">Neural Link Active</p>
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-[9px] text-gray-500 uppercase tracking-widest font-mono">Status: Stealth v2.4</span>
+                    <div class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
                 </div>
             </div>
         </nav>
 
         <main class="flex-grow flex items-center justify-center px-6 py-20">
-            <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
-                <div class="perspective-container mb-10 p-2 bg-[#1e2023] rounded-3xl border border-gray-800 shadow-2xl shadow-purple-500/10 overflow-hidden">
-                    <img src="images/market.png" alt="Logo" class="w-48 h-auto object-contain logo-3d">
+            <div class="text-center max-w-3xl mx-auto flex flex-col items-center">
+                <div class="perspective-container mb-12 p-3 bg-[#111214] rounded-full border border-purple-900/30 shadow-2xl shadow-purple-500/10">
+                    <img src="images/market.png" alt="Logo" class="w-40 h-40 object-contain logo-3d">
                 </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-10 text-white leading-tight uppercase italic">
-                    Welcome to the <br><span class="text-gray-500">Alpha Core Terminal</span>
+                <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white leading-none uppercase italic">
+                    SUPERMODULAR <br><span class="text-purple-600">INFRASTRUCTURE</span>
                 </h1>
-                <button onclick="startScanning()" class="inline-flex items-center gap-2.5 bg-white text-black font-black px-10 py-4 rounded-full hover:bg-purple-500 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-xl shadow-white/10 uppercase tracking-tight">
-                    Initialize Terminal
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
+                <p class="text-gray-400 text-sm md:text-base max-w-xl mb-12 leading-relaxed font-mono">
+                    Bridging Real-World Finance with 50ms Block Time and RISC-V Virtual Machines.
+                </p>
+                <button onclick="startScanning()" class="group relative px-12 py-5 bg-white text-black font-black rounded-full overflow-hidden transition-all hover:pr-16">
+                    <span class="relative z-10 uppercase tracking-tighter">Initialize Alpha Core AI</span>
+                    <div class="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </div>
                 </button>
             </div>
         </main>
@@ -87,8 +81,8 @@
     <div id="scan-screen">
         <div class="text-center space-y-2">
             <div class="opacity-50 tracking-widest text-[8px]">ESTABLISHING SECURE CONNECTION...</div>
-            <div class="scan-line">[ INITIALIZING ALPHA CORE AI ]</div>
-            <div class="opacity-50 text-[8px]">DECRYPTING RIALO PROTOCOL v2.4</div>
+            <div class="scan-line">[ DECRYPTING RIALO SUPERMODULAR STACK ]</div>
+            <div class="opacity-50 text-[8px]">BY SUBZERO LABS | RISC-V VM DETECTED</div>
             <div class="mt-6 h-1 w-48 bg-gray-900 rounded-full overflow-hidden mx-auto border border-gray-800">
                 <div class="h-full bg-purple-500 animate-[progress_3s_ease-in-out]"></div>
             </div>
@@ -98,52 +92,61 @@
     <div id="terminal-ui" class="hidden-ui flex-col min-h-screen fade-in">
         <nav class="border-b border-gray-800 bg-[#08090a] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
             <div class="flex items-center gap-2">
-                <span class="text-xs font-black uppercase tracking-widest text-white">Alpha Core <span class="text-purple-500 ml-1">AI</span></span>
+                <span class="text-xs font-black uppercase tracking-widest text-white italic">Alpha Core <span class="text-purple-500 ml-1">v2.4</span></span>
             </div>
-            <button onclick="location.reload()" class="text-[9px] font-bold text-gray-500 uppercase tracking-widest hover:text-white transition">Disconnect</button>
+            <div class="flex items-center gap-4">
+                <span class="text-[8px] font-mono text-gray-600 uppercase">Latency: 50ms</span>
+                <button onclick="location.reload()" class="text-[9px] font-bold text-gray-500 uppercase tracking-widest hover:text-white border border-gray-800 px-3 py-1 rounded-full">Disconnect</button>
+            </div>
         </nav>
 
-        <main class="flex-grow p-4 max-w-2xl mx-auto w-full space-y-6" id="chat-container">
+        <main class="flex-grow p-4 max-w-4xl mx-auto w-full space-y-6" id="chat-container">
             <div id="welcome-msg" class="flex flex-col items-start">
-                <div class="bg-[#111214] border border-purple-900/30 p-4 chat-bubble text-xs text-purple-300 font-mono leading-relaxed max-w-[90%] shadow-2xl">
-                    <span class="text-purple-500 font-bold">[SYSTEM]:</span> Connection Established. Rialo Mainframe Synced. <br>
-                    Welcome to the Alpha Core Neural Interface. I am ready to provide deep ecosystem intelligence.
+                <div class="bg-[#111214] border border-purple-900/20 p-5 chat-bubble text-[11px] text-purple-300 font-mono leading-relaxed max-w-[90%] shadow-2xl">
+                    <span class="text-purple-500 font-bold">[SYSTEM]:</span> RISC-V VM Active. Supermodular Stack Synced. <br><br>
+                    Welcome to the Rialo Technical Interface. I am programmed with the complete Subzero Labs dataset. <br>
+                    Commands: <span class="text-white underline">Architecture</span>, <span class="text-white underline">Features</span>, <span class="text-white underline">Roadmap</span>, <span class="text-white underline">Funding</span>.
                 </div>
             </div>
         </main>
 
-        <div class="p-4 border-t border-gray-800 bg-[#08090a] sticky bottom-0">
-            <div class="max-w-2xl mx-auto relative">
-                <input type="text" id="user-input" autocomplete="off" placeholder="Ask about Rialo, AI, or Roadmap..." 
-                    class="w-full bg-[#111214] border border-gray-800 rounded-full py-4 px-6 pr-14 text-sm font-mono focus:outline-none focus:border-purple-500 transition shadow-inner placeholder:text-gray-700 text-purple-100">
-                <button onclick="handleSend()" class="absolute right-2 top-2 bg-purple-600 text-white p-2.5 rounded-full hover:bg-purple-400 transition active:scale-90">
+        <div class="p-4 border-t border-gray-800 bg-[#08090a]/95 backdrop-blur-md sticky bottom-0">
+            <div class="max-w-3xl mx-auto relative group">
+                <input type="text" id="user-input" autocomplete="off" placeholder="Query the Rialo database..." 
+                    class="w-full bg-[#111214] border border-gray-800 rounded-xl py-4 px-6 pr-14 text-sm font-mono focus:outline-none focus:border-purple-500 transition shadow-inner placeholder:text-gray-700 text-purple-100">
+                <button onclick="handleSend()" class="absolute right-2 top-2 bg-purple-600 text-white p-2.5 rounded-lg hover:bg-purple-500 transition active:scale-90">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
                     </svg>
                 </button>
             </div>
-            <p class="text-[7px] text-center text-gray-800 mt-2.5 uppercase tracking-[0.3em]">Neural Verification Secured by Rialo.io</p>
+            <div class="flex justify-between max-w-3xl mx-auto mt-2 px-2">
+                <p class="text-[7px] text-gray-800 uppercase tracking-[0.3em]">Neural Verification Secured</p>
+                <p class="text-[7px] text-purple-900 uppercase tracking-[0.3em]">Subzero Labs Infrastructure</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // MEGA DATABASE RIALO.IO
+        // THE ULTIMATE RIALO TECH DATABASE
         const RialoDB = {
-            "rialo": "RIALO is a premier Web3 ecosystem bridging AI-Driven Analytics and Social Trading. It is designed to democratize access to elite trading strategies through total blockchain transparency and Neural Verification. By integrating Layer 1 blockchain security with institutional-grade AI, Rialo processes massive market data streams to empower the next generation of traders.",
-            "vision": "Our vision is to establish a secure, AI-verified financial ecosystem. We aim to empower traders and builders by providing professional-grade intelligence and a transparent social trading environment where success is data-driven, not luck-based.",
-            "ai": "Alpha Core is the neural engine of the Rialo ecosystem. It provides predictive intelligence, protocol stress-testing, and ecosystem health monitoring. It acts as the central brain, ensuring maximum stability and providing 'Alpha'—hidden market patterns and liquidity shifts.",
-            "trading": "Rialo Social Trading allows users to discover, analyze, and mirror the moves of top-tier 'Alpha Traders'. Our automated Copy Trading system synchronizes portfolios instantly, executing trades with precision and speed based on real-time on-chain signals from the Subzero network.",
-            "shark": "The Rialo Shark Tank is a weekly community-driven pitch session and incubator. Innovative builders present their projects to the Rialo community to gain visibility, feedback, and ecosystem support, fostering a culture of constant innovation.",
-            "safe": "Security in the Rialo Ecosystem is non-negotiable and strictly non-custodial. Every interaction is protected by multi-layer encryption and verified through our Neural AI. We never request access to private keys; your assets remain under your control, secured by mathematical certainty.",
-            "roadmap": "Currently in the 'Alpha Integration' phase. Key 2026 milestones include: (Q2) Validator Node Expansion to decentralize the network further, (Q3) Integration of Cross-chain Alpha Signals for multi-chain trading, and (Q4) Full launch of the global 'Rialo Shark Tank' builder events.",
-            "subzero": "Rialo is powered by Subzero Labs infrastructure. This partnership provides a high-speed, low-latency blockchain backbone (Layer 1) required for real-time AI analytics and seamless, high-frequency social trading execution."
+            "arch": "<b>[CORE ARCHITECTURE]</b><br>Rialo utilizes a <b>Supermodular Stack</b> that integrates L1 services natively:<br>• <b>Rialo VM:</b> Built on RISC-V. Compatible with SVM (Solana), with upcoming support for EVM and MoveVM.<br>• <b>Consensus:</b> Parallel multi-concurrent proposer system enabling <b>50ms Block Time</b>.<br>• <b>Execution:</b> Event-driven engine with Conditional Transactions (nanosecond latency).<br>• <b>IPC:</b> Built-in Identity and Privacy for secure PII management (Public/Private hybrid).",
+            
+            "feat": "<b>[NATIVE CAPABILITIES]</b><br>Eliminating middleware dependencies:<br>• <b>Rialo Stream:</b> Validator-integrated data feeds for DeFi/RWA (40x faster than traditional oracles).<br>• <b>Rialo Interop:</b> Native interoperability 10x faster than standard bridges.<br>• <b>Rialo Cruise:</b> Gas-less transaction features for seamless user onboarding.<br>• <b>Rialo Read Path:</b> Direct validator data access at 100ms, slashing dev costs by thousands per month.",
+            
+            "vision": "<b>[REAL-WORLD FINANCE (RWF)]</b><br>Focusing on tangible utility:<br>• <b>Rialo Edge:</b> Direct Web2-to-Web3 connectivity without intermediaries.<br>• <b>Programmatic Privacy:</b> Send encrypted messages to Email/Phone/Device IDs without complex wallet setup.",
+            
+            "roadmap": "<b>[ROADMAP 2025-2026]</b><br>• <b>Q1-Q2 2025:</b> Seed Round completion & Private Devnet launch.<br>• <b>Q3 2025:</b> Stealth Mode EXIT, 20+ data providers, 30+ validators.<br>• <b>Q4 2025:</b> Testnet v1 & Community Builder Program activation.<br>• <b>2026:</b> <b>MAINNET LAUNCH.</b>",
+            
+            "team": "<b>[DEVELOPMENT & FUNDING]</b><br>• <b>Builder:</b> Subzero Labs, led by cryptography legend <b>Jan Camenisch</b>.<br>• <b>Funding:</b> $20M Seed Round led by <b>Pantera Capital</b>.<br>• <b>Talent:</b> Elite team from Google, Apple, Microsoft, Solana, and EigenLayer.",
+            
+            "rialo": "RIALO is a Layer 1 blockchain engineered for 'Real-World Finance'. It features a RISC-V VM, 50ms block times, and a supermodular stack that eliminates the need for slow, expensive middleware."
         };
 
         function startScanning() {
             document.getElementById('landing-page').classList.add('hidden-ui');
             const scanner = document.getElementById('scan-screen');
             scanner.style.display = 'flex';
-
             setTimeout(() => {
                 scanner.style.display = 'none';
                 const terminal = document.getElementById('terminal-ui');
@@ -165,37 +168,34 @@
 
             setTimeout(() => {
                 let botResponses = [];
-                if (text.includes("rialo") || text.includes("what")) botResponses.push(RialoDB.rialo);
-                if (text.includes("vision") || text.includes("goal")) botResponses.push(RialoDB.vision);
-                if (text.includes("ai") || text.includes("core") || text.includes("tech")) botResponses.push(RialoDB.ai);
-                if (text.includes("trading") || text.includes("copy")) botResponses.push(RialoDB.trading);
-                if (text.includes("shark") || text.includes("tank")) botResponses.push(RialoDB.shark);
-                if (text.includes("safe") || text.includes("secure") || text.includes("verify")) botResponses.push(RialoDB.safe);
-                if (text.includes("roadmap") || text.includes("future") || text.includes("plan")) botResponses.push(RialoDB.roadmap);
-                if (text.includes("subzero") || text.includes("labs")) botResponses.push(RialoDB.subzero);
+                // DEEP SCAN LOGIC
+                if (text.includes("arch") || text.includes("tech") || text.includes("vm") || text.includes("risc")) botResponses.push(RialoDB.arch);
+                if (text.includes("feat") || text.includes("stream") || text.includes("cruise")) botResponses.push(RialoDB.feat);
+                if (text.includes("vision") || text.includes("rwf") || text.includes("edge")) botResponses.push(RialoDB.vision);
+                if (text.includes("roadmap") || text.includes("plan") || text.includes("2026")) botResponses.push(RialoDB.roadmap);
+                if (text.includes("team") || text.includes("fund") || text.includes("pantera") || text.includes("subzero")) botResponses.push(RialoDB.team);
+                if (text.includes("rialo") || text.includes("what")) { if(botResponses.length === 0) botResponses.push(RialoDB.rialo); }
 
-                let finalMsg = botResponses.length > 0 ? botResponses.join("<br><br>") : "Access Denied: Query not found. Try: 'Rialo Vision', 'AI Tech', or 'Is it safe?'.";
+                let finalMsg = botResponses.length > 0 ? botResponses.join("<br><br>") : "QUERY FAILED. Access the database using keywords: 'Architecture', 'Features', 'Roadmap', or 'Team'.";
                 addBubble(finalMsg, 'bot');
             }, 800);
         }
 
         function addBubble(msg, sender) {
             const wrapper = document.createElement('div');
-            wrapper.className = sender === 'user' ? 'flex flex-col items-end w-full mb-4' : 'flex flex-col items-start w-full mb-4';
-            
+            wrapper.className = sender === 'user' ? 'flex flex-col items-end w-full mb-4 px-2' : 'flex flex-col items-start w-full mb-4 px-2';
             const bubble = document.createElement('div');
             bubble.className = sender === 'user' 
-                ? 'bg-purple-600 text-white font-bold p-3 px-5 rounded-2xl rounded-tr-none text-xs max-w-[80%] shadow-lg' 
-                : 'bg-[#111214] border border-purple-900/30 p-4 chat-bubble text-xs text-purple-300 font-mono leading-relaxed max-w-[95%] shadow-xl';
-            
+                ? 'bg-purple-600 text-white font-bold p-3 px-5 rounded-2xl rounded-tr-none text-xs max-w-[85%] shadow-lg' 
+                : 'bg-[#111214] border border-purple-900/30 p-5 chat-bubble text-[10px] text-purple-200 font-mono leading-relaxed max-w-[95%] shadow-xl';
             wrapper.appendChild(bubble);
             chatContainer.appendChild(wrapper);
             
             if (sender === 'bot') {
-                const prefix = document.createElement('div');
-                prefix.className = "text-purple-500 font-bold mb-2 border-b border-purple-900/30 pb-1";
-                prefix.innerText = "[ALPHA_CORE_DEEP_SCAN]:";
-                bubble.appendChild(prefix);
+                const header = document.createElement('div');
+                header.className = "text-purple-500 font-bold mb-3 border-b border-purple-900/30 pb-1 flex justify-between uppercase tracking-widest text-[9px]";
+                header.innerHTML = "<span>[DEEP_DATABASE_SCAN]</span><span>SUBZERO_PROTOCOLS</span>";
+                bubble.appendChild(header);
                 typeEffect(bubble, msg);
             } else {
                 bubble.innerText = msg;
@@ -207,16 +207,15 @@
             let i = 0; 
             const contentSpan = document.createElement('span');
             el.appendChild(contentSpan);
-
             function type() {
                 if (i < text.length) { 
                     if (text.substr(i, 4) === "<br>") { contentSpan.innerHTML += "<br>"; i += 4; }
+                    else if (text.substr(i, 3) === "<b>") { contentSpan.innerHTML += "<b>"; i += 3; }
+                    else if (text.substr(i, 4) === "</b>") { contentSpan.innerHTML += "</b>"; i += 4; }
                     else { contentSpan.innerHTML += text.charAt(i); i++; }
-                    setTimeout(type, 10); 
+                    setTimeout(type, 5); 
                     chatContainer.scrollTop = chatContainer.scrollHeight;
-                } else {
-                    el.innerHTML += '<span class="cursor"></span>';
-                }
+                } else { el.innerHTML += '<span class="cursor"></span>'; }
             }
             type();
         }
