@@ -3,134 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpha Core - System Modules</title>
+    <title>Market Predict - Alpha Core AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #08090a; 
-            background-image: radial-gradient(circle at 50% -20%, #3b0764 0%, #08090a 45%);
-            min-height: screen;
-        }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        body { font-family: 'Inter', sans-serif; background-color: #08090a; color: white; margin: 0; overflow-x: hidden; }
         
-        .glass {
-            background: rgba(17, 18, 20, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* ANIMASI LOGO MUTAR 3D */
+        @keyframes mutar3D {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
         }
-        
-        .glass:hover {
-            border-color: rgba(168, 85, 247, 0.5);
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
-            transform: translateY(-5px);
-        }
+        .logo-3d { animation: mutar3D 10s linear infinite; transform-style: preserve-3d; }
+        .perspective-container { perspective: 1000px; }
 
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+        /* UI TERMINAL STYLES */
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .cursor { display: inline-block; width: 8px; height: 15px; background: #a855f7; margin-left: 4px; animation: blink 0.8s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
+        .chat-bubble { border-radius: 20px 20px 20px 4px; }
+        #chat-container { scroll-behavior: smooth; height: calc(100vh - 200px); overflow-y: auto; }
+
+        /* LOADING SCANNER */
+        #scan-screen {
+            position: fixed; inset: 0; background: #08090a; z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            font-family: monospace; color: #a855f7; font-size: 10px; letter-spacing: 2px;
         }
-        .animate-pulse-slow { animation: pulse-slow 4s infinite; }
+        .scan-line { animation: scanPulse 1s infinite; font-weight: bold; color: white; font-size: 14px; margin: 10px 0; }
+        @keyframes scanPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        @keyframes progress { from { width: 0; } to { width: 100%; } }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #a855f7; border-radius: 10px; }
+
+        /* TRANSITIONS */
+        .hidden-ui { display: none !important; }
+        .fade-in { animation: fadeIn 0.8s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="text-white antialiased pb-20">
+<body class="antialiased flex flex-col min-h-screen">
 
-    <nav class="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <div class="h-10 w-10 rounded-xl bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-900/40">
-                <span class="font-black text-xl italic">R</span>
-            </div>
-            <div>
-                <h1 class="text-sm font-black tracking-[0.2em] uppercase">Rialo <span class="text-purple-500">Alpha Core</span></h1>
-                <p class="text-[8px] text-gray-500 font-mono tracking-widest uppercase">Ecosystem Access Point</p>
-            </div>
-        </div>
-        <a href="index.html" class="glass px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">
-            Return to Terminal
-        </a>
-    </nav>
-
-    <main class="max-w-6xl mx-auto px-6 mt-10 grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto">
-        
-        <div class="md:col-span-2 md:row-span-2 glass rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-purple-500">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-            </div>
-            <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
-                    <span class="h-1.5 w-1.5 rounded-full bg-purple-500 animate-pulse"></span>
-                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest font-mono">Core Intelligence</span>
+    <div id="landing-page" class="flex flex-col min-h-screen">
+        <nav class="border-b border-gray-800 bg-[#08090a] sticky top-0 z-50 px-6 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-bold tracking-tight text-white uppercase italic">Market <span class="text-purple-500 font-medium italic">Predict</span></span>
                 </div>
-                <h2 class="text-4xl font-black tracking-tighter leading-none mb-4 uppercase italic">Predictive<br><span class="text-gray-500">Simulations</span></h2>
-                <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Execute advanced protocol stress-tests and analyze market trajectory with institutional-grade Neural Verification technology.</p>
+                <div class="flex items-center space-x-2 bg-purple-950/30 px-3 py-1 rounded-full border border-purple-800">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purple-500"></span>
+                    </span>
+                    <p class="text-[10px] text-purple-300 font-bold uppercase tracking-widest">Neural Link Active</p>
+                </div>
             </div>
-            <button class="mt-8 bg-white text-black font-black py-4 px-8 rounded-2xl flex items-center justify-between group-hover:bg-purple-500 group-hover:text-white transition-all">
-                LAUNCH TERMINAL
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </button>
-        </div>
+        </nav>
 
-        <div class="md:col-span-2 glass rounded-3xl p-6 flex items-center justify-between group">
-            <div class="flex flex-col gap-1">
-                <span class="text-[10px] font-bold text-blue-400 uppercase tracking-widest font-mono mb-2">Alpha Engine</span>
-                <h3 class="text-xl font-bold uppercase italic">Social <span class="text-gray-500">Trading</span></h3>
-                <p class="text-[11px] text-gray-400 max-w-[200px]">Mirror elite traders with verified on-chain history.</p>
+        <main class="flex-grow flex items-center justify-center px-6 py-20">
+            <div class="text-center max-w-2xl mx-auto flex flex-col items-center">
+                <div class="perspective-container mb-10 p-2 bg-[#1e2023] rounded-3xl border border-gray-800 shadow-2xl shadow-purple-500/10 overflow-hidden">
+                    <img src="images/market.png" alt="Logo" class="w-48 h-auto object-contain logo-3d">
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter mb-10 text-white leading-tight uppercase italic">
+                    Welcome to the <br><span class="text-gray-500">Alpha Core Terminal</span>
+                </h1>
+                <button onclick="startScanning()" class="inline-flex items-center gap-2.5 bg-white text-black font-black px-10 py-4 rounded-full hover:bg-purple-500 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-xl shadow-white/10 uppercase tracking-tight">
+                    Initialize Terminal
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                </button>
             </div>
-            <div class="h-20 w-20 rounded-2xl bg-blue-500/5 border border-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-            </div>
-        </div>
+        </main>
+    </div>
 
-        <div class="glass rounded-3xl p-6 flex flex-col justify-between group">
-            <div class="h-10 w-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-4">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-500">
-                    <path d="M2 20h20M5 20V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12M9 20v-4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/>
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-sm font-bold uppercase italic mb-1">Shark Tank</h3>
-                <p class="text-[10px] text-gray-500 leading-tight">Weekly pitch sessions for top-tier Web3 builders.</p>
+    <div id="scan-screen">
+        <div class="text-center space-y-2">
+            <div class="opacity-50 tracking-widest text-[8px]">ESTABLISHING SECURE CONNECTION...</div>
+            <div class="scan-line">[ INITIALIZING ALPHA CORE AI ]</div>
+            <div class="opacity-50 text-[8px]">DECRYPTING RIALO PROTOCOL v2.4</div>
+            <div class="mt-6 h-1 w-48 bg-gray-900 rounded-full overflow-hidden mx-auto border border-gray-800">
+                <div class="h-full bg-purple-500 animate-[progress_3s_ease-in-out]"></div>
             </div>
         </div>
+    </div>
 
-        <div class="glass rounded-3xl p-6 flex flex-col justify-between group">
-            <div class="h-10 w-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
+    <div id="terminal-ui" class="hidden-ui flex-col min-h-screen fade-in">
+        <nav class="border-b border-gray-800 bg-[#08090a] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-black uppercase tracking-widest text-white">Alpha Core <span class="text-purple-500 ml-1">AI</span></span>
             </div>
-            <div>
-                <h3 class="text-sm font-bold uppercase italic mb-1">Verify Scan</h3>
-                <p class="text-[10px] text-gray-500 leading-tight">Instant on-chain data validation powered by AI.</p>
+            <button onclick="location.reload()" class="text-[9px] font-bold text-gray-500 uppercase tracking-widest hover:text-white transition">Disconnect</button>
+        </nav>
+
+        <main class="flex-grow p-4 max-w-2xl mx-auto w-full space-y-6" id="chat-container">
+            <div id="welcome-msg" class="flex flex-col items-start">
+                <div class="bg-[#111214] border border-purple-900/30 p-4 chat-bubble text-xs text-purple-300 font-mono leading-relaxed max-w-[90%] shadow-2xl">
+                    <span class="text-purple-500 font-bold">[SYSTEM]:</span> Connection Established. Rialo Mainframe Synced. <br>
+                    Welcome to the Alpha Core Neural Interface. I am ready to provide deep ecosystem intelligence.
+                </div>
             </div>
-        </div>
+        </main>
 
-    </main>
+        <div class="p-4 border-t border-gray-800 bg-[#08090a] sticky bottom-0">
+            <div class="max-w-2xl mx-auto relative">
+                <input type="text" id="user-input" autocomplete="off" placeholder="Ask about Rialo, AI, or Roadmap..." 
+                    class="w-full bg-[#111214] border border-gray-800 rounded-full py-4 px-6 pr-14 text-sm font-mono focus:outline-none focus:border-purple-500 transition shadow-inner placeholder:text-gray-700 text-purple-100">
+                <button onclick="handleSend()" class="absolute right-2 top-2 bg-purple-600 text-white p-2.5 rounded-full hover:bg-purple-400 transition active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-[7px] text-center text-gray-800 mt-2.5 uppercase tracking-[0.3em]">Neural Verification Secured by Rialo.io</p>
+        </div>
+    </div>
 
-    <footer class="max-w-6xl mx-auto px-6 mt-12 flex flex-wrap gap-8 opacity-40">
-        <div class="flex flex-col">
-            <span class="text-[10px] uppercase font-mono tracking-widest text-gray-500">Network Status</span>
-            <span class="text-xs font-bold text-green-500 uppercase">Optimal</span>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-[10px] uppercase font-mono tracking-widest text-gray-500">Active Nodes</span>
-            <span class="text-xs font-bold">1,248 Synchronized</span>
-        </div>
-        <div class="flex flex-col">
-            <span class="text-[10px] uppercase font-mono tracking-widest text-gray-500">Neural Hash Rate</span>
-            <span class="text-xs font-bold">4.2 PB/s</span>
-        </div>
-    </footer>
+    <script>
+        // MEGA DATABASE RIALO.IO
+        const RialoDB = {
+            "rialo": "RIALO is a premier Web3 ecosystem bridging AI-Driven Analytics and Social Trading. It is designed to democratize access to elite trading strategies through total blockchain transparency and Neural Verification. By integrating Layer 1 blockchain security with institutional-grade AI, Rialo processes massive market data streams to empower the next generation of traders.",
+            "vision": "Our vision is to establish a secure, AI-verified financial ecosystem. We aim to empower traders and builders by providing professional-grade intelligence and a transparent social trading environment where success is data-driven, not luck-based.",
+            "ai": "Alpha Core is the neural engine of the Rialo ecosystem. It provides predictive intelligence, protocol stress-testing, and ecosystem health monitoring. It acts as the central brain, ensuring maximum stability and providing 'Alpha'—hidden market patterns and liquidity shifts.",
+            "trading": "Rialo Social Trading allows users to discover, analyze, and mirror the moves of top-tier 'Alpha Traders'. Our automated Copy Trading system synchronizes portfolios instantly, executing trades with precision and speed based on real-time on-chain signals from the Subzero network.",
+            "shark": "The Rialo Shark Tank is a weekly community-driven pitch session and incubator. Innovative builders present their projects to the Rialo community to gain visibility, feedback, and ecosystem support, fostering a culture of constant innovation.",
+            "safe": "Security in the Rialo Ecosystem is non-negotiable and strictly non-custodial. Every interaction is protected by multi-layer encryption and verified through our Neural AI. We never request access to private keys; your assets remain under your control, secured by mathematical certainty.",
+            "roadmap": "Currently in the 'Alpha Integration' phase. Key 2026 milestones include: (Q2) Validator Node Expansion to decentralize the network further, (Q3) Integration of Cross-chain Alpha Signals for multi-chain trading, and (Q4) Full launch of the global 'Rialo Shark Tank' builder events.",
+            "subzero": "Rialo is powered by Subzero Labs infrastructure. This partnership provides a high-speed, low-latency blockchain backbone (Layer 1) required for real-time AI analytics and seamless, high-frequency social trading execution."
+        };
 
+        function startScanning() {
+            document.getElementById('landing-page').classList.add('hidden-ui');
+            const scanner = document.getElementById('scan-screen');
+            scanner.style.display = 'flex';
+
+            setTimeout(() => {
+                scanner.style.display = 'none';
+                const terminal = document.getElementById('terminal-ui');
+                terminal.classList.remove('hidden-ui');
+                terminal.classList.add('flex');
+            }, 3000);
+        }
+
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+
+        function handleSend() {
+            const rawText = userInput.value.trim();
+            const text = rawText.toLowerCase();
+            if (text === "") return;
+
+            addBubble(rawText, 'user');
+            userInput.value = "";
+
+            setTimeout(() => {
+                let botResponses = [];
+                if (text.includes("rialo") || text.includes("what")) botResponses.push(RialoDB.rialo);
+                if (text.includes("vision") || text.includes("goal")) botResponses.push(RialoDB.vision);
+                if (text.includes("ai") || text.includes("core") || text.includes("tech")) botResponses.push(RialoDB.ai);
+                if (text.includes("trading") || text.includes("copy")) botResponses.push(RialoDB.trading);
+                if (text.includes("shark") || text.includes("tank")) botResponses.push(RialoDB.shark);
+                if (text.includes("safe") || text.includes("secure") || text.includes("verify")) botResponses.push(RialoDB.safe);
+                if (text.includes("roadmap") || text.includes("future") || text.includes("plan")) botResponses.push(RialoDB.roadmap);
+                if (text.includes("subzero") || text.includes("labs")) botResponses.push(RialoDB.subzero);
+
+                let finalMsg = botResponses.length > 0 ? botResponses.join("<br><br>") : "Access Denied: Query not found. Try: 'Rialo Vision', 'AI Tech', or 'Is it safe?'.";
+                addBubble(finalMsg, 'bot');
+            }, 800);
+        }
+
+        function addBubble(msg, sender) {
+            const wrapper = document.createElement('div');
+            wrapper.className = sender === 'user' ? 'flex flex-col items-end w-full mb-4' : 'flex flex-col items-start w-full mb-4';
+            
+            const bubble = document.createElement('div');
+            bubble.className = sender === 'user' 
+                ? 'bg-purple-600 text-white font-bold p-3 px-5 rounded-2xl rounded-tr-none text-xs max-w-[80%] shadow-lg' 
+                : 'bg-[#111214] border border-purple-900/30 p-4 chat-bubble text-xs text-purple-300 font-mono leading-relaxed max-w-[95%] shadow-xl';
+            
+            wrapper.appendChild(bubble);
+            chatContainer.appendChild(wrapper);
+            
+            if (sender === 'bot') {
+                const prefix = document.createElement('div');
+                prefix.className = "text-purple-500 font-bold mb-2 border-b border-purple-900/30 pb-1";
+                prefix.innerText = "[ALPHA_CORE_DEEP_SCAN]:";
+                bubble.appendChild(prefix);
+                typeEffect(bubble, msg);
+            } else {
+                bubble.innerText = msg;
+            }
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function typeEffect(el, text) {
+            let i = 0; 
+            const contentSpan = document.createElement('span');
+            el.appendChild(contentSpan);
+
+            function type() {
+                if (i < text.length) { 
+                    if (text.substr(i, 4) === "<br>") { contentSpan.innerHTML += "<br>"; i += 4; }
+                    else { contentSpan.innerHTML += text.charAt(i); i++; }
+                    setTimeout(type, 10); 
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } else {
+                    el.innerHTML += '<span class="cursor"></span>';
+                }
+            }
+            type();
+        }
+
+        userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleSend(); });
+    </script>
 </body>
 </html>
