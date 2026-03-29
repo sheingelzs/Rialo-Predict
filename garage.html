@@ -62,10 +62,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .li-pill{font-family:var(--font-mono);font-size:.6rem;padding:2px 8px;border-radius:99px;}
 
 /* WALLET PICKER */
-.wpicker-grid{display:grid;grid-template-columns: 1fr 1fr; gap:0.75rem; width:100%; max-width:500px;}
-.witem{display:flex;align-items:center;gap:0.75rem;padding:0.85rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition: 0.2s;}
-.witem:hover { background:rgba(74,222,128,0.1); border-color:var(--accent); transform: translateY(-2px); }
-.w-icon { width:24px; height:24px; border-radius:4px; }
+.witem{display:flex;align-items:center;gap:1rem;padding:1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;width:300px;margin-bottom:.5rem;transition: 0.2s;}
+.witem:hover { background:rgba(74,222,128,0.1); border-color:var(--accent); }
 </style>
 </head>
 <body>
@@ -88,20 +86,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   <div id="scr-standby" class="screen" style="display:flex;">
     <h2 style="margin-bottom:0.5rem; font-family:var(--font-head);">Rialo Alpha Core</h2>
     <p style="color:var(--muted); margin-bottom:1.5rem; font-size:0.9rem;">Pilih provider untuk mengaktifkan Validator Engine.</p>
-    
-    <div class="wpicker-grid">
-      <div class="witem" onclick="handleWalletConnect('MetaMask')">
-        <img src="https://cryptologos.cc/logos/metamask-eth-logo.png" class="w-icon"> MetaMask
-      </div>
-      <div class="witem" onclick="handleWalletConnect('OKX')">
-        <img src="https://www.okx.com/cdn/assets/imgs/221/96057A0F7E043B7B.png" class="w-icon"> OKX Wallet
-      </div>
-      <div class="witem" onclick="handleWalletConnect('Phantom')">
-        <img src="https://cryptologos.cc/logos/phantom-phantom-logo.png" class="w-icon"> Phantom
-      </div>
-      <div class="witem" onclick="handleWalletConnect('Coinbase')">
-        <img src="https://cryptologos.cc/logos/coinbase-coin-logo.png" class="w-icon"> Coinbase
-      </div>
+    <div id="wallet-area">
+      <div class="witem" onclick="handleWalletConnect('MetaMask')">🦊 &nbsp; MetaMask</div>
+      <div class="witem" onclick="handleWalletConnect('Phantom')">👻 &nbsp; Phantom Wallet</div>
     </div>
   </div>
 
@@ -147,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </div>
 
 <script>
+/* ── DATA ── */
 const MARKET_DATA = {
   EVM: {
     finality: 50, baseGas: 0.00125, color: '#4ade80',
@@ -174,23 +162,33 @@ const MARKET_DATA = {
 let currentVM = 'EVM';
 let isConnected = false;
 
+/* ── WALLET CONNECT LOGIC ── */
 function handleWalletConnect(provider) {
+  const btn = document.getElementById('nav-btn');
+  const badge = document.getElementById('node-badge');
+  const badgeTxt = document.getElementById('badge-txt');
+  
+  // 1. Update UI Status
   isConnected = true;
-  document.getElementById('nav-btn').textContent = "0x71...CONNECTED";
-  document.getElementById('nav-btn').classList.add('on');
-  document.getElementById('node-badge').classList.add('online');
-  document.getElementById('badge-txt').textContent = "NODE_STATUS: ONLINE (" + provider.toUpperCase() + ")";
+  btn.textContent = "0x71...8976F (CONNECTED)";
+  btn.classList.add('on');
+  badge.classList.add('online');
+  badgeTxt.textContent = "NODE_STATUS: ONLINE";
 
+  // 2. Switch Screen
   document.getElementById('scr-standby').style.display = 'none';
   document.getElementById('scr-dashboard').style.display = 'flex';
 
+  // 3. Initialize Data
   switchVM('EVM', document.querySelector('.vm-tab'));
   startGasSimulation();
 }
 
+/* ── GAS SIMULATION ── */
 function startGasSimulation() {
   setInterval(() => {
     if(!isConnected) return;
+    
     const d = MARKET_DATA[currentVM];
     const jitter = (Math.random() * 0.00005).toFixed(5);
     const liveBase = (d.baseGas + parseFloat(jitter)).toFixed(5);
@@ -203,18 +201,22 @@ function startGasSimulation() {
   }, 1500);
 }
 
+/* ── VM LOGIC ── */
 function switchVM(vm, btn) {
   currentVM = vm;
   const d = MARKET_DATA[vm];
   
+  // Tab Styling
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
 
+  // Telemetry Update
   document.getElementById('vm-label').textContent = vm;
   document.getElementById('vm-label').style.color = d.color;
   document.getElementById('finality-text').textContent = d.finality + 'ms';
   document.getElementById('finality-text').style.color = d.color;
 
+  // Table Update
   const stackCard = document.getElementById('stack-card');
   let html = `<div class="card-lbl">🧱 ${vm} Supermodular Stack</div>`;
   d.stack.forEach((item, i) => {
@@ -228,7 +230,7 @@ function switchVM(vm, btn) {
   stackCard.innerHTML = html;
 }
 
-/* CANVAS BG */
+/* ── CANVAS BG ── */
 const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
 let w,h;
 function res(){w=cv.width=innerWidth;h=cv.height=innerHeight;}
