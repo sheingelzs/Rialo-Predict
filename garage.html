@@ -15,170 +15,66 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
 #net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes vpulse{0%,100%{opacity:1}50%{opacity:.6}}
 
-/* NAV */
+/* NAVIGATION */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
-.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
+.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 15px var(--accent);}
 .nav-right{display:flex;align-items:center;gap:.6rem;}
-.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
-.nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
-.nav-link:hover{color:rgba(255,255,255,.8);}
-.nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
-.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;}
 .nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
-.wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
-
-.page{position:relative;z-index:1;}
 
 /* STATUS BADGE */
-.status-row{display:flex;justify-content:center;padding:1.5rem 0 0;}
-.node-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.1em;transition:background .4s,border-color .4s,color .4s;}
+.status-row{display:flex;justify-content:center;padding:1.5rem 0 0;position:relative;z-index:1;}
+.node-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;}
 .node-badge.online{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25);color:var(--accent);}
-.nbdot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;flex-shrink:0;}
+.nbdot{width:7px;height:7px;border-radius:50%;background:currentColor;}
 
-.screen{display:none;position:relative;z-index:1;}
+.screen{display:none;position:relative;z-index:1;flex-direction:column;align-items:center;padding:2rem;}
 
-/* STANDBY */
-#scr-standby{flex-direction:column;align-items:center;text-align:center;padding:2rem 1.5rem;animation:fadein .3s ease;}
-#scr-standby h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.75rem;}
-#scr-standby h2 .dim{color:rgba(255,255,255,.2);}
-#scr-standby p{font-size:.88rem;color:var(--muted);max-width:400px;line-height:1.7;margin-bottom:.75rem;}
-.ro-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.25);color:rgba(200,180,255,.75);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-family:var(--font-mono);margin-bottom:1.5rem;}
-
-/* WALLET PICKER */
-.wpicker{width:100%;max-width:380px;display:flex;flex-direction:column;gap:.45rem;}
-.wpicker-note{font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);margin-bottom:.35rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);padding:.35rem .8rem;border-radius:8px;}
-.witem{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;}
-.witem:hover:not(.dim){background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
-.witem.dim{opacity:.4;cursor:default;}
-.wlogo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-.winfo{flex:1;text-align:left;}
-.wname{font-weight:600;font-size:.85rem;}
-.wsub{font-size:.67rem;color:var(--muted);margin-top:1px;}
-.wbadge{font-size:.67rem;font-weight:700;}
-.wbadge.ok{color:var(--accent);}
-.wbadge.no{color:rgba(255,255,255,.25);}
-
-.conn-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
-.conn-spin{width:40px;height:40px;border:3px solid rgba(74,222,128,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-.conn-lbl{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);}
-.conn-ro{font-size:.67rem;color:rgba(200,180,255,.45);}
-.err-msg{font-size:.82rem;color:var(--red);margin-bottom:.5rem;}
-.retry-btn{padding:.5rem 1.25rem;background:transparent;border:1px solid rgba(74,222,128,.3);color:var(--accent);border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;}
-.retry-btn:hover{background:rgba(74,222,128,.08);}
-
-/* ASSEMBLY */
-#scr-assembly{flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:2rem;text-align:center;animation:fadein .3s ease;}
-.asm-title{font-family:var(--font-head);font-size:1.4rem;font-weight:800;margin-bottom:2.5rem;letter-spacing:-.02em;}
-.asm-title span{color:var(--muted);font-size:.9rem;font-family:var(--font-mono);display:block;margin-top:.3rem;}
-.asm-layers{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:420px;margin-bottom:2rem;}
-.asm-layer{display:flex;align-items:center;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;opacity:0;transform:translateX(-16px);transition:opacity .5s ease,transform .5s ease,border-color .5s ease,background .5s ease;}
-.asm-layer.loaded{opacity:1;transform:translateX(0);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04);}
-.asm-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.asm-ico.exec{background:rgba(74,222,128,.12);}
-.asm-ico.settle{background:rgba(98,126,234,.12);}
-.asm-ico.da{background:rgba(124,92,252,.12);}
-.asm-text{flex:1;text-align:left;}
-.asm-lbl{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
-.asm-st{font-size:.85rem;font-weight:700;}
-.asm-st.pending{color:rgba(255,255,255,.2);}
-.asm-st.loading{color:var(--amber);}
-.asm-st.done{color:var(--accent);}
-.asm-check{font-size:1rem;opacity:0;transition:opacity .3s;}
-.asm-layer.loaded .asm-check{opacity:1;}
-.asm-bar{width:100%;max-width:420px;height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
-.asm-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;transition:width .4s ease;}
-#asm-log{font-size:.72rem;color:var(--muted);margin-top:1rem;font-family:var(--font-mono);}
-
-/* DASHBOARD */
-#scr-dashboard{flex-direction:column;animation:fadein .3s ease;}
+/* DASHBOARD LAYOUT */
 .dash-wrap{padding:1.5rem 2rem;max-width:1100px;margin:0 auto;width:100%;}
-.dash-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
-.dash-lbl{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;}
-.dash-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.4rem;}
-.dash-sub{font-size:.8rem;color:var(--muted);}
-
-.key-badge{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .85rem;}
-.kbd-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0;}
-.kbd-lbl{font-size:.6rem;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-.kbd-ro{font-size:.58rem;font-family:var(--font-mono);color:var(--accent2);background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.25);padding:1px 6px;border-radius:99px;margin-left:4px;}
-.kbd-addr{font-family:var(--font-mono);font-size:.75rem;color:var(--text);font-weight:700;}
-.kbd-eject{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.68rem;font-family:var(--font);margin-left:.5rem;transition:color .2s;}
-.kbd-eject:hover{color:var(--red);}
-
-.sec-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-.3px;margin-bottom:1rem;display:flex;align-items:center;gap:10px;color:var(--text);}
-.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-
-/* TELEMETRY */
 .tele-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;}
-.tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
-.tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.tele-card.g::before{background:linear-gradient(90deg,var(--accent),transparent);}
-.tele-card.c::before{background:linear-gradient(90deg,var(--cyan),transparent);}
-.tele-card.a::before{background:linear-gradient(90deg,var(--amber),transparent);}
-.tele-card.p::before{background:linear-gradient(90deg,var(--accent2),transparent);}
-.tele-lbl{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.6rem;}
-.tele-val{font-family:var(--font-head);font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:.3rem;transition: color 0.3s ease;}
-.tele-s{font-size:.7rem;color:var(--muted);}
-.tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:.62rem;padding:2px 8px;border-radius:99px;margin-top:.5rem;}
-.tag.ok{background:rgba(74,222,128,.1);color:var(--accent);}
-.tag.act{background:rgba(34,211,238,.1);color:var(--cyan);}
-.tag.mod{background:rgba(124,92,252,.1);color:var(--accent2);}
+.tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem;position:relative;}
+.tele-lbl{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
+.tele-val{font-family:var(--font-head);font-size:1.6rem;font-weight:800;line-height:1;}
 
-/* MODULAR DIAGNOSTICS */
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;}
 .mod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
-.card-lbl{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;}
+.card-lbl{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
 
-.vm-tabs{display:flex;gap:.4rem;}
-.vm-tab{flex:1;padding:.6rem .4rem;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);font-family:var(--font-mono);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
-.vm-tab.active{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--accent);}
-.vm-desc{margin-top:.85rem;font-size:.75rem;color:var(--muted);line-height:1.6;}
-.vm-desc strong{color:var(--accent);font-family:var(--font-mono);}
-
+/* GAS MONITOR STYLING */
 .gas-rows{display:flex;flex-direction:column;gap:.5rem;}
 .gas-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;border-radius:9px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.03);}
 .gr-lbl{font-size:.75rem;color:rgba(255,255,255,.45);}
 .gr-val{font-family:var(--font-mono);font-size:.75rem;font-weight:700;color:var(--accent);}
 
-.fin-card{display:flex;flex-direction:column;align-items:center;}
+/* VM TABS */
+.vm-tabs{display:flex;gap:.4rem;margin-bottom:1rem;}
+.vm-tab{flex:1;padding:.6rem;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.3);cursor:pointer;font-family:var(--font-mono);font-size:.7rem;font-weight:700;}
+.vm-tab.active{background:rgba(74,222,128,.1);border-color:var(--accent);color:var(--accent);}
 
-/* STACK LIST (PNG Logos) */
-.layer-item{display:flex;align-items:center;gap:.85rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.li-n{font-family:var(--font-mono);font-size:.65rem;color:var(--muted);width:20px;flex-shrink:0;}
-.li-ico{width:32px;height:32px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+/* STACK LIST */
+.layer-item{display:flex;align-items:center;gap:.85rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04);animation: fadeIn 0.3s ease forwards;}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 .li-ico img{width:22px;height:22px;object-fit:contain;}
-.li-info{flex:1;}
 .li-name{font-size:.82rem;font-weight:700;}
-.li-pill{font-family:var(--font-mono);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:99px;}
+.li-pill{font-family:var(--font-mono);font-size:.6rem;padding:2px 8px;border-radius:99px;}
 
-@media(max-width:700px){
-  .tele-grid{grid-template-columns:1fr 1fr;}
-  .mod-grid{grid-template-columns:1fr;}
-  .dash-wrap{padding:1rem;}
-  .nav-links{display:none;}
-}
+/* WALLET PICKER */
+.wpicker-grid{display:grid;grid-template-columns: 1fr 1fr; gap:0.75rem; width:100%; max-width:500px;}
+.witem{display:flex;align-items:center;gap:0.75rem;padding:0.85rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition: 0.2s;}
+.witem:hover { background:rgba(74,222,128,0.1); border-color:var(--accent); transform: translateY(-2px); }
+.w-icon { width:24px; height:24px; border-radius:4px; object-fit: contain; }
 </style>
 </head>
 <body>
 <canvas id="net-canvas"></canvas>
 
 <nav class="nav">
-  <a class="nav-logo" href="#"><div class="logo-dot"></div>RIALO</a>
+  <div class="nav-logo"><div class="logo-dot"></div>RIALO</div>
   <div class="nav-right">
-    <div class="nav-links">
-      <a class="nav-link" href="#">Home</a>
-      <a class="nav-link" href="#">Swap</a>
-      <a class="nav-link active" href="#">Garage</a>
-      <a class="nav-link" href="#">Market</a>
-    </div>
-    <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
+    <button class="nav-btn" id="nav-btn">Insert Validator Key</button>
   </div>
 </nav>
 
@@ -190,314 +86,176 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 
   <div id="scr-standby" class="screen" style="display:flex;">
-    <h2>Rialo Alpha Core<br><span class="dim">// Validator Garage</span></h2>
-    <p>Mesin modular belum aktif. Mount Validator Key untuk memulai proses assembly dan mengakses Engine Telemetry Dashboard.</p>
-    <div class="ro-pill">🔒 Read-only connection — tidak ada transaksi atau saldo yang digunakan</div>
-    <div id="wallet-area"></div>
-  </div>
-
-  <div id="scr-assembly" class="screen">
-    <div class="asm-title">Mounting Validator Key…<span>Assembling Supermodular Stack</span></div>
-    <div class="asm-layers">
-      <div class="asm-layer" id="al1">
-        <div class="asm-ico exec">⚙️</div>
-        <div class="asm-text"><div class="asm-lbl">Layer 1 · Execution</div><div class="asm-st pending" id="as1">Waiting…</div></div>
-        <span class="asm-check">✓</span>
+    <h2 style="margin-bottom:0.5rem; font-family:var(--font-head);">Rialo Alpha Core</h2>
+    <p style="color:var(--muted); margin-bottom:1.5rem; font-size:0.9rem;">Pilih provider untuk mengaktifkan Validator Engine.</p>
+    
+    <div class="wpicker-grid">
+      <div class="witem" onclick="handleWalletConnect('MetaMask')">
+        <img src="https://cryptologos.cc/logos/metamask-eth-logo.png" class="w-icon"> MetaMask
       </div>
-      <div class="asm-layer" id="al2">
-        <div class="asm-ico settle">🔷</div>
-        <div class="asm-text"><div class="asm-lbl">Layer 2 · Settlement</div><div class="asm-st pending" id="as2">Waiting…</div></div>
-        <span class="asm-check">✓</span>
+      <div class="witem" onclick="handleWalletConnect('OKX')">
+        <img src="https://www.okx.com/cdn/assets/imgs/221/96057A0F7E043B7B.png" class="w-icon"> OKX Wallet
       </div>
-      <div class="asm-layer" id="al3">
-        <div class="asm-ico da">🗄️</div>
-        <div class="asm-text"><div class="asm-lbl">Layer 3 · Data Availability</div><div class="asm-st pending" id="as3">Waiting…</div></div>
-        <span class="asm-check">✓</span>
+      <div class="witem" onclick="handleWalletConnect('Phantom')">
+        <img src="https://cryptologos.cc/logos/phantom-phantom-logo.png" class="w-icon"> Phantom
+      </div>
+      <div class="witem" onclick="handleWalletConnect('Coinbase')">
+        <img src="https://cryptologos.cc/logos/coinbase-coin-logo.png" class="w-icon"> Coinbase
       </div>
     </div>
-    <div class="asm-bar"><div class="asm-fill" id="asm-fill"></div></div>
-    <p id="asm-log">Initializing…</p>
   </div>
 
   <div id="scr-dashboard" class="screen">
     <div class="dash-wrap">
-      <div class="dash-hdr">
-        <div>
-          <div class="dash-lbl">Engine Telemetry</div>
-          <div class="dash-title">Validator Dashboard</div>
-          <div class="dash-sub">Rialo Alpha Core · Supermodular Stack Active</div>
-        </div>
-        <div class="key-badge">
-          <div class="kbd-dot"></div>
-          <div>
-            <div class="kbd-lbl">Validator Key <span class="kbd-ro">READ-ONLY</span></div>
-            <div class="kbd-addr" id="kbd-addr">—</div>
-          </div>
-          <button class="kbd-eject" onclick="doDisconnect()">Eject ↗</button>
-        </div>
-      </div>
-
-      <div class="sec-title">Live Engine Telemetry</div>
       <div class="tele-grid">
-        <div class="tele-card g">
-          <div class="tele-lbl">Time to Finality</div>
-          <div class="tele-val ca vp" id="finality-text">50<span style="font-size:1rem">ms</span></div>
-          <div class="tele-s">Confirmed on Rialo L1</div>
-          <div class="tag ok" id="finality-tag">● OPTIMAL</div>
+        <div class="tele-card">
+          <div class="tele-lbl">Finality</div>
+          <div id="finality-text" class="tele-val">--</div>
         </div>
-        <div class="tele-card c">
-          <div class="tele-lbl">Gas Fees</div>
-          <div class="tele-val cc" style="font-size:1.2rem;">SUBSIDIZED</div>
-          <div class="tele-s">Fuel-Injection Protocol Active</div>
-          <div class="tag ok">● GAS-LESS</div>
-        </div>
-        <div class="tele-card a">
+        <div class="tele-card">
           <div class="tele-lbl">Active VM</div>
-          <div class="tele-val cam" style="font-size:1.3rem" id="vm-label">EVM</div>
-          <div class="tele-s">Swappable without chain rebuild</div>
-          <div class="tag act">● MODULAR</div>
-        </div>
-        <div class="tele-card p">
-          <div class="tele-lbl">Stack Integrity</div>
-          <div class="tele-val cp" style="font-size:1.2rem" id="integrity-text">3 / 3</div>
-          <div class="tele-s">All layers operational</div>
-          <div class="tag mod" id="integrity-tag">● VERIFIED</div>
+          <div id="vm-label" class="tele-val" style="color:var(--accent)">EVM</div>
         </div>
       </div>
 
-      <div class="sec-title">Supermodular Diagnostic Suite</div>
       <div class="mod-grid">
         <div class="mod-card">
-          <div class="card-lbl">⚙ Modular VM Interface</div>
+          <div class="card-lbl">⛽ Gas System Monitor</div>
+          <div class="gas-rows">
+            <div class="gas-row"><span class="gr-lbl">Base Fee</span><span class="gr-val" id="gas-base">0.00000 GWEI</span></div>
+            <div class="gas-row"><span class="gr-lbl">Priority Fee</span><span class="gr-val" id="gas-priority">0.00000 GWEI</span></div>
+            <div class="gas-row"><span class="gr-lbl">Tx Cost</span><span class="gr-val" id="gas-cost">$0.000000</span></div>
+            <div class="gas-row"><span class="gr-lbl">Subsidy Status</span><span class="gr-val" style="color:var(--cyan)">ACTIVE ⚡</span></div>
+          </div>
+        </div>
+
+        <div class="mod-card">
+          <div class="card-lbl">⚙ Modular VM</div>
           <div class="vm-tabs">
             <button class="vm-tab active" onclick="switchVM('EVM',this)">EVM</button>
             <button class="vm-tab" onclick="switchVM('SVM',this)">SVM</button>
             <button class="vm-tab" onclick="switchVM('MOVE',this)">MOVE</button>
           </div>
-          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.</div>
-        </div>
-
-        <div class="mod-card">
-          <div class="card-lbl">⛽ Cruise Monitor — Gas System</div>
-          <div class="gas-rows">
-            <div class="gas-row"><span class="gr-lbl">Base Fee</span><span class="gr-val" id="gas-base">0 GWEI</span></div>
-            <div class="gas-row"><span class="gr-lbl">Priority Fee</span><span class="gr-val">0 GWEI</span></div>
-            <div class="gas-row"><span class="gr-lbl">Tx Cost</span><span class="gr-val" id="gas-cost">$0.000</span></div>
-            <div class="gas-row"><span class="gr-lbl">Subsidy Status</span><span class="gr-val">ACTIVE ⚡</span></div>
-          </div>
-        </div>
-
-        <div class="mod-card fin-card">
-          <div class="card-lbl" style="align-self:flex-start">🏁 Finality Gauge</div>
-          <svg viewBox="0 0 140 80" style="width:160px;height:90px">
-            <path d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10" stroke-linecap="round"/>
-            <path id="gauge-path" d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="#4ade80" stroke-width="10" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="40" style="transition:all 0.5s;"/>
-            <text id="gauge-val" x="70" y="60" text-anchor="middle" font-family="Syne" font-size="26" font-weight="800" fill="#4ade80">50</text>
-          </svg>
+          <div id="vm-desc" style="font-size:.75rem; color:var(--muted); line-height:1.6;">Execution environment active.</div>
         </div>
 
         <div class="mod-card" id="stack-card">
-           </div>
+          </div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ── CANVAS BACKGROUND ── */
-(function(){
-  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
-  let W,H,ang=0;
-  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
-  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
-  window.onresize=res; res();
-  (function draw(){
-    ctx.clearRect(0,0,W,H);ang+=.0005;
-    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
-    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
-    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
-    pts.forEach((p,i)=>{
-      for(let j=i+1;j<pts.length;j++){
-        const d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);
-        if(d<150){
-          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.stroke();
-        }
-      }
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle='rgba(74,222,128,.5)';ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  })();
-})();
-
-/* ── DATA & LOGIC ── */
-let wallet=null, currentVM='EVM';
-
+/* ── CONFIG DATA ── */
 const MARKET_DATA = {
   EVM: {
-    finality: 50, fStatus: 'OPTIMAL', integrity: '3 / 3', iStatus: 'VERIFIED',
-    baseGas: 0.00125, color: '#4ade80', gaugeOffset: 40,
+    finality: 50, baseGas: 0.00125, color: '#4ade80',
     stack: [
       { name: "Ethereum", logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=032", status: "SETTLEMENT" },
-      { name: "Arbitrum", logo: "https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=032", status: "L2 EXECUTION" },
-      { name: "Optimism", logo: "https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=032", status: "SCALING" }
-    ],
-    desc: 'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.'
+      { name: "Arbitrum", logo: "https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=032", status: "L2 EXEC" }
+    ]
   },
   SVM: {
-    finality: 22, fStatus: 'ULTRA FAST', integrity: '12 / 12', iStatus: 'STABLE',
-    baseGas: 0.00005, color: '#22d3ee', gaugeOffset: 15,
+    finality: 22, baseGas: 0.00005, color: '#22d3ee',
     stack: [
       { name: "Solana", logo: "https://cryptologos.cc/logos/solana-sol-logo.png?v=032", status: "SVM CORE" },
-      { name: "Pyth Network", logo: "https://cryptologos.cc/logos/pyth-network-pyth-logo.png?v=032", status: "ORACLE" },
       { name: "Jupiter", logo: "https://static.jup.ag/jup/tokens/jup.png", status: "AGGREGATOR" }
-    ],
-    desc: 'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing active. Rust-based.'
+    ]
   },
   MOVE: {
-    finality: 45, fStatus: 'SECURE', integrity: '5 / 5', iStatus: 'SYNCHRONIZED',
-    baseGas: 0.00082, color: '#7c5cfc', gaugeOffset: 55,
+    finality: 45, baseGas: 0.00082, color: '#7c5cfc',
     stack: [
       { name: "Sui", logo: "https://cryptologos.cc/logos/sui-sui-logo.png?v=032", status: "OBJECT-VM" },
-      { name: "Aptos", logo: "https://cryptologos.cc/logos/aptos-apt-logo.png?v=032", status: "MOVE-CORE" },
       { name: "Movement", logo: "https://raw.githubusercontent.com/Rialo-Labs/branding/main/movement_logo_white.png", status: "M2 STACK" }
-    ],
-    desc: 'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management active.'
+    ]
   }
 };
 
-// Real-time Gas Simulation
-setInterval(() => {
-  const d = MARKET_DATA[currentVM];
-  const jitter = (Math.random() * 0.00008).toFixed(5);
-  const liveBase = (d.baseGas + parseFloat(jitter)).toFixed(5);
-  const liveCost = (liveBase * 0.0001).toFixed(6);
-  if(document.getElementById('gas-base')) document.getElementById('gas-base').textContent = `${liveBase} GWEI`;
-  if(document.getElementById('gas-cost')) document.getElementById('gas-cost').textContent = `$${liveCost}`;
-}, 2000);
+let currentVM = 'EVM';
+let isConnected = false;
 
+/* ── CONNECT LOGIC ── */
+function handleWalletConnect(provider) {
+  isConnected = true;
+  
+  // Update Navbar & Badge
+  const btn = document.getElementById('nav-btn');
+  btn.textContent = "0x71...8976F (CONNECTED)";
+  btn.classList.add('on');
+  
+  document.getElementById('node-badge').classList.add('online');
+  document.getElementById('badge-txt').textContent = "NODE_STATUS: ONLINE (" + provider.toUpperCase() + ")";
+
+  // Screen Switch
+  document.getElementById('scr-standby').style.display = 'none';
+  document.getElementById('scr-dashboard').style.display = 'flex';
+
+  // Init UI Components
+  switchVM('EVM', document.querySelector('.vm-tab'));
+  startGasSimulation();
+}
+
+/* ── SIMULATION ENGINE ── */
+function startGasSimulation() {
+  setInterval(() => {
+    if(!isConnected) return;
+    
+    const d = MARKET_DATA[currentVM];
+    // Membuat angka acak (jitter) agar terlihat real-time
+    const jitter = (Math.random() * 0.00005).toFixed(5);
+    const liveBase = (d.baseGas + parseFloat(jitter)).toFixed(5);
+    const livePriority = (Math.random() * 0.00002).toFixed(5);
+    const liveCost = (liveBase * 0.0001).toFixed(6);
+
+    // Update ke elemen HTML
+    document.getElementById('gas-base').textContent = `${liveBase} GWEI`;
+    document.getElementById('gas-priority').textContent = `${livePriority} GWEI`;
+    document.getElementById('gas-cost').textContent = `$${liveCost}`;
+  }, 1500);
+}
+
+/* ── VM LOGIC ── */
 function switchVM(vm, btn) {
   currentVM = vm;
   const d = MARKET_DATA[vm];
   
+  // Tab UI
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
 
-  // Update Telemetry
-  const fVal=document.getElementById('finality-text'), iVal=document.getElementById('integrity-text');
-  if(fVal){ fVal.innerHTML=`${d.finality}<span style="font-size:1rem">ms</span>`; fVal.style.color=d.color; }
-  if(iVal){ iVal.textContent=d.integrity; iVal.style.color=d.color; }
-  document.getElementById('finality-tag').innerHTML=`● ${d.fStatus}`;
-  document.getElementById('integrity-tag').innerHTML=`● ${d.iStatus}`;
-  
-  // Update Gauge
-  const gPath=document.getElementById('gauge-path'), gVal=document.getElementById('gauge-val');
-  if(gPath){ gPath.style.strokeDashoffset=d.gaugeOffset; gPath.style.stroke=d.color; }
-  if(gVal){ gVal.textContent=d.finality; gVal.setAttribute('fill', d.color); }
-
-  // Update Table (Fixed structure)
-  const stackCard = document.getElementById('stack-card');
-  if(stackCard){
-    let html = `<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
-    d.stack.forEach((item, idx) => {
-      html += `
-        <div class="layer-item" style="animation:fadein 0.3s forwards; animation-delay:${idx*0.1}s">
-          <div class="li-n">0${idx+1}</div>
-          <div class="li-ico"><img src="${item.logo}" onerror="this.src='https://via.placeholder.com/20'"></div>
-          <div class="li-info"><div class="li-name">${item.name}</div></div>
-          <span class="li-pill" style="background:${d.color}20; color:${d.color}">${item.status}</span>
-        </div>`;
-    });
-    stackCard.innerHTML = html;
-  }
-
+  // Telemetry UI
   document.getElementById('vm-label').textContent = vm;
   document.getElementById('vm-label').style.color = d.color;
-  document.getElementById('vm-desc').innerHTML = d.desc;
+  document.getElementById('finality-text').textContent = d.finality + 'ms';
+  document.getElementById('finality-text').style.color = d.color;
+
+  // Render Table Stack
+  const stackCard = document.getElementById('stack-card');
+  let html = `<div class="card-lbl">🧱 ${vm} Supermodular Stack</div>`;
+  d.stack.forEach((item, i) => {
+    html += `
+      <div class="layer-item" style="animation-delay: ${i*0.1}s">
+        <div class="li-ico"><img src="${item.logo}" onerror="this.src='https://via.placeholder.com/20'"></div>
+        <div class="li-info"><div class="li-name">${item.name}</div></div>
+        <span class="li-pill" style="background:${d.color}20; color:${d.color}">${item.status}</span>
+      </div>`;
+  });
+  stackCard.innerHTML = html;
 }
 
-/* ── WALLET & SCREEN FLOW ── */
-function showScreen(n){ 
-  document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
-  document.getElementById('scr-'+n).style.display='flex';
+/* ── BACKGROUND CANVAS ── */
+const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
+let w,h;
+function res(){w=cv.width=innerWidth;h=cv.height=innerHeight;}
+window.onresize=res;res();
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='rgba(74,222,128,0.03)';
+  for(let i=0;i<40;i++) ctx.fillRect(Math.random()*w,Math.random()*h,2,2);
+  requestAnimationFrame(draw);
 }
-
-function navClick(){ wallet ? doDisconnect() : renderPicker(); }
-
-function doDisconnect(){
-  wallet=null; setNavBtn(null); 
-  document.getElementById('node-badge').classList.remove('online');
-  document.getElementById('badge-txt').textContent='NODE_STATUS: DISCONNECTED';
-  showScreen('standby'); renderPicker();
-}
-
-function setNavBtn(a){
-  const b=document.getElementById('nav-btn');
-  b.innerHTML = a ? `<span class="wdot"></span>${a.slice(0,6)}…${a.slice(-4)}` : 'Insert Validator Key';
-  b.className = a ? 'nav-btn on' : 'nav-btn';
-}
-
-function renderPicker(){
-  const area = document.getElementById('wallet-area');
-  area.innerHTML = `
-    <div class="wpicker-note">🔒 Read-only — connection secured</div>
-    <div class="wpicker">
-      <div class="witem" onclick="mockConnect('MetaMask')">
-        <div class="wlogo" style="background:rgba(247,147,26,.1)">🦊</div>
-        <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Browser Extension</div></div>
-        <span class="wbadge ok">● Detected</span>
-      </div>
-      <div class="witem" onclick="mockConnect('Phantom')">
-        <div class="wlogo" style="background:rgba(153,69,255,.1)">👻</div>
-        <div class="winfo"><div class="wname">Phantom</div><div class="wsub">Solana & EVM</div></div>
-        <span class="wbadge ok">● Detected</span>
-      </div>
-    </div>`;
-}
-
-async function mockConnect(name){
-  const area = document.getElementById('wallet-area');
-  area.innerHTML = `<div class="conn-state"><div class="conn-spin"></div><div class="conn-lbl">Connecting ${name}...</div></div>`;
-  setTimeout(()=>{
-    wallet = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"; // Mock address
-    setNavBtn(wallet);
-    runAssembly();
-  }, 1200);
-}
-
-function runAssembly(){
-  showScreen('assembly');
-  const log=document.getElementById('asm-log'), fill=document.getElementById('asm-fill');
-  const steps = [
-    {id:'al1', st:'as1', txt:'RISC-V Engine Loaded', p:'33%'},
-    {id:'al2', st:'as2', txt:'Integrity Verified', p:'66%'},
-    {id:'al3', st:'as3', txt:'DA Layer Synced', p:'100%'}
-  ];
-  let i=0;
-  function next(){
-    if(i>=steps.length){ setTimeout(initDash, 600); return; }
-    const s = steps[i];
-    const stEl = document.getElementById(s.st);
-    stEl.className='asm-st loading'; stEl.textContent='Loading...';
-    setTimeout(()=>{
-      document.getElementById(s.id).classList.add('loaded');
-      stEl.className='asm-st done'; stEl.textContent=s.txt;
-      fill.style.width = s.p;
-      i++; next();
-    }, 800);
-  }
-  next();
-}
-
-function initDash(){
-  showScreen('dashboard');
-  document.getElementById('node-badge').classList.add('online');
-  document.getElementById('badge-txt').textContent='NODE_STATUS: ONLINE';
-  document.getElementById('kbd-addr').textContent = wallet.slice(0,10)+'...'+wallet.slice(-6);
-  switchVM('EVM', document.querySelector('.vm-tab'));
-}
-
-renderPicker();
+draw();
 </script>
 </body>
 </html>
