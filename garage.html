@@ -25,7 +25,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
 .nav-right{display:flex;align-items:center;gap:.6rem;}
-.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
+.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:99px;padding:3px;}
 .nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
 .nav-link:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06);}
 .nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
@@ -215,16 +215,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     </div>
   </div>
 
-  <!-- STANDBY -->
   <div id="scr-standby" class="screen" style="display:flex;">
     <h2>Rialo Alpha Core<br><span class="dim">// Validator Garage</span></h2>
     <p>Mesin modular belum aktif. Mount Validator Key untuk memulai proses assembly dan mengakses Engine Telemetry Dashboard.</p>
     <div class="tx-pill">⚡ Validator Pack · Stake ETH + Approve Kontrak</div>
-    <div class="chain-pill">⛓ Ethereum Mainnet · Fixed Fee: 0.001 ETH</div>
+    <div class="chain-pill">⛓ Ethereum Mainnet · Fixed Fee: 0.000001 ETH</div>
     <div id="wallet-area"></div>
   </div>
 
-  <!-- ASSEMBLY -->
   <div id="scr-assembly" class="screen">
     <div class="asm-title">Mounting Validator Key…<span>Assembling Supermodular Stack</span></div>
     <div class="asm-layers">
@@ -236,7 +234,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <p id="asm-log">Initializing…</p>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="scr-dashboard" class="screen">
     <div class="dash-wrap">
       <div class="dash-hdr">
@@ -286,7 +283,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       <div class="sec-title">Supermodular Diagnostic Suite</div>
       <div class="mod-grid">
 
-        <!-- VM Interface -->
         <div class="mod-card">
           <div class="card-lbl">⚙ Modular VM Interface</div>
           <div class="vm-tabs">
@@ -294,10 +290,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <button class="vm-tab" onclick="switchVM('SVM',this)">SVM</button>
             <button class="vm-tab" onclick="switchVM('MOVE',this)">MOVE</button>
           </div>
-          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Fee: Fixed 0.001 ETH.</div>
+          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Fee: Fixed 0.000001 ETH.</div>
         </div>
 
-        <!-- Gas System LIVE -->
         <div class="mod-card">
           <div class="card-lbl">⛽ Gas System — Ethereum Mainnet · Live</div>
           <div class="gas-rows">
@@ -318,10 +313,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
               <span class="gr-val live-amber" id="subsidy-status">ACTIVE ⚡</span>
             </div>
           </div>
-          <div class="gas-note">Biaya tetap: <strong style="color:var(--accent)">0.001 ETH</strong> per tx · Base Fee tampil sebagai referensi live Mainnet</div>
+          <div class="gas-note">Biaya tetap: <strong style="color:var(--accent)">0.000001 ETH</strong> per tx · Base Fee tampil sebagai referensi live Mainnet</div>
         </div>
 
-        <!-- Finality Gauge -->
         <div class="mod-card" style="display:flex;flex-direction:column;align-items:center;">
           <div class="card-lbl" style="align-self:flex-start">🏁 Finality Gauge</div>
           <svg viewBox="0 0 140 80" style="width:160px;height:90px">
@@ -331,22 +325,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </svg>
         </div>
 
-        <!-- Stack Card -->
         <div class="mod-card" id="stack-card"></div>
       </div>
 
-      <!-- VALIDATOR PACK -->
       <div class="sec-title">🔥 Validator Pack — Transaksi Aktif</div>
       <div class="mod-grid">
 
-        <!-- Stake & Send -->
         <div class="mod-card">
           <div class="card-lbl">🥩 Stake &amp; Send ETH</div>
           <div class="vpack">
             <div class="vpack-action">
               <div class="vpack-hd">
                 <span class="vpack-name">💎 Stake ETH</span>
-                <span class="vpack-fee">Fee: 0.001 ETH</span>
+                <span class="vpack-fee">Fee: 0.000001 ETH</span>
               </div>
               <div class="vpack-desc">Deposit ETH ke Validator Contract. Minimum 0.01 ETH. Transaksi nyata di Ethereum Mainnet.</div>
               <div class="vpack-input">
@@ -357,7 +348,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <div class="vpack-action">
               <div class="vpack-hd">
                 <span class="vpack-name">📤 Send ETH</span>
-                <span class="vpack-fee">Fee: 0.001 ETH</span>
+                <span class="vpack-fee">Fee: 0.000001 ETH</span>
               </div>
               <div class="vpack-desc">Kirim ETH ke address lain langsung dari Garage.</div>
               <div class="vpack-input">
@@ -369,14 +360,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
         </div>
 
-        <!-- Approve & Revoke -->
         <div class="mod-card">
           <div class="card-lbl">🔐 Approve &amp; Revoke Kontrak</div>
           <div class="vpack">
             <div class="vpack-action">
               <div class="vpack-hd">
                 <span class="vpack-name">✅ Approve</span>
-                <span class="vpack-fee">Fee: 0.001 ETH</span>
+                <span class="vpack-fee">Fee: 0.000001 ETH</span>
               </div>
               <div class="vpack-desc">Approve kontrak validator untuk akses token ERC-20 kamu. Masukkan address kontrak target.</div>
               <div class="vpack-input">
@@ -388,7 +378,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <div class="vpack-action">
               <div class="vpack-hd">
                 <span class="vpack-name">🔄 Revoke</span>
-                <span class="vpack-fee">Fee: 0.001 ETH</span>
+                <span class="vpack-fee">Fee: 0.000001 ETH</span>
               </div>
               <div class="vpack-desc">Cabut approval dari kontrak sebelumnya. Masukkan token &amp; spender yang ingin di-revoke.</div>
               <div class="vpack-input">
@@ -431,7 +421,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* ── STATE ── */
 let walletAddress=null,currentVM='EVM',gasInterval=null;
-const FIXED_FEE_ETH=0.001;
+const FIXED_FEE_ETH=0.000001;
 const DEPOSIT_CONTRACT='0x00000000219ab540356cBB839Cbe05303d7705Fa';
 const MAX_UINT256='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -439,7 +429,7 @@ const MAX_UINT256='fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 const VM={
   EVM:{finality:50,fStatus:'OPTIMAL',integrity:'3 / 3',iStatus:'VERIFIED',color:'#4ade80',gaugeOffset:40,
     stack:[{name:"Ethereum",logo:"https://cryptologos.cc/logos/ethereum-eth-logo.png?v=032",status:"SETTLEMENT"},{name:"Arbitrum",logo:"https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=032",status:"L2 EXECUTION"},{name:"Optimism",logo:"https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=032",status:"SCALING"}],
-    desc:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity ready. Fee: Fixed 0.001 ETH.'},
+    desc:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity ready. Fee: Fixed 0.000001 ETH.'},
   SVM:{finality:22,fStatus:'ULTRA FAST',integrity:'12 / 12',iStatus:'STABLE',color:'#22d3ee',gaugeOffset:15,
     stack:[{name:"Solana",logo:"https://cryptologos.cc/logos/solana-sol-logo.png?v=032",status:"SVM CORE"},{name:"Pyth Network",logo:"https://cryptologos.cc/logos/pyth-network-pyth-logo.png?v=032",status:"ORACLE"},{name:"Jupiter",logo:"https://static.jup.ag/jup/tokens/jup.png",status:"AGGREGATOR"}],
     desc:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel tx processing. Rust-based.'},
@@ -598,7 +588,7 @@ function renderPicker(){
   const pageUrl=encodeURIComponent(location.href);
   document.getElementById('wallet-area').innerHTML=`
     <div class="wpicker-wrap">
-      <div class="wpicker-note">⚡ Validator Pack · Stake + Approve · Fee 0.001 ETH per tx</div>
+      <div class="wpicker-note">⚡ Validator Pack · Stake + Approve · Fee 0.000001 ETH per tx</div>
       <div class="wpicker">
         <div class="witem${hasMM?'':' dim'}" onclick="${hasMM?'connectWallet(\'metamask\')':'void(0)'}">
           <div class="wlogo" style="background:rgba(247,147,26,.12)">🦊</div>
@@ -696,4 +686,5 @@ function switchVM(vm,btn){
 renderPicker();
 </script>
 </body>
+</html>
 </html>
