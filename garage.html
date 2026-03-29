@@ -6,6 +6,7 @@
 <title>RIALO · Validator Garage</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
+/* KEMBALI KE STYLE ASLI RIALO */
 :root{
   --bg:#050810;--card:#0f1929;--border:#1a2a42;
   --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--amber:#facc15;--cyan:#22d3ee;
@@ -16,19 +17,16 @@
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
 #net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes vpulse{0%,100%{opacity:1}50%{opacity:.6}}
 
-/* NAV */
+/* NAV & LAYOUT */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
-.nav-btn{padding:.45rem 1rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;}
-.nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
+.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;}
 
-/* PAGE */
 .status-row{display:flex;justify-content:center;padding:1.5rem 0 0;position:relative;z-index:1;}
 .node-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;}
 .node-badge.online{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25);color:var(--accent);}
@@ -36,31 +34,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 .screen{display:none;position:relative;z-index:1;flex-direction:column;align-items:center;padding:1rem;}
 
-/* WALLET PICKER - KEMBALI KE DESAIN AWAL */
+/* WALLET PICKER DESIGN */
 .wpicker{width:100%;max-width:380px;display:flex;flex-direction:column;gap:.6rem;margin-top:1.5rem;}
 .witem{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;}
-.witem:hover{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
-.w-left{display:flex;align-items:center;gap:12px;}
-.wlogo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(255,255,255,0.05);}
-.wname{font-weight:600;font-size:.85rem;display:block;}
+.witem:hover:not(.dim){background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.witem.dim{opacity:.4;cursor:default;}
+.wlogo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.winfo{flex:1;text-align:left;padding-left:12px;}
+.wname{font-weight:600;font-size:.85rem;}
 .wsub{font-size:.67rem;color:var(--muted);font-family:var(--font-mono);}
-.btn-st{font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:6px;font-family:var(--font-mono);}
-.btn-st.install{background:var(--accent2);color:white;}
-.btn-st.connect{color:var(--accent);border:1px solid var(--accent);}
+.wbadge{font-size:.65rem;font-weight:700;font-family:var(--font-mono);}
+.wbadge.ok{color:var(--accent);}
+.wbadge.no{color:rgba(255,255,255,.25);}
 
-/* DASHBOARD GRID */
+/* DASHBOARD ELEMENTS */
 .dash-wrap{padding:1.5rem 2rem;max-width:1100px;margin:0 auto;width:100%;}
 .tele-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;}
-@media(max-width:700px){ .tele-grid{grid-template-columns:1fr 1fr;} }
-
 .tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
-.tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
+.tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.tele-card.g::before{background:var(--accent);}
+.tele-card.c::before{background:var(--cyan);}
+.tele-card.a::before{background:var(--amber);}
+.tele-card.p::before{background:var(--accent2);}
 .tele-lbl{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
 .tele-val{font-family:var(--font-head);font-size:1.5rem;font-weight:800;line-height:1;}
-
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;}
-@media(max-width:700px){ .mod-grid{grid-template-columns:1fr;} }
-.mod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
+.vp{animation:vpulse 1.2s ease-in-out infinite;}
 
 .asm-bar{width:100%;max-width:350px;height:4px;background:rgba(255,255,255,.06);border-radius:99px;margin:1.5rem 0;overflow:hidden;}
 .asm-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;transition:width .4s ease;}
@@ -71,7 +69,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 <nav class="nav">
   <a class="nav-logo" href="#"><div class="logo-dot"></div>RIALO</a>
-  <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Key</button>
+  <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
 </nav>
 
 <div class="status-row">
@@ -82,14 +80,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 <div id="scr-standby" class="screen" style="display:flex;">
   <h2 style="font-family:var(--font-head);font-size:2.2rem;margin-top:2rem;">Validator Garage</h2>
-  <p style="color:var(--muted);font-size:0.85rem;margin:0.5rem 0 1.5rem;">Pilih mesin wallet untuk sinkronisasi node Rialo.</p>
+  <p style="color:var(--muted);font-size:0.85rem;margin:0.5rem 0 1.5rem;text-align:center;max-width:400px;">Mesin modular belum aktif. Mount Validator Key untuk memulai proses assembly.</p>
   <div id="wallet-area" class="wpicker"></div>
 </div>
 
 <div id="scr-assembly" class="screen">
   <h3 style="margin-top:5rem;font-family:var(--font-head);">Mounting Node...</h3>
   <div class="asm-bar"><div class="asm-fill" id="asm-fill"></div></div>
-  <p id="asm-log" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);">Initializing Stack...</p>
+  <p id="asm-log" style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);">Initializing Rialo Stack...</p>
 </div>
 
 <div id="scr-dashboard" class="screen">
@@ -100,61 +98,72 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     </div>
 
     <div class="tele-grid">
-      <div class="tele-card"><div class="tele-lbl">Finality</div><div class="tele-val vp" id="finality-val" style="color:var(--accent)">50ms</div></div>
-      <div class="tele-card"><div class="tele-lbl">Gas Saved</div><div class="tele-val" style="color:var(--cyan)">100%</div></div>
-      <div class="tele-card"><div class="tele-lbl">Gold Price</div><div class="tele-val" id="gold-price" style="color:var(--amber)">$0.00</div></div>
-      <div class="tele-card"><div class="tele-lbl">Node Load</div><div class="tele-val" id="load-val" style="color:var(--accent2)">99%</div></div>
+      <div class="tele-card g"><div class="tele-lbl">Finality</div><div class="tele-val vp" id="finality-val" style="color:var(--accent)">50ms</div></div>
+      <div class="tele-card c"><div class="tele-lbl">Gas Saved</div><div class="tele-val" style="color:var(--cyan)">100%</div></div>
+      <div class="tele-card a"><div class="tele-lbl">Gold Price</div><div class="tele-val" id="gold-price" style="color:var(--amber)">$0.00</div></div>
+      <div class="tele-card p"><div class="tele-lbl">Node Load</div><div class="tele-val" id="load-val" style="color:var(--accent2)">99%</div></div>
     </div>
 
-    <div class="mod-grid">
-      <div class="mod-card">
-        <div class="tele-lbl">⚙️ Modular VM</div>
-        <p style="font-size:0.8rem;color:var(--muted);line-height:1.6;">Alpha-Core v1.0 aktif. Mendukung eksekusi paralel EVM/SVM dengan latensi milidetik.</p>
-      </div>
-      <div class="mod-card" style="text-align:center;">
-        <div class="tele-lbl">🏁 Finality Gauge</div>
-        <div style="font-family:var(--font-head);font-size:2.5rem;color:var(--accent)" id="gauge-txt">50</div>
-        <p style="font-size:0.6rem;color:var(--muted);">STABLE_SYNC_ACTIVE</p>
-      </div>
-    </div>
-
-    <button onclick="location.reload()" style="margin-top:2rem;width:100%;padding:1rem;background:rgba(248,113,113,0.1);border:1px solid var(--red);color:var(--red);border-radius:12px;font-weight:800;cursor:pointer;">EJECT VALIDATOR</button>
+    <button onclick="location.reload()" style="margin-top:2rem;width:100%;padding:1rem;background:rgba(248,113,113,0.1);border:1px solid var(--red);color:var(--red);border-radius:12px;font-weight:800;cursor:pointer;font-family:var(--font);">EJECT VALIDATOR</button>
   </div>
 </div>
 
 <script>
-let wallet=null, prov=null;
+/* ── CANVAS ASLI RIALO (JARING HIJAU) ── */
+(function(){
+  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
+  let W,H,ang=0;
+  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2200,by:(Math.random()-.5)*1400,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+1}));
+  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  window.onresize=res; res();
+  (function draw(){
+    ctx.clearRect(0,0,W,H); ang+=.0008;
+    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
+    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1100)n.bx=1100;if(n.bx>1100)n.bx=-1100;});
+    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs}));
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<160){
+        ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
+        ctx.strokeStyle=`rgba(74,222,128,${(1-d/160)*.4})`;ctx.lineWidth=.7;ctx.stroke();
+      }
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
 
-/* ── WALLET CONFIG ── */
+/* ── WALLET LOGIC DENGAN 4 OPSI ── */
 const WALLETS = [
   { id:'metamask', name:'MetaMask', icon:'🦊', site:'https://metamask.io/download/' },
-  { id:'okx', name:'OKX Wallet', icon:'🖤', site:'https://www.okx.com/download' },
+  { id:'okx', name:'OKX Wallet', icon:'⬛', site:'https://www.okx.com/download' },
   { id:'phantom', name:'Phantom', icon:'👻', site:'https://phantom.app/download' },
   { id:'coinbase', name:'Coinbase', icon:'🔵', site:'https://www.coinbase.com/wallet' }
 ];
 
 function renderPicker() {
   const area = document.getElementById('wallet-area');
-  const detects = {
-    metamask: !!window.ethereum?.isMetaMask,
-    okx: !!window.okxwallet,
-    phantom: !!window.phantom?.ethereum,
-    coinbase: !!window.coinbaseWalletExtension || (!!window.ethereum && window.ethereum.isCoinbaseWallet)
+  const d = {
+    metamask: !!(window.ethereum?.isMetaMask),
+    okx: !!(window.okxwallet),
+    phantom: !!(window.phantom?.ethereum),
+    coinbase: !!(window.coinbaseWalletExtension || window.ethereum?.isCoinbaseWallet)
   };
 
   area.innerHTML = WALLETS.map(w => {
-    const isInst = detects[w.id];
+    const isInst = d[w.id];
     return `
       <div class="witem" onclick="${isInst ? `connect('${w.id}')` : `window.open('${w.site}','_blank')`}">
-        <div class="w-left">
+        <div class="w-left" style="display:flex;align-items:center;">
           <div class="wlogo">${w.icon}</div>
-          <div><span class="wname">${w.name}</span><span class="wsub">Digital Key</span></div>
+          <div class="winfo"><span class="wname">${w.name}</span><span class="wsub">Validator Key</span></div>
         </div>
-        <span class="btn-st ${isInst?'connect':'install'}">${isInst?'Connect':'Install'}</span>
+        <span class="wbadge ${isInst?'ok':'no'}">${isInst?'Detected ●':'Install ↗'}</span>
       </div>
     `;
   }).join('');
 }
+
+let wallet=null, prov=null;
 
 async function connect(type) {
   let p;
@@ -176,25 +185,19 @@ function runAssembly(){
   const fill=document.getElementById('asm-fill'), log=document.getElementById('asm-log');
   const iv=setInterval(()=>{
     p+=5; fill.style.width=p+'%';
-    if(p==40) log.textContent="Verifying L2 Settlement...";
-    if(p==80) log.textContent="Finalizing Sync...";
+    if(p==40) log.textContent="Verifying Stack Integrity...";
+    if(p==80) log.textContent="Finalizing Node Sync...";
     if(p>=100){ clearInterval(iv); showDash(); }
   }, 100);
 }
 
 function showDash(){
   showScreen('dashboard');
-  setBadge(true);
-  document.getElementById('kbd-addr').textContent=wallet;
+  const b=document.getElementById('node-badge'); b.classList.add('online');
+  document.getElementById('badge-txt').textContent='NODE_STATUS: ONLINE';
+  document.getElementById('kbd-addr').textContent=wallet.slice(0,10)+'...'+wallet.slice(-6);
   document.getElementById('nav-btn').textContent=wallet.slice(0,6)+'...';
   updateData();
-  setInterval(updateData, 5000);
-  setInterval(()=>{
-    const ms=Math.floor(Math.random()*10)+45;
-    document.getElementById('finality-val').textContent=ms+'ms';
-    document.getElementById('gauge-txt').textContent=ms;
-    document.getElementById('load-val').textContent=(99+Math.random()).toFixed(1)+'%';
-  }, 2000);
 }
 
 async function updateData(){
@@ -211,29 +214,6 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
   document.getElementById('scr-'+id).style.display='flex';
 }
-
-/* ── CANVAS ASLI (DESAIN AWAL) ── */
-(function(){
-  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
-  let W,H,ang=0;
-  const nodes=Array.from({length:60},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
-  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
-  window.onresize=res; res();
-  (function draw(){
-    ctx.clearRect(0,0,W,H); ang+=.0005;
-    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
-    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
-    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs}));
-    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
-      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
-      if(d<150){
-        ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);
-        ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.lineWidth=.6;ctx.stroke();
-      }
-    }
-    requestAnimationFrame(draw);
-  })();
-})();
 
 renderPicker();
 </script>
