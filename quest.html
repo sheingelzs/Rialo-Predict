@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RIALO · Quest Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+--bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
+--accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--amber:#facc15;--cyan:#22d3ee;
+--text:#e8eaf0;--muted:#5a7090;
+--font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes xpPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
+.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
+.nav-right{display:flex;align-items:center;gap:.6rem;}
+.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
+.nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
+.nav-link:hover{color:rgba(255,255,255,.8);}
+.nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
+.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
+.wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+/* PAGE */
+.page{position:relative;z-index:1;animation:fadein .25s ease;}
+
+/* LOCK SCREEN */
+#lock-screen{min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;}
+.lock-icon{font-size:3rem;margin-bottom:1.5rem;opacity:.5;}
+.lock-title{font-family:var(--font-head);font-size:2rem;font-weight:800;margin-bottom:.75rem;}
+.lock-sub{color:var(--muted);font-size:.9rem;max-width:360px;line-height:1.7;margin-bottom:2rem;}
+.wpicker{width:100%;max-width:380px;display:flex;flex-direction:column;gap:.45rem;margin:0 auto;}
+.wpicker-note{font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);margin-bottom:.35rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);padding:.35rem .8rem;border-radius:8px;}
+.witem{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;}
+.witem:hover{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.wlogo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.winfo{flex:1;text-align:left;}
+.wname{font-weight:600;font-size:.85rem;}
+.wsub{font-size:.67rem;color:var(--muted);margin-top:1px;}
+.wbadge{font-size:.67rem;font-weight:700;}
+.wbadge.ok{color:var(--accent);}
+.wbadge.no{color:rgba(255,255,255,.25);}
+.conn-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
+.conn-spin{width:40px;height:40px;border:3px solid rgba(74,222,128,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+.conn-lbl{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);}
+
+/* MAIN */
+#main-screen{display:none;}
+.board-wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+/* HEADER */
+.board-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+.hdr-left{}
+.hdr-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem;}
+.hdr-title{font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.3rem;}
+.hdr-sub{font-size:.82rem;color:var(--muted);}
+.xp-card{background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.25);border-radius:14px;padding:.9rem 1.2rem;display:flex;align-items:center;gap:1rem;min-width:200px;}
+.xp-icon{font-size:1.6rem;}
+.xp-lbl{font-size:.62rem;font-family:var(--font-mono);color:rgba(200,180,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.xp-val{font-family:var(--font-head);font-size:1.5rem;font-weight:800;color:#c4b5fd;line-height:1;}
+.xp-rank{font-size:.68rem;color:rgba(200,180,255,.4);margin-top:2px;}
+.xp-bar-wrap{margin-top:.5rem;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),#a78bfa);border-radius:99px;transition:width .6s ease;}
+
+/* ADDR STRIP */
+.addr-strip{display:flex;align-items:center;justify-content:space-between;background:rgba(74,222,128,.04);border:1px solid rgba(74,222,128,.12);border-radius:10px;padding:.6rem 1rem;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem;}
+.addr-left{display:flex;align-items:center;gap:8px;}
+.addr-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite;}
+.addr-txt{font-family:var(--font-mono);font-size:.75rem;color:rgba(255,255,255,.55);}
+.addr-disc{font-size:.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font);transition:color .2s;}
+.addr-disc:hover{color:var(--red);}
+
+/* PROGRESS BAR */
+.prog-section{margin-bottom:1.5rem;}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
+.prog-lbl{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.prog-frac{font-family:var(--font-mono);font-size:.78rem;font-weight:700;color:var(--accent);}
+.prog-bar{height:6px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));border-radius:99px;transition:width .8s ease;}
+
+/* SECTION */
+.sec-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-.3px;margin:1.5rem 0 .85rem;display:flex;align-items:center;gap:10px;color:var(--text);}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* QUEST GRID */
+.quest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem;}
+.quest-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default;}
+.quest-card:hover{transform:translateY(-2px);}
+.quest-card.done{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.03);}
+.quest-card.done::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.quest-card.locked{opacity:.5;}
+.quest-card.active{border-color:rgba(250,204,21,.3);background:rgba(250,204,21,.02);}
+.quest-card.active::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),transparent);}
+.qc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.7rem;}
+.qc-ico{font-size:1.5rem;}
+.qc-badge{font-family:var(--font-mono);font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:99px;}
+.qc-badge.done{background:rgba(74,222,128,.12);color:var(--accent);}
+.qc-badge.active{background:rgba(250,204,21,.12);color:var(--amber);}
+.qc-badge.locked{background:rgba(255,255,255,.06);color:var(--muted);}
+.qc-title{font-weight:700;font-size:.9rem;margin-bottom:.3rem;}
+.qc-desc{font-size:.75rem;color:var(--muted);line-height:1.55;margin-bottom:.75rem;}
+.qc-footer{display:flex;align-items:center;justify-content:space-between;}
+.qc-xp{font-family:var(--font-mono);font-size:.72rem;font-weight:700;color:#c4b5fd;}
+.qc-action{font-size:.72rem;font-weight:600;color:var(--accent);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:3px 10px;cursor:pointer;text-decoration:none;transition:background .2s;}
+.qc-action:hover{background:rgba(74,222,128,.2);}
+.qc-action.locked-btn{color:var(--muted);background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);cursor:not-allowed;}
+.qc-action.done-btn{color:var(--accent);background:none;border:none;cursor:default;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;}
+.toast{background:rgba(15,25,41,.95);border:1px solid rgba(74,222,128,.3);border-radius:12px;padding:.75rem 1.1rem;font-size:.82rem;display:flex;align-items:center;gap:.6rem;animation:fadein .3s ease;backdrop-filter:blur(12px);}
+.toast .tick{color:var(--accent);font-size:1rem;}
+
+@media(max-width:600px){
+  .quest-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .board-hdr{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<canvas id="net-canvas"></canvas>
+
+<nav class="nav">
+  <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a class="nav-link" href="menu.html">Home</a>
+      <a class="nav-link" href="wallet.html">Swap</a>
+      <a class="nav-link" href="garage.html">Garage</a>
+      <a class="nav-link" href="market.html">Market</a>
+      <a class="nav-link active" href="quest.html">Quests</a>
+      <a class="nav-link" href="passport.html">Passport</a>
+      <a class="nav-link" href="leaderboard.html">Leaderboard</a>
+    </div>
+    <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- LOCK SCREEN -->
+  <div id="lock-screen">
+    <div class="lock-icon">🎯</div>
+    <div class="lock-title">Quest Board</div>
+    <div class="lock-sub">Connect wallet untuk mulai tracking misi dan kumpulkan XP di ekosistem Rialo.</div>
+    <div id="wallet-area">
+      <div class="wpicker">
+        <div class="wpicker-note">🔒 Read-only — tidak ada transaksi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN BOARD -->
+  <div id="main-screen">
+    <div class="board-wrap">
+      <div class="board-hdr">
+        <div class="hdr-left">
+          <div class="hdr-eyebrow">Alpha Operator Missions</div>
+          <div class="hdr-title">Quest Board</div>
+          <div class="hdr-sub">Selesaikan misi untuk kumpulkan XP dan unlock status Alpha Operator.</div>
+        </div>
+        <div class="xp-card">
+          <div class="xp-icon">⚡</div>
+          <div>
+            <div class="xp-lbl">Total XP</div>
+            <div class="xp-val" id="xp-total">0</div>
+            <div class="xp-rank" id="xp-rank">Rank: Recruit</div>
+            <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="addr-strip">
+        <div class="addr-left">
+          <div class="addr-dot"></div>
+          <span class="addr-txt" id="addr-txt">—</span>
+        </div>
+        <button class="addr-disc" onclick="doDisconnect()">Disconnect ↗</button>
+      </div>
+
+      <div class="prog-section">
+        <div class="prog-hdr">
+          <span class="prog-lbl">Mission Progress</span>
+          <span class="prog-frac" id="prog-frac">0 / 8</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="sec-title">🚀 Onboarding Missions</div>
+      <div class="quest-grid" id="onboarding-grid"></div>
+
+      <div class="sec-title">⚙️ Validator Missions</div>
+      <div class="quest-grid" id="validator-grid"></div>
+
+      <div class="sec-title">🔬 Advanced Missions</div>
+      <div class="quest-grid" id="advanced-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+/* ── CANVAS ── */
+(function(){
+  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
+  let W,H,ang=0;
+  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
+  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  window.onresize=res;res();
+  (function draw(){
+    ctx.clearRect(0,0,W,H);ang+=.0005;
+    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
+    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
+    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
+    pts.forEach((p,i)=>{
+      for(let j=i+1;j<pts.length;j++){const d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);if(d<150){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.stroke();}}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle='rgba(74,222,128,.5)';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ── QUESTS DATA ── */
+const QUESTS = {
+  onboarding: [
+    {id:'connect', icon:'🔑', title:'Insert Validator Key', desc:'Connect wallet kamu ke Rialo untuk pertama kali dan mount validator key.', xp:50, link:'garage.html', linkTxt:'Go to Garage'},
+    {id:'visit_market', icon:'📊', title:'Open the Markets', desc:'Kunjungi halaman Market dan lihat live crypto prices di Rialo.', xp:25, link:'market.html', linkTxt:'Open Market'},
+    {id:'visit_swap', icon:'🔄', title:'Visit Swap', desc:'Buka halaman Swap dan lihat cara kerja token exchange di Rialo.', xp:25, link:'wallet.html', linkTxt:'Go to Swap'},
+  ],
+  validator: [
+    {id:'mount_key', icon:'⚙️', title:'Mount Validator Key', desc:'Buka Garage dan mount validator key kamu — mulai assembly supermodular stack.', xp:100, link:'garage.html', linkTxt:'Open Garage'},
+    {id:'assemble_stack', icon:'🧱', title:'Assemble the Stack', desc:'Selesaikan 3-layer assembly di Garage: Execution → Settlement → Data Availability.', xp:150, link:'garage.html', linkTxt:'Open Garage'},
+    {id:'switch_vm', icon:'🔃', title:'VM Switcher', desc:'Ganti VM dari EVM ke SVM atau MOVE di Validator Dashboard.', xp:75, link:'garage.html', linkTxt:'Open Garage'},
+  ],
+  advanced: [
+    {id:'first_swap', icon:'💱', title:'First Swap', desc:'Lakukan simulasi swap pertama kamu — ETH ke RIALO token.', xp:200, link:'wallet.html', linkTxt:'Go to Swap'},
+    {id:'all_missions', icon:'🏆', title:'Alpha Operator', desc:'Selesaikan semua misi di atas. Status: Alpha Operator unlocked.', xp:500, link:null, linkTxt:null},
+  ]
+};
+
+const RANKS = [
+  {min:0, name:'Recruit', next:200},
+  {min:200, name:'Operator', next:500},
+  {min:500, name:'Validator', next:900},
+  {min:900, name:'Core Builder', next:1125},
+  {min:1125, name:'Alpha Operator', next:9999},
+];
+
+let wallet = null;
+let completed = {};
+
+function getKey(addr){ return `rialo_quests_${addr}`; }
+function loadProgress(addr){
+  try{ const d=localStorage.getItem(getKey(addr)); return d?JSON.parse(d):{}; }catch(e){ return {}; }
+}
+function saveProgress(addr, data){
+  try{ localStorage.setItem(getKey(addr), JSON.stringify(data)); }catch(e){}
+}
+
+function calcXP(){
+  const all = [...QUESTS.onboarding,...QUESTS.validator,...QUESTS.advanced];
+  let total=0;
+  all.forEach(q=>{ if(completed[q.id]) total+=q.xp; });
+  return total;
+}
+
+function getRank(xp){
+  let rank=RANKS[0];
+  RANKS.forEach(r=>{ if(xp>=r.min) rank=r; });
+  return rank;
+}
+
+function countDone(){
+  const all=[...QUESTS.onboarding,...QUESTS.validator,...QUESTS.advanced];
+  return all.filter(q=>completed[q.id]).length;
+}
+
+function updateXPDisplay(){
+  const xp=calcXP();
+  const rank=getRank(xp);
+  const done=countDone();
+  const total=[...QUESTS.onboarding,...QUESTS.validator,...QUESTS.advanced].length;
+  document.getElementById('xp-total').textContent=xp;
+  document.getElementById('xp-rank').textContent='Rank: '+rank.name;
+  document.getElementById('xp-bar').style.width=Math.min(100,(xp/rank.next)*100)+'%';
+  document.getElementById('prog-frac').textContent=done+' / '+total;
+  document.getElementById('prog-fill').style.width=(done/total*100)+'%';
+
+  // check all_missions auto-complete
+  if(done>=(total-1) && !completed['all_missions']){
+    completed['all_missions']=true;
+    saveProgress(wallet,completed);
+  }
+}
+
+function renderGrid(quests, gridId){
+  const g=document.getElementById(gridId);
+  g.innerHTML='';
+  quests.forEach(q=>{
+    const isDone = !!completed[q.id];
+    const isAllMissions = q.id==='all_missions';
+    const canDo = isAllMissions ? false : !isDone;
+    let status = isDone ? 'done' : 'active';
+    if(isAllMissions && !isDone) status='locked';
+
+    const card=document.createElement('div');
+    card.className=`quest-card ${status}`;
+    card.innerHTML=`
+      <div class="qc-top">
+        <div class="qc-ico">${q.icon}</div>
+        <span class="qc-badge ${status}">${isDone?'✓ DONE': status==='locked'?'LOCKED':'IN PROGRESS'}</span>
+      </div>
+      <div class="qc-title">${q.title}</div>
+      <div class="qc-desc">${q.desc}</div>
+      <div class="qc-footer">
+        <span class="qc-xp">+${q.xp} XP</span>
+        ${isDone
+          ? `<span class="qc-action done-btn">Completed ✓</span>`
+          : status==='locked'
+            ? `<span class="qc-action locked-btn">🔒 Locked</span>`
+            : q.link
+              ? `<a class="qc-action" href="${q.link}">${q.linkTxt} →</a>`
+              : `<button class="qc-action" onclick="markDone('${q.id}',${q.xp})">Mark Done</button>`
+        }
+      </div>`;
+    g.appendChild(card);
+  });
+}
+
+function renderBoard(){
+  renderGrid(QUESTS.onboarding, 'onboarding-grid');
+  renderGrid(QUESTS.validator, 'validator-grid');
+  renderGrid(QUESTS.advanced, 'advanced-grid');
+  updateXPDisplay();
+}
+
+function markDone(id, xp){
+  if(completed[id]) return;
+  completed[id]=true;
+  saveProgress(wallet,completed);
+  showToast(`+${xp} XP — Quest Complete! 🎉`);
+  renderBoard();
+}
+
+function showToast(msg){
+  const wrap=document.getElementById('toast-wrap');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<span class="tick">✓</span>${msg}`;
+  wrap.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+/* ── WALLET ── */
+function getProvList(){ const e=window.ethereum; if(!e) return []; return e.providers||[e]; }
+function findProv(key){
+  const L=getProvList();
+  if(key==='okx') return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;
+  if(key==='metamask') return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;
+  if(key==='phantom') return L.find(p=>p.isPhantom)||null;
+  if(key==='coinbase') return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;
+  return window.ethereum||null;
+}
+function detectW(){
+  const L=getProvList();
+  return{
+    metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),
+    phantom:!!(L.find(p=>p.isPhantom)),
+    okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),
+    coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)),
+  };
+}
+
+function setNavBtn(addr){
+  const b=document.getElementById('nav-btn');
+  b.innerHTML=addr?`<span class="wdot"></span>${addr.slice(0,6)}…${addr.slice(-4)}`:'Insert Validator Key';
+  b.className=addr?'nav-btn on':'nav-btn';
+}
+function navClick(){ wallet?doDisconnect():renderPicker(); }
+function doDisconnect(){
+  wallet=null; setNavBtn(null);
+  document.getElementById('main-screen').style.display='none';
+  document.getElementById('lock-screen').style.display='flex';
+  renderPicker();
+}
+
+function renderPicker(){
+  const d=detectW();
+  const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const wallets=[
+    {key:'metamask',icon:'🦊',bg:'rgba(247,147,26,.1)',name:'MetaMask',sub:'Browser Extension',ok:d.metamask},
+    {key:'phantom',icon:'👻',bg:'rgba(153,69,255,.1)',name:'Phantom',sub:'Solana & EVM',ok:d.phantom},
+    {key:'okx',icon:'⬛',bg:'rgba(0,0,0,.3)',name:'OKX Wallet',sub:'Extension & Mobile',ok:d.okx},
+    {key:'coinbase',icon:'🔵',bg:'rgba(22,82,240,.15)',name:'Coinbase Wallet',sub:'Extension & Mobile',ok:d.coinbase},
+  ];
+  const area=document.getElementById('wallet-area');
+  if(isMob){
+    const cur=encodeURIComponent(location.href);
+    area.innerHTML=`<div class="wpicker">
+      <div class="wpicker-note">📱 Mobile — buka di wallet browser</div>
+      ${[{icon:'🦊',name:'MetaMask',href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},{icon:'👻',name:'Phantom',href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},{icon:'⬛',name:'OKX Wallet',href:`okx://wallet/dapp/url?dappUrl=${cur}`},{icon:'🔵',name:'Coinbase',href:`https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(location.href)}`}].map(l=>`<div class="witem" onclick="location.href='${l.href}'"><div class="wlogo">${l.icon}</div><div class="winfo"><div class="wname">${l.name}</div></div><span class="wbadge ok">Open ↗</span></div>`).join('')}
+    </div>`;
+    return;
+  }
+  area.innerHTML=`<div class="wpicker">
+    <div class="wpicker-note">🔒 Read-only connection</div>
+    ${wallets.map(w=>`<div class="witem${w.ok?'':' '}" onclick="${w.ok?`connectWallet('${w.key}','${w.name}')`:''}" style="${w.ok?'':'opacity:.45;cursor:default'}">
+      <div class="wlogo" style="background:${w.bg}">${w.icon}</div>
+      <div class="winfo"><div class="wname">${w.name}</div><div class="wsub">${w.sub}</div></div>
+      <span class="wbadge ${w.ok?'ok':'no'}">${w.ok?'● Detected':'Not Found'}</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+async function connectWallet(key, name){
+  const area=document.getElementById('wallet-area');
+  area.innerHTML=`<div class="conn-state"><div class="conn-spin"></div><div class="conn-lbl">Connecting ${name}...</div></div>`;
+  const p=findProv(key);
+  if(!p){ renderPicker(); return; }
+  try{
+    const accounts=await p.request({method:'eth_requestAccounts'});
+    if(!accounts||!accounts.length) throw new Error('No accounts');
+    wallet=accounts[0];
+    setNavBtn(wallet);
+    completed=loadProgress(wallet);
+    // auto-mark connect quest
+    if(!completed['connect']){ completed['connect']=true; saveProgress(wallet,completed); showToast('+50 XP — First Connection! 🔑'); }
+    document.getElementById('addr-txt').textContent=wallet.slice(0,10)+'...'+wallet.slice(-6);
+    document.getElementById('lock-screen').style.display='none';
+    document.getElementById('main-screen').style.display='block';
+    renderBoard();
+  }catch(e){
+    renderPicker();
+  }
+}
+
+renderPicker();
+</script>
+</body>
+</html>
