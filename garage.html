@@ -271,7 +271,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <button class="vm-tab" onclick="switchVM('SVM',this)">SVM</button>
             <button class="vm-tab" onclick="switchVM('MOVE',this)">MOVE</button>
           </div>
-          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum, BSC, Polygon compatible execution. Gas model: SUBSIDIZED.</div>
+          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.</div>
           <div class="vm-hint">// Swap VM without chain rebuild · Supermodular by design</div>
         </div>
         <div class="mod-card">
@@ -296,9 +296,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <div class="fin-unit">Time to Finality · Rialo L1</div>
           <div class="fin-note">Backed by <span>Pantera Capital</span> · 2025</div>
         </div>
-        <div class="mod-card" id="chain-stack-list">
-          <div class="card-lbl">🧱 Official Network Data</div>
-          </div>
+        <div class="mod-card" id="official-data-container">
+          <div class="card-lbl">🧱 Supermodular Layer Stack</div>
+          <div id="chain-stack-list"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -327,16 +328,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 /* ── DATABASE DATA ── */
 const officialChains = {
     EVM: [
-        { name: "Ethereum", desc: "Mainnet Settlement", status: "VERIFIED" },
-        { name: "Arbitrum", desc: "Optimistic Rollup", status: "LOADED" }
+        { name: "Ethereum", desc: "Mainnet Settlement", status: "VERIFIED", icon: "🔹" },
+        { name: "Arbitrum", desc: "Optimistic Rollup", status: "LOADED", icon: "🌀" },
+        { name: "Polygon", desc: "PoS Sidechain", status: "ACTIVE", icon: "🟣" }
     ],
     SVM: [
-        { name: "Solana", desc: "SVM Execution Layer", status: "LOADED" },
-        { name: "Eclipse", desc: "Ethereum L2 SVM", status: "SYNCED" }
+        { name: "Solana", desc: "SVM Execution Layer", status: "LOADED", icon: "☀️" },
+        { name: "Eclipse", desc: "Ethereum L2 SVM", status: "SYNCED", icon: "🌑" },
+        { name: "Sonic", desc: "SVM Gaming Chain", status: "ACTIVE", icon: "🚀" }
     ],
     MOVE: [
-        { name: "Aptos", desc: "Move Core Layer", status: "LOADED" },
-        { name: "Sui", desc: "Object-centric Move", status: "SYNCED" }
+        { name: "Aptos", desc: "Move Core Layer", status: "LOADED", icon: "💧" },
+        { name: "Sui", desc: "Object-centric Move", status: "SYNCED", icon: "🌊" },
+        { name: "Movement", desc: "M2 Move Rollup", status: "TESTNET", icon: "📦" }
     ]
 };
 
@@ -380,15 +384,16 @@ function findProv(key){
   if(key==='okx') return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;
   if(key==='metamask') return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;
   if(key==='phantom') return L.find(p=>p.isPhantom)||null;
+  if(key==='coinbase') return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;
   return window.ethereum||null;
 }
-
 function detectW(){
   const L=getProvList();
   return{
     metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),
     phantom:!!(L.find(p=>p.isPhantom)),
     okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),
+    coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)),
   };
 }
 
@@ -397,23 +402,23 @@ function renderPicker(){
   const area=document.getElementById('wallet-area');
   if(!area)return;
   const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  
+  const hasEth=!!(window.ethereum||window.okxwallet);
+
   if(isMob){
     area.innerHTML=`
-      <div class="wpicker-note">🔒 Read-only — hanya meminta alamat wallet</div>
+      <div class="wpicker-note">🔒 Read-only — no transactions or fees</div>
       <div class="wpicker">
         <div class="witem" onclick="location.href='https://metamask.app.link/dapp/${location.host}${location.pathname}'">
           <div class="wlogo" style="background:rgba(255,255,255,.06)">🦊</div>
-          <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Open in Mobile App</div></div>
+          <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Open in App Browser</div></div>
           <span class="wbadge ok">Open ↗</span>
         </div>
       </div>`;
     return;
   }
-
   const d=detectW();
   area.innerHTML=`
-    <div class="wpicker-note">🔒 Read-only — Tidak ada gas fees.</div>
+    <div class="wpicker-note">🔒 Read-only — hanya meminta alamat wallet.</div>
     <div class="wpicker">
       <div class="witem" onclick="connectWallet('metamask','MetaMask')">
         <div class="wlogo" style="background:rgba(247,147,26,.15)">🦊</div>
@@ -423,40 +428,39 @@ function renderPicker(){
     </div>`;
 }
 
-/* ── CONNECT & GET BALANCE ── */
+/* ── CONNECT & BALANCE ── */
 async function connectWallet(key,name){
-  const p = findProv(key);
+  const p=findProv(key);
   try{
     const provider = new ethers.providers.Web3Provider(p);
     const accounts = await p.request({method:'eth_requestAccounts'});
     wallet = accounts[0];
+    prov = p;
     
-    // Tarik Saldo (Real Data)
+    // Tarik Saldo Asli
     const balance = await provider.getBalance(wallet);
     const ethBalance = ethers.utils.formatEther(balance);
-    
-    // Update UI Balances
     document.getElementById('kbd-balance').innerText = `BALANCE: ${parseFloat(ethBalance).toFixed(4)} ETH`;
     
     setNavBtn(wallet);
     runAssembly(wallet);
-    renderChainStack('EVM'); // Default view
+    renderChainTable('EVM'); // Init data table
   }catch(err){
     console.error(err);
   }
 }
 
-/* ── RENDER DATA TABEL ── */
-function renderChainStack(type) {
+/* ── RENDER DATA TABLE ── */
+function renderChainTable(type) {
     const container = document.getElementById('chain-stack-list');
+    if (!container) return;
     const data = officialChains[type];
-    let html = `<div class="card-lbl">🧱 ${type} Network Data</div>`;
-    
+    let html = '';
     data.forEach((item, index) => {
         html += `
-          <div class="layer-item">
+          <div class="layer-item" style="animation: fadein 0.3s ease forwards; animation-delay: ${index * 0.1}s">
             <div class="li-n">0${index+1}</div>
-            <div class="li-ico" style="background:rgba(74,222,128,.12)">⚡</div>
+            <div class="li-ico" style="background:rgba(74,222,128,.12)">${item.icon}</div>
             <div class="li-info">
                 <div class="li-name">${item.name}</div>
                 <div class="li-desc">${item.desc}</div>
@@ -491,16 +495,16 @@ function showDash(addr){
 
 /* ── VM SWITCHER ── */
 const VM_DESC={
-  EVM:'Active: <strong>EVM</strong> — Ethereum, BSC, Polygon compatible execution. Gas model: SUBSIDIZED.',
-  SVM:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing. Rust programs.',
-  MOVE:'Active: <strong>MOVE</strong> — Move language VM. Safe asset management. Aptos/Sui compatible.',
+  EVM:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.',
+  SVM:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing. Rust-based programs.',
+  MOVE:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management. Aptos/Sui compatible.',
 };
 function switchVM(vm,btn){
   document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('vm-desc').innerHTML=VM_DESC[vm];
   document.getElementById('vm-label').textContent=vm;
-  renderChainStack(vm); // Update table data
+  renderChainTable(vm); // Update tabel data asli
 }
 
 /* ── INIT ── */
