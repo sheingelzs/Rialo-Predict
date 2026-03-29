@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RIALO · Validator Garage (SIMULATOR)</title>
+<title>RIALO · Validator Garage</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
-/* CSS tetap sama seperti desain asli kamu */
 :root{
   --bg:#050810;--card:#0f1929;--border:#1a2a42;
   --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--amber:#facc15;--cyan:#22d3ee;
@@ -20,6 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 @keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* NAV */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
@@ -28,9 +28,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-right{display:flex;align-items:center;gap:.6rem;}
 .nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
 .nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
+.nav-link:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06);}
 .nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
 .nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
 .nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
+.nav-btn:hover{background:rgba(74,222,128,.15);}
 .wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
 
 /* PAGE */
@@ -39,48 +41,169 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .node-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.1em;transition:all .4s;}
 .node-badge.online{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25);color:var(--accent);}
 .nbdot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;flex-shrink:0;}
-.screen{display:none;position:relative;z-index:1;flex-direction:column;align-items:center;}
+.screen{display:none;position:relative;z-index:1;}
 
-/* STANDBY & PICKER */
-#scr-standby{text-align:center;padding:2rem 1.5rem;animation:fadein .3s ease;}
+/* STANDBY */
+#scr-standby{flex-direction:column;align-items:center;text-align:center;padding:2rem 1.5rem;animation:fadein .3s ease;}
 #scr-standby h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.75rem;}
-#scr-standby p{font-size:.88rem;color:var(--muted);max-width:400px;line-height:1.7;margin-bottom:1.5rem;}
-.wpicker{display:flex;flex-direction:column;gap:.45rem;width:100%;max-width:400px;}
-.witem{display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;width:100%;text-align:left;}
-.witem:hover{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+#scr-standby h2 .dim{color:rgba(255,255,255,.2);}
+#scr-standby p{font-size:.88rem;color:var(--muted);max-width:400px;line-height:1.7;margin-bottom:.75rem;}
+.tx-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);color:rgba(150,255,180,.75);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-family:var(--font-mono);margin-bottom:.6rem;}
+.chain-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.25);color:rgba(200,180,255,.85);padding:.3rem .9rem;border-radius:8px;font-size:.68rem;font-family:var(--font-mono);margin-bottom:1.2rem;}
+
+/* WALLET PICKER */
+.wpicker-wrap{width:100%;max-width:420px;}
+.wpicker-note{font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);margin-bottom:.5rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);padding:.4rem .85rem;border-radius:8px;}
+.wpicker{display:flex;flex-direction:column;gap:.45rem;}
+.witem{display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;width:100%;}
+.witem:hover:not(.dim){background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);transform:translateY(-1px);}
+.witem:active:not(.dim){transform:scale(.98);}
+.witem.dim{opacity:.35;cursor:not-allowed;}
+.wlogo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;}
+.winfo{flex:1;text-align:left;}
 .wname{font-weight:600;font-size:.85rem;}
-.wsub{font-size:.66rem;color:var(--muted);}
-
-/* DASHBOARD */
-#scr-dashboard{width:100%;padding:1.5rem 2rem;max-width:1100px;margin:0 auto;}
-.dash-hdr{display:flex;justify-content:space-between;width:100%;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
-.key-badge{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .85rem;}
-.kbd-addr{font-family:var(--font-mono);font-size:.75rem;font-weight:700;}
-.tele-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;width:100%;margin-bottom:1.5rem;}
-.tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;}
-.tele-val{font-family:var(--font-head);font-size:1.6rem;font-weight:800;margin-bottom:.3rem;}
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;width:100%;}
-.mod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
-
-/* GAS STYLE */
-.gas-rows{display:flex;flex-direction:column;gap:.5rem;}
-.gas-row{display:flex;justify-content:space-between;padding:.55rem .75rem;background:rgba(255,255,255,.03);border-radius:8px;}
-.gr-val{font-family:var(--font-mono);color:var(--accent);font-weight:700;}
-.sim-alert{margin-top:1rem;padding:.75rem;background:rgba(250,204,21,.1);border:1px solid var(--amber);color:var(--amber);font-size:.7rem;border-radius:8px;line-height:1.4;}
+.wsub{font-size:.66rem;color:var(--muted);margin-top:2px;}
+.wbadge{font-size:.65rem;font-weight:700;flex-shrink:0;}
+.wbadge.ok{color:var(--accent);}
+.wbadge.no{color:rgba(255,255,255,.22);}
+.conn-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
+.conn-spin{width:40px;height:40px;border:3px solid rgba(74,222,128,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+.conn-lbl{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);}
+.err-box{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:1rem;max-width:380px;}
+.err-msg{font-size:.82rem;color:var(--red);text-align:center;line-height:1.55;}
+.retry-btn{padding:.5rem 1.25rem;background:transparent;border:1px solid rgba(74,222,128,.3);color:var(--accent);border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;}
+.retry-btn:hover{background:rgba(74,222,128,.08);}
+.no-wallet-warn{margin-top:.5rem;padding:.65rem 1rem;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;font-size:.75rem;color:rgba(248,113,113,.85);line-height:1.55;text-align:left;}
+.mobile-link{display:block;text-align:center;margin-top:.5rem;font-size:.68rem;color:rgba(74,222,128,.6);font-family:var(--font-mono);text-decoration:none;}
+.mobile-link:hover{color:var(--accent);}
+.faucet-note{margin-top:.6rem;padding:.55rem .85rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:8px;font-size:.67rem;font-family:var(--font-mono);color:rgba(200,180,255,.6);line-height:1.6;text-align:center;}
+.faucet-note a{color:var(--accent2);text-decoration:none;}
+.faucet-note a:hover{text-decoration:underline;}
 
 /* ASSEMBLY */
-#scr-assembly{min-height:60vh;justify-content:center;}
-.asm-bar{width:100%;max-width:400px;height:4px;background:rgba(255,255,255,.1);border-radius:10px;margin:20px 0;overflow:hidden;}
-.asm-fill{height:100%;background:var(--accent);width:0%;transition:width .5s;}
+#scr-assembly{flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:2rem;text-align:center;animation:fadein .3s ease;}
+.asm-title{font-family:var(--font-head);font-size:1.4rem;font-weight:800;margin-bottom:2.5rem;letter-spacing:-.02em;}
+.asm-title span{color:var(--muted);font-size:.9rem;font-family:var(--font-mono);display:block;margin-top:.3rem;}
+.asm-layers{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:420px;margin-bottom:2rem;}
+.asm-layer{display:flex;align-items:center;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;opacity:0;transform:translateX(-16px);transition:opacity .5s,transform .5s,border-color .5s,background .5s;}
+.asm-layer.loaded{opacity:1;transform:translateX(0);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04);}
+.asm-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.asm-ico.exec{background:rgba(74,222,128,.12);}
+.asm-ico.settle{background:rgba(98,126,234,.12);}
+.asm-ico.da{background:rgba(124,92,252,.12);}
+.asm-text{flex:1;text-align:left;}
+.asm-lbl{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.asm-st{font-size:.85rem;font-weight:700;}
+.asm-st.pending{color:rgba(255,255,255,.2);}
+.asm-st.loading{color:var(--amber);}
+.asm-st.done{color:var(--accent);}
+.asm-check{font-size:1rem;opacity:0;transition:opacity .3s;}
+.asm-layer.loaded .asm-check{opacity:1;}
+.asm-bar{width:100%;max-width:420px;height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
+.asm-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;transition:width .4s;}
+#asm-log{font-size:.72rem;color:var(--muted);margin-top:1rem;font-family:var(--font-mono);}
+
+/* DASHBOARD */
+#scr-dashboard{flex-direction:column;animation:fadein .3s ease;}
+.dash-wrap{padding:1.5rem 2rem;max-width:1100px;margin:0 auto;width:100%;}
+.dash-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.dash-lbl{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;}
+.dash-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.4rem;}
+.dash-sub{font-size:.8rem;color:var(--muted);}
+.key-badge{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .85rem;}
+.kbd-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0;}
+.kbd-lbl{font-size:.6rem;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.kbd-ro{font-size:.58rem;font-family:var(--font-mono);color:var(--accent2);background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.25);padding:1px 6px;border-radius:99px;margin-left:4px;}
+.kbd-addr{font-family:var(--font-mono);font-size:.75rem;color:var(--text);font-weight:700;}
+.kbd-eject{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.68rem;font-family:var(--font);margin-left:.5rem;transition:color .2s;}
+.kbd-eject:hover{color:var(--red);}
+.sec-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-.3px;margin-bottom:1rem;display:flex;align-items:center;gap:10px;color:var(--text);}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* TELEMETRY */
+.tele-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
+.tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.tele-card.g::before{background:linear-gradient(90deg,var(--accent),transparent);}
+.tele-card.c::before{background:linear-gradient(90deg,var(--cyan),transparent);}
+.tele-card.a::before{background:linear-gradient(90deg,var(--amber),transparent);}
+.tele-card.p::before{background:linear-gradient(90deg,var(--accent2),transparent);}
+.tele-lbl{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.6rem;}
+.tele-val{font-family:var(--font-head);font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:.3rem;transition:color .3s;}
+.tele-s{font-size:.7rem;color:var(--muted);}
+.tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:.62rem;padding:2px 8px;border-radius:99px;margin-top:.5rem;}
+.tag.ok{background:rgba(74,222,128,.1);color:var(--accent);}
+.tag.act{background:rgba(34,211,238,.1);color:var(--cyan);}
+.tag.mod{background:rgba(124,92,252,.1);color:var(--accent2);}
+.tag.free{background:rgba(74,222,128,.15);color:var(--accent);border:1px solid rgba(74,222,128,.3);}
+
+/* MOD */
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.mod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
+.card-lbl{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;}
+.vm-tabs{display:flex;gap:.4rem;}
+.vm-tab{flex:1;padding:.6rem .4rem;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);font-family:var(--font-mono);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+.vm-tab.active{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--accent);}
+.vm-desc{margin-top:.85rem;font-size:.75rem;color:var(--muted);line-height:1.6;}
+.vm-desc strong{color:var(--accent);font-family:var(--font-mono);}
+
+/* GAS */
+.gas-rows{display:flex;flex-direction:column;gap:.5rem;}
+.gas-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;border-radius:9px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.03);}
+.gr-lbl{font-size:.75rem;color:rgba(255,255,255,.45);}
+.gr-val{font-family:var(--font-mono);font-size:.75rem;font-weight:700;color:var(--accent);}
+.gr-val.pulse{animation:blink .9s infinite;}
+.gr-val.free{color:var(--accent);font-weight:800;}
+.gas-note{margin-top:.6rem;font-size:.65rem;font-family:var(--font-mono);color:var(--muted);background:rgba(74,222,128,.03);border:1px solid rgba(74,222,128,.1);border-radius:8px;padding:.4rem .7rem;line-height:1.5;}
+
+/* VALIDATOR PACK */
+.vpack{display:flex;flex-direction:column;gap:.6rem;}
+.vpack-action{display:flex;flex-direction:column;gap:.5rem;padding:.9rem 1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;transition:border-color .2s;}
+.vpack-action:hover{border-color:rgba(74,222,128,.2);}
+.vpack-hd{display:flex;align-items:center;justify-content:space-between;}
+.vpack-name{font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+.vpack-fee{font-family:var(--font-mono);font-size:.65rem;color:var(--accent);background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);padding:2px 8px;border-radius:99px;}
+.vpack-desc{font-size:.72rem;color:var(--muted);line-height:1.5;}
+.vpack-input{display:flex;gap:.5rem;margin-top:.3rem;flex-wrap:wrap;}
+.vpack-field{flex:1;min-width:80px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.45rem .75rem;color:var(--text);font-family:var(--font-mono);font-size:.75rem;outline:none;transition:border-color .2s;}
+.vpack-field:focus{border-color:rgba(74,222,128,.35);}
+.vpack-field::placeholder{color:var(--muted);}
+.vpack-btn{padding:.45rem 1rem;border-radius:8px;border:1px solid rgba(74,222,128,.4);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.vpack-btn:hover:not(:disabled){background:rgba(74,222,128,.18);}
+.vpack-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* TESTNET BANNER */
+.testnet-banner{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.2);border-radius:12px;margin-bottom:1rem;font-size:.75rem;color:rgba(200,180,255,.8);line-height:1.5;}
+.testnet-banner strong{color:var(--accent2);}
+.testnet-banner a{color:var(--accent);font-family:var(--font-mono);font-size:.68rem;text-decoration:none;white-space:nowrap;}
+.testnet-banner a:hover{text-decoration:underline;}
 
 /* TOAST */
-.tx-toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;}
-.toast{padding:.75rem 1rem;border-radius:10px;border:1px solid;font-size:.75rem;animation:fadein .3s ease;background:var(--card);}
-.toast.success{border-color:var(--accent);color:var(--accent);}
-.toast.pending{border-color:var(--amber);color:var(--amber);}
+.tx-toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px;}
+.toast{display:flex;align-items:flex-start;gap:.65rem;padding:.75rem 1rem;border-radius:12px;border:1px solid;font-size:.75rem;animation:slideup .3s ease;backdrop-filter:blur(12px);}
+.toast.pending{background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:var(--amber);}
+.toast.success{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.25);color:var(--accent);}
+.toast.error{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.25);color:var(--red);}
+.toast-ico{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.toast-msg{flex:1;line-height:1.6;}
+.toast-msg a{color:inherit;opacity:.7;font-family:var(--font-mono);font-size:.65rem;word-break:break-all;}
 
-.vpack-field{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:.5rem;border-radius:6px;color:#fff;margin-bottom:.5rem;font-family:var(--font-mono);}
-.vpack-btn{width:100%;padding:.6rem;background:rgba(74,222,128,.1);border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;font-weight:700;}
+/* STACK */
+.layer-item{display:flex;align-items:center;gap:.85rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.li-n{font-family:var(--font-mono);font-size:.65rem;color:var(--muted);width:20px;flex-shrink:0;}
+.li-ico{width:32px;height:32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.li-ico img{width:22px;height:22px;object-fit:contain;}
+.li-info{flex:1;}
+.li-name{font-size:.82rem;font-weight:700;}
+.li-pill{font-family:var(--font-mono);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:99px;}
+
+@media(max-width:700px){
+  .tele-grid{grid-template-columns:1fr 1fr;}
+  .mod-grid{grid-template-columns:1fr;}
+  .dash-wrap{padding:1rem;}
+  .nav-links{display:none;}
+  .tx-toast{left:1rem;right:1rem;max-width:unset;}
+}
 </style>
 </head>
 <body>
@@ -88,9 +211,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <div id="tx-toast" class="tx-toast"></div>
 
 <nav class="nav">
-  <div class="nav-logo"><div class="logo-dot"></div>RIALO</div>
+  <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
   <div class="nav-right">
-    <button class="nav-btn" id="nav-btn" onclick="location.reload()">Reset Simulator</button>
+    <div class="nav-links">
+      <a class="nav-link" href="menu.html">Home</a>
+      <a class="nav-link" href="market.html">Market</a>
+      <a class="nav-link active" href="garage.html">Garage</a>
+      <a class="nav-link" href="wallet.html">Swap</a>
+    </div>
+    <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
   </div>
 </nav>
 
@@ -101,153 +230,484 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     </div>
   </div>
 
+  <!-- STANDBY -->
   <div id="scr-standby" class="screen" style="display:flex;">
-    <h2>Rialo Alpha Core<br><span style="color:rgba(255,255,255,.2)">// Validator Garage</span></h2>
-    <p>Silahkan "Connect" wallet simulator untuk mengakses Engine Telemetry Dashboard.</p>
-    
-    <div class="wpicker">
-      <div class="witem" onclick="startSimulation('0x71C...88F1')">
-        <div style="font-size:1.5rem">🦊</div>
-        <div><div class="wname">MetaMask (Simulated)</div><div class="wsub">Klik untuk autorisasi cepat</div></div>
-      </div>
-      <div class="witem" onclick="startSimulation('0x33A...42E0')">
-        <div style="font-size:1.5rem">⚫</div>
-        <div><div class="wname">OKX Wallet (Simulated)</div><div class="wsub">Klik untuk masuk dashboard</div></div>
-      </div>
-    </div>
-    <div class="sim-alert" style="max-width:400px; margin-top:2rem;">
-      ⚡ <strong>Mode simulasi aktif</strong> — Garage ini tidak mengirim transaksi onchain. Wallet kamu aman, balance tidak berubah.
-    </div>
+    <h2>Rialo Alpha Core<br><span class="dim">// Validator Garage</span></h2>
+    <p>Mesin modular belum aktif. Mount Validator Key untuk memulai proses assembly dan mengakses Engine Telemetry Dashboard.</p>
+    <div class="tx-pill">⚡ Validator Pack · Sepolia Testnet · Gas Gratis</div>
+    <div class="chain-pill">🧪 Ethereum Sepolia · Chain ID: 11155111 · No Real ETH</div>
+    <div id="wallet-area"></div>
   </div>
 
+  <!-- ASSEMBLY -->
   <div id="scr-assembly" class="screen">
-    <h3 style="font-family:var(--font-head)">Mounting Validator Key...</h3>
+    <div class="asm-title">Mounting Validator Key…<span>Assembling Supermodular Stack</span></div>
+    <div class="asm-layers">
+      <div class="asm-layer" id="al1"><div class="asm-ico exec">⚙️</div><div class="asm-text"><div class="asm-lbl">Layer 1 · Execution</div><div class="asm-st pending" id="as1">Waiting…</div></div><span class="asm-check">✓</span></div>
+      <div class="asm-layer" id="al2"><div class="asm-ico settle">🔷</div><div class="asm-text"><div class="asm-lbl">Layer 2 · Settlement</div><div class="asm-st pending" id="as2">Waiting…</div></div><span class="asm-check">✓</span></div>
+      <div class="asm-layer" id="al3"><div class="asm-ico da">🗄️</div><div class="asm-text"><div class="asm-lbl">Layer 3 · Data Availability</div><div class="asm-st pending" id="as3">Waiting…</div></div><span class="asm-check">✓</span></div>
+    </div>
     <div class="asm-bar"><div class="asm-fill" id="asm-fill"></div></div>
-    <p id="asm-log" style="font-family:var(--font-mono); font-size:.7rem; color:var(--muted)">Initializing Supermodular Stack...</p>
+    <p id="asm-log">Initializing…</p>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="scr-dashboard" class="screen">
-    <div class="dash-hdr">
-      <div>
-        <div style="color:var(--accent); font-size:.7rem; font-weight:700;">ENGINE TELEMETRY</div>
-        <h2 style="font-family:var(--font-head)">Validator Dashboard</h2>
-      </div>
-      <div class="key-badge">
-        <div class="kbd-addr" id="kbd-addr">0x000...000</div>
-      </div>
-    </div>
-
-    <div class="tele-grid">
-      <div class="tele-card"><div class="tele-val" style="color:var(--accent)">50ms</div><div style="font-size:.7rem; color:var(--muted)">Time to Finality</div></div>
-      <div class="tele-card"><div class="tele-val" style="color:var(--cyan)">FREE</div><div style="font-size:.7rem; color:var(--muted)">Gas Fees (Sepolia)</div></div>
-      <div class="tele-card"><div class="tele-val" style="color:var(--accent2)">EVM</div><div style="font-size:.7rem; color:var(--muted)">Active VM</div></div>
-    </div>
-
-    <div class="mod-grid">
-      <div class="mod-card">
-        <div style="font-size:.7rem; color:var(--muted); margin-bottom:1rem;">⛽ GAS SYSTEM — SEPOLIA TESTNET · LIVE</div>
-        <div class="gas-rows">
-          <div class="gas-row"><span>Base Fee</span><span class="gr-val" id="sim-base">1.2402 GWEI</span></div>
-          <div class="gas-row"><span>Priority Fee</span><span class="gr-val">0 GWEI</span></div>
-          <div class="gas-row"><span>Tx Cost</span><span class="gr-val">$0.00</span></div>
-          <div class="gas-row"><span>Subsidy Status</span><span class="gr-val">ACTIVE ⚡</span></div>
+    <div class="dash-wrap">
+      <div class="dash-hdr">
+        <div>
+          <div class="dash-lbl">Engine Telemetry</div>
+          <div class="dash-title">Validator Dashboard</div>
+          <div class="dash-sub">Rialo Alpha Core · Supermodular Stack Active · Sepolia Testnet</div>
         </div>
-        <div class="sim-alert">
-          🧪 Sepolia Testnet · Gas tidak bernilai uang asli · Gratis dari faucet.
+        <div class="key-badge">
+          <div class="kbd-dot"></div>
+          <div>
+            <div class="kbd-lbl">Validator Key <span class="kbd-ro">TESTNET</span></div>
+            <div class="kbd-addr" id="kbd-addr">—</div>
+          </div>
+          <button class="kbd-eject" onclick="doDisconnect()">Eject ↗</button>
         </div>
       </div>
 
-      <div class="mod-card">
-        <div style="font-size:.7rem; color:var(--muted); margin-bottom:1rem;">🔥 VALIDATOR PACK (SIMULATED)</div>
-        <input class="vpack-field" type="number" placeholder="Amount sETH (e.g. 0.01)" id="sim-amt">
-        <button class="vpack-btn" onclick="fakeTx('Stake')">Stake sETH →</button>
-        <div style="margin-top:10px">
-            <input class="vpack-field" type="text" placeholder="Recipient Address 0x...">
-            <button class="vpack-btn" style="border-color:var(--cyan); color:var(--cyan)" onclick="fakeTx('Send')">Send sETH →</button>
+      <!-- Testnet banner -->
+      <div class="testnet-banner">
+        🧪 <div><strong>Sepolia Testnet</strong> — Tidak menggunakan ETH asli. Gas gratis dari faucet. Tidak ada biaya real. &nbsp;<a href="https://sepoliafaucet.com" target="_blank">Faucet SepoliaETH →</a></div>
+      </div>
+
+      <div class="sec-title">Live Engine Telemetry</div>
+      <div class="tele-grid">
+        <div class="tele-card g">
+          <div class="tele-lbl">Time to Finality</div>
+          <div class="tele-val" id="finality-text">50<span style="font-size:1rem">ms</span></div>
+          <div class="tele-s">Confirmed on Rialo L1</div>
+          <div class="tag ok" id="finality-tag">● OPTIMAL</div>
         </div>
+        <div class="tele-card c">
+          <div class="tele-lbl">Gas Fees · Sepolia</div>
+          <div class="tele-val" style="font-size:1.2rem;" id="gas-tele-val">FREE</div>
+          <div class="tele-s">Testnet — tidak ada biaya real</div>
+          <div class="tag free">● GASLESS</div>
+        </div>
+        <div class="tele-card a">
+          <div class="tele-lbl">Active VM</div>
+          <div class="tele-val" style="font-size:1.3rem" id="vm-label">EVM</div>
+          <div class="tele-s">Swappable without chain rebuild</div>
+          <div class="tag act">● MODULAR</div>
+        </div>
+        <div class="tele-card p">
+          <div class="tele-lbl">Stack Integrity</div>
+          <div class="tele-val" style="font-size:1.2rem" id="integrity-text">3 / 3</div>
+          <div class="tele-s">All layers operational</div>
+          <div class="tag mod" id="integrity-tag">● VERIFIED</div>
+        </div>
+      </div>
+
+      <div class="sec-title">Supermodular Diagnostic Suite</div>
+      <div class="mod-grid">
+
+        <div class="mod-card">
+          <div class="card-lbl">⚙ Modular VM Interface</div>
+          <div class="vm-tabs">
+            <button class="vm-tab active" onclick="switchVM('EVM',this)">EVM</button>
+            <button class="vm-tab" onclick="switchVM('SVM',this)">SVM</button>
+            <button class="vm-tab" onclick="switchVM('MOVE',this)">MOVE</button>
+          </div>
+          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Sepolia Testnet. Gas: FREE.</div>
+        </div>
+
+        <!-- GAS SEPOLIA LIVE -->
+        <div class="mod-card">
+          <div class="card-lbl">⛽ Gas System — Sepolia Testnet · Live</div>
+          <div class="gas-rows">
+            <div class="gas-row"><span class="gr-lbl">Base Fee</span><span class="gr-val pulse" id="gas-base">Fetching…</span></div>
+            <div class="gas-row"><span class="gr-lbl">Priority Fee</span><span class="gr-val" id="gas-priority">0 GWEI</span></div>
+            <div class="gas-row"><span class="gr-lbl">Tx Cost</span><span class="gr-val free" id="gas-cost">$0.00</span></div>
+            <div class="gas-row"><span class="gr-lbl">Subsidy Status</span><span class="gr-val free" id="subsidy-status">ACTIVE ⚡</span></div>
+          </div>
+          <div class="gas-note">🧪 Sepolia Testnet · Gas tidak bernilai uang asli · Gratis dari faucet</div>
+        </div>
+
+        <div class="mod-card" style="display:flex;flex-direction:column;align-items:center;">
+          <div class="card-lbl" style="align-self:flex-start">🏁 Finality Gauge</div>
+          <svg viewBox="0 0 140 80" style="width:160px;height:90px">
+            <path d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10" stroke-linecap="round"/>
+            <path id="gauge-path" d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="#4ade80" stroke-width="10" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="40" style="transition:all .5s;"/>
+            <text id="gauge-val" x="70" y="60" text-anchor="middle" font-family="Syne" font-size="26" font-weight="800" fill="#4ade80">50</text>
+          </svg>
+        </div>
+
+        <div class="mod-card" id="stack-card"></div>
+      </div>
+
+      <!-- VALIDATOR PACK -->
+      <div class="sec-title">🔥 Validator Pack — Transaksi Sepolia</div>
+      <div class="mod-grid">
+
+        <div class="mod-card">
+          <div class="card-lbl">🥩 Stake &amp; Send · Sepolia ETH</div>
+          <div class="vpack">
+            <div class="vpack-action">
+              <div class="vpack-hd">
+                <span class="vpack-name">💎 Stake SepoliaETH</span>
+                <span class="vpack-fee">Gas: GRATIS</span>
+              </div>
+              <div class="vpack-desc">Deposit SepoliaETH ke Validator Contract. Minimum 0.01 sETH. Tidak ada biaya real.</div>
+              <div class="vpack-input">
+                <input class="vpack-field" id="stake-amount" type="number" placeholder="0.01 sETH" min="0.01" step="0.001"/>
+                <button class="vpack-btn" id="stake-btn" onclick="doStake()">Stake →</button>
+              </div>
+            </div>
+            <div class="vpack-action">
+              <div class="vpack-hd">
+                <span class="vpack-name">📤 Send SepoliaETH</span>
+                <span class="vpack-fee">Gas: GRATIS</span>
+              </div>
+              <div class="vpack-desc">Kirim SepoliaETH ke address lain di jaringan Sepolia.</div>
+              <div class="vpack-input">
+                <input class="vpack-field" id="send-addr" type="text" placeholder="Address 0x…"/>
+                <input class="vpack-field" id="send-amount" type="number" placeholder="sETH" min="0.0001" step="0.0001" style="max-width:90px;"/>
+                <button class="vpack-btn" id="send-btn" onclick="doSend()">Send →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mod-card">
+          <div class="card-lbl">🔐 Approve &amp; Revoke · Sepolia</div>
+          <div class="vpack">
+            <div class="vpack-action">
+              <div class="vpack-hd">
+                <span class="vpack-name">✅ Approve Token</span>
+                <span class="vpack-fee">Gas: GRATIS</span>
+              </div>
+              <div class="vpack-desc">Approve kontrak untuk akses token ERC-20 di Sepolia. Tidak ada biaya real.</div>
+              <div class="vpack-input">
+                <input class="vpack-field" id="approve-token" type="text" placeholder="Token address 0x…"/>
+                <input class="vpack-field" id="approve-contract" type="text" placeholder="Spender 0x…"/>
+                <button class="vpack-btn" id="approve-btn" onclick="doApprove()">Approve →</button>
+              </div>
+            </div>
+            <div class="vpack-action">
+              <div class="vpack-hd">
+                <span class="vpack-name">🔄 Revoke Approval</span>
+                <span class="vpack-fee">Gas: GRATIS</span>
+              </div>
+              <div class="vpack-desc">Cabut approval dari kontrak Sepolia.</div>
+              <div class="vpack-input">
+                <input class="vpack-field" id="revoke-token" type="text" placeholder="Token address 0x…"/>
+                <input class="vpack-field" id="revoke-contract" type="text" placeholder="Spender 0x…"/>
+                <button class="vpack-btn" id="revoke-btn" onclick="doRevoke()">Revoke →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* CANVAS BACKGROUND */
+/* ── CANVAS ── */
 (function(){
   const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
-  let W,H;
-  const nodes=Array.from({length:50},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*0.001,vy:(Math.random()-.5)*0.001}));
+  let W,H,ang=0;
+  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
   function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
   window.addEventListener('resize',res);res();
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    nodes.forEach(n=>{
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>1)n.vx*=-1; if(n.y<0||n.y>1)n.vy*=-1;
-      ctx.beginPath(); ctx.arc(n.x*W,n.y*H,2,0,7); ctx.fillStyle='rgba(74,222,128,0.2)'; ctx.fill();
+  (function draw(){
+    ctx.clearRect(0,0,W,H);ang+=.0005;
+    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
+    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
+    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
+    pts.forEach((p,i)=>{
+      for(let j=i+1;j<pts.length;j++){const d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);if(d<150){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.stroke();}}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle='rgba(74,222,128,.5)';ctx.fill();
     });
     requestAnimationFrame(draw);
-  }
-  draw();
+  })();
 })();
 
-/* SIMULATION LOGIC */
-function showScreen(id){
-    document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
-    document.getElementById('scr-'+id).style.display='flex';
+/* ── STATE ── */
+let walletAddress=null,currentVM='EVM',gasInterval=null;
+
+// Sepolia Testnet
+const CHAIN_ID='0xaa36a7'; // 11155111
+const CHAIN_NAME='Sepolia Testnet';
+const CHAIN_CONFIG={
+  chainId:CHAIN_ID,
+  chainName:CHAIN_NAME,
+  nativeCurrency:{name:'Sepolia ETH',symbol:'ETH',decimals:18},
+  rpcUrls:['https://rpc.sepolia.org'],
+  blockExplorerUrls:['https://sepolia.etherscan.io']
+};
+const SEPOLIA_RPC='https://rpc.sepolia.org';
+const DEPOSIT_CONTRACT='0x7f268357A8c2552623316e2562D90e642bB538E5'; // Sepolia test contract
+const MAX_UINT256='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+/* ── VM DATA ── */
+const VM={
+  EVM:{finality:50,fStatus:'OPTIMAL',integrity:'3 / 3',iStatus:'VERIFIED',color:'#4ade80',gaugeOffset:40,
+    stack:[{name:"Ethereum",logo:"https://cryptologos.cc/logos/ethereum-eth-logo.png?v=032",status:"SETTLEMENT"},{name:"Arbitrum",logo:"https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=032",status:"L2 EXECUTION"},{name:"Optimism",logo:"https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=032",status:"SCALING"}],
+    desc:'Active: <strong>EVM</strong> — Ethereum-compatible. Sepolia Testnet. Gas: FREE.'},
+  SVM:{finality:22,fStatus:'ULTRA FAST',integrity:'12 / 12',iStatus:'STABLE',color:'#22d3ee',gaugeOffset:15,
+    stack:[{name:"Solana",logo:"https://cryptologos.cc/logos/solana-sol-logo.png?v=032",status:"SVM CORE"},{name:"Pyth Network",logo:"https://cryptologos.cc/logos/pyth-network-pyth-logo.png?v=032",status:"ORACLE"},{name:"Jupiter",logo:"https://static.jup.ag/jup/tokens/jup.png",status:"AGGREGATOR"}],
+    desc:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel tx processing. Rust-based.'},
+  MOVE:{finality:45,fStatus:'SECURE',integrity:'5 / 5',iStatus:'SYNCHRONIZED',color:'#7c5cfc',gaugeOffset:55,
+    stack:[{name:"Sui",logo:"https://cryptologos.cc/logos/sui-sui-logo.png?v=032",status:"OBJECT-VM"},{name:"Aptos",logo:"https://cryptologos.cc/logos/aptos-apt-logo.png?v=032",status:"MOVE-CORE"},{name:"Movement",logo:"https://avatars.githubusercontent.com/u/131062835?s=200&v=4",status:"M2 STACK"}],
+    desc:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset mgmt.'}
+};
+
+/* ── GAS SEPOLIA LIVE ── */
+async function fetchSepoliaGas(){
+  try{
+    const r=await fetch(SEPOLIA_RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})});
+    const j=await r.json();
+    if(j.result){
+      const gwei=(parseInt(j.result,16)/1e9).toFixed(4);
+      const elBase=document.getElementById('gas-base');
+      if(elBase){elBase.textContent=`${gwei} GWEI`;elBase.classList.remove('pulse');}
+      document.getElementById('gas-priority').textContent='0 GWEI';
+      document.getElementById('gas-cost').textContent='$0.00';
+      document.getElementById('subsidy-status').textContent='ACTIVE ⚡';
+      document.getElementById('gas-tele-val').textContent='FREE';
+    }
+  }catch{
+    const elBase=document.getElementById('gas-base');
+    if(elBase&&elBase.classList.contains('pulse')){elBase.textContent='~1 GWEI';elBase.classList.remove('pulse');}
+  }
+}
+function startGasPolling(){fetchSepoliaGas();if(gasInterval)clearInterval(gasInterval);gasInterval=setInterval(fetchSepoliaGas,10000);}
+
+/* ── TOAST ── */
+const _timers={};
+function showToast(id,type,msg){
+  const box=document.getElementById('tx-toast');
+  let el=document.getElementById('t-'+id);
+  if(!el){el=document.createElement('div');el.id='t-'+id;box.appendChild(el);}
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span class="toast-ico">${type==='pending'?'⏳':type==='success'?'✅':'❌'}</span><span class="toast-msg">${msg}</span>`;
+  if(_timers[id])clearTimeout(_timers[id]);
+  if(type!=='pending')_timers[id]=setTimeout(()=>{el.remove();},9000);
 }
 
-function startSimulation(addr){
-    // 1. Ganti UI ke Assembly
-    showScreen('assembly');
-    const fill = document.getElementById('asm-fill');
-    const log = document.getElementById('asm-log');
-    
-    // 2. Animasi Loading (Assembly)
-    let p = 0;
-    const interval = setInterval(()=>{
-        p += 10;
-        fill.style.width = p + '%';
-        if(p==30) log.innerText = "Verifying Validator Key...";
-        if(p==60) log.innerText = "Syncing L2 Settlement Layer...";
-        if(p==90) log.innerText = "Establishing Data Availability...";
-        
-        if(p>=100){
-            clearInterval(interval);
-            setTimeout(()=>enterDashboard(addr), 500);
-        }
-    }, 200);
+/* ── ABI ── */
+function encodeApprove(spender,amountHex){
+  return '0x095ea7b3'+spender.toLowerCase().replace('0x','').padStart(64,'0')+amountHex.replace('0x','').padStart(64,'0');
+}
+function ethToHex(eth){
+  return '0x'+BigInt(Math.round(parseFloat(eth)*1e18)).toString(16);
 }
 
-function enterDashboard(addr){
-    showScreen('dashboard');
-    document.getElementById('kbd-addr').innerText = addr;
-    document.getElementById('node-badge').classList.add('online');
-    document.getElementById('badge-txt').innerText = "NODE_STATUS: ONLINE (SIMULATED)";
-    
-    // Jalankan fluktuasi gas palsu
-    setInterval(()=>{
-        const fakeGas = (Math.random() * (1.5 - 1.1) + 1.1).toFixed(4);
-        document.getElementById('sim-base').innerText = fakeGas + " GWEI";
-    }, 3000);
+/* ── PROVIDER ── */
+function getProvider(type){
+  const pp=window.ethereum?.providers||[];
+  if(type==='metamask'){if(pp.length){const p=pp.find(x=>x.isMetaMask&&!x.isBraveWallet&&!x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isMetaMask)return window.ethereum;return null;}
+  if(type==='coinbase'){if(pp.length){const p=pp.find(x=>x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isCoinbaseWallet)return window.ethereum;if(window.coinbaseWalletExtension)return window.coinbaseWalletExtension;return null;}
+  if(type==='phantom'){if(window.phantom?.ethereum)return window.phantom.ethereum;if(pp.length){const p=pp.find(x=>x.isPhantom);if(p)return p;}if(window.ethereum?.isPhantom)return window.ethereum;return null;}
+  if(type==='okx'){if(window.okxwallet)return window.okxwallet;if(window.okexchain)return window.okexchain;if(pp.length){const p=pp.find(x=>x.isOkxWallet||x.isOKExWallet);if(p)return p;}return null;}
+  return window.ethereum||null;
+}
+const AP=()=>window._rialoProv||window.ethereum;
+
+/* ── SWITCH KE SEPOLIA ── */
+async function switchToSepolia(provider){
+  try{
+    await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:CHAIN_ID}]});
+  }catch(e){
+    if(e.code===4902){
+      // Chain belum ada di wallet, tambah dulu
+      await provider.request({method:'wallet_addEthereumChain',params:[CHAIN_CONFIG]});
+    }
+  }
 }
 
-function showToast(msg, type){
-    const container = document.getElementById('tx-toast');
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerText = msg;
-    container.appendChild(t);
-    setTimeout(()=>t.remove(), 4000);
+/* ── TRANSACTIONS — Sepolia, no real value ── */
+async function doStake(){
+  const prov=AP();if(!prov||!walletAddress){showToast('stake','error','Wallet tidak terkoneksi.');return;}
+  const amt=parseFloat(document.getElementById('stake-amount').value);
+  if(!amt||amt<0.01){showToast('stake','error','Minimum stake 0.01 sETH.');return;}
+  const btn=document.getElementById('stake-btn');btn.disabled=true;btn.textContent='Waiting…';
+  showToast('stake','pending','Menunggu konfirmasi stake di wallet kamu…');
+  try{
+    const tx=await prov.request({method:'eth_sendTransaction',params:[{
+      from:walletAddress,to:DEPOSIT_CONTRACT,value:ethToHex(amt),gas:'0x7A120'
+    }]});
+    showToast('stake','success',`Stake Sepolia berhasil! 🎉<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
+  }catch(e){showToast('stake','error',e.code===4001?'Ditolak.':e.message||'Stake gagal.');}
+  finally{btn.disabled=false;btn.textContent='Stake →';}
 }
 
-function fakeTx(action){
-    const amt = document.getElementById('sim-amt').value || "0.01";
-    showToast(`⏳ Memproses ${action} sebesar ${amt} sETH...`, 'pending');
-    
-    setTimeout(()=>{
-        showToast(`✅ ${action} Berhasil! (Simulasi Selesai)`, 'success');
-    }, 2000);
+async function doSend(){
+  const prov=AP();if(!prov||!walletAddress){showToast('send','error','Wallet tidak terkoneksi.');return;}
+  const to=document.getElementById('send-addr').value.trim();
+  const amt=parseFloat(document.getElementById('send-amount').value);
+  if(!to||!to.startsWith('0x')||to.length!==42){showToast('send','error','Address tidak valid.');return;}
+  if(!amt||amt<=0){showToast('send','error','Masukkan jumlah sETH.');return;}
+  const btn=document.getElementById('send-btn');btn.disabled=true;btn.textContent='Waiting…';
+  showToast('send','pending','Menunggu konfirmasi send di wallet kamu…');
+  try{
+    const tx=await prov.request({method:'eth_sendTransaction',params:[{
+      from:walletAddress,to,value:ethToHex(amt),gas:'0x5208'
+    }]});
+    showToast('send','success',`Send Sepolia berhasil! 📤<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
+  }catch(e){showToast('send','error',e.code===4001?'Ditolak.':e.message||'Send gagal.');}
+  finally{btn.disabled=false;btn.textContent='Send →';}
 }
+
+async function doApprove(){
+  const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet tidak terkoneksi.');return;}
+  const token=document.getElementById('approve-token').value.trim();
+  const spender=document.getElementById('approve-contract').value.trim();
+  if(!token||token.length!==42||!token.startsWith('0x')){showToast('approve','error','Token address tidak valid.');return;}
+  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('approve','error','Spender address tidak valid.');return;}
+  const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='Waiting…';
+  showToast('approve','pending','Menunggu konfirmasi approve di wallet kamu…');
+  try{
+    const tx=await prov.request({method:'eth_sendTransaction',params:[{
+      from:walletAddress,to:token,data:encodeApprove(spender,MAX_UINT256),gas:'0x30D40',value:'0x0'
+    }]});
+    showToast('approve','success',`Approve Sepolia berhasil! ✅<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
+  }catch(e){showToast('approve','error',e.code===4001?'Ditolak.':e.message||'Approve gagal.');}
+  finally{btn.disabled=false;btn.textContent='Approve →';}
+}
+
+async function doRevoke(){
+  const prov=AP();if(!prov||!walletAddress){showToast('revoke','error','Wallet tidak terkoneksi.');return;}
+  const token=document.getElementById('revoke-token').value.trim();
+  const spender=document.getElementById('revoke-contract').value.trim();
+  if(!token||token.length!==42||!token.startsWith('0x')){showToast('revoke','error','Token address tidak valid.');return;}
+  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('revoke','error','Spender address tidak valid.');return;}
+  const btn=document.getElementById('revoke-btn');btn.disabled=true;btn.textContent='Waiting…';
+  showToast('revoke','pending','Menunggu konfirmasi revoke di wallet kamu…');
+  try{
+    const tx=await prov.request({method:'eth_sendTransaction',params:[{
+      from:walletAddress,to:token,data:encodeApprove(spender,'0x0000000000000000000000000000000000000000000000000000000000000000'),gas:'0x30D40',value:'0x0'
+    }]});
+    showToast('revoke','success',`Revoke Sepolia berhasil! 🔄<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
+  }catch(e){showToast('revoke','error',e.code===4001?'Ditolak.':e.message||'Revoke gagal.');}
+  finally{btn.disabled=false;btn.textContent='Revoke →';}
+}
+
+/* ── SCREEN ── */
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');document.getElementById('scr-'+n).style.display='flex';}
+function setNavBtn(a){const b=document.getElementById('nav-btn');b.innerHTML=a?`<span class="wdot"></span>${a.slice(0,6)}…${a.slice(-4)}`:'Insert Validator Key';b.className=a?'nav-btn on':'nav-btn';}
+function navClick(){walletAddress?doDisconnect():renderPicker();}
+function doDisconnect(){
+  walletAddress=null;window._rialoProv=null;
+  if(gasInterval){clearInterval(gasInterval);gasInterval=null;}
+  setNavBtn(null);
+  document.getElementById('node-badge').classList.remove('online');
+  document.getElementById('badge-txt').textContent='NODE_STATUS: DISCONNECTED';
+  showScreen('standby');renderPicker();
+}
+
+/* ── WALLET PICKER ── */
+function renderPicker(){
+  const hasMM=!!getProvider('metamask'),hasCB=!!getProvider('coinbase'),hasPH=!!getProvider('phantom'),hasOKX=!!getProvider('okx');
+  const anyFound=hasMM||hasCB||hasPH||hasOKX||!!window.ethereum;
+  const pageUrl=encodeURIComponent(location.href);
+  document.getElementById('wallet-area').innerHTML=`
+    <div class="wpicker-wrap">
+      <div class="wpicker-note">🧪 Sepolia Testnet · Tidak ada biaya real · Gas gratis</div>
+      <div class="wpicker">
+        <div class="witem${hasMM?'':' dim'}" onclick="${hasMM?'connectWallet(\'metamask\')':'void(0)'}">
+          <div class="wlogo" style="background:rgba(247,147,26,.12)">🦊</div>
+          <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Extension / MetaMask Mobile · Sepolia Testnet</div></div>
+          <span class="wbadge ${hasMM?'ok':'no'}">${hasMM?'● Detected':'○ Not Found'}</span>
+        </div>
+        <div class="witem${hasCB?'':' dim'}" onclick="${hasCB?'connectWallet(\'coinbase\')':'void(0)'}">
+          <div class="wlogo" style="background:rgba(0,82,255,.12)">🔵</div>
+          <div class="winfo"><div class="wname">Coinbase Wallet</div><div class="wsub">Extension / Coinbase App · Sepolia Testnet</div></div>
+          <span class="wbadge ${hasCB?'ok':'no'}">${hasCB?'● Detected':'○ Not Found'}</span>
+        </div>
+        <div class="witem${hasPH?'':' dim'}" onclick="${hasPH?'connectWallet(\'phantom\')':'void(0)'}">
+          <div class="wlogo" style="background:rgba(153,69,255,.12)">👻</div>
+          <div class="winfo"><div class="wname">Phantom</div><div class="wsub">Extension / Phantom App · Sepolia Testnet</div></div>
+          <span class="wbadge ${hasPH?'ok':'no'}">${hasPH?'● Detected':'○ Not Found'}</span>
+        </div>
+        <div class="witem${hasOKX?'':' dim'}" onclick="${hasOKX?'connectWallet(\'okx\')':'void(0)'}">
+          <div class="wlogo" style="background:rgba(255,255,255,.06)">⚫</div>
+          <div class="winfo"><div class="wname">OKX Wallet</div><div class="wsub">Extension / OKX App · Sepolia Testnet</div></div>
+          <span class="wbadge ${hasOKX?'ok':'no'}">${hasOKX?'● Detected':'○ Not Found'}</span>
+        </div>
+        ${!anyFound?`<div class="no-wallet-warn">⚠️ Tidak ada wallet terdeteksi.<br>Jika di HP, buka dari <strong>browser bawaan wallet</strong> kamu (MetaMask, OKX, Phantom Browser).</div>`:''}
+        <div class="faucet-note">💧 Butuh SepoliaETH gratis? → <a href="https://sepoliafaucet.com" target="_blank">sepoliafaucet.com</a> · <a href="https://faucet.sepolia.dev" target="_blank">faucet.sepolia.dev</a></div>
+        <a class="mobile-link" href="https://metamask.app.link/dapp/${pageUrl}">📱 Buka di MetaMask Mobile →</a>
+        <a class="mobile-link" href="https://okx.com/download?deeplink=${pageUrl}" style="color:rgba(255,255,255,.3);">📱 Buka di OKX App →</a>
+      </div>
+    </div>`;
+}
+
+/* ── CONNECT — otomatis switch ke Sepolia ── */
+async function connectWallet(type){
+  const provider=getProvider(type);
+  if(!provider){showToast('conn','error','Provider tidak ditemukan.');return;}
+  document.getElementById('wallet-area').innerHTML=`<div class="conn-state"><div class="conn-spin"></div><div class="conn-lbl">Menunggu konfirmasi di wallet kamu…</div></div>`;
+  try{
+    const accounts=await provider.request({method:'eth_requestAccounts'});
+    if(!accounts?.length)throw new Error('Tidak ada akun dipilih');
+    // Auto switch ke Sepolia, tambah chain jika belum ada
+    await switchToSepolia(provider);
+    walletAddress=accounts[0];window._rialoProv=provider;
+    onConnected();
+  }catch(err){
+    let msg='Koneksi gagal.';
+    if(err.code===4001)msg='Kamu menolak permintaan koneksi.';
+    else if(err.code===-32002)msg='Ada request pending. Buka wallet dan setujui dulu.';
+    else if(err.message)msg=err.message;
+    document.getElementById('wallet-area').innerHTML=`<div class="err-box"><div class="err-msg">⚠️ ${msg}</div><button class="retry-btn" onclick="renderPicker()">↩ Kembali</button></div>`;
+  }
+}
+
+/* ── FLOW ── */
+function onConnected(){setNavBtn(walletAddress);runAssembly();}
+function runAssembly(){
+  showScreen('assembly');
+  const fill=document.getElementById('asm-fill');
+  const steps=[{id:'al1',st:'as1',txt:'RISC-V Engine Loaded',p:'33%'},{id:'al2',st:'as2',txt:'Integrity Verified',p:'66%'},{id:'al3',st:'as3',txt:'DA Layer Synced',p:'100%'}];
+  let i=0;
+  (function next(){
+    if(i>=steps.length){setTimeout(initDash,600);return;}
+    const s=steps[i],el=document.getElementById(s.st);
+    el.className='asm-st loading';el.textContent='Loading...';
+    setTimeout(()=>{document.getElementById(s.id).classList.add('loaded');el.className='asm-st done';el.textContent=s.txt;fill.style.width=s.p;i++;next();},800);
+  })();
+}
+function initDash(){
+  showScreen('dashboard');
+  document.getElementById('node-badge').classList.add('online');
+  document.getElementById('badge-txt').textContent='NODE_STATUS: ONLINE · SEPOLIA';
+  document.getElementById('kbd-addr').textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6);
+  switchVM('EVM',document.querySelector('.vm-tab'));
+  startGasPolling();
+}
+
+/* ── VM SWITCH ── */
+function switchVM(vm,btn){
+  currentVM=vm;const d=VM[vm];
+  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const fEl=document.getElementById('finality-text'),iEl=document.getElementById('integrity-text');
+  if(fEl){fEl.innerHTML=`${d.finality}<span style="font-size:1rem">ms</span>`;fEl.style.color=d.color;}
+  if(iEl){iEl.textContent=d.integrity;iEl.style.color=d.color;}
+  document.getElementById('finality-tag').innerHTML=`● ${d.fStatus}`;
+  document.getElementById('integrity-tag').innerHTML=`● ${d.iStatus}`;
+  const gp=document.getElementById('gauge-path'),gv=document.getElementById('gauge-val');
+  if(gp){gp.style.strokeDashoffset=d.gaugeOffset;gp.style.stroke=d.color;}
+  if(gv){gv.textContent=d.finality;gv.setAttribute('fill',d.color);}
+  const sc=document.getElementById('stack-card');
+  if(sc){
+    let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
+    d.stack.forEach((item,idx)=>{h+=`<div class="layer-item" style="animation:fadein .3s both;animation-delay:${idx*.1}s"><div class="li-n">0${idx+1}</div><div class="li-ico"><img src="${item.logo}" onerror="this.src='https://placehold.co/22x22/1a2a42/4ade80?text=?'" loading="lazy"></div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});
+    sc.innerHTML=h;
+  }
+  document.getElementById('vm-label').textContent=vm;document.getElementById('vm-label').style.color=d.color;
+  document.getElementById('vm-desc').innerHTML=d.desc;
+}
+
+/* ── INIT ── */
+renderPicker();
 </script>
 </body>
 </html>
