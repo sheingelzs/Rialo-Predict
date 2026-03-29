@@ -52,9 +52,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .garage-standby h2 .dim{color:rgba(255,255,255,0.25);}
 .garage-standby p{font-size:0.88rem;color:var(--muted);max-width:420px;line-height:1.7;margin-bottom:0.75rem;}
 .readonly-notice{display:inline-flex;align-items:center;gap:6px;background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.25);color:rgba(200,180,255,0.75);padding:0.4rem 1rem;border-radius:8px;font-size:0.75rem;font-family:var(--font-mono);margin-bottom:1.75rem;}
-.ignition-btn{display:inline-flex;align-items:center;gap:10px;padding:0.9rem 2rem;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.4);color:var(--accent);font-family:var(--font-mono);font-size:0.85rem;font-weight:700;letter-spacing:0.08em;border-radius:12px;cursor:pointer;transition:all 0.2s;}
-.ignition-btn:hover{background:rgba(74,222,128,0.15);box-shadow:0 0 24px rgba(74,222,128,0.15);}
-.ignition-btn svg{width:16px;height:16px;flex-shrink:0;}
+
+/* WALLET PICKER inline (no modal) */
+.wallet-picker{width:100%;max-width:400px;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.5rem;}
+.wallet-pick-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.2s;}
+.wallet-pick-item:hover:not(.not-installed){background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.3);}
+.wallet-pick-item.not-installed{opacity:0.4;cursor:default;}
+.wpi-logo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.wpi-info{flex:1;text-align:left;}
+.wpi-name{font-weight:600;font-size:0.86rem;}
+.wpi-type{font-size:0.68rem;color:var(--muted);margin-top:1px;}
+.wpi-badge{font-size:0.68rem;font-weight:700;}
+.wpi-badge.ok{color:var(--accent);}
+.wpi-badge.no{color:rgba(255,255,255,0.25);}
+.ro-notice-small{font-size:0.68rem;color:rgba(200,180,255,0.55);font-family:var(--font-mono);margin-bottom:0.75rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.18);padding:0.4rem 0.85rem;border-radius:8px;}
+
+/* CONNECTING STATE */
+.connecting-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:2rem 0;}
+.connecting-spinner{width:40px;height:40px;border:3px solid rgba(74,222,128,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+.connecting-label{font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);}
+.connecting-ro{font-size:0.68rem;color:rgba(200,180,255,0.5);}
+
+/* ERROR STATE */
+.error-state{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem 0;}
+.error-msg{font-size:0.82rem;color:var(--red);}
+.retry-btn{margin-top:0.5rem;padding:0.5rem 1.25rem;background:transparent;border:1px solid rgba(74,222,128,0.3);color:var(--accent);border-radius:8px;font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.retry-btn:hover{background:rgba(74,222,128,0.08);}
+
+/* NO WALLET */
+.no-wallet-state{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:0.5rem 0;}
+.no-wallet-state a{display:block;padding:0.6rem 1.25rem;border-radius:9px;text-decoration:none;font-weight:600;font-size:0.82rem;text-align:center;}
 
 /* ASSEMBLY */
 .assembly-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:88vh;padding:2rem;text-align:center;animation:fadeIn 0.3s ease;}
@@ -98,7 +125,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .telemetry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;}
 .tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
 .tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.tele-card.green ::before,.tele-card.green::before{background:linear-gradient(90deg,var(--accent),transparent);}
+.tele-card.green::before{background:linear-gradient(90deg,var(--accent),transparent);}
 .tele-card.purple::before{background:linear-gradient(90deg,var(--accent2),transparent);}
 .tele-card.cyan::before  {background:linear-gradient(90deg,var(--cyan),transparent);}
 .tele-card.amber::before {background:linear-gradient(90deg,var(--amber),transparent);}
@@ -149,37 +176,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .layer-pill.ok     {background:rgba(74,222,128,0.1);color:var(--accent);}
 .layer-pill.modular{background:rgba(34,211,238,0.1);color:var(--cyan);}
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem;}
-.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
-.modal{background:#0d1117;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.75rem;width:100%;max-width:420px;position:relative;}
-.modal-close{position:absolute;top:0.9rem;right:0.9rem;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.1rem;cursor:pointer;line-height:1;}
-.modal-close:hover{color:#fff;}
-.modal-title{font-family:var(--font-head);font-size:1.15rem;font-weight:800;margin-bottom:0.3rem;}
-.modal-sub  {font-size:0.8rem;color:rgba(255,255,255,0.38);margin-bottom:1rem;line-height:1.5;}
-.modal-ro-notice{display:flex;align-items:flex-start;gap:8px;background:rgba(124,92,252,0.08);border:1px solid rgba(124,92,252,0.2);border-radius:10px;padding:0.75rem;margin-bottom:1rem;font-size:0.75rem;color:rgba(200,185,255,0.7);line-height:1.55;}
-.ro-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
-.wallet-list{display:flex;flex-direction:column;gap:0.55rem;}
-.wallet-item{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 0.95rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;cursor:pointer;transition:all 0.2s;}
-.wallet-item:hover:not(.not-installed){background:rgba(255,255,255,0.08);border-color:rgba(74,222,128,0.3);}
-.wallet-item.not-installed{opacity:0.45;cursor:default;}
-.wallet-logo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
-.wallet-info-block{flex:1;}
-.wallet-name{font-weight:600;font-size:0.88rem;}
-.wallet-type{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:1px;}
-.wallet-badge{font-size:0.7rem;font-weight:700;}
-.wallet-badge.ok{color:var(--accent);}
-.wallet-badge.no{color:var(--red);}
-.install-hint{font-size:0.65rem;color:var(--muted);margin-top:0.75rem;text-align:center;line-height:1.6;}
-.spinner{width:44px;height:44px;border:3px solid rgba(74,222,128,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;}
-.center-modal{text-align:center;padding:0.5rem 0;}
-.big-title{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:0.35rem;}
-.modal-desc{font-size:0.8rem;color:rgba(255,255,255,0.38);line-height:1.6;margin-bottom:1rem;}
-.modal-btn{display:block;width:100%;padding:0.65rem;margin-top:0.5rem;background:var(--accent);color:#050810;border:none;border-radius:9px;font-weight:700;cursor:pointer;font-family:var(--font);font-size:0.88rem;transition:all 0.2s;}
-.modal-btn:hover{background:#86efac;}
-.modal-btn-ghost{background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.12);}
-.modal-btn-ghost:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8);}
-
 @media(max-width:700px){
   .telemetry-grid{grid-template-columns:1fr 1fr;}
   .modular-stack{grid-template-columns:1fr;}
@@ -191,7 +187,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <body>
 <canvas id="net-canvas"></canvas>
 
-<!-- NAV -->
 <nav class="nav">
   <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
   <div class="nav-right">
@@ -207,7 +202,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 <div class="page">
 
-  <!-- STANDBY -->
+  <!-- STANDBY: inline wallet picker, no modal -->
   <div id="garage-standby" class="garage-standby">
     <div class="node-status-badge" id="node-badge">
       <div class="node-status-dot"></div>NODE_STATUS: DISCONNECTED
@@ -217,12 +212,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <div class="readonly-notice">
       🔒 Read-only connection — tidak ada transaksi atau saldo yang digunakan
     </div>
-    <button class="ignition-btn" onclick="startIgnition()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-      </svg>
-      [INSERT VALIDATOR KEY]
-    </button>
+
+    <!-- STEP: wallet picker / connecting / error — rendered by JS -->
+    <div id="standby-inner"></div>
   </div>
 
   <!-- ASSEMBLY -->
@@ -311,7 +303,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
     <div class="garage-section-title">Supermodular Diagnostic Suite</div>
     <div class="modular-stack">
-
       <div class="vm-card">
         <div class="card-inner-title">⚙ Modular VM Interface</div>
         <div class="vm-tabs">
@@ -324,7 +315,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         </div>
         <div class="vm-swap-hint">// Swap VM without chain rebuild · Supermodular by design</div>
       </div>
-
       <div class="gas-card">
         <div class="card-inner-title">⛽ Cruise Monitor — Gas System</div>
         <div class="gas-rows">
@@ -338,7 +328,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <div class="gas-subsidy-text">Rialo Fuel-Injection Protocol: <strong>Gas fees fully subsidized</strong> during testnet. Zero-cost transactions.</div>
         </div>
       </div>
-
       <div class="finality-card">
         <div class="card-inner-title">🏁 Finality Gauge</div>
         <svg viewBox="0 0 140 80" style="width:160px;height:90px">
@@ -356,7 +345,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="finality-unit">Time to Finality · Rialo L1</div>
         <div class="finality-pantera">Backed by <span>Pantera Capital</span> · 2025</div>
       </div>
-
       <div class="layer-stack-card">
         <div class="card-inner-title">🧱 Supermodular Layer Stack</div>
         <div class="layer-item">
@@ -378,18 +366,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <span class="layer-pill modular">SYNCED</span>
         </div>
       </div>
-
     </div>
   </div>
 
-</div>
-
-<!-- MODAL -->
-<div id="wallet-modal" class="modal-overlay">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modal-content"></div>
-  </div>
 </div>
 
 <script>
@@ -411,14 +390,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   })();
 })();
 
-/* ════════════════════════════════════════════
+/* ════════════════════════════════
    STATE
-   connectedAddr  = wallet address string | null
-   activeProvider = EIP-1193 provider     | null
-
-   IMPORTANT: This page ONLY calls eth_requestAccounts.
-   No eth_sendTransaction. No personal_sign. No fees.
-════════════════════════════════════════════ */
+════════════════════════════════ */
 let connectedAddr  = null;
 let activeProvider = null;
 
@@ -454,7 +428,6 @@ function bindProvider(p){
     const el=document.getElementById('gkb-addr');
     if(el)el.textContent=longAddr(connectedAddr);
   });
-  // chain changes are ignored — read-only
 }
 
 /* ── address formatting ── */
@@ -473,7 +446,7 @@ function resetNavBtn(){
   btn.textContent='Insert Validator Key';
 }
 function handleNavWallet(){
-  connectedAddr?doDisconnect():openWalletModal();
+  connectedAddr?doDisconnect():renderWalletPicker();
 }
 
 /* ── disconnect / standby ── */
@@ -488,146 +461,130 @@ function showStandby(){
   const badge=document.getElementById('node-badge');
   badge.classList.remove('online');
   badge.innerHTML='<div class="node-status-dot"></div>NODE_STATUS: DISCONNECTED';
+  renderWalletPicker();
 }
 
-/* ════════════════════════════════════════════
-   MODAL
-════════════════════════════════════════════ */
-function openWalletModal(){
+/* ════════════════════════════════
+   INLINE WALLET PICKER (no modal)
+════════════════════════════════ */
+function renderWalletPicker(){
   const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const hasAny=!!(window.ethereum||window.okxwallet);
-  if(!hasAny){showModalNoWallet();return;}
-  isMobile?showModalMobile():showModalDesktop();
-}
-function closeModal(){
-  document.getElementById('wallet-modal').classList.remove('open');
-}
-/* close on backdrop click */
-document.getElementById('wallet-modal').addEventListener('click',function(e){
-  if(e.target===this)closeModal();
-});
+  const inner=document.getElementById('standby-inner');
+  if(!inner)return;
 
-function showModalDesktop(){
-  const d=detectInstalled();
-  const wallets=[
-    {key:'metamask',icon:'🦊',bg:'rgba(247,147,26,0.15)',name:'MetaMask',       sub:'Browser Extension',         ok:d.metamask,url:'https://metamask.io/download/'},
-    {key:'phantom', icon:'👻',bg:'rgba(153,69,255,0.15)',name:'Phantom',        sub:'Solana & EVM · Extension',  ok:d.phantom, url:'https://phantom.app/download'},
-    {key:'okx',     icon:'⬛',bg:'rgba(0,0,0,0.35)',     name:'OKX Wallet',    sub:'Extension & Mobile',        ok:d.okx,    url:'https://www.okx.com/web3'},
-    {key:'coinbase',icon:'🔵',bg:'rgba(22,82,240,0.15)', name:'Coinbase Wallet',sub:'Extension · Mobile',       ok:d.coinbase,url:'https://www.coinbase.com/wallet'},
-  ];
-  const rows=wallets.map(w=>w.ok
-    ?`<div class="wallet-item" onclick="connectWallet('${w.key}','${w.name}')"><div class="wallet-logo" style="background:${w.bg}">${w.icon}</div><div class="wallet-info-block"><div class="wallet-name">${w.name}</div><div class="wallet-type">${w.sub}</div></div><span class="wallet-badge ok">● Detected</span></div>`
-    :`<div class="wallet-item not-installed" onclick="window.open('${w.url}','_blank')"><div class="wallet-logo" style="background:${w.bg};opacity:.5">${w.icon}</div><div class="wallet-info-block"><div class="wallet-name">${w.name}</div><div class="wallet-type">${w.sub}</div></div><span class="wallet-badge no">Install ↗</span></div>`
-  ).join('');
-  document.getElementById('modal-content').innerHTML=`
-    <div class="modal-title">Insert Validator Key</div>
-    <div class="modal-sub">Hubungkan wallet kamu sebagai Validator Key.</div>
-    <div class="modal-ro-notice"><span class="ro-icon">🔒</span><span><strong style="color:rgba(200,185,255,0.9)">Read-only connection</strong> — hanya meminta alamat wallet. Tidak ada transaksi, tanda tangan, atau biaya gas apapun.</span></div>
-    <div class="wallet-list">${rows}</div>
-    <p class="install-hint">Hanya wallet bertanda <span style="color:var(--accent)">● Detected</span> yang terinstall.</p>`;
-  document.getElementById('wallet-modal').classList.add('open');
-}
-function showModalNoWallet(){
-  document.getElementById('modal-content').innerHTML=`
-    <div class="center-modal">
-      <div style="font-size:2.5rem;margin-bottom:1rem">🔑</div>
-      <div class="big-title">No Wallet Detected</div>
-      <div class="modal-desc">Install browser wallet extension terlebih dahulu, lalu refresh halaman ini.</div>
-      <a href="https://metamask.io/download/" target="_blank" style="display:block;padding:.75rem;background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);color:#f7931a;text-decoration:none;font-weight:600;border-radius:10px;text-align:center;margin-top:.5rem">🦊 Install MetaMask</a>
-      <a href="https://phantom.app/download"  target="_blank" style="display:block;padding:.75rem;background:rgba(153,69,255,0.1);border:1px solid rgba(153,69,255,0.3);color:#9945ff;text-decoration:none;font-weight:600;border-radius:10px;text-align:center;margin-top:.5rem">👻 Install Phantom</a>
-    </div>`;
-  document.getElementById('wallet-modal').classList.add('open');
-}
-function showModalMobile(){
-  const cur=encodeURIComponent(location.href);
-  const links=[
-    {icon:'🦊',name:'MetaMask',       href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},
-    {icon:'👻',name:'Phantom',        href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},
-    {icon:'⬛',name:'OKX Wallet',     href:`okx://wallet/dapp/url?dappUrl=${cur}`},
-    {icon:'🔵',name:'Coinbase Wallet',href:`https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(location.href)}`},
-  ];
-  const rows=links.map(l=>`<div class="wallet-item" onclick="location.href='${l.href}'"><div class="wallet-logo" style="background:rgba(255,255,255,.06)">${l.icon}</div><div class="wallet-info-block"><div class="wallet-name">${l.name}</div><div class="wallet-type">Open in ${l.name} Browser</div></div><span class="wallet-badge ok">Open ↗</span></div>`).join('');
-  document.getElementById('modal-content').innerHTML=`
-    <div class="modal-title">Open with Wallet App</div>
-    <div class="modal-sub">Pilih wallet untuk membuka dApp ini.</div>
-    <div class="modal-ro-notice"><span class="ro-icon">🔒</span><span>Read-only — tidak ada transaksi atau biaya gas.</span></div>
-    <div class="wallet-list">${rows}</div>`;
-  document.getElementById('wallet-modal').classList.add('open');
-}
-
-/* ════════════════════════════════════════════
-   CONNECT — read-only
-   Hanya eth_requestAccounts.
-   Tidak ada eth_sendTransaction sama sekali.
-════════════════════════════════════════════ */
-async function connectWallet(key,name){
-  document.getElementById('modal-content').innerHTML=`
-    <div class="center-modal">
-      <div class="spinner"></div>
-      <div class="big-title">Connecting ${name}…</div>
-      <div class="modal-desc">Approve the connection in your wallet.<br>
-        <span style="color:rgba(200,185,255,0.65);font-size:0.73rem;display:block;margin-top:.35rem">🔒 No transaction will be sent. No gas fees.</span>
-      </div>
-    </div>`;
-
-  const provider=findProvider(key);
-  if(!provider){
-    document.getElementById('modal-content').innerHTML=`
-      <div class="center-modal">
-        <div style="font-size:2rem;margin-bottom:.75rem">⚠️</div>
-        <div class="big-title">${name} Not Found</div>
-        <div class="modal-desc">Provider tidak ditemukan. Pastikan extension aktif dan refresh halaman.</div>
-        <button class="modal-btn" onclick="showModalDesktop()">← Back</button>
+  if(!hasAny && !isMobile){
+    inner.innerHTML=`
+      <div class="no-wallet-state">
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem">No wallet extension detected.</p>
+        <a href="https://metamask.io/download/" target="_blank" style="background:rgba(247,147,26,0.1);border:1px solid rgba(247,147,26,0.3);color:#f7931a;padding:0.6rem 1.25rem;border-radius:9px;text-decoration:none;font-weight:600;font-size:0.82rem;">🦊 Install MetaMask</a>
+        <a href="https://phantom.app/download" target="_blank" style="background:rgba(153,69,255,0.1);border:1px solid rgba(153,69,255,0.3);color:#9945ff;padding:0.6rem 1.25rem;border-radius:9px;text-decoration:none;font-weight:600;font-size:0.82rem;margin-top:0.4rem;display:block">👻 Install Phantom</a>
       </div>`;
     return;
   }
 
+  if(isMobile){
+    const cur=encodeURIComponent(location.href);
+    const links=[
+      {icon:'🦊',name:'MetaMask',       href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},
+      {icon:'👻',name:'Phantom',        href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},
+      {icon:'⬛',name:'OKX Wallet',     href:`okx://wallet/dapp/url?dappUrl=${cur}`},
+      {icon:'🔵',name:'Coinbase Wallet',href:`https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(location.href)}`},
+    ];
+    inner.innerHTML=`
+      <div class="ro-notice-small">🔒 Read-only — no transactions or fees</div>
+      <div class="wallet-picker">
+        ${links.map(l=>`
+          <div class="wallet-pick-item" onclick="location.href='${l.href}'">
+            <div class="wpi-logo" style="background:rgba(255,255,255,0.06)">${l.icon}</div>
+            <div class="wpi-info"><div class="wpi-name">${l.name}</div><div class="wpi-type">Open in ${l.name} Browser</div></div>
+            <span class="wpi-badge ok">Open ↗</span>
+          </div>`).join('')}
+      </div>`;
+    return;
+  }
+
+  // Desktop — detect installed wallets
+  const d=detectInstalled();
+  const wallets=[
+    {key:'metamask',icon:'🦊',bg:'rgba(247,147,26,0.15)',name:'MetaMask',       sub:'Browser Extension',   ok:d.metamask,url:'https://metamask.io/download/'},
+    {key:'phantom', icon:'👻',bg:'rgba(153,69,255,0.15)',name:'Phantom',        sub:'Solana & EVM',        ok:d.phantom, url:'https://phantom.app/download'},
+    {key:'okx',     icon:'⬛',bg:'rgba(0,0,0,0.35)',     name:'OKX Wallet',    sub:'Extension & Mobile',  ok:d.okx,     url:'https://www.okx.com/web3'},
+    {key:'coinbase',icon:'🔵',bg:'rgba(22,82,240,0.15)', name:'Coinbase Wallet',sub:'Extension · Mobile', ok:d.coinbase,url:'https://www.coinbase.com/wallet'},
+  ];
+
+  inner.innerHTML=`
+    <div class="ro-notice-small">🔒 Read-only — hanya meminta alamat wallet. Tidak ada transaksi atau gas fees.</div>
+    <div class="wallet-picker">
+      ${wallets.map(w=>w.ok
+        ?`<div class="wallet-pick-item" onclick="connectWallet('${w.key}','${w.name}')">
+            <div class="wpi-logo" style="background:${w.bg}">${w.icon}</div>
+            <div class="wpi-info"><div class="wpi-name">${w.name}</div><div class="wpi-type">${w.sub}</div></div>
+            <span class="wpi-badge ok">● Detected</span>
+          </div>`
+        :`<div class="wallet-pick-item not-installed" onclick="window.open('${w.url}','_blank')">
+            <div class="wpi-logo" style="background:${w.bg};opacity:.5">${w.icon}</div>
+            <div class="wpi-info"><div class="wpi-name">${w.name}</div><div class="wpi-type">${w.sub}</div></div>
+            <span class="wpi-badge no">Install ↗</span>
+          </div>`
+      ).join('')}
+    </div>`;
+}
+
+/* ════════════════════════════════
+   CONNECT — read-only (eth_requestAccounts only)
+════════════════════════════════ */
+async function connectWallet(key,name){
+  const inner=document.getElementById('standby-inner');
+  if(inner){
+    inner.innerHTML=`
+      <div class="connecting-state">
+        <div class="connecting-spinner"></div>
+        <div class="connecting-label">Connecting ${name}…</div>
+        <div class="connecting-ro">🔒 No transaction will be sent. No gas fees.</div>
+      </div>`;
+  }
+
+  const provider=findProvider(key);
+  if(!provider){
+    if(inner){
+      inner.innerHTML=`
+        <div class="error-state">
+          <div class="error-msg">⚠ ${name} provider not found. Make sure the extension is active.</div>
+          <button class="retry-btn" onclick="renderWalletPicker()">← Try Again</button>
+        </div>`;
+    }
+    return;
+  }
+
   try{
-    /* ── The only call we make ── */
     const accounts=await provider.request({method:'eth_requestAccounts'});
-
     if(!accounts||accounts.length===0) throw new Error('No accounts returned.');
-
     connectedAddr =accounts[0];
     activeProvider=provider;
     bindProvider(provider);
-
-    closeModal();
     updateNavBtn(connectedAddr);
-    runAssembly(connectedAddr);   // start the visual sequence
-
-  }catch(err){
-    const msg=err.code===4001
-      ?'Connection cancelled.'
-      :(err.message||'Unknown error.');
-    document.getElementById('modal-content').innerHTML=`
-      <div class="center-modal">
-        <div style="font-size:2rem;margin-bottom:.75rem">⚠️</div>
-        <div class="big-title">Connection Failed</div>
-        <div class="modal-desc">${msg}</div>
-        <button class="modal-btn" onclick="showModalDesktop()">Try Again</button>
-        <button class="modal-btn modal-btn-ghost" onclick="closeModal()" style="margin-top:.4rem">Cancel</button>
-      </div>`;
-  }
-}
-
-/* ════════════════════════════════════════════
-   IGNITION → ASSEMBLY → DASHBOARD
-════════════════════════════════════════════ */
-function startIgnition(){
-  if(connectedAddr){
     runAssembly(connectedAddr);
-  }else{
-    openWalletModal();
+  }catch(err){
+    const msg=err.code===4001?'Connection cancelled.':(err.message||'Unknown error.');
+    if(inner){
+      inner.innerHTML=`
+        <div class="error-state">
+          <div class="error-msg">⚠ ${msg}</div>
+          <button class="retry-btn" onclick="renderWalletPicker()">← Try Again</button>
+        </div>`;
+    }
   }
 }
 
+/* ════════════════════════════════
+   ASSEMBLY → DASHBOARD
+════════════════════════════════ */
 function runAssembly(addr){
   document.getElementById('garage-standby')  .style.display='none';
   document.getElementById('assembly-screen') .style.display='flex';
   document.getElementById('garage-dashboard').style.display='none';
 
-  /* reset layers */
   ['asm-l1','asm-l2','asm-l3'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.classList.remove('loaded');
@@ -672,9 +629,7 @@ function showDashboard(addr){
   badge.innerHTML='<div class="node-status-dot"></div>NODE_STATUS: ONLINE';
 }
 
-/* ════════════════════════════════════════════
-   VM SWITCHER
-════════════════════════════════════════════ */
+/* ── VM SWITCHER ── */
 const VM_DESC={
   EVM :'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Gas model: SUBSIDIZED.',
   SVM :'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel transaction processing. Rust-based programs.',
@@ -686,6 +641,9 @@ function switchVM(vm,btn){
   document.getElementById('vm-status-text').innerHTML=VM_DESC[vm];
   document.getElementById('dash-vm-label').textContent=vm;
 }
+
+/* Init — render picker on load */
+renderWalletPicker();
 </script>
 </body>
 </html>
