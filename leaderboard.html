@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RIALO · Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+--bg:#050810;--card:#0f1929;--border:#1a2a42;
+--accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--amber:#facc15;--cyan:#22d3ee;
+--text:#e8eaf0;--muted:#5a7090;
+--font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
+.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
+.nav-right{display:flex;align-items:center;gap:.6rem;}
+.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
+.nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
+.nav-link:hover{color:rgba(255,255,255,.8);}
+.nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
+.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
+.wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+.page{position:relative;z-index:1;animation:fadein .25s ease;}
+
+/* LOCK */
+#lock-screen{min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;}
+.lock-icon{font-size:3rem;margin-bottom:1.5rem;opacity:.5;}
+.lock-title{font-family:var(--font-head);font-size:2rem;font-weight:800;margin-bottom:.75rem;}
+.lock-sub{color:var(--muted);font-size:.9rem;max-width:360px;line-height:1.7;margin-bottom:2rem;}
+.wpicker{width:100%;max-width:380px;display:flex;flex-direction:column;gap:.45rem;margin:0 auto;}
+.wpicker-note{font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);margin-bottom:.35rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);padding:.35rem .8rem;border-radius:8px;}
+.witem{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;}
+.witem:hover{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);}
+.wlogo{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.winfo{flex:1;text-align:left;}
+.wname{font-weight:600;font-size:.85rem;}
+.wsub{font-size:.67rem;color:var(--muted);margin-top:1px;}
+.wbadge{font-size:.67rem;font-weight:700;}
+.wbadge.ok{color:var(--accent);}
+.wbadge.no{color:rgba(255,255,255,.25);}
+.conn-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
+.conn-spin{width:40px;height:40px;border:3px solid rgba(74,222,128,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+.conn-lbl{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);}
+
+/* MAIN */
+#main-screen{display:none;}
+.board-wrap{max-width:800px;margin:0 auto;padding:2rem 1.5rem;}
+.board-hdr{margin-bottom:1.75rem;}
+.hdr-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem;}
+.hdr-title{font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.3rem;}
+.hdr-sub{font-size:.82rem;color:var(--muted);}
+
+/* MY RANK */
+.my-rank-card{background:linear-gradient(135deg,rgba(124,92,252,.1),rgba(74,222,128,.06));border:1px solid rgba(124,92,252,.3);border-radius:14px;padding:1.1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.mr-num{font-family:var(--font-head);font-size:2rem;font-weight:800;color:#c4b5fd;min-width:50px;text-align:center;}
+.mr-info{flex:1;}
+.mr-addr{font-family:var(--font-mono);font-size:.78rem;color:rgba(255,255,255,.55);}
+.mr-rank{font-size:.7rem;color:#c4b5fd;font-family:var(--font-mono);margin-top:2px;}
+.mr-xp{font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--accent);}
+.mr-xp-lbl{font-size:.62rem;color:var(--muted);font-family:var(--font-mono);}
+
+/* TABLE */
+.lb-table{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.lb-thead{display:grid;grid-template-columns:50px 1fr 120px 100px;gap:.5rem;padding:.7rem 1.2rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);}
+.lb-th{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.lb-row{display:grid;grid-template-columns:50px 1fr 120px 100px;gap:.5rem;padding:.85rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.04);align-items:center;animation:rowIn .3s ease both;transition:background .2s;}
+.lb-row:last-child{border-bottom:none;}
+.lb-row:hover{background:rgba(255,255,255,.03);}
+.lb-row.me{background:rgba(124,92,252,.06);border-left:2px solid var(--accent2);}
+.lb-row.top1{background:rgba(250,204,21,.04);}
+.lb-row.top2{background:rgba(200,200,200,.03);}
+.lb-row.top3{background:rgba(205,127,50,.03);}
+.rank-num{font-family:var(--font-mono);font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:4px;}
+.medal{font-size:1rem;}
+.lb-addr-cell{display:flex;align-items:center;gap:.5rem;}
+.lb-avatar{width:28px;height:28px;border-radius:7px;background:rgba(74,222,128,.08);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.lb-addr{font-family:var(--font-mono);font-size:.75rem;color:rgba(255,255,255,.6);}
+.lb-addr.me{color:#c4b5fd;}
+.lb-rank-cell{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.lb-rank-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.lb-xp{font-family:var(--font-head);font-size:.9rem;font-weight:800;color:var(--accent);}
+.lb-xp.me{color:#c4b5fd;}
+
+.sec-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-.3px;margin:1.5rem 0 .85rem;display:flex;align-items:center;gap:10px;color:var(--text);}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+.disc-btn{font-size:.68rem;color:var(--muted);background:none;border:none;cursor:pointer;font-family:var(--font);transition:color .2s;margin-top:.5rem;}
+.disc-btn:hover{color:var(--red);}
+
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--accent);padding:.2rem .6rem;border-radius:99px;font-size:.65rem;font-family:var(--font-mono);font-weight:700;margin-bottom:.75rem;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.5s infinite;}
+
+@media(max-width:600px){
+  .nav-links{display:none;}
+  .lb-thead,.lb-row{grid-template-columns:40px 1fr 80px;}
+  .lb-thead .lb-th:nth-child(3),.lb-row .lb-rank-cell{display:none;}
+}
+</style>
+</head>
+<body>
+<canvas id="net-canvas"></canvas>
+<nav class="nav">
+  <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a class="nav-link" href="menu.html">Home</a>
+      <a class="nav-link" href="wallet.html">Swap</a>
+      <a class="nav-link" href="garage.html">Garage</a>
+      <a class="nav-link" href="market.html">Market</a>
+      <a class="nav-link" href="quest.html">Quests</a>
+      <a class="nav-link" href="passport.html">Passport</a>
+      <a class="nav-link active" href="leaderboard.html">Leaderboard</a>
+    </div>
+    <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div id="lock-screen">
+    <div class="lock-icon">🏆</div>
+    <div class="lock-title">Validator Leaderboard</div>
+    <div class="lock-sub">Connect wallet untuk lihat posisi kamu di antara Alpha Operators di testnet Rialo.</div>
+    <div id="wallet-area"></div>
+  </div>
+
+  <div id="main-screen">
+    <div class="board-wrap">
+      <div class="board-hdr">
+        <div class="hdr-eyebrow">Alpha Operator Rankings</div>
+        <div class="hdr-title">Validator Leaderboard</div>
+        <div class="hdr-sub">Ranking berdasarkan total XP dari quest completion.</div>
+      </div>
+
+      <div class="live-badge"><div class="live-dot"></div>LIVE · SEPOLIA TESTNET</div>
+
+      <div class="sec-title">📍 Your Position</div>
+      <div class="my-rank-card" id="my-rank-card">
+        <div class="mr-num" id="mr-num">#—</div>
+        <div class="mr-info">
+          <div class="mr-addr" id="mr-addr">—</div>
+          <div class="mr-rank" id="mr-rank">Rank: —</div>
+        </div>
+        <div style="text-align:right">
+          <div class="mr-xp" id="mr-xp">0</div>
+          <div class="mr-xp-lbl">TOTAL XP</div>
+        </div>
+      </div>
+      <button class="disc-btn" onclick="doDisconnect()">Disconnect ↗</button>
+
+      <div class="sec-title">🏅 Top Operators</div>
+      <div class="lb-table">
+        <div class="lb-thead">
+          <div class="lb-th">Rank</div>
+          <div class="lb-th">Operator</div>
+          <div class="lb-th">Status</div>
+          <div class="lb-th">XP</div>
+        </div>
+        <div id="lb-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
+  let W,H,ang=0;
+  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
+  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  window.onresize=res;res();
+  (function draw(){
+    ctx.clearRect(0,0,W,H);ang+=.0005;
+    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
+    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
+    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
+    pts.forEach((p,i)=>{
+      for(let j=i+1;j<pts.length;j++){const d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);if(d<150){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.stroke();}}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle='rgba(74,222,128,.5)';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+const RANKS=[{min:0,name:'Recruit'},{min:200,name:'Operator'},{min:500,name:'Validator'},{min:900,name:'Core Builder'},{min:1125,name:'Alpha Operator'}];
+const AVATARS=['🧑‍💻','👾','🤖','🦾','⚡','🔮','🛸','🌐','🔬','🗡️'];
+const MEDALS=['🥇','🥈','🥉'];
+
+// Simulated leaderboard entries (other operators)
+const MOCK_OTHERS = [
+  {addr:'0xDEf1C0ded9bec7F1a1670819833240f027b25EfF', xp:1125},
+  {addr:'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', xp:975},
+  {addr:'0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', xp:850},
+  {addr:'0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8', xp:625},
+  {addr:'0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE', xp:500},
+  {addr:'0x8484Ef722627bf18ca5Ae6BcF031c23E6e922B30', xp:350},
+  {addr:'0xF977814e90dA44bFA03b6295A0616a897441aceC', xp:275},
+  {addr:'0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503', xp:200},
+  {addr:'0x5a52E96BAcdaBb82fd05763E25335261B270Efcb', xp:125},
+];
+
+function getRank(xp){let r=RANKS[0];RANKS.forEach(rk=>{if(xp>=rk.min)r=rk;});return r;}
+function getAvatar(addr){const idx=parseInt(addr.slice(-2),16)%AVATARS.length;return AVATARS[idx];}
+function fmtAddr(addr){return addr.slice(0,6)+'...'+addr.slice(-4);}
+
+function getKey(addr){return `rialo_quests_${addr}`;}
+function loadProgress(addr){try{const d=localStorage.getItem(getKey(addr));return d?JSON.parse(d):{};}catch(e){return {};}}
+function calcXP(completed){
+  const QS=[{id:'connect',xp:50},{id:'visit_market',xp:25},{id:'visit_swap',xp:25},{id:'mount_key',xp:100},{id:'assemble_stack',xp:150},{id:'switch_vm',xp:75},{id:'first_swap',xp:200},{id:'all_missions',xp:500}];
+  let total=0;QS.forEach(q=>{if(completed[q.id])total+=q.xp;});return total;
+}
+
+let wallet=null;
+
+function buildLeaderboard(){
+  const completed=loadProgress(wallet);
+  const myXP=calcXP(completed);
+  const myRank=getRank(myXP);
+
+  // combine mock + me
+  const entries=[...MOCK_OTHERS,{addr:wallet,xp:myXP,isMe:true}];
+  entries.sort((a,b)=>b.xp-a.xp);
+  const myPos=entries.findIndex(e=>e.isMe)+1;
+
+  document.getElementById('mr-num').textContent='#'+myPos;
+  document.getElementById('mr-addr').textContent=fmtAddr(wallet)+' (You)';
+  document.getElementById('mr-rank').textContent='Rank: '+myRank.name;
+  document.getElementById('mr-xp').textContent=myXP;
+
+  const body=document.getElementById('lb-body');
+  body.innerHTML=entries.map((e,i)=>{
+    const pos=i+1;
+    const rank=getRank(e.xp);
+    const medal=pos<=3?MEDALS[pos-1]:'';
+    const cls=e.isMe?'me':pos===1?'top1':pos===2?'top2':pos===3?'top3':'';
+    return `<div class="lb-row ${cls}" style="animation-delay:${i*0.04}s">
+      <div class="rank-num">${medal||(''+pos)}</div>
+      <div class="lb-addr-cell">
+        <div class="lb-avatar">${getAvatar(e.addr)}</div>
+        <span class="lb-addr ${e.isMe?'me':''}">${fmtAddr(e.addr)}${e.isMe?' (You)':''}</span>
+      </div>
+      <div class="lb-rank-cell"><div class="lb-rank-dot" style="background:${e.xp>=1125?'#c4b5fd':e.xp>=900?'#22d3ee':e.xp>=500?'#4ade80':'#64748b'}"></div>${rank.name}</div>
+      <div class="lb-xp ${e.isMe?'me':''}">${e.xp}</div>
+    </div>`;
+  }).join('');
+}
+
+/* WALLET */
+function getProvList(){const e=window.ethereum;if(!e)return[];return e.providers||[e];}
+function findProv(key){const L=getProvList();if(key==='okx')return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;if(key==='metamask')return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;if(key==='phantom')return L.find(p=>p.isPhantom)||null;if(key==='coinbase')return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;return window.ethereum||null;}
+function detectW(){const L=getProvList();return{metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),phantom:!!(L.find(p=>p.isPhantom)),okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser))};}
+function setNavBtn(addr){const b=document.getElementById('nav-btn');b.innerHTML=addr?`<span class="wdot"></span>${addr.slice(0,6)}…${addr.slice(-4)}`:'Insert Validator Key';b.className=addr?'nav-btn on':'nav-btn';}
+function navClick(){wallet?doDisconnect():renderPicker();}
+function doDisconnect(){wallet=null;setNavBtn(null);document.getElementById('main-screen').style.display='none';document.getElementById('lock-screen').style.display='flex';renderPicker();}
+
+function renderPicker(){
+  const d=detectW();
+  const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const wallets=[{key:'metamask',icon:'🦊',bg:'rgba(247,147,26,.1)',name:'MetaMask',sub:'Browser Extension',ok:d.metamask},{key:'phantom',icon:'👻',bg:'rgba(153,69,255,.1)',name:'Phantom',sub:'Solana & EVM',ok:d.phantom},{key:'okx',icon:'⬛',bg:'rgba(0,0,0,.3)',name:'OKX Wallet',sub:'Extension & Mobile',ok:d.okx},{key:'coinbase',icon:'🔵',bg:'rgba(22,82,240,.15)',name:'Coinbase Wallet',sub:'Extension & Mobile',ok:d.coinbase}];
+  const area=document.getElementById('wallet-area');
+  if(isMob){const cur=encodeURIComponent(location.href);area.innerHTML=`<div class="wpicker"><div class="wpicker-note">📱 Mobile — buka di wallet browser</div>${[{icon:'🦊',name:'MetaMask',href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},{icon:'👻',name:'Phantom',href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},{icon:'⬛',name:'OKX Wallet',href:`okx://wallet/dapp/url?dappUrl=${cur}`},{icon:'🔵',name:'Coinbase',href:`https://go.cb-w.com/dapp?cb_url=${encodeURIComponent(location.href)}`}].map(l=>`<div class="witem" onclick="location.href='${l.href}'"><div class="wlogo">${l.icon}</div><div class="winfo"><div class="wname">${l.name}</div></div><span class="wbadge ok">Open ↗</span></div>`).join('')}</div>`;return;}
+  area.innerHTML=`<div class="wpicker"><div class="wpicker-note">🔒 Read-only connection</div>${wallets.map(w=>`<div class="witem" onclick="${w.ok?`connectWallet('${w.key}','${w.name}')`:''}" style="${w.ok?'':'opacity:.45;cursor:default'}"><div class="wlogo" style="background:${w.bg}">${w.icon}</div><div class="winfo"><div class="wname">${w.name}</div><div class="wsub">${w.sub}</div></div><span class="wbadge ${w.ok?'ok':'no'}">${w.ok?'● Detected':'Not Found'}</span></div>`).join('')}</div>`;
+}
+
+async function connectWallet(key,name){
+  const area=document.getElementById('wallet-area');
+  area.innerHTML=`<div class="conn-state"><div class="conn-spin"></div><div class="conn-lbl">Connecting ${name}...</div></div>`;
+  const p=findProv(key);
+  if(!p){renderPicker();return;}
+  try{
+    const accounts=await p.request({method:'eth_requestAccounts'});
+    if(!accounts||!accounts.length) throw new Error('No accounts');
+    wallet=accounts[0];
+    setNavBtn(wallet);
+    document.getElementById('lock-screen').style.display='none';
+    document.getElementById('main-screen').style.display='block';
+    buildLeaderboard();
+  }catch(e){renderPicker();}
+}
+
+renderPicker();
+</script>
+</body>
+</html>
