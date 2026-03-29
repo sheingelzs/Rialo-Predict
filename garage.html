@@ -8,674 +8,113 @@
 <style>
 :root{
   --bg:#050810;--card:#0f1929;--border:#1a2a42;
-  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--amber:#facc15;--cyan:#22d3ee;
-  --text:#e8eaf0;--muted:#5a7090;
-  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+  --accent:#4ade80;--text:#e8eaf0;--muted:#5a7090;
+  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
-#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(5,8,16,.95);backdrop-filter:blur(16px);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:#fff;}
+.nav-btn{padding:.5rem 1rem;border-radius:8px;border:1px solid var(--accent);background:rgba(74,222,128,.1);color:var(--accent);cursor:pointer;font-weight:600;}
 
-.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
-.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
-.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
-.nav-right{display:flex;align-items:center;gap:.6rem;}
-.nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
-.nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
-.nav-link:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.06);}
-.nav-link.active{background:rgba(255,255,255,.1);color:#fff;}
-.nav-btn{padding:.4rem .9rem;border-radius:8px;border:1px solid rgba(74,222,128,.35);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
-.nav-btn.on{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);}
-.nav-btn:hover{background:rgba(74,222,128,.15);}
-.wdot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.container{max-width:500px;margin:2rem auto;padding:0 1.5rem;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1rem;}
+.label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;display:block;}
+.val-big{font-size:1.8rem;font-family:var(--font-head);font-weight:800;margin-bottom:0.5rem;}
 
-.page{position:relative;z-index:1;}
-.status-row{display:flex;justify-content:center;padding:1.5rem 0 0;}
-.node-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:var(--red);padding:.35rem 1rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.1em;transition:all .4s;}
-.node-badge.online{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25);color:var(--accent);}
-.nbdot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;flex-shrink:0;}
-.screen{display:none;position:relative;z-index:1;}
+.input-group{margin-top:1.5rem;}
+.input-field{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border);padding:.8rem;border-radius:10px;color:#fff;font-family:monospace;margin-bottom:1rem;outline:none;}
+.btn-send{width:100%;padding:1rem;background:var(--accent);color:#000;border:none;border-radius:10px;font-weight:800;cursor:pointer;transition:0.2s;}
+.btn-send:hover{opacity:0.9;}
 
-/* STANDBY */
-#scr-standby{flex-direction:column;align-items:center;text-align:center;padding:2rem 1.5rem;animation:fadein .3s ease;}
-#scr-standby h2{font-family:var(--font-head);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.75rem;}
-#scr-standby h2 .dim{color:rgba(255,255,255,.2);}
-#scr-standby p{font-size:.88rem;color:var(--muted);max-width:400px;line-height:1.7;margin-bottom:.75rem;}
-.tx-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);color:rgba(150,255,180,.75);padding:.4rem 1rem;border-radius:8px;font-size:.72rem;font-family:var(--font-mono);margin-bottom:.6rem;}
-.chain-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);color:var(--cyan);padding:.3rem .9rem;border-radius:8px;font-size:.68rem;font-family:var(--font-mono);margin-bottom:1.2rem;}
-
-.wpicker-wrap{width:100%;max-width:420px;}
-.wpicker-note{font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);margin-bottom:.5rem;display:flex;align-items:center;gap:6px;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);padding:.4rem .85rem;border-radius:8px;}
-.wpicker{display:flex;flex-direction:column;gap:.45rem;}
-.witem{display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;width:100%;}
-.witem:hover:not(.dim){background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.3);transform:translateY(-1px);}
-.witem:active:not(.dim){transform:scale(.98);}
-.witem.dim{opacity:.35;cursor:not-allowed;}
-.wlogo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;}
-.winfo{flex:1;text-align:left;}
-.wname{font-weight:600;font-size:.85rem;}
-.wsub{font-size:.66rem;color:var(--muted);margin-top:2px;}
-.wbadge{font-size:.65rem;font-weight:700;flex-shrink:0;}
-.wbadge.ok{color:var(--accent);}
-.wbadge.no{color:rgba(255,255,255,.22);}
-.conn-state{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
-.conn-spin{width:40px;height:40px;border:3px solid rgba(74,222,128,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-.conn-lbl{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);}
-.err-box{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:1rem;max-width:380px;}
-.err-msg{font-size:.82rem;color:var(--red);text-align:center;line-height:1.55;}
-.retry-btn{padding:.5rem 1.25rem;background:transparent;border:1px solid rgba(74,222,128,.3);color:var(--accent);border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;}
-.retry-btn:hover{background:rgba(74,222,128,.08);}
-.no-wallet-warn{margin-top:.5rem;padding:.65rem 1rem;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;font-size:.75rem;color:rgba(248,113,113,.85);line-height:1.55;text-align:left;}
-.mobile-link{display:block;text-align:center;margin-top:.5rem;font-size:.68rem;color:rgba(74,222,128,.6);font-family:var(--font-mono);text-decoration:none;}
-.mobile-link:hover{color:var(--accent);}
-
-/* ASSEMBLY */
-#scr-assembly{flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:2rem;text-align:center;animation:fadein .3s ease;}
-.asm-title{font-family:var(--font-head);font-size:1.4rem;font-weight:800;margin-bottom:2.5rem;letter-spacing:-.02em;}
-.asm-title span{color:var(--muted);font-size:.9rem;font-family:var(--font-mono);display:block;margin-top:.3rem;}
-.asm-layers{display:flex;flex-direction:column;gap:.75rem;width:100%;max-width:420px;margin-bottom:2rem;}
-.asm-layer{display:flex;align-items:center;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;opacity:0;transform:translateX(-16px);transition:opacity .5s,transform .5s,border-color .5s,background .5s;}
-.asm-layer.loaded{opacity:1;transform:translateX(0);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.04);}
-.asm-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.asm-ico.exec{background:rgba(74,222,128,.12);}
-.asm-ico.settle{background:rgba(98,126,234,.12);}
-.asm-ico.da{background:rgba(124,92,252,.12);}
-.asm-text{flex:1;text-align:left;}
-.asm-lbl{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
-.asm-st{font-size:.85rem;font-weight:700;}
-.asm-st.pending{color:rgba(255,255,255,.2);}
-.asm-st.loading{color:var(--amber);}
-.asm-st.done{color:var(--accent);}
-.asm-check{font-size:1rem;opacity:0;transition:opacity .3s;}
-.asm-layer.loaded .asm-check{opacity:1;}
-.asm-bar{width:100%;max-width:420px;height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
-.asm-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0%;transition:width .4s;}
-#asm-log{font-size:.72rem;color:var(--muted);margin-top:1rem;font-family:var(--font-mono);}
-
-/* DASHBOARD */
-#scr-dashboard{flex-direction:column;animation:fadein .3s ease;}
-.dash-wrap{padding:1.5rem 2rem;max-width:1100px;margin:0 auto;width:100%;}
-.dash-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
-.dash-lbl{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.35rem;}
-.dash-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:.4rem;}
-.dash-sub{font-size:.8rem;color:var(--muted);}
-.key-badge{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .85rem;}
-.kbd-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0;}
-.kbd-lbl{font-size:.6rem;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-.kbd-ro{font-size:.58rem;font-family:var(--font-mono);color:var(--cyan);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);padding:1px 6px;border-radius:99px;margin-left:4px;}
-.kbd-addr{font-family:var(--font-mono);font-size:.75rem;color:var(--text);font-weight:700;}
-.kbd-eject{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.68rem;font-family:var(--font);margin-left:.5rem;transition:color .2s;}
-.kbd-eject:hover{color:var(--red);}
-.sec-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-.3px;margin-bottom:1rem;display:flex;align-items:center;gap:10px;color:var(--text);}
-.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-
-.tele-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;}
-.tele-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
-.tele-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.tele-card.g::before{background:linear-gradient(90deg,var(--accent),transparent);}
-.tele-card.c::before{background:linear-gradient(90deg,var(--cyan),transparent);}
-.tele-card.a::before{background:linear-gradient(90deg,var(--amber),transparent);}
-.tele-card.p::before{background:linear-gradient(90deg,var(--accent2),transparent);}
-.tele-lbl{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.6rem;}
-.tele-val{font-family:var(--font-head);font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:.3rem;transition:color .3s;}
-.tele-s{font-size:.7rem;color:var(--muted);}
-.tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:.62rem;padding:2px 8px;border-radius:99px;margin-top:.5rem;}
-.tag.ok{background:rgba(74,222,128,.1);color:var(--accent);}
-.tag.act{background:rgba(34,211,238,.1);color:var(--cyan);}
-.tag.mod{background:rgba(124,92,252,.1);color:var(--accent2);}
-.tag.live{background:rgba(250,204,21,.1);color:var(--amber);}
-
-.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
-.mod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
-.card-lbl{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;}
-.vm-tabs{display:flex;gap:.4rem;}
-.vm-tab{flex:1;padding:.6rem .4rem;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.3);font-family:var(--font-mono);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
-.vm-tab.active{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.4);color:var(--accent);}
-.vm-desc{margin-top:.85rem;font-size:.75rem;color:var(--muted);line-height:1.6;}
-.vm-desc strong{color:var(--accent);font-family:var(--font-mono);}
-
-/* GAS */
-.gas-rows{display:flex;flex-direction:column;gap:.5rem;}
-.gas-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem;border-radius:9px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.03);}
-.gr-lbl{font-size:.75rem;color:rgba(255,255,255,.45);}
-.gr-val{font-family:var(--font-mono);font-size:.75rem;font-weight:700;color:var(--accent);}
-.gr-val.pulse{animation:blink .9s infinite;}
-.gr-val.live-amber{color:var(--amber);}
-.gas-note{margin-top:.6rem;font-size:.65rem;font-family:var(--font-mono);color:var(--muted);background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:.4rem .7rem;line-height:1.5;}
-
-/* VALIDATOR PACK */
-.vpack{display:flex;flex-direction:column;gap:.6rem;}
-.vpack-action{display:flex;flex-direction:column;gap:.5rem;padding:.9rem 1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;transition:border-color .2s;}
-.vpack-action:hover{border-color:rgba(74,222,128,.2);}
-.vpack-hd{display:flex;align-items:center;justify-content:space-between;}
-.vpack-name{font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:6px;}
-.vpack-fee{font-family:var(--font-mono);font-size:.65rem;color:var(--muted);}
-.vpack-desc{font-size:.72rem;color:var(--muted);line-height:1.5;}
-.vpack-input{display:flex;gap:.5rem;margin-top:.3rem;flex-wrap:wrap;}
-.vpack-field{flex:1;min-width:80px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.45rem .75rem;color:var(--text);font-family:var(--font-mono);font-size:.75rem;outline:none;transition:border-color .2s;}
-.vpack-field:focus{border-color:rgba(74,222,128,.35);}
-.vpack-field::placeholder{color:var(--muted);}
-.vpack-btn{padding:.45rem 1rem;border-radius:8px;border:1px solid rgba(74,222,128,.4);background:rgba(74,222,128,.08);color:var(--accent);font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.vpack-btn:hover:not(:disabled){background:rgba(74,222,128,.18);}
-.vpack-btn:disabled{opacity:.4;cursor:not-allowed;}
-
-/* TOAST */
-.tx-toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px;}
-.toast{display:flex;align-items:flex-start;gap:.65rem;padding:.75rem 1rem;border-radius:12px;border:1px solid;font-size:.75rem;animation:slideup .3s ease;backdrop-filter:blur(12px);}
-.toast.pending{background:rgba(250,204,21,.07);border-color:rgba(250,204,21,.25);color:var(--amber);}
-.toast.success{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.25);color:var(--accent);}
-.toast.error{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.25);color:var(--red);}
-.toast-ico{font-size:1rem;flex-shrink:0;margin-top:1px;}
-.toast-msg{flex:1;line-height:1.6;}
-.toast-msg a{color:inherit;opacity:.7;font-family:var(--font-mono);font-size:.65rem;word-break:break-all;}
-
-.layer-item{display:flex;align-items:center;gap:.85rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.li-n{font-family:var(--font-mono);font-size:.65rem;color:var(--muted);width:20px;flex-shrink:0;}
-.li-ico{width:32px;height:32px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
-.li-ico img{width:22px;height:22px;object-fit:contain;}
-.li-info{flex:1;}
-.li-name{font-size:.82rem;font-weight:700;}
-.li-pill{font-family:var(--font-mono);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:99px;}
-
-@media(max-width:700px){
-  .tele-grid{grid-template-columns:1fr 1fr;}
-  .mod-grid{grid-template-columns:1fr;}
-  .dash-wrap{padding:1rem;}
-  .nav-links{display:none;}
-  .tx-toast{left:1rem;right:1rem;max-width:unset;}
-}
+.status-tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;color:var(--accent);background:rgba(74,222,128,.1);padding:4px 10px;border-radius:20px;margin-bottom:1rem;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--accent);padding:.8rem 1.2rem;border-radius:10px;font-size:.8rem;z-index:1000;animation:fadeup 0.3s ease;}
+@keyframes fadeup{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
 </style>
 </head>
 <body>
-<canvas id="net-canvas"></canvas>
-<div id="tx-toast" class="tx-toast"></div>
 
 <nav class="nav">
-  <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
-  <div class="nav-right">
-    <div class="nav-links">
-      <a class="nav-link" href="menu.html">Home</a>
-      <a class="nav-link" href="market.html">Market</a>
-      <a class="nav-link active" href="garage.html">Garage</a>
-      <a class="nav-link" href="wallet.html">Swap</a>
-    </div>
-    <button class="nav-btn" id="nav-btn" onclick="navClick()">Insert Validator Key</button>
-  </div>
+  <div class="nav-logo">RIALO CORE</div>
+  <button class="nav-btn" id="connect-btn" onclick="connect()">Connect Wallet</button>
 </nav>
 
-<div class="page">
-  <div class="status-row">
-    <div class="node-badge" id="node-badge">
-      <div class="nbdot"></div><span id="badge-txt">NODE_STATUS: DISCONNECTED</span>
+<div class="container" id="main-content" style="display:none;">
+    <div class="status-tag">● VALIDATOR ACTIVE</div>
+    
+    <div class="card">
+        <span class="label">Balance Context</span>
+        <div class="val-big">$0.63 <span style="font-size:1rem; color:var(--muted)">ETH</span></div>
+        <p style="font-size:.7rem; color:var(--muted)">Simulator Mode: Low-Cost Enabled</p>
     </div>
-  </div>
 
-  <div id="scr-standby" class="screen" style="display:flex;">
-    <h2>Rialo Alpha Core<br><span class="dim">// Validator Garage</span></h2>
-    <p>Mesin modular belum aktif. Mount Validator Key untuk memulai proses assembly dan mengakses Engine Telemetry Dashboard.</p>
-    <div class="tx-pill">⚡ Validator Pack · Stake ETH + Approve Kontrak</div>
-    <div class="chain-pill">⛓ Ethereum Mainnet · Fixed Fee: 0.000001 ETH</div>
-    <div id="wallet-area"></div>
-  </div>
-
-  <div id="scr-assembly" class="screen">
-    <div class="asm-title">Mounting Validator Key…<span>Assembling Supermodular Stack</span></div>
-    <div class="asm-layers">
-      <div class="asm-layer" id="al1"><div class="asm-ico exec">⚙️</div><div class="asm-text"><div class="asm-lbl">Layer 1 · Execution</div><div class="asm-st pending" id="as1">Waiting…</div></div><span class="asm-check">✓</span></div>
-      <div class="asm-layer" id="al2"><div class="asm-ico settle">🔷</div><div class="asm-text"><div class="asm-lbl">Layer 2 · Settlement</div><div class="asm-st pending" id="as2">Waiting…</div></div><span class="asm-check">✓</span></div>
-      <div class="asm-layer" id="al3"><div class="asm-ico da">🗄️</div><div class="asm-text"><div class="asm-lbl">Layer 3 · Data Availability</div><div class="asm-st pending" id="as3">Waiting…</div></div><span class="asm-check">✓</span></div>
+    <div class="card">
+        <span class="label">Stake Transaction</span>
+        <div class="input-group">
+            <input type="number" id="tx-amount" class="input-field" value="0.000001" step="0.000001">
+            <button class="btn-send" onclick="sendTinyTx()">Stake Now →</button>
+        </div>
+        <div style="margin-top:1rem; display:flex; justify-content:space-between; font-size:.65rem; color:var(--muted)">
+            <span>Est. Cost: ~$0.003</span>
+            <span>Est. Clicks: ~200x</span>
+        </div>
     </div>
-    <div class="asm-bar"><div class="asm-fill" id="asm-fill"></div></div>
-    <p id="asm-log">Initializing…</p>
-  </div>
-
-  <div id="scr-dashboard" class="screen">
-    <div class="dash-wrap">
-      <div class="dash-hdr">
-        <div>
-          <div class="dash-lbl">Engine Telemetry</div>
-          <div class="dash-title">Validator Dashboard</div>
-          <div class="dash-sub">Rialo Alpha Core · Supermodular Stack Active · Ethereum Mainnet</div>
-        </div>
-        <div class="key-badge">
-          <div class="kbd-dot"></div>
-          <div>
-            <div class="kbd-lbl">Validator Key <span class="kbd-ro">TX ACTIVE</span></div>
-            <div class="kbd-addr" id="kbd-addr">—</div>
-          </div>
-          <button class="kbd-eject" onclick="doDisconnect()">Eject ↗</button>
-        </div>
-      </div>
-
-      <div class="sec-title">Live Engine Telemetry</div>
-      <div class="tele-grid">
-        <div class="tele-card g">
-          <div class="tele-lbl">Time to Finality</div>
-          <div class="tele-val" id="finality-text">50<span style="font-size:1rem">ms</span></div>
-          <div class="tele-s">Confirmed on Rialo L1</div>
-          <div class="tag ok" id="finality-tag">● OPTIMAL</div>
-        </div>
-        <div class="tele-card c">
-          <div class="tele-lbl">Gas Fees · Live</div>
-          <div class="tele-val" style="font-size:1.3rem;" id="gas-tele-val">…</div>
-          <div class="tele-s">Ethereum Mainnet real-time</div>
-          <div class="tag live">● LIVE</div>
-        </div>
-        <div class="tele-card a">
-          <div class="tele-lbl">Active VM</div>
-          <div class="tele-val" style="font-size:1.3rem" id="vm-label">EVM</div>
-          <div class="tele-s">Swappable without chain rebuild</div>
-          <div class="tag act">● MODULAR</div>
-        </div>
-        <div class="tele-card p">
-          <div class="tele-lbl">Stack Integrity</div>
-          <div class="tele-val" style="font-size:1.2rem" id="integrity-text">3 / 3</div>
-          <div class="tele-s">All layers operational</div>
-          <div class="tag mod" id="integrity-tag">● VERIFIED</div>
-        </div>
-      </div>
-
-      <div class="sec-title">Supermodular Diagnostic Suite</div>
-      <div class="mod-grid">
-
-        <div class="mod-card">
-          <div class="card-lbl">⚙ Modular VM Interface</div>
-          <div class="vm-tabs">
-            <button class="vm-tab active" onclick="switchVM('EVM',this)">EVM</button>
-            <button class="vm-tab" onclick="switchVM('SVM',this)">SVM</button>
-            <button class="vm-tab" onclick="switchVM('MOVE',this)">MOVE</button>
-          </div>
-          <div class="vm-desc" id="vm-desc">Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity contracts ready. Fee: Fixed 0.000001 ETH.</div>
-        </div>
-
-        <div class="mod-card">
-          <div class="card-lbl">⛽ Gas System — Ethereum Mainnet · Live</div>
-          <div class="gas-rows">
-            <div class="gas-row">
-              <span class="gr-lbl">Base Fee</span>
-              <span class="gr-val pulse" id="gas-base">Fetching…</span>
-            </div>
-            <div class="gas-row">
-              <span class="gr-lbl">Priority Fee</span>
-              <span class="gr-val" id="gas-priority">0 GWEI</span>
-            </div>
-            <div class="gas-row">
-              <span class="gr-lbl">Tx Cost</span>
-              <span class="gr-val pulse" id="gas-cost">Fetching…</span>
-            </div>
-            <div class="gas-row">
-              <span class="gr-lbl">Subsidy Status</span>
-              <span class="gr-val live-amber" id="subsidy-status">ACTIVE ⚡</span>
-            </div>
-          </div>
-          <div class="gas-note">Biaya tetap: <strong style="color:var(--accent)">0.000001 ETH</strong> per tx · Base Fee tampil sebagai referensi live Mainnet</div>
-        </div>
-
-        <div class="mod-card" style="display:flex;flex-direction:column;align-items:center;">
-          <div class="card-lbl" style="align-self:flex-start">🏁 Finality Gauge</div>
-          <svg viewBox="0 0 140 80" style="width:160px;height:90px">
-            <path d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10" stroke-linecap="round"/>
-            <path id="gauge-path" d="M10 75 A60 60 0 0 1 130 75" fill="none" stroke="#4ade80" stroke-width="10" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="40" style="transition:all .5s;"/>
-            <text id="gauge-val" x="70" y="60" text-anchor="middle" font-family="Syne" font-size="26" font-weight="800" fill="#4ade80">50</text>
-          </svg>
-        </div>
-
-        <div class="mod-card" id="stack-card"></div>
-      </div>
-
-      <div class="sec-title">🔥 Validator Pack — Transaksi Aktif</div>
-      <div class="mod-grid">
-
-        <div class="mod-card">
-          <div class="card-lbl">🥩 Stake &amp; Send ETH</div>
-          <div class="vpack">
-            <div class="vpack-action">
-              <div class="vpack-hd">
-                <span class="vpack-name">💎 Stake ETH</span>
-                <span class="vpack-fee">Fee: 0.000001 ETH</span>
-              </div>
-              <div class="vpack-desc">Deposit ETH ke Validator Contract. Transaksi simulasi Alpha Core.</div>
-              <div class="vpack-input">
-                <input class="vpack-field" id="stake-amount" type="number" placeholder="0.000001 ETH" min="0.000001" step="0.000001"/>
-                <button class="vpack-btn" id="stake-btn" onclick="doStake()">Stake →</button>
-              </div>
-            </div>
-            <div class="vpack-action">
-              <div class="vpack-hd">
-                <span class="vpack-name">📤 Send ETH</span>
-                <span class="vpack-fee">Fee: 0.000001 ETH</span>
-              </div>
-              <div class="vpack-desc">Kirim ETH ke address lain langsung dari Garage.</div>
-              <div class="vpack-input">
-                <input class="vpack-field" id="send-addr" type="text" placeholder="Address 0x…"/>
-                <input class="vpack-field" id="send-amount" type="number" placeholder="ETH" min="0.000001" step="0.000001" style="max-width:90px;"/>
-                <button class="vpack-btn" id="send-btn" onclick="doSend()">Send →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mod-card">
-          <div class="card-lbl">🔐 Approve &amp; Revoke Kontrak</div>
-          <div class="vpack">
-            <div class="vpack-action">
-              <div class="vpack-hd">
-                <span class="vpack-name">✅ Approve</span>
-                <span class="vpack-fee">Fee: 0.000001 ETH</span>
-              </div>
-              <div class="vpack-desc">Approve kontrak validator untuk akses token ERC-20 kamu. Masukkan address kontrak target.</div>
-              <div class="vpack-input">
-                <input class="vpack-field" id="approve-token" type="text" placeholder="Token address 0x…"/>
-                <input class="vpack-field" id="approve-contract" type="text" placeholder="Spender 0x…"/>
-                <button class="vpack-btn" id="approve-btn" onclick="doApprove()">Approve →</button>
-              </div>
-            </div>
-            <div class="vpack-action">
-              <div class="vpack-hd">
-                <span class="vpack-name">🔄 Revoke</span>
-                <span class="vpack-fee">Fee: 0.000001 ETH</span>
-              </div>
-              <div class="vpack-desc">Cabut approval dari kontrak sebelumnya. Masukkan token &amp; spender yang ingin di-revoke.</div>
-              <div class="vpack-input">
-                <input class="vpack-field" id="revoke-token" type="text" placeholder="Token address 0x…"/>
-                <input class="vpack-field" id="revoke-contract" type="text" placeholder="Spender 0x…"/>
-                <button class="vpack-btn" id="revoke-btn" onclick="doRevoke()">Revoke →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
 </div>
 
+<div class="container" id="login-prompt">
+    <div class="card" style="text-align:center; padding:3rem 1.5rem;">
+        <h2 style="margin-bottom:1rem">Akses Validator</h2>
+        <p style="color:var(--muted); font-size:.9rem; margin-bottom:2rem;">Silakan koneksikan dompet untuk masuk ke Garage.</p>
+        <button class="btn-send" onclick="connect()">Connect OKX Wallet</button>
+    </div>
+</div>
+
+<div id="toast-box"></div>
+
 <script>
-/* ── CANVAS ── */
-(function(){
-  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
-  let W,H,ang=0;
-  const nodes=Array.from({length:80},()=>({bx:(Math.random()-.5)*2000,by:(Math.random()-.5)*1200,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+1}));
-  function res(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
-  window.addEventListener('resize',res);res();
-  (function draw(){
-    ctx.clearRect(0,0,W,H);ang+=.0005;
-    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
-    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1000)n.bx=1000;if(n.bx>1000)n.bx=-1000;});
-    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
-    pts.forEach((p,i)=>{
-      for(let j=i+1;j<pts.length;j++){
-        const d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);
-        if(d<150){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.3})`;ctx.stroke();}
-      }
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fillStyle='rgba(74,222,128,.5)';ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  })();
-})();
+let userAddress = null;
 
-/* ── STATE ── */
-let walletAddress=null,currentVM='EVM',gasInterval=null;
-const FIXED_FEE_ETH=0.000001;
-const DEPOSIT_CONTRACT='0x00000000219ab540356cBB839Cbe05303d7705Fa';
-const MAX_UINT256='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+async function connect() {
+    if(!window.ethereum) return alert("Gunakan OKX Wallet!");
+    try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAddress = accounts[0];
+        document.getElementById('connect-btn').innerText = userAddress.slice(0,6)+'...';
+        document.getElementById('login-prompt').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        showToast("Wallet Connected!");
+    } catch (e) { console.error(e); }
+}
 
-/* ── VM DATA ── */
-const VM={
-  EVM:{finality:50,fStatus:'OPTIMAL',integrity:'3 / 3',iStatus:'VERIFIED',color:'#4ade80',gaugeOffset:40,
-    stack:[{name:"Ethereum",logo:"https://cryptologos.cc/logos/ethereum-eth-logo.png?v=032",status:"SETTLEMENT"},{name:"Arbitrum",logo:"https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=032",status:"L2 EXECUTION"},{name:"Optimism",logo:"https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=032",status:"SCALING"}],
-    desc:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Solidity ready. Fee: Fixed 0.000001 ETH.'},
-  SVM:{finality:22,fStatus:'ULTRA FAST',integrity:'12 / 12',iStatus:'STABLE',color:'#22d3ee',gaugeOffset:15,
-    stack:[{name:"Solana",logo:"https://cryptologos.cc/logos/solana-sol-logo.png?v=032",status:"SVM CORE"},{name:"Pyth Network",logo:"https://cryptologos.cc/logos/pyth-network-pyth-logo.png?v=032",status:"ORACLE"},{name:"Jupiter",logo:"https://static.jup.ag/jup/tokens/jup.png",status:"AGGREGATOR"}],
-    desc:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel tx processing. Rust-based. Fee: Fixed 0.000001 ETH.'},
-  MOVE:{finality:45,fStatus:'SECURE',integrity:'5 / 5',iStatus:'SYNCHRONIZED',color:'#7c5cfc',gaugeOffset:55,
-    stack:[{name:"Sui",logo:"https://cryptologos.cc/logos/sui-sui-logo.png?v=032",status:"OBJECT-VM"},{name:"Aptos",logo:"https://cryptologos.cc/logos/aptos-apt-logo.png?v=032",status:"MOVE-CORE"},{name:"Movement",logo:"https://avatars.githubusercontent.com/u/131062835?s=200&v=4",status:"M2 STACK"}],
-    desc:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset mgmt. Fee: Fixed 0.000001 ETH.'}
-};
+async function sendTinyTx() {
+    const amountInput = document.getElementById('tx-amount').value;
+    // Konversi ke Hex
+    const hexValue = "0x" + BigInt(Math.floor(parseFloat(amountInput) * 1e18)).toString(16);
+    
+    showToast("Membuka OKX Wallet...");
 
-/* ── GAS LIVE FETCH ── */
-async function fetchLiveGas(){
-  try{
-    const r=await fetch('https://cloudflare-eth.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})});
-    const j=await r.json();
-    if(j.result){
-      const gwei=(parseInt(j.result,16)/1e9).toFixed(3);
-      const elBase=document.getElementById('gas-base');
-      const elCost=document.getElementById('gas-cost');
-      const elTele=document.getElementById('gas-tele-val');
-      if(elBase){elBase.textContent=`${gwei} GWEI`;elBase.classList.remove('pulse');}
-      if(elCost){elCost.textContent=`${FIXED_FEE_ETH} ETH`;elCost.classList.remove('pulse');}
-      if(elTele)elTele.textContent=`${gwei} GWEI`;
-      document.getElementById('gas-priority').textContent='0 GWEI';
-      document.getElementById('subsidy-status').textContent='LIVE ⚡';
+    try {
+        const tx = await window.ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [{
+                from: userAddress,
+                to: '0x00000000219ab540356cBB839Cbe05303d7705Fa', // Contract Stake
+                value: hexValue,
+                gas: '0x5208', // Paksa Gas Limit ke 21.000 (Paling murah)
+            }]
+        });
+        showToast("Sukses! Sisa saldo masih aman.");
+    } catch (e) {
+        showToast("Gagal atau Dibatalkan");
+        console.error(e);
     }
-  }catch{
-    const elBase=document.getElementById('gas-base');
-    const elCost=document.getElementById('gas-cost');
-    if(elBase&&elBase.classList.contains('pulse')){elBase.textContent='Unavailable';elBase.classList.remove('pulse');}
-    if(elCost&&elCost.classList.contains('pulse')){elCost.textContent=`${FIXED_FEE_ETH} ETH`;elCost.classList.remove('pulse');}
-    document.getElementById('subsidy-status').textContent='LIVE ⚡';
-  }
-}
-function startGasPolling(){
-  fetchLiveGas();
-  if(gasInterval)clearInterval(gasInterval);
-  gasInterval=setInterval(fetchLiveGas,8000);
 }
 
-/* ── TOAST ── */
-const _timers={};
-function showToast(id,type,msg){
-  const box=document.getElementById('tx-toast');
-  let el=document.getElementById('t-'+id);
-  if(!el){el=document.createElement('div');el.id='t-'+id;box.appendChild(el);}
-  const ico=type==='pending'?'⏳':type==='success'?'✅':'❌';
-  el.className=`toast ${type}`;
-  el.innerHTML=`<span class="toast-ico">${ico}</span><span class="toast-msg">${msg}</span>`;
-  if(_timers[id])clearTimeout(_timers[id]);
-  if(type!=='pending')_timers[id]=setTimeout(()=>{el.remove();},8000);
+function showToast(msg) {
+    const box = document.getElementById('toast-box');
+    box.innerHTML = `<div class="toast">${msg}</div>`;
+    setTimeout(() => { box.innerHTML = ''; }, 3000);
 }
-
-/* ── ABI ENCODE ── */
-function encodeApprove(spender,amountHex){
-  const sel='095ea7b3';
-  const addr=spender.toLowerCase().replace('0x','').padStart(64,'0');
-  const val=amountHex.replace('0x','').padStart(64,'0');
-  return '0x'+sel+addr+val;
-}
-
-/* ── PROVIDER ── */
-function getProvider(type){
-  const pp=window.ethereum?.providers||[];
-  if(type==='metamask'){if(pp.length){const p=pp.find(x=>x.isMetaMask&&!x.isBraveWallet&&!x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isMetaMask)return window.ethereum;return null;}
-  if(type==='coinbase'){if(pp.length){const p=pp.find(x=>x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isCoinbaseWallet)return window.ethereum;if(window.coinbaseWalletExtension)return window.coinbaseWalletExtension;return null;}
-  if(type==='phantom'){if(window.phantom?.ethereum)return window.phantom.ethereum;if(pp.length){const p=pp.find(x=>x.isPhantom);if(p)return p;}if(window.ethereum?.isPhantom)return window.ethereum;return null;}
-  if(type==='okx'){if(window.okxwallet)return window.okxwallet;if(window.okexchain)return window.okexchain;if(pp.length){const p=pp.find(x=>x.isOkxWallet||x.isOKExWallet);if(p)return p;}return null;}
-  return window.ethereum||null;
-}
-const AP=()=>window._rialoProv||window.ethereum;
-
-/* ── TRANSACTIONS ── */
-function toHex(eth){return'0x'+BigInt(Math.round(eth*1e15)).toString(16)+'000';}
-
-async function doStake(){
-  const prov=AP();if(!prov||!walletAddress){showToast('stake','error','Wallet tidak terkoneksi.');return;}
-  const amt=parseFloat(document.getElementById('stake-amount').value);
-  if(!amt||amt<0.000001){showToast('stake','error','Minimum stake 0.000001 ETH.');return;}
-  const btn=document.getElementById('stake-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('stake','pending','Menunggu konfirmasi stake di wallet kamu…');
-  try{
-    const total=toHex(amt+FIXED_FEE_ETH);
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:DEPOSIT_CONTRACT,value:total,gas:'0x7A120'}]});
-    showToast('stake','success',`Stake berhasil! 🎉<br><a href="https://etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('stake','error',e.code===4001?'Ditolak.':e.message||'Stake gagal.');}
-  finally{btn.disabled=false;btn.textContent='Stake →';}
-}
-
-async function doSend(){
-  const prov=AP();if(!prov||!walletAddress){showToast('send','error','Wallet tidak terkoneksi.');return;}
-  const to=document.getElementById('send-addr').value.trim();
-  const amt=parseFloat(document.getElementById('send-amount').value);
-  if(!to||!to.startsWith('0x')||to.length!==42){showToast('send','error','Address tidak valid (harus 42 karakter mulai 0x).');return;}
-  if(!amt||amt<=0){showToast('send','error','Masukkan jumlah ETH.');return;}
-  const btn=document.getElementById('send-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('send','pending','Menunggu konfirmasi send di wallet kamu…');
-  try{
-    const total=toHex(amt+FIXED_FEE_ETH);
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to,value:total,gas:'0x5208'}]});
-    showToast('send','success',`Send berhasil! 📤<br><a href="https://etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('send','error',e.code===4001?'Ditolak.':e.message||'Send gagal.');}
-  finally{btn.disabled=false;btn.textContent='Send →';}
-}
-
-async function doApprove(){
-  const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet tidak terkoneksi.');return;}
-  const token=document.getElementById('approve-token').value.trim();
-  const spender=document.getElementById('approve-contract').value.trim();
-  if(!token||token.length!==42||!token.startsWith('0x')){showToast('approve','error','Token address tidak valid.');return;}
-  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('approve','error','Spender address tidak valid.');return;}
-  const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('approve','pending','Menunggu konfirmasi approve di wallet kamu…');
-  try{
-    const data=encodeApprove(spender,MAX_UINT256);
-    const feeHex=toHex(FIXED_FEE_ETH);
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data,gas:'0x30D40',value:feeHex}]});
-    showToast('approve','success',`Approve berhasil! ✅<br><a href="https://etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('approve','error',e.code===4001?'Ditolak.':e.message||'Approve gagal.');}
-  finally{btn.disabled=false;btn.textContent='Approve →';}
-}
-
-async function doRevoke(){
-  const prov=AP();if(!prov||!walletAddress){showToast('revoke','error','Wallet tidak terkoneksi.');return;}
-  const token=document.getElementById('revoke-token').value.trim();
-  const spender=document.getElementById('revoke-contract').value.trim();
-  if(!token||token.length!==42||!token.startsWith('0x')){showToast('revoke','error','Token address tidak valid.');return;}
-  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('revoke','error','Spender address tidak valid.');return;}
-  const btn=document.getElementById('revoke-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('revoke','pending','Menunggu konfirmasi revoke di wallet kamu…');
-  try{
-    const data=encodeApprove(spender,'0x0000000000000000000000000000000000000000000000000000000000000000');
-    const feeHex=toHex(FIXED_FEE_ETH);
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data,gas:'0x30D40',value:feeHex}]});
-    showToast('revoke','success',`Revoke berhasil! 🔄<br><a href="https://etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('revoke','error',e.code===4001?'Ditolak.':e.message||'Revoke gagal.');}
-  finally{btn.disabled=false;btn.textContent='Revoke →';}
-}
-
-/* ── SCREEN ── */
-function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');document.getElementById('scr-'+n).style.display='flex';}
-function setNavBtn(a){const b=document.getElementById('nav-btn');b.innerHTML=a?`<span class="wdot"></span>${a.slice(0,6)}…${a.slice(-4)}`:'Insert Validator Key';b.className=a?'nav-btn on':'nav-btn';}
-function navClick(){walletAddress?doDisconnect():renderPicker();}
-function doDisconnect(){
-  walletAddress=null;window._rialoProv=null;
-  if(gasInterval){clearInterval(gasInterval);gasInterval=null;}
-  setNavBtn(null);
-  document.getElementById('node-badge').classList.remove('online');
-  document.getElementById('badge-txt').textContent='NODE_STATUS: DISCONNECTED';
-  showScreen('standby');renderPicker();
-}
-
-/* ── WALLET PICKER ── */
-function renderPicker(){
-  const hasMM=!!getProvider('metamask'),hasCB=!!getProvider('coinbase'),hasPH=!!getProvider('phantom'),hasOKX=!!getProvider('okx');
-  const anyFound=hasMM||hasCB||hasPH||hasOKX||!!window.ethereum;
-  const pageUrl=encodeURIComponent(location.href);
-  document.getElementById('wallet-area').innerHTML=`
-    <div class="wpicker-wrap">
-      <div class="wpicker-note">⚡ Validator Pack · Stake + Approve · Fee 0.000001 ETH per tx</div>
-      <div class="wpicker">
-        <div class="witem${hasMM?'':' dim'}" onclick="${hasMM?'connectWallet(\'metamask\')':'void(0)'}">
-          <div class="wlogo" style="background:rgba(247,147,26,.12)">🦊</div>
-          <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Extension / MetaMask Mobile · Ethereum Mainnet</div></div>
-          <span class="wbadge ${hasMM?'ok':'no'}">${hasMM?'● Detected':'○ Not Found'}</span>
-        </div>
-        <div class="witem${hasCB?'':' dim'}" onclick="${hasCB?'connectWallet(\'coinbase\')':'void(0)'}">
-          <div class="wlogo" style="background:rgba(0,82,255,.12)">🔵</div>
-          <div class="winfo"><div class="wname">Coinbase Wallet</div><div class="wsub">Extension / Coinbase App · Ethereum Mainnet</div></div>
-          <span class="wbadge ${hasCB?'ok':'no'}">${hasCB?'● Detected':'○ Not Found'}</span>
-        </div>
-        <div class="witem${hasPH?'':' dim'}" onclick="${hasPH?'connectWallet(\'phantom\')':'void(0)'}">
-          <div class="wlogo" style="background:rgba(153,69,255,.12)">👻</div>
-          <div class="winfo"><div class="wname">Phantom</div><div class="wsub">Extension / Phantom App · EVM Mainnet</div></div>
-          <span class="wbadge ${hasPH?'ok':'no'}">${hasPH?'● Detected':'○ Not Found'}</span>
-        </div>
-        <div class="witem${hasOKX?'':' dim'}" onclick="${hasOKX?'connectWallet(\'okx\')':'void(0)'}">
-          <div class="wlogo" style="background:rgba(255,255,255,.06)">⚫</div>
-          <div class="winfo"><div class="wname">OKX Wallet</div><div class="wsub">Extension / OKX App · Ethereum Mainnet</div></div>
-          <span class="wbadge ${hasOKX?'ok':'no'}">${hasOKX?'● Detected':'○ Not Found'}</span>
-        </div>
-        ${!anyFound?`<div class="no-wallet-warn">⚠️ Tidak ada wallet terdeteksi.</div>`:''}
-        <a class="mobile-link" href="https://metamask.app.link/dapp/${pageUrl}">📱 Buka di MetaMask Mobile →</a>
-      </div>
-    </div>`;
-}
-
-/* ── CONNECT ── */
-async function connectWallet(type){
-  const provider=getProvider(type);
-  if(!provider){showToast('conn','error','Provider tidak ditemukan.');return;}
-  document.getElementById('wallet-area').innerHTML=`<div class="conn-state"><div class="conn-spin"></div><div class="conn-lbl">Menunggu konfirmasi…</div></div>`;
-  try{
-    const accounts=await provider.request({method:'eth_requestAccounts'});
-    walletAddress=accounts[0];window._rialoProv=provider;
-    onConnected();
-  }catch(err){
-    renderPicker();
-  }
-}
-
-/* ── FLOW ── */
-function onConnected(){setNavBtn(walletAddress);runAssembly();}
-function runAssembly(){
-  showScreen('assembly');
-  const fill=document.getElementById('asm-fill');
-  const steps=[{id:'al1',st:'as1',txt:'RISC-V Engine Loaded',p:'33%'},{id:'al2',st:'as2',txt:'Integrity Verified',p:'66%'},{id:'al3',st:'as3',txt:'DA Layer Synced',p:'100%'}];
-  let i=0;
-  (function next(){
-    if(i>=steps.length){setTimeout(initDash,600);return;}
-    const s=steps[i],el=document.getElementById(s.st);
-    el.className='asm-st loading';el.textContent='Loading...';
-    setTimeout(()=>{document.getElementById(s.id).classList.add('loaded');el.className='asm-st done';el.textContent=s.txt;fill.style.width=s.p;i++;next();},800);
-  })();
-}
-function initDash(){
-  showScreen('dashboard');
-  document.getElementById('node-badge').classList.add('online');
-  document.getElementById('badge-txt').textContent='NODE_STATUS: ONLINE';
-  document.getElementById('kbd-addr').textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6);
-  switchVM('EVM',document.querySelector('.vm-tab'));
-  startGasPolling();
-}
-
-/* ── VM SWITCH ── */
-function switchVM(vm,btn){
-  currentVM=vm;const d=VM[vm];
-  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  const fEl=document.getElementById('finality-text'),iEl=document.getElementById('integrity-text');
-  if(fEl){fEl.innerHTML=`${d.finality}<span style="font-size:1rem">ms</span>`;fEl.style.color=d.color;}
-  if(iEl){iEl.textContent=d.integrity;iEl.style.color=d.color;}
-  document.getElementById('finality-tag').innerHTML=`● ${d.fStatus}`;
-  document.getElementById('integrity-tag').innerHTML=`● ${d.iStatus}`;
-  const gp=document.getElementById('gauge-path'),gv=document.getElementById('gauge-val');
-  if(gp){gp.style.strokeDashoffset=d.gaugeOffset;gp.style.stroke=d.color;}
-  if(gv){gv.textContent=d.finality;gv.setAttribute('fill',d.color);}
-  const sc=document.getElementById('stack-card');
-  if(sc){
-    let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
-    d.stack.forEach((item,idx)=>{h+=`<div class="layer-item"><div class="li-n">0${idx+1}</div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});
-    sc.innerHTML=h;
-  }
-  document.getElementById('vm-label').textContent=vm;document.getElementById('vm-label').style.color=d.color;
-  document.getElementById('vm-desc').innerHTML=d.desc;
-}
-
-/* ── INIT ── */
-renderPicker();
 </script>
 </body>
 </html>
