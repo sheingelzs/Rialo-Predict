@@ -120,7 +120,56 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <div class="lock-sub">Connect your wallet to see your position among Alpha Operators on the Rialo testnet.</div>
     <div id="wallet-area"></div>
   </div>
+async function checkWalletAndUnlock() {
+  const lockScreen = document.getElementById('lock-screen');
+  const lbContent = document.getElementById('lb-content');
+  const walletArea = document.getElementById('wallet-area');
 
+  if (window.ethereum) {
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    
+    if (accounts.length > 0) {
+      // Jika sudah connect
+      lockScreen.style.display = 'none';
+      lbContent.style.display = 'block';
+      connectedWallet = accounts[0];
+      renderLB(); // Jalankan fungsi render tabel kamu
+    } else {
+      // Jika belum connect, tampilkan tombol di wallet-area
+      walletArea.innerHTML = `
+        <button onclick="connectAndUnlock()" class="lb-back" style="padding:15px 40px; margin-top:20px;">
+          UNSEAL DATA [CONNECT WALLET]
+        </button>`;
+    }
+  }
+}
+
+// Fungsi tombol Connect
+async function connectAndUnlock() {
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (accounts.length > 0) {
+      checkWalletAndUnlock(); // Refresh status
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Jalankan pengecekan saat halaman dibuka
+window.addEventListener('DOMContentLoaded', checkWalletAndUnlock);
+window.connectAndUnlock = connectAndUnlock;
+  #lock-screen {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(15, 25, 41, 0.8);
+  border: 1px dashed var(--cyan);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+.lock-icon { font-size: 4rem; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--cyan)); }
+.lock-title { font-family: var(--font-head); font-size: 1.8rem; color: var(--cyan); }
+.lock-sub { color: var(--muted); margin-top: 10px; max-width: 400px; margin-inline: auto; }
   <div id="main-screen">
     <div class="board-wrap">
       <div class="board-hdr">
