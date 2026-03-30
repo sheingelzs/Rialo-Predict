@@ -21,7 +21,6 @@ REPLACE WITH:
 <a class="nav-link active" href="garage.html">Garage</a>
 <a class="nav-link" href="market.html">Market</a>
 <a class="nav-link" href="quest.html">Quests</a>
-<a class="nav-link" href="passport.html">Passport</a>
 <a class="nav-link" href="leaderboard.html">Leaderboard</a>
 </div>
 
