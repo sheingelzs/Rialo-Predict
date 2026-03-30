@@ -21,6 +21,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:lpulse 2s infinite;}
 @keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .nav-links{display:flex;gap:.2rem;background:rgba(255,255,255,.05);border-radius:9px;padding:3px;}
 .nav-link{padding:.35rem .85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,.45);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:var(--font);}
 .nav-link:hover{color:rgba(255,255,255,.8);}
@@ -185,7 +186,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="name-label">Your Name / Handle</div>
         <input class="name-input" id="player-name" type="text" maxlength="20" placeholder="e.g. RialoBuilder" autocomplete="off"/>
       </div>
-      <button class="start-btn" onclick="startQuiz()">Start Quiz →</button>
+      <div class="name-input-wrap">
+        <div class="name-label">Connect Wallet (Required)</div>
+        <div id="wallet-connect-area"></div>
+      </div>
+      <button class="start-btn" id="start-btn" onclick="startQuiz()" disabled style="opacity:.4;cursor:not-allowed">Start Quiz →</button>
       <button class="lb-btn" onclick="showLeaderboard()">🏆 View Leaderboard</button>
     </div>
   </div>
@@ -271,7 +276,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 </div>
 
-<script>
+<script type="module">
 /* ── CANVAS — menu.html style ── */
 (function(){
   const canvas = document.getElementById('net-canvas');
@@ -385,33 +390,246 @@ let timeLeft = 15;
 let answered = false;
 let totalQ = QUESTIONS.length;
 
-/* ── STORAGE ── */
+/* ══════════════════════════════════════════
+   FIREBASE CONFIG
+   Ganti nilai di bawah dengan config Firebase kamu.
+   Cara dapat: Firebase Console → Project Settings → Your Apps → SDK setup
+   ══════════════════════════════════════════ */
+const FB_CONFIG = {
+  apiKey:            "GANTI_API_KEY_KAMU",
+  authDomain:        "GANTI_PROJECT.firebaseapp.com",
+  databaseURL:       "https://GANTI_PROJECT-default-rtdb.firebaseio.com",
+  projectId:         "GANTI_PROJECT",
+  storageBucket:     "GANTI_PROJECT.appspot.com",
+  messagingSenderId: "GANTI_SENDER_ID",
+  appId:             "GANTI_APP_ID"
+};
+
+/* ── FIREBASE INIT ── */
+import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const fbApp = initializeApp(FB_CONFIG);
+const db    = getDatabase(fbApp);
+
+/* ── WALLET DETECT (simple, no modal) ── */
+let connectedWallet = null;
+function getProvList(){const e=window.ethereum;if(!e)return[];return e.providers||[e];}
+function findProv(key){
+  const L=getProvList();
+  if(key==='metamask')return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;
+  if(key==='phantom')return L.find(p=>p.isPhantom)||null;
+  if(key==='okx')return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;
+  if(key==='coinbase')return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;
+  return window.ethereum||null;
+}
+function detectW(){
+  const L=getProvList();
+  return{
+    metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),
+    phantom:!!(L.find(p=>p.isPhantom)),
+    okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),
+    coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser))
+  };
+}
+
+/* ── WALLET AREA (inline, no modal) ── */
+function renderWalletConnect(){
+  const area = document.getElementById('wallet-connect-area');
+  if(!area) return;
+  if(connectedWallet){
+    area.innerHTML=`
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .9rem;font-size:.78rem;">
+        <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0"></div>
+        <span style="font-family:monospace;color:rgba(255,255,255,.6)">${connectedWallet.slice(0,6)}…${connectedWallet.slice(-4)}</span>
+        <span style="margin-left:auto;font-size:.65rem;color:var(--accent);font-weight:700">✓ Connected</span>
+      </div>`;
+    checkStartReady();
+    return;
+  }
+  const d=detectW();
+  const wallets=[
+    {key:'metamask',icon:'🦊',bg:'rgba(247,147,26,.12)',name:'MetaMask',ok:d.metamask},
+    {key:'phantom',icon:'👻',bg:'rgba(153,69,255,.12)',name:'Phantom',ok:d.phantom},
+    {key:'okx',icon:'⬛',bg:'rgba(255,255,255,.06)',name:'OKX Wallet',ok:d.okx},
+    {key:'coinbase',icon:'🔵',bg:'rgba(0,82,255,.12)',name:'Coinbase',ok:d.coinbase},
+  ];
+  const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMob){
+    const cur=encodeURIComponent(location.href);
+    area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
+      <div style="font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.35rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">📱 Open from wallet browser</div>
+      ${[{icon:'🦊',name:'MetaMask',href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},{icon:'👻',name:'Phantom',href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},{icon:'⬛',name:'OKX',href:`okx://wallet/dapp/url?dappUrl=${cur}`}]
+        .map(l=>`<div onclick="location.href='${l.href}'" style="display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:600">${l.icon} ${l.name} <span style="margin-left:auto;font-size:.65rem;color:var(--accent)">Open ↗</span></div>`)
+        .join('')}
+    </div>`;
+    return;
+  }
+  area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
+    <div style="font-size:.65rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.3rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">🔗 Connect wallet to submit score to global leaderboard</div>
+    ${wallets.map(w=>`
+      <div onclick="${w.ok?`connectQuizWallet('${w.key}')`:''}"
+           style="display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:${w.ok?'pointer':'not-allowed'};opacity:${w.ok?'1':'.35'};font-size:.82rem;font-weight:600;transition:all .2s"
+           onmouseover="${w.ok?`this.style.borderColor='rgba(74,222,128,.3)'`:''}"
+           onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+        <div style="width:32px;height:32px;border-radius:8px;background:${w.bg};display:flex;align-items:center;justify-content:center;font-size:1.1rem">${w.icon}</div>
+        <span>${w.name}</span>
+        <span style="margin-left:auto;font-size:.65rem;font-weight:700;color:${w.ok?'var(--accent)':'rgba(255,255,255,.22)'}">${w.ok?'● Detected':'○ Not Found'}</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+async function connectQuizWallet(key){
+  const area=document.getElementById('wallet-connect-area');
+  area.innerHTML=`<div style="display:flex;align-items:center;gap:.7rem;padding:.75rem;font-size:.8rem;color:var(--muted)"><div style="width:20px;height:20px;border:2px solid rgba(74,222,128,.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0"></div>Waiting for wallet…</div>`;
+  const p=findProv(key);
+  if(!p){renderWalletConnect();return;}
+  try{
+    const accounts=await p.request({method:'eth_requestAccounts'});
+    if(!accounts?.length)throw new Error('No account');
+    connectedWallet=accounts[0];
+    renderWalletConnect();
+  }catch(e){renderWalletConnect();}
+}
+
+/* ── START GATE: wallet + username required ── */
+function checkStartReady(){
+  const name=(document.getElementById('player-name')?.value||'').trim();
+  const btn=document.getElementById('start-btn');
+  if(!btn)return;
+  if(connectedWallet && name.length>=2){
+    btn.disabled=false;
+    btn.style.opacity='1';
+    btn.style.cursor='pointer';
+  } else {
+    btn.disabled=true;
+    btn.style.opacity='.4';
+    btn.style.cursor='not-allowed';
+  }
+}
+
+/* ── FIREBASE: SAVE SCORE ── */
+async function saveScoreToFirebase(name, walletAddr, xpVal, correctVal, total){
+  try{
+    await push(ref(db,'leaderboard'),{
+      name:   name,
+      wallet: walletAddr,
+      xp:     xpVal,
+      correct:correctVal,
+      total:  total,
+      ts:     Date.now()
+    });
+  }catch(e){
+    console.warn('Firebase save failed, falling back to localStorage', e);
+    // fallback localStorage
+    const lb=getLB();
+    lb.push({name,wallet:walletAddr,xp:xpVal,correct:correctVal,total,date:new Date().toLocaleDateString()});
+    lb.sort((a,b)=>b.xp-a.xp||b.correct-a.correct);
+    saveLB(lb);
+  }
+}
+
+/* ── FIREBASE: REALTIME LEADERBOARD ── */
+function listenLB(){
+  const q=query(ref(db,'leaderboard'),orderByChild('xp'),limitToLast(50));
+  onValue(q, snap=>{
+    const entries=[];
+    snap.forEach(child=>{entries.push(child.val());});
+    entries.sort((a,b)=>b.xp-a.xp||b.correct-a.correct);
+    renderLBEntries(entries);
+  });
+}
+
+/* ── LOCAL STORAGE (fallback) ── */
 const LB_KEY = 'rialo_quiz_leaderboard_v2';
 function getLB(){try{const raw=localStorage.getItem(LB_KEY);return raw?JSON.parse(raw):[];}catch(e){return[];}}
 function saveLB(entries){localStorage.setItem(LB_KEY,JSON.stringify(entries));}
-function addToLB(name,xpVal,correctVal,total){
-  const lb=getLB();
-  lb.push({name,xp:xpVal,correct:correctVal,total,date:new Date().toLocaleDateString()});
-  lb.sort((a,b)=>b.xp-a.xp||b.correct-a.correct);
-  saveLB(lb);
-}
 
 /* ── SCREENS ── */
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 function showStart(){showScreen('scr-start');}
-function showLeaderboard(){renderLB();showScreen('scr-lb');}
+function showLeaderboard(){listenLB();showScreen('scr-lb');}
 
 /* ── START ── */
 function startQuiz(){
   const nameEl=document.getElementById('player-name');
   playerName=(nameEl&&nameEl.value.trim())||'Anonymous';
+  if(!connectedWallet){alert('Please connect your wallet first!');return;}
+  if(playerName.length<2){alert('Please enter your name first!');return;}
   currentQ=0;xp=0;correct=0;wrong=0;
   document.getElementById('xp-count').textContent='0';
   showScreen('scr-quiz');
   renderQuestion();
 }
 
-/* ── RENDER QUESTION ── */
+/* ── END QUIZ ── */
+function endQuiz(){
+  clearInterval(timerInterval);
+
+  // Save ke Firebase (+ localStorage fallback)
+  saveScoreToFirebase(playerName, connectedWallet||'Anonymous', xp, correct, totalQ);
+
+  document.getElementById('final-xp').textContent=xp;
+  document.getElementById('stat-correct').textContent=correct;
+  document.getElementById('stat-wrong').textContent=wrong;
+  const acc=Math.round((correct/totalQ)*100);
+  document.getElementById('stat-acc').textContent=acc+'%';
+  let title='Quiz Complete!',sub='Your score has been saved to the global leaderboard.';
+  if(acc>=80){title='🔥 Rialo Expert!';sub='Outstanding! Your score is now live on the global leaderboard!';}
+  else if(acc>=60){title='💡 Well Played!';sub='Solid knowledge. Your score has been saved globally!';}
+  else{title='Keep Learning!';sub='Study the Rialo protocol deeper and try again!';}
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-sub').textContent=sub;
+  const circumference=339.3;
+  const fill=document.getElementById('rs-fill');
+  fill.style.strokeDashoffset=circumference;
+  setTimeout(()=>{fill.style.strokeDashoffset=circumference-(correct/totalQ)*circumference;},100);
+  showScreen('scr-result');
+}
+
+/* ── RENDER LEADERBOARD ── */
+function renderLBEntries(lb){
+  const list=document.getElementById('lb-list');
+  if(!lb.length){list.innerHTML='<div class="lb-empty">No scores yet. Be the first to complete the quiz!</div>';return;}
+  const rankClass=(i)=>i===0?'top1':i===1?'top2':i===2?'top3':'';
+  const rankLabel=(i)=>{
+    if(i===0)return'<span class="lb-rank gold">🥇</span>';
+    if(i===1)return'<span class="lb-rank silver">🥈</span>';
+    if(i===2)return'<span class="lb-rank bronze">🥉</span>';
+    return`<span class="lb-rank">#${i+1}</span>`;
+  };
+  list.innerHTML=lb.slice(0,50).map((entry,i)=>`
+    <div class="lb-row ${rankClass(i)}${connectedWallet&&entry.wallet===connectedWallet?' me':''}" style="animation-delay:${i*0.05}s">
+      ${rankLabel(i)}
+      <div class="lb-name">${escHtml(entry.name||'Anonymous')}<span style="font-size:.62rem;color:var(--muted);font-family:var(--font-mono);margin-left:6px">${entry.wallet?entry.wallet.slice(0,6)+'…'+entry.wallet.slice(-4):''}</span></div>
+      <div class="lb-correct">${entry.correct}/${entry.total}</div>
+      <div class="lb-xp">${entry.xp} XP</div>
+    </div>
+  `).join('');
+}
+
+function renderLB(){
+  // coba Firebase realtime, fallback localStorage
+  try{
+    listenLB();
+  }catch(e){
+    const lb=getLB();
+    renderLBEntries(lb);
+  }
+}
+
+function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ── INIT: render wallet picker on load ── */
+renderWalletConnect();
+// Disable start button until wallet+name ready
+window.addEventListener('DOMContentLoaded',()=>{
+  const btn=document.getElementById('start-btn');
+  if(btn){btn.disabled=true;btn.style.opacity='.4';btn.style.cursor='not-allowed';}
+  const nameInput=document.getElementById('player-name');
+  if(nameInput) nameInput.addEventListener('input', checkStartReady);
+});
 function renderQuestion(){
   if(currentQ>=totalQ){endQuiz();return;}
   answered=false;
@@ -515,50 +733,8 @@ function stopConfetti(){
   document.getElementById('confetti-canvas').getContext('2d').clearRect(0,0,window.innerWidth,window.innerHeight);
 }
 
-/* ── END QUIZ ── */
-function endQuiz(){
-  clearInterval(timerInterval);
-  addToLB(playerName,xp,correct,totalQ);
-  document.getElementById('final-xp').textContent=xp;
-  document.getElementById('stat-correct').textContent=correct;
-  document.getElementById('stat-wrong').textContent=wrong;
-  const acc=Math.round((correct/totalQ)*100);
-  document.getElementById('stat-acc').textContent=acc+'%';
-  let title='Quiz Complete!',sub='Your score has been saved to the leaderboard.';
-  if(acc>=80){title='🔥 Rialo Expert!';sub='Outstanding performance. You truly know the Rialo protocol!';}
-  else if(acc>=60){title='💡 Well Played!';sub='Solid knowledge. Keep building and come back for more!';}
-  else{title='Keep Learning!';sub='Study the Rialo protocol deeper and try again!';}
-  document.getElementById('result-title').textContent=title;
-  document.getElementById('result-sub').textContent=sub;
-  const circumference=339.3;
-  const fill=document.getElementById('rs-fill');
-  fill.style.strokeDashoffset=circumference;
-  setTimeout(()=>{fill.style.strokeDashoffset=circumference-(correct/totalQ)*circumference;},100);
-  showScreen('scr-result');
-}
-
-/* ── LEADERBOARD ── */
-function renderLB(){
-  const lb=getLB();
-  const list=document.getElementById('lb-list');
-  if(!lb.length){list.innerHTML='<div class="lb-empty">No scores yet. Be the first to complete the quiz!</div>';return;}
-  const rankClass=(i)=>i===0?'top1':i===1?'top2':i===2?'top3':'';
-  const rankLabel=(i)=>{
-    if(i===0)return'<span class="lb-rank gold">🥇</span>';
-    if(i===1)return'<span class="lb-rank silver">🥈</span>';
-    if(i===2)return'<span class="lb-rank bronze">🥉</span>';
-    return`<span class="lb-rank">#${i+1}</span>`;
-  };
-  list.innerHTML=lb.slice(0,50).map((entry,i)=>`
-    <div class="lb-row ${rankClass(i)}" style="animation-delay:${i*0.05}s">
-      ${rankLabel(i)}
-      <div class="lb-name">${escHtml(entry.name)}</div>
-      <div class="lb-correct">${entry.correct}/${entry.total}</div>
-      <div class="lb-xp">${entry.xp} XP</div>
-    </div>
-  `).join('');
-}
-function escHtml(str){return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+/* ── RENDER QUESTION ── */
+function renderQuestion(){
 </script>
 </body>
 </html>
