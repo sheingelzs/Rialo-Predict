@@ -184,52 +184,99 @@ function fmtAddr(addr){if(!addr)return'—';return addr.slice(0,6)+'...'+addr.sl
 
 let wallet=null;
 
+// ✅ localStorage — key sinkron dengan quest.html
+const LB_KEY = 'rialo_lb';
+function getLBLocal(){try{const raw=localStorage.getItem(LB_KEY);return raw?JSON.parse(raw):[];}catch(e){return[];}}
+
 function listenLeaderboard(){
   const lbBody=document.getElementById('lb-body');
   lbBody.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;font-family:var(--font-mono)">Loading leaderboard…</div>`;
-  const q=query(ref(db,'leaderboard'),orderByChild('xp'),limitToLast(50));
-  onValue(q, snap=>{
-    const entries=[];
-    snap.forEach(child=>{entries.push(child.val());});
-    entries.sort((a,b)=>b.xp-a.xp||(b.correct||0)-(a.correct||0));
-    if(!entries.length){
-      lbBody.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.8rem">No scores yet. Complete the quiz to be first!</div>`;
-      return;
-    }
-    const myIdx=wallet?entries.findIndex(e=>e.wallet&&e.wallet.toLowerCase()===wallet.toLowerCase()):-1;
-    if(myIdx>=0){
-      const me=entries[myIdx];
-      document.getElementById('mr-num').textContent='#'+(myIdx+1);
-      document.getElementById('mr-addr').textContent=(me.name||fmtAddr(me.wallet))+' (You)';
-      document.getElementById('mr-rank').textContent='Rank: '+getRank(me.xp).name;
-      document.getElementById('mr-xp').textContent=me.xp;
-    } else if(wallet){
+
+  // ✅ Coba Firebase dulu, fallback ke localStorage
+  try {
+    const q=query(ref(db,'leaderboard'),orderByChild('xp'),limitToLast(50));
+    onValue(q, snap=>{
+      const firebaseEntries=[];
+      snap.forEach(child=>{firebaseEntries.push(child.val());});
+
+      // ✅ Merge Firebase + localStorage (deduplikasi by wallet, ambil xp tertinggi)
+      const localEntries = getLBLocal();
+      const merged = [...firebaseEntries];
+      localEntries.forEach(le => {
+        const existIdx = merged.findIndex(fe => fe.wallet && le.wallet && fe.wallet.toLowerCase() === le.wallet.toLowerCase());
+        if(existIdx < 0) merged.push(le); // tambah yang belum ada di Firebase
+        else if(le.xp > merged[existIdx].xp) merged[existIdx] = le; // update jika local lebih tinggi
+      });
+
+      merged.sort((a,b) => b.xp - a.xp || (b.correct||0) - (a.correct||0));
+      renderLeaderboard(merged);
+    }, err => {
+      // Firebase error → fallback ke localStorage saja
+      console.warn('Firebase error, using localStorage:', err);
+      const local = getLBLocal();
+      local.sort((a,b) => b.xp - a.xp || (b.correct||0) - (a.correct||0));
+      renderLeaderboard(local);
+    });
+  } catch(e) {
+    // Firebase tidak tersedia → localStorage saja
+    console.warn('Firebase unavailable, using localStorage:', e);
+    const local = getLBLocal();
+    local.sort((a,b) => b.xp - a.xp || (b.correct||0) - (a.correct||0));
+    renderLeaderboard(local);
+  }
+}
+
+function renderLeaderboard(entries){
+  const lbBody=document.getElementById('lb-body');
+  if(!entries.length){
+    lbBody.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.8rem">No scores yet. Complete the quiz to be first!</div>`;
+    // Update "Your Position" card
+    if(wallet){
       document.getElementById('mr-num').textContent='—';
       document.getElementById('mr-addr').textContent=fmtAddr(wallet)+' — Complete the quiz!';
       document.getElementById('mr-rank').textContent='Rank: Recruit';
       document.getElementById('mr-xp').textContent='0';
     }
-    lbBody.innerHTML=entries.map((e,i)=>{
-      const pos=i+1;
-      const rank=getRank(e.xp);
-      const medal=pos<=3?MEDALS[pos-1]:'';
-      const isMe=wallet&&e.wallet&&e.wallet.toLowerCase()===wallet.toLowerCase();
-      const cls=isMe?'me':pos===1?'top1':pos===2?'top2':pos===3?'top3':'';
-      const rankColor=e.xp>=1125?'#c4b5fd':e.xp>=900?'#22d3ee':e.xp>=500?'#4ade80':'#64748b';
-      return `<div class="lb-row ${cls}" style="animation-delay:${i*0.04}s">
-        <div class="rank-num">${medal||pos}</div>
-        <div class="lb-addr-cell">
-          <div class="lb-avatar">${getAvatar(e.wallet||'')}</div>
-          <div>
-            <div style="font-size:.82rem;font-weight:600">${escHtml(e.name||'Anonymous')}${isMe?' <span style="color:var(--accent);font-size:.65rem">(You)</span>':''}</div>
-            <div class="lb-addr ${isMe?'me':''}">${fmtAddr(e.wallet)}</div>
-          </div>
+    return;
+  }
+  // ✅ Urutkan XP tertinggi ke terendah
+  entries.sort((a,b) => b.xp - a.xp || (b.correct||0) - (a.correct||0));
+
+  const myIdx=wallet?entries.findIndex(e=>e.wallet&&e.wallet.toLowerCase()===wallet.toLowerCase()):-1;
+  if(myIdx>=0){
+    const me=entries[myIdx];
+    document.getElementById('mr-num').textContent='#'+(myIdx+1);
+    // ✅ Tampilkan nama DAN alamat wallet dengan jelas
+    document.getElementById('mr-addr').textContent=(me.name||'Anonymous')+' · '+fmtAddr(me.wallet);
+    document.getElementById('mr-rank').textContent='Rank: '+getRank(me.xp).name;
+    document.getElementById('mr-xp').textContent=me.xp+' XP';
+  } else if(wallet){
+    document.getElementById('mr-num').textContent='—';
+    document.getElementById('mr-addr').textContent=fmtAddr(wallet)+' — Complete the quiz!';
+    document.getElementById('mr-rank').textContent='Rank: Recruit';
+    document.getElementById('mr-xp').textContent='0';
+  }
+
+  lbBody.innerHTML=entries.map((e,i)=>{
+    const pos=i+1;
+    const rank=getRank(e.xp);
+    const medal=pos<=3?MEDALS[pos-1]:'';
+    const isMe=wallet&&e.wallet&&e.wallet.toLowerCase()===wallet.toLowerCase();
+    const cls=isMe?'me':pos===1?'top1':pos===2?'top2':pos===3?'top3':'';
+    const rankColor=e.xp>=1125?'#c4b5fd':e.xp>=900?'#22d3ee':e.xp>=500?'#4ade80':'#64748b';
+    return `<div class="lb-row ${cls}" style="animation-delay:${i*0.04}s">
+      <div class="rank-num">${medal||pos}</div>
+      <div class="lb-addr-cell">
+        <div class="lb-avatar">${getAvatar(e.wallet||'')}</div>
+        <div>
+          <div style="font-size:.82rem;font-weight:600">${escHtml(e.name||'Anonymous')}${isMe?' <span style="color:var(--accent);font-size:.65rem">(You)</span>':''}</div>
+          <div class="lb-addr ${isMe?'me':''}">${fmtAddr(e.wallet)}</div>
         </div>
-        <div class="lb-rank-cell"><div class="lb-rank-dot" style="background:${rankColor}"></div>${rank.name}</div>
-        <div class="lb-xp ${isMe?'me':''}">${e.xp}</div>
-      </div>`;
-    }).join('');
-  });
+      </div>
+      <div class="lb-rank-cell"><div class="lb-rank-dot" style="background:${rankColor}"></div>${rank.name}</div>
+      <div class="lb-xp ${isMe?'me':''}">${e.xp} XP</div>
+    </div>`;
+  }).join('');
 }
 
 function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
