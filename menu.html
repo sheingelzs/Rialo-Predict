@@ -7,18 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
-  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
-  --amber:#facc15;--cyan:#22d3ee;
-  --text:#e8eaf0;--muted:#5a7090;
-  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+--bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
+--accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
+--amber:#facc15;--cyan:#22d3ee;
+--text:#e8eaf0;--muted:#5a7090;
+--font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
-#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;width:100vw;height:100vh;}
-
-/* NAV */
+#net-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.95);backdrop-filter:blur(16px);}
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:logopulse 2s infinite;}
@@ -28,12 +26,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-link{padding:0.35rem 0.85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;}
 .nav-link:hover{color:rgba(255,255,255,0.8);}
 .nav-link.active{background:rgba(255,255,255,0.1);color:#fff;}
-
-/* PAGE */
 .page{position:relative;z-index:1;animation:fadeIn 0.25s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* LANDING HERO */
 .landing{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
 .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--accent);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.72rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1.5rem;text-transform:uppercase;}
 .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
@@ -48,9 +42,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .btn-primary:hover{background:#86efac;transform:translateY(-1px);}
 .btn-ghost{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75);font-family:var(--font);font-size:0.88rem;font-weight:500;padding:0.75rem 1.6rem;border-radius:9px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
 .btn-ghost:hover{background:rgba(255,255,255,0.09);}
-
-/* EXPLORE MENU */
-.explore-wrap{max-width:640px;margin:0 auto;padding:2.5rem 1.5rem;}
+.explore-wrap{max-width:600px;margin:0 auto;padding:2.5rem 1.5rem;}
 .explore-wrap h2{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:0.3rem;}
 .explore-wrap .sub{color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.75rem;}
 .menu-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;}
@@ -63,12 +55,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .card-icon.green{background:rgba(74,222,128,0.15);}
 .card-icon.cyan{background:rgba(34,211,238,0.15);}
 .card-icon.purple{background:rgba(124,92,252,0.15);}
-.card-icon.red{background:rgba(248,113,113,0.15);}
 .card-title{font-weight:600;font-size:0.95rem;}
 .card-desc{font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.5;}
 .card-arrow{font-size:.75rem;color:rgba(255,255,255,.22);}
-
-/* HOW IT WORKS */
 .how-section{max-width:860px;margin:0 auto;padding:1rem 2rem 4rem;}
 .how-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
 .how-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:2rem;}
@@ -77,8 +66,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .how-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);margin-bottom:0.6rem;}
 .how-card h3{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem;}
 .how-card p{font-size:0.78rem;color:rgba(255,255,255,0.38);line-height:1.6;}
-
-/* FOOTER */
 .site-footer{border-top:1px solid rgba(255,255,255,0.06);padding:2rem 1.5rem;background:rgba(5,8,16,0.9);position:relative;z-index:1;}
 .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;}
 .footer-logo{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;display:flex;align-items:center;gap:7px;}
@@ -92,10 +79,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .footer-builders{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:rgba(255,255,255,0.2);}
 .builder-link{color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;}
 .builder-link:hover{color:var(--accent);}
-@media(max-width:600px){
-  .menu-cards{grid-template-columns:1fr;}
-  .footer-inner{grid-template-columns:1fr;}
-}
+@media(max-width:600px){.menu-cards{grid-template-columns:1fr;}.footer-inner{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -108,34 +92,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       <a class="nav-link" href="wallet.html">Swap</a>
       <a class="nav-link" href="garage.html">Garage</a>
       <a class="nav-link" href="market.html">Market</a>
-      <a class="nav-link" href="quest.html">Quiz</a>
+      <a class="nav-link" href="quest.html">Quests</a>
+      <a class="nav-link" href="leaderboard.html">Leaderboard</a>
     </div>
   </div>
 </nav>
 <div class="page">
-  <!-- HERO -->
   <div class="landing">
     <div class="badge">Supermodular L1 · 50ms Finality</div>
     <h1>The <span class="accent">Validator</span><br>Garage.</h1>
-    <p class="hero-sub">Mount your Validator Key. Assemble the Supermodular Stack. Monitor live engine telemetry from Rialo L1 core.</p>
+    <p class="hero-sub">Mount your Validator Key. Assemble the Supermodular Stack. Monitor live engine telemetry dari Rialo L1 core.</p>
     <div class="parlay-hook">
-      <span>Supermodular?</span> — Swap execution layers (EVM → SVM → MOVE) without rebuilding the chain. Sovereignty by design.
+      <span>Supermodular?</span> — Swap execution layers (EVM → SVM → MOVE) tanpa rebuild chain. Sovereignty by design.
     </div>
     <div class="cta-group">
       <a class="btn-primary" href="garage.html">Open Garage</a>
       <a class="btn-ghost" href="market.html">Live Markets</a>
-      <a class="btn-ghost" href="quest.html">Take the Quiz</a>
     </div>
   </div>
-
-  <!-- EXPLORE MENU -->
   <div class="explore-wrap">
     <h2>Explore</h2>
     <p class="sub">Choose a module to access</p>
     <div class="menu-cards">
       <a class="menu-card" href="wallet.html">
         <div class="card-icon yellow">🔄</div>
-        <div><div class="card-title">Swap</div><div class="card-desc">Swap Sepolia ETH to RIALO token</div></div>
+        <div><div class="card-title">Swap</div><div class="card-desc">Swap ETH Sepolia testnet ke RIALO token</div></div>
         <div class="card-arrow">→</div>
       </a>
       <a class="menu-card" href="garage.html">
@@ -145,29 +126,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </a>
       <a class="menu-card" href="market.html">
         <div class="card-icon cyan">📊</div>
-        <div><div class="card-title">Market</div><div class="card-desc">Live crypto prices, charts & top movers</div></div>
+        <div><div class="card-title">Market</div><div class="card-desc">Live crypto prices, charts &amp; top movers</div></div>
         <div class="card-arrow">→</div>
       </a>
-      <a class="menu-card" href="quest.html">
-        <div class="card-icon red">🧠</div>
-        <div><div class="card-title">Quiz</div><div class="card-desc">Test your Rialo knowledge. Earn XP. Climb the leaderboard.</div></div>
+      <a class="menu-card" href="#about">
+        <div class="card-icon purple">ℹ️</div>
+        <div><div class="card-title">About</div><div class="card-desc">Pelajari Rialo Protocol dan tim di baliknya</div></div>
         <div class="card-arrow">→</div>
       </a>
     </div>
   </div>
-
-  <!-- HOW IT WORKS -->
   <div class="how-section" id="about">
     <div class="how-label">How it works</div>
     <div class="how-title">Node Ignition Protocol</div>
     <div class="how-grid">
-      <div class="how-card"><div class="how-num">01 / STANDBY</div><h3>Node Disconnected</h3><p>Neural mesh network active. Status: NODE_DISCONNECTED. Engine not yet ignited.</p></div>
-      <div class="how-card"><div class="how-num">02 / IGNITION</div><h3>Insert Validator Key</h3><p>Connect wallet = mount validator key. One action, three layers ready to assemble.</p></div>
-      <div class="how-card"><div class="how-num">03 / ASSEMBLY</div><h3>Modular Stack Loaded</h3><p>RISC-V Engine → Ethereum Settlement → DA Layer. All assembled automatically.</p></div>
-      <div class="how-card"><div class="how-num">04 / TELEMETRY</div><h3>50ms Dashboard</h3><p>Engine live. Monitor gas, active VM, finality gauge, and layer stack in real-time.</p></div>
+      <div class="how-card"><div class="how-num">01 / STANDBY</div><h3>Node Disconnected</h3><p>Network jaring neural aktif. Status: NODE_DISCONNECTED. Mesin belum dinyalakan.</p></div>
+      <div class="how-card"><div class="how-num">02 / IGNITION</div><h3>Insert Validator Key</h3><p>Connect wallet = mount validator key. Satu aksi, tiga layer siap diassemble.</p></div>
+      <div class="how-card"><div class="how-num">03 / ASSEMBLY</div><h3>Modular Stack Loaded</h3><p>RISC-V Engine → Ethereum Settlement → DA Layer. Semua terpasang otomatis.</p></div>
+      <div class="how-card"><div class="how-num">04 / TELEMETRY</div><h3>50ms Dashboard</h3><p>Engine hidup. Monitor gas, VM aktif, finality gauge, dan layer stack secara real-time.</p></div>
     </div>
   </div>
-
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-col">
@@ -180,7 +158,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <a href="garage.html">Validator Garage</a>
           <a href="wallet.html">Swap</a>
           <a href="market.html">Markets</a>
-          <a href="quest.html">Quiz</a>
         </div>
       </div>
       <div class="footer-col">
@@ -207,33 +184,68 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 (function(){
   const canvas = document.getElementById('net-canvas');
   const ctx = canvas.getContext('2d');
-  const NODE_COUNT = 160, MAX_DIST = 150;
-  let W, H, angle = 0;
-  const nodes = Array.from({length: NODE_COUNT}, () => ({
-    bx: (Math.random()-0.5)*2400, by: (Math.random()-0.5)*1600,
-    vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
-    r: Math.random()*2+0.8
-  }));
-  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-  window.addEventListener('resize', resize); resize();
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    angle += 0.0008;
-    const cos = Math.cos(angle), sin = Math.sin(angle), cx = W/2, cy = H/2;
-    nodes.forEach(n => {
-      n.bx += n.vx; n.by += n.vy;
-      if(n.bx < -1300) n.bx = 1300; if(n.bx > 1300) n.bx = -1300;
-      if(n.by < -900) n.by = 900; if(n.by > 900) n.by = -900;
-    });
-    const pts = nodes.map(n => ({ x: cx + n.bx*cos - n.by*sin, y: cy + n.bx*sin + n.by*cos, r: n.r }));
-    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
-      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
-      if(d<MAX_DIST){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle=`rgba(74,222,128,${(1-d/MAX_DIST)*0.5})`; ctx.lineWidth=0.6; ctx.stroke(); }
-    }
-    pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle='rgba(74,222,128,0.75)'; ctx.fill(); });
-    requestAnimationFrame(draw);
+  const particleCount = 110;
+  const connectionDistance = 150;
+  let particles = [];
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
-  draw();
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Particle {
+    constructor(){
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.radius = 1.2;
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      if(this.x < 0 || this.x > canvas.width)  this.vx *= -1;
+      if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 255, 150, 0.4)';
+      ctx.fill();
+    }
+  }
+
+  function init(){
+    particles = [];
+    for(let i = 0; i < particleCount; i++) particles.push(new Particle());
+  }
+
+  function animate(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for(let i = 0; i < particles.length; i++){
+      particles[i].update();
+      particles[i].draw();
+      for(let j = i + 1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < connectionDistance){
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0, 255, 150, ${1 - dist / connectionDistance})`;
+          ctx.lineWidth = 0.6;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  init();
+  animate();
 })();
 </script>
 </body>
