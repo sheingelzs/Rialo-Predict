@@ -14,11 +14,10 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
-#net-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#net-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes lpulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
 /* NAV */
@@ -39,7 +38,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 /* SWAP LAYOUT */
 .swap-page{max-width:500px;margin:0 auto;padding:2rem 1.5rem;}
 
-/* Header */
 .swap-hdr{margin-bottom:1.75rem;}
 .swap-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
 .swap-hdr h2{font-family:var(--font-head);font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem;}
@@ -276,36 +274,82 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </div>
 
 <script>
+/* ── CANVAS — menu.html style ── */
+(function(){
+  const canvas = document.getElementById('net-canvas');
+  const ctx = canvas.getContext('2d');
+  const particleCount = 110;
+  const connectionDistance = 150;
+  let particles = [];
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  class Particle {
+    constructor(){
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.radius = 1.2;
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      if(this.x < 0 || this.x > canvas.width)  this.vx *= -1;
+      if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 255, 150, 0.4)';
+      ctx.fill();
+    }
+  }
+
+  function init(){
+    particles = [];
+    for(let i = 0; i < particleCount; i++) particles.push(new Particle());
+  }
+
+  function animate(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for(let i = 0; i < particles.length; i++){
+      particles[i].update();
+      particles[i].draw();
+      for(let j = i + 1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < connectionDistance){
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0, 255, 150, ${1 - dist / connectionDistance})`;
+          ctx.lineWidth = 0.6;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  init();
+  animate();
+})();
+
+/* ── RATE JITTER ── */
 const RATE = 1250;
 let rateJitter = RATE;
-
-/* Animate rate ticker */
 setInterval(() => {
   rateJitter = RATE + Math.floor((Math.random()-0.5)*20);
   document.getElementById('live-rate').textContent = rateJitter.toLocaleString() + ' RIALO';
   calcSwap();
 }, 5000);
-
-/* ── CANVAS ── */
-(function(){
-  const cv=document.getElementById('net-canvas'),ctx=cv.getContext('2d');
-  let W,H,ang=0;
-  const nodes=Array.from({length:160},()=>({bx:(Math.random()-.5)*2400,by:(Math.random()-.5)*1600,vx:(Math.random()-.5)*.38,vy:(Math.random()-.5)*.38,r:Math.random()*1.8+0.8}));
-  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
-  addEventListener('resize',resize);resize();
-  (function draw(){
-    ctx.clearRect(0,0,W,H);ang+=.0008;
-    const cs=Math.cos(ang),sn=Math.sin(ang),cx=W/2,cy=H/2;
-    nodes.forEach(n=>{n.bx+=n.vx;n.by+=n.vy;if(n.bx<-1300)n.bx=1300;if(n.bx>1300)n.bx=-1300;if(n.by<-900)n.by=900;if(n.by>900)n.by=-900;});
-    const pts=nodes.map(n=>({x:cx+n.bx*cs-n.by*sn,y:cy+n.bx*sn+n.by*cs,r:n.r}));
-    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
-      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.hypot(dx,dy);
-      if(d<150){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(74,222,128,${(1-d/150)*.48})`;ctx.lineWidth=.6;ctx.stroke();}
-    }
-    pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(74,222,128,0.7)';ctx.fill();});
-    requestAnimationFrame(draw);
-  })();
-})();
 
 /* ── STATE ── */
 let wallet=null, prov=null;
@@ -340,17 +384,14 @@ function bindProv(p){
   });
 }
 
-/* ── BALANCE FETCH ── */
+/* ── BALANCE ── */
 async function fetchBalance(){
   if(!wallet||!prov) return;
   try{
     const hex = await prov.request({method:'eth_getBalance',params:[wallet,'latest']});
-    const wei = parseInt(hex,16);
-    ethBalance = wei/1e18;
+    ethBalance = parseInt(hex,16)/1e18;
     updateUI();
-  }catch(e){
-    ethBalance = 0; updateUI();
-  }
+  }catch(e){ethBalance=0;updateUI();}
 }
 
 /* ── NAV ── */
@@ -532,12 +573,7 @@ async function doSwap(){
     const weiAmt='0x'+Math.floor(amt*1e18).toString(16);
     const txHash = await prov.request({
       method:'eth_sendTransaction',
-      params:[{
-        from:wallet,
-        to:'0x0000000000000000000000000000000000000000',
-        value:weiAmt,
-        data:'0x',
-      }]
+      params:[{from:wallet,to:'0x0000000000000000000000000000000000000000',value:weiAmt,data:'0x'}]
     });
     document.getElementById('tx-hash-row').textContent='Tx: '+txHash.slice(0,20)+'…';
     setTimeout(()=>swapDone(amt,out,txHash),2000);
