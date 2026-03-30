@@ -18,8 +18,6 @@
 html,body{height:100%;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
 #net-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-
-/* NAV */
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.95);backdrop-filter:blur(16px);}
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:logopulse 2s infinite;}
@@ -29,12 +27,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .nav-link{padding:0.35rem 0.85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;}
 .nav-link:hover{color:rgba(255,255,255,0.8);}
 .nav-link.active{background:rgba(255,255,255,0.1);color:#fff;}
-
-/* PAGE */
 .page{position:relative;z-index:1;animation:fadeIn 0.25s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* MARKET */
 .ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border);overflow:hidden;padding:8px 0;position:relative;z-index:1;}
 .ticker-track{display:flex;gap:40px;animation:ticker 30s linear infinite;white-space:nowrap;width:max-content;}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
@@ -43,7 +37,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ticker-price{color:var(--text);font-weight:700;}
 .ticker-change{font-size:0.7rem;}
 .pos{color:var(--green);}.neg{color:var(--red);}
-
 .market-inner{max-width:1200px;margin:0 auto;padding:24px;position:relative;z-index:1;}
 .market-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
 .market-title{font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;}
@@ -52,7 +45,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .last-update{font-size:0.68rem;color:var(--muted);}
 .section-title{font-family:var(--font-head);font-weight:800;font-size:1rem;letter-spacing:-0.3px;margin-bottom:14px;display:flex;align-items:center;gap:10px;color:var(--text);}
 .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
-
 .mkt-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:32px;}
 .mkt-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
 .mkt-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,92,252,0.04),transparent);opacity:0;transition:opacity 0.2s;}
@@ -71,7 +63,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .mkt-card-change.neg{background:rgba(248,113,113,0.1);color:var(--red);}
 .mkt-card-vol{font-size:0.65rem;color:var(--muted);margin-top:6px;}
 .sparkline{margin-top:8px;height:36px;position:relative;}
-
 .chart-section{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:32px;}
 .chart-card,.gainers-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
 .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
@@ -93,7 +84,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .gainer-sym{font-family:var(--font-head);font-size:0.82rem;font-weight:700;}
 .gainer-name{font-size:0.62rem;color:var(--muted);}
 .gainer-pct{font-family:var(--font-mono);font-size:0.8rem;font-weight:700;padding:3px 9px;border-radius:7px;}
-
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:32px;}
 .table-header-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
 .search-box{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:0.78rem;padding:6px 12px;border-radius:9px;outline:none;width:200px;transition:border-color 0.2s;}
@@ -116,23 +106,21 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 .skeleton{background:linear-gradient(90deg,var(--card) 25%,rgba(26,42,66,0.5) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .error-msg{color:var(--red);font-size:0.8rem;text-align:center;padding:40px;}
-
 @media(max-width:900px){.chart-section{grid-template-columns:1fr}}
-@media(max-width:700px){.col-mktcap,.col-vol{display:none;}.mkt-cards-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.col-mktcap,.col-vol{display:none;}.mkt-cards-grid{grid-template-columns:1fr 1fr;}.nav-links{display:none;}}
 </style>
 </head>
 <body>
 <canvas id="net-canvas"></canvas>
-
 <nav class="nav">
   <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
   <div class="nav-right">
     <div class="nav-links">
-    <a class="nav-link active" href="menu.html">Home</a>
+      <a class="nav-link" href="menu.html">Home</a>
       <a class="nav-link" href="wallet.html">Swap</a>
       <a class="nav-link" href="garage.html">Garage</a>
       <a class="nav-link" href="market.html">Market</a>
-      <a class="nav-link" href="quest.html">Quests</a>
+      <a class="nav-link" href="quiz.html">Quests</a>
       <a class="nav-link" href="leaderboard.html">Leaderboard</a>
     </div>
   </div>
@@ -201,75 +189,33 @@ tr:hover td{background:rgba(124,92,252,0.04);}
 </div>
 
 <script>
-/* ── CANVAS — menu.html style ── */
 (function(){
   const canvas = document.getElementById('net-canvas');
   const ctx = canvas.getContext('2d');
-  const particleCount = 110;
-  const connectionDistance = 150;
+  const particleCount = 110, connectionDistance = 150;
   let particles = [];
-
-  function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  window.addEventListener('resize',resize);resize();
+  class Particle{
+    constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.vx=(Math.random()-.5)*.4;this.vy=(Math.random()-.5)*.4;this.radius=1.2;}
+    update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>canvas.width)this.vx*=-1;if(this.y<0||this.y>canvas.height)this.vy*=-1;}
+    draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle='rgba(0,255,150,0.4)';ctx.fill();}
   }
-  window.addEventListener('resize', resize);
-  resize();
-
-  class Particle {
-    constructor(){
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.4;
-      this.vy = (Math.random() - 0.5) * 0.4;
-      this.radius = 1.2;
-    }
-    update(){
-      this.x += this.vx;
-      this.y += this.vy;
-      if(this.x < 0 || this.x > canvas.width)  this.vx *= -1;
-      if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
-    }
-    draw(){
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 255, 150, 0.4)';
-      ctx.fill();
-    }
-  }
-
-  function init(){
-    particles = [];
-    for(let i = 0; i < particleCount; i++) particles.push(new Particle());
-  }
-
+  function init(){particles=[];for(let i=0;i<particleCount;i++)particles.push(new Particle());}
   function animate(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let i = 0; i < particles.length; i++){
-      particles[i].update();
-      particles[i].draw();
-      for(let j = i + 1; j < particles.length; j++){
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < connectionDistance){
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(0, 255, 150, ${1 - dist / connectionDistance})`;
-          ctx.lineWidth = 0.6;
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
-        }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let i=0;i<particles.length;i++){
+      particles[i].update();particles[i].draw();
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<connectionDistance){ctx.beginPath();ctx.strokeStyle=`rgba(0,255,150,${1-dist/connectionDistance})`;ctx.lineWidth=.6;ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();}
       }
     }
     requestAnimationFrame(animate);
   }
-
-  init();
-  animate();
+  init();animate();
 })();
 
-/* ── MARKET DATA ── */
 let allCoins=[], selectedCoinId='bitcoin', currentDays=1, mainChartInst=null, sparkCharts={};
 let sortKey='rank', sortDir=1, gainTabMode='gain', refreshInterval=null;
 
@@ -403,6 +349,30 @@ async function loadMarketData(){
 }
 
 loadMarketData();
+</script>
+
+<!-- ✅ NAV ACTIVE FIX -->
+<script>
+(function() {
+  const filename = window.location.pathname.split('/').pop() || 'menu.html';
+  const pageMap = {
+    'menu.html':        'Home',
+    'wallet.html':      'Swap',
+    'garage.html':      'Garage',
+    'market.html':      'Market',
+    'quiz.html':        'Quests',
+    'quest.html':       'Quests',
+    'leaderboard.html': 'Leaderboard'
+  };
+  const activeLabel = pageMap[filename];
+  if (!activeLabel) return;
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.textContent.trim() === activeLabel) {
+      link.classList.add('active');
+    }
+  });
+})();
 </script>
 </body>
 </html>
