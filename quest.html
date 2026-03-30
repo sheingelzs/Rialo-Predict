@@ -192,7 +192,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div id="wallet-connect-area"></div>
       </div>
       <button class="start-btn" id="start-btn" onclick="startQuiz()" disabled style="opacity:.4;cursor:not-allowed">Start Quiz →</button>
-      <button class="lb-btn" onclick="showLeaderboard()">🏆 View Leaderboard</button>
+      <button class="lb-btn" onclick="window.location.href='leaderboard.html'">🏆 View Leaderboard</button>
     </div>
   </div>
 
@@ -245,7 +245,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
       <div class="result-actions">
         <button class="result-actions btn-replay" style="flex:1;padding:.85rem;border-radius:12px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;background:var(--accent);color:#050810;border:none;" onclick="startQuiz()">Play Again</button>
-        <button class="result-actions btn-lb" style="flex:1;padding:.85rem;border-radius:12px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;background:rgba(34,211,238,.08);color:var(--cyan);border:1px solid rgba(34,211,238,.25);" onclick="showLeaderboard()">🏆 Leaderboard</button>
+        <button class="result-actions btn-lb" style="flex:1;padding:.85rem;border-radius:12px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;background:rgba(34,211,238,.08);color:var(--cyan);border:1px solid rgba(34,211,238,.25);" onclick="window.location.href='leaderboard.html'">🏆 Leaderboard</button>
       </div>
     </div>
   </div>
@@ -411,6 +411,7 @@ const db    = getDatabase(fbApp);
 
 /* ── WALLET DETECT ── */
 let connectedWallet = null;
+window.connectedWallet = null; // global agar bisa diakses dari Firebase & leaderboard
 function getProvList(){const e=window.ethereum;if(!e)return[];return e.providers||[e];}
 function findProv(key){
   const L=getProvList();
@@ -464,10 +465,11 @@ function renderWalletConnect(){
   area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
     <div style="font-size:.65rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.3rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">🔗 Connect wallet to submit score to global leaderboard</div>
     ${wallets.map(w=>`
-      <div onclick="${w.ok?`connectQuizWallet('${w.key}')`:''}"
-           style="display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:${w.ok?'pointer':'not-allowed'};opacity:${w.ok?'1':'.35'};font-size:.82rem;font-weight:600;transition:all .2s"
-           onmouseover="${w.ok?`this.style.borderColor='rgba(74,222,128,.3)'`:''}"
-           onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+      <div class="witem"
+           onclick="${w.ok?`window.connectWallet('${w.key}','${w.name}')`:''}"
+           style="display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:${w.ok?'pointer':'not-allowed'};opacity:${w.ok?'1':'.35'};font-size:.82rem;font-weight:600;transition:all .2s;user-select:none;"
+           onmouseover="${w.ok?`this.style.borderColor='rgba(74,222,128,.3)';this.style.background='rgba(74,222,128,.06)'`:''}"
+           onmouseout="${w.ok?`this.style.borderColor='rgba(255,255,255,.08)';this.style.background='rgba(255,255,255,.04)'`:''}">
         <div style="width:32px;height:32px;border-radius:8px;background:${w.bg};display:flex;align-items:center;justify-content:center;font-size:1.1rem">${w.icon}</div>
         <span>${w.name}</span>
         <span style="margin-left:auto;font-size:.65rem;font-weight:700;color:${w.ok?'var(--accent)':'rgba(255,255,255,.22)'}">${w.ok?'● Detected':'○ Not Found'}</span>
@@ -475,18 +477,23 @@ function renderWalletConnect(){
   </div>`;
 }
 
-async function connectQuizWallet(key){
+async function connectWallet(key, name){
   const area=document.getElementById('wallet-connect-area');
-  area.innerHTML=`<div style="display:flex;align-items:center;gap:.7rem;padding:.75rem;font-size:.8rem;color:var(--muted)"><div style="width:20px;height:20px;border:2px solid rgba(74,222,128,.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0"></div>Waiting for wallet…</div>`;
+  area.innerHTML=`<div style="display:flex;align-items:center;gap:.7rem;padding:.75rem;font-size:.8rem;color:var(--muted)"><div style="width:20px;height:20px;border:2px solid rgba(74,222,128,.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0"></div>Menunggu konfirmasi ${name}…</div>`;
   const p=findProv(key);
   if(!p){renderWalletConnect();return;}
   try{
     const accounts=await p.request({method:'eth_requestAccounts'});
     if(!accounts?.length)throw new Error('No account');
     connectedWallet=accounts[0];
+    window.connectedWallet=accounts[0]; // simpan ke global untuk Firebase & leaderboard
     renderWalletConnect();
-  }catch(e){renderWalletConnect();}
+  }catch(e){
+    console.warn('Wallet connect error:', e);
+    renderWalletConnect();
+  }
 }
+window.connectWallet = connectWallet;
 
 function checkStartReady(){
   const name=(document.getElementById('player-name')?.value||'').trim();
@@ -605,6 +612,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   const nameInput=document.getElementById('player-name');
   if(nameInput) nameInput.addEventListener('input', checkStartReady);
 });
+
+// ── EXPOSE SEMUA FUNGSI KE GLOBAL (wajib karena script type="module") ──
+window.startQuiz        = startQuiz;
+window.showLeaderboard  = () => { window.location.href = 'leaderboard.html'; };
+window.showStart        = showStart;
+window.selectAnswer     = selectAnswer;
+window.renderWalletConnect = renderWalletConnect;
 
 function renderQuestion(){
   if(currentQ>=totalQ){endQuiz();return;}
