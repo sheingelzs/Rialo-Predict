@@ -626,16 +626,16 @@ window.selectAnswer     = selectAnswer;
 window.renderWalletConnect = renderWalletConnect;
 
 function finishQuiz() {
+ function finishQuiz() {
   stopConfetti();
   const score = correct * 50; 
 
-  // Ambil Nama & Wallet
-  const userName = document.getElementById('user-name-input')?.value || "Anonymous";
+  // Mengambil nama dari input ID 'player-name'
+  const userName = document.getElementById('player-name')?.value || "Anonymous";
   const userWallet = currentWalletAddress || "Disconnected";
   const LB_KEY = 'rialo_final_lb'; 
   
   try {
-    // Proses Simpan
     let currentLB = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
     currentLB.push({
       name: userName,
@@ -644,19 +644,17 @@ function finishQuiz() {
       date: new Date().toLocaleString()
     });
     localStorage.setItem(LB_KEY, JSON.stringify(currentLB));
-    console.log("Data tersimpan di rialo_final_lb!");
+    console.log("Skor Berhasil Disimpan!");
   } catch (e) {
-    console.error("Gagal simpan:", e);
+    console.error("Gagal simpan skor:", e);
   }
 
-  // Tampilkan hasil
-  const scoreEl = document.getElementById('result-score');
-  if(scoreEl) scoreEl.textContent = score;
+  // Update angka score di lingkaran hasil (ID: final-xp)
+  const finalXpEl = document.getElementById('final-xp');
+  if(finalXpEl) finalXpEl.textContent = score;
+  
   showScreen('scr-result');
 }
-  console.log("Data berhasil disimpan ke leaderboard!", newEntry);
-}
-
 function startTimer(){
   timeLeft=15;clearInterval(timerInterval);updateTimerUI(15);
   timerInterval=setInterval(()=>{
