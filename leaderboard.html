@@ -120,45 +120,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <div class="lock-sub">Connect your wallet to see your position among Alpha Operators on the Rialo testnet.</div>
     <div id="wallet-area"></div>
   </div>
-async function checkWalletAndUnlock() {
-  const lockScreen = document.getElementById('lock-screen');
-  const lbContent = document.getElementById('lb-content');
-  const walletArea = document.getElementById('wallet-area');
-
-  if (window.ethereum) {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-    
-    if (accounts.length > 0) {
-      // Jika sudah connect
-      lockScreen.style.display = 'none';
-      lbContent.style.display = 'block';
-      connectedWallet = accounts[0];
-      renderLB(); // Jalankan fungsi render tabel kamu
-    } else {
-      // Jika belum connect, tampilkan tombol di wallet-area
-      walletArea.innerHTML = `
-        <button onclick="connectAndUnlock()" class="lb-back" style="padding:15px 40px; margin-top:20px;">
-          UNSEAL DATA [CONNECT WALLET]
-        </button>`;
-    }
-  }
-}
-
-// Fungsi tombol Connect
-async function connectAndUnlock() {
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    if (accounts.length > 0) {
-      checkWalletAndUnlock(); // Refresh status
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// Jalankan pengecekan saat halaman dibuka
-window.addEventListener('DOMContentLoaded', checkWalletAndUnlock);
-window.connectAndUnlock = connectAndUnlock;
 
   <div id="main-screen">
     <div class="board-wrap">
@@ -223,12 +184,9 @@ function fmtAddr(addr){if(!addr)return'—';return addr.slice(0,6)+'...'+addr.sl
 
 let wallet=null;
 
-// ✅ localStorage — key sinkron dengan quest.html
-const LB_KEY = 'rialo_lb';
-// 1. The Key must be identical to the one in quest.html
-const LB_KEY = 'rialo_final_lb'; 
+// ✅ Key harus sama dengan yang dipakai di quest.html
+const LB_KEY = 'rialo_final_lb';
 
-// 2. This function only grabs YOUR real data from the browser
 function getLBLocal() {
   try {
     const raw = localStorage.getItem(LB_KEY);
@@ -239,24 +197,16 @@ function getLBLocal() {
   }
 }
 
-// 3. This function sorts the players by highest EXP
-function getLB() {
-  const localData = getLBLocal();
-  return localData.sort((a, b) => b.exp - a.exp);
-}
-
 function listenLeaderboard(){
   const lbBody=document.getElementById('lb-body');
   lbBody.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;font-family:var(--font-mono)">Loading leaderboard…</div>`;
 
-  // ✅ Coba Firebase dulu, fallback ke localStorage
   try {
     const q=query(ref(db,'leaderboard'),orderByChild('exp'),limitToLast(50));
     onValue(q, snap=>{
       const firebaseEntries=[];
       snap.forEach(child=>{firebaseEntries.push(child.val());});
 
-      // ✅ Merge Firebase + localStorage (deduplikasi by wallet, ambil exp tertinggi)
       const localEntries = getLBLocal();
       const merged = [...firebaseEntries];
       localEntries.forEach(le => {
@@ -293,7 +243,6 @@ function renderLeaderboard(entries){
     }
     return;
   }
-  // ✅ Urutkan exp tertinggi ke terendah
   entries.sort((a,b) => (b.exp||0) - (a.exp||0));
 
   const myIdx=wallet?entries.findIndex(e=>e.wallet&&e.wallet.toLowerCase()===wallet.toLowerCase()):-1;
@@ -371,11 +320,31 @@ async function connectWallet(key,name){
   }catch(e){renderPicker();}
 }
 
+// ✅ Auto-reconnect saat halaman dibuka jika wallet sudah pernah connect
+async function checkAutoConnect(){
+  if(!window.ethereum) return;
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    if(accounts && accounts.length > 0){
+      wallet = accounts[0];
+      setNavBtn(wallet);
+      document.getElementById('lock-screen').style.display='none';
+      document.getElementById('main-screen').style.display='block';
+      listenLeaderboard();
+    }
+  } catch(e) {
+    console.warn('Auto-connect check failed:', e);
+  }
+}
+
 window.navClick=navClick;
 window.doDisconnect=doDisconnect;
 window.connectWallet=connectWallet;
 
-renderPicker();
+// ✅ Jalankan auto-connect cek, lalu render picker jika belum connect
+checkAutoConnect().then(() => {
+  if(!wallet) renderPicker();
+});
 
 (function(){
   const canvas = document.getElementById('net-canvas');
