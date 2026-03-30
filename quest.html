@@ -629,30 +629,30 @@ function finishQuiz() {
   stopConfetti();
   const score = correct * 50; 
 
-  // Pakai ID 'player-name' karena itu yang ada di HTML kamu
+  // Mengambil nama dari input player (ID: player-name)
   const userName = document.getElementById('player-name')?.value || "Anonymous";
-  const userWallet = currentWalletAddress || "Disconnected";
+  
+  // Mengambil wallet dari window.connectedWallet (hasil dari sistem connect wallet kamu)
+  const userWallet = window.connectedWallet || "Disconnected";
+  
   const LB_KEY = 'rialo_final_lb'; 
   
   try {
+    // 1. Ambil data lama
     let currentLB = JSON.parse(localStorage.getItem(LB_KEY) || '[]');
+    
+    // 2. Tambah data baru
     currentLB.push({
       name: userName,
       wallet: userWallet,
       exp: score,
       date: new Date().toLocaleString()
     });
+    
+    // 3. Simpan permanen
     localStorage.setItem(LB_KEY, JSON.stringify(currentLB));
+    console.log("Skor Berhasil Disimpan!");
   } catch (e) {
-    console.error("Gagal simpan skor:", e);
-  }
-
-  // Update skor di lingkaran (ID-nya 'final-xp')
-  const finalXpEl = document.getElementById('final-xp');
-  if(finalXpEl) finalXpEl.textContent = score;
-  
-  showScreen('scr-result');
-}catch (e) {
     console.error("Gagal simpan skor:", e);
   }
 
@@ -660,6 +660,7 @@ function finishQuiz() {
   const finalXpEl = document.getElementById('final-xp');
   if(finalXpEl) finalXpEl.textContent = score;
   
+  // Pindah ke layar hasil
   showScreen('scr-result');
 }
 
