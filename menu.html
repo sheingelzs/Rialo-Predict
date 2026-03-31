@@ -200,9 +200,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 (function(){
   const canvas = document.getElementById('net-canvas');
   const ctx = canvas.getContext('2d');
-  const particleCount = 110;
-  const connectionDistance = 150;
-  let particles = [];
+  
+  let lines = [];
+  const lineCount = 15;
 
   function resize(){
     canvas.width = window.innerWidth;
@@ -211,52 +211,66 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   window.addEventListener('resize', resize);
   resize();
 
-  class Particle {
+  class DataLine {
     constructor(){
+      this.reset();
+    }
+    reset(){
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.vx = (Math.random() - 0.5) * 0.4;
-      this.vy = (Math.random() - 0.5) * 0.4;
-      this.radius = 1.2;
+      this.width = Math.random() * 150 + 50;
+      this.speed = Math.random() * 4 + 2;
+      this.opacity = Math.random() * 0.5 + 0.1;
     }
     update(){
-      this.x += this.vx;
-      this.y += this.vy;
-      if(this.x < 0 || this.x > canvas.width)  this.vx *= -1;
-      if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      this.x += this.speed;
+      if(this.x > canvas.width) {
+        this.x = -this.width;
+        this.y = Math.random() * canvas.height;
+      }
     }
     draw(){
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 255, 150, 0.4)';
-      ctx.fill();
+      const gradient = ctx.createLinearGradient(this.x, 0, this.x + this.width, 0);
+      gradient.addColorStop(0, 'transparent');
+      gradient.addColorStop(0.5, `rgba(74, 222, 128, ${this.opacity})`); // Menggunakan --accent
+      gradient.addColorStop(1, 'transparent');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(this.x, this.y, this.width, 1.5);
+      
+      // Efek cahaya (glow) kecil di ujung garis
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(74, 222, 128, 0.5)';
     }
   }
 
   function init(){
-    particles = [];
-    for(let i = 0; i < particleCount; i++) particles.push(new Particle());
+    for(let i = 0; i < lineCount; i++) lines.push(new DataLine());
+  }
+
+  function drawCircuitBackground() {
+    // Gambar pola sirkuit statis yang sangat samar
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.03)';
+    ctx.lineWidth = 1;
+    for(let i = 0; i < canvas.width; i += 100) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, canvas.height);
+      ctx.stroke();
+    }
   }
 
   function animate(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(let i = 0; i < particles.length; i++){
-      particles[i].update();
-      particles[i].draw();
-      for(let j = i + 1; j < particles.length; j++){
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < connectionDistance){
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(0, 255, 150, ${1 - dist / connectionDistance})`;
-          ctx.lineWidth = 0.6;
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
-        }
-      }
-    }
+    ctx.shadowBlur = 0; // Reset shadow agar tidak berat
+    
+    drawCircuitBackground();
+    
+    lines.forEach(line => {
+      line.update();
+      line.draw();
+    });
+    
     requestAnimationFrame(animate);
   }
 
@@ -264,5 +278,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   animate();
 })();
 </script>
+  
 </body>
 </html>
