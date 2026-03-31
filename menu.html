@@ -1213,65 +1213,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 /* ===========================
-   LIVE TICKER
-=========================== */
-(function(){
-  const tokens=[
-    {sym:'RIALO',price:'0.0284',chg:'+12.4%',up:true},
-    {sym:'ETH',price:'3,421.50',chg:'+2.1%',up:true},
-    {sym:'BTC',price:'68,240.00',chg:'+1.8%',up:true},
-    {sym:'SOL',price:'182.44',chg:'-0.9%',up:false},
-    {sym:'AVAX',price:'38.20',chg:'+5.2%',up:true},
-    {sym:'ARB',price:'1.24',chg:'-1.1%',up:false},
-    {sym:'OP',price:'2.88',chg:'+3.4%',up:true},
-    {sym:'MATIC',price:'0.89',chg:'-0.4%',up:false},
-    {sym:'LINK',price:'17.60',chg:'+4.0%',up:true},
-    {sym:'INJ',price:'32.10',chg:'+7.2%',up:true},
-  ];
-  const el = document.getElementById('ticker-inner');
-  const make = (t)=>`<span class="ticker-item">${t.sym} <span class="${t.up?'up':'dn'}">${t.price} ${t.chg}</span></span>`;
-  const html = tokens.map(make).join('');
-  el.innerHTML = html + html;
-})();
-
-/* ===========================
-   LIVE COUNTERS
-=========================== */
-(function(){
-  let tps=8200, block=4827391, val=1284;
-  const tpsEl=document.getElementById('hero-tps');
-  const blockEl=document.getElementById('t-block');
-  const valEl=document.getElementById('t-val');
-
-  setInterval(()=>{
-    tps += Math.floor((Math.random()-0.5)*400);
-    tps = Math.max(5000,Math.min(12000,tps));
-    if(tpsEl) tpsEl.textContent = tps.toLocaleString();
-  },600);
-
-  setInterval(()=>{
-    block++;
-    if(blockEl) blockEl.textContent = block.toLocaleString();
-  },2000);
-
-  setInterval(()=>{
-    val += Math.floor((Math.random()-0.5)*3);
-    if(valEl) valEl.textContent = val.toLocaleString();
-  },5000);
-
-  const hashEl = document.getElementById('footer-hash');
-  const HEXC='0123456789abcdef';
-  setInterval(()=>{
-    if(!hashEl) return;
-    let h='0x';
-    for(let i=0;i<8;i++) h+=HEXC[Math.floor(Math.random()*16)];
-    h+='...';
-    for(let i=0;i<4;i++) h+=HEXC[Math.floor(Math.random()*16)];
-    hashEl.textContent=h;
-  },1500);
-})();
-
-/* ===========================
    BINARY DISPLAY UPDATE
 =========================== */
 (function(){
