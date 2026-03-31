@@ -330,22 +330,36 @@ function getLB(){
 }
 function saveLB(entries){ localStorage.setItem(LB_KEY, JSON.stringify(entries)); }
 
-/* ── FIREBASE CONFIG ── */
+/* ══════════════════════════════════════════════════════════
+   🔥 FIREBASE CONFIG — GANTI DENGAN NILAI DARI FIREBASE CONSOLE
+   Langkah:
+   1. Buka https://console.firebase.google.com
+   2. Project Settings → General → scroll ke "Your apps"
+   3. Klik ikon </> (Web) atau pilih app yang sudah ada
+   4. Copy nilai apiKey, databaseURL, projectId, dll ke sini
+   ══════════════════════════════════════════════════════════ */
 const FB_CONFIG = {
-  apiKey:            "GANTI_API_KEY_KAMU",
-  authDomain:        "GANTI_PROJECT.firebaseapp.com",
-  databaseURL:       "https://GANTI_PROJECT-default-rtdb.firebaseio.com",
-  projectId:         "GANTI_PROJECT",
+  apiKey:            "GANTI_API_KEY_KAMU",          // contoh: "AIzaSyXXXXXXXXXXXXXXXXX"
+  authDomain:        "GANTI_PROJECT.firebaseapp.com",// contoh: "rialo-app.firebaseapp.com"
+  databaseURL:       "https://GANTI_PROJECT-default-rtdb.firebaseio.com", // contoh: "https://rialo-app-default-rtdb.firebaseio.com"
+  projectId:         "GANTI_PROJECT",               // contoh: "rialo-app"
   storageBucket:     "GANTI_PROJECT.appspot.com",
   messagingSenderId: "GANTI_SENDER_ID",
   appId:             "GANTI_APP_ID"
 };
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, push, set, get, query, orderByChild, equalTo }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const fbApp = initializeApp(FB_CONFIG);
 const db    = getDatabase(fbApp);
+
+/* ── ANTI-CHEAT: timestamp server-side + skor maksimum yang valid ──
+   Skor dikalkulasi di client, tapi kita validasi batas atas:
+   Max XP = jumlah soal × 50 = 1500 XP
+   Jika skor dikirim melebihi batas, entri diabaikan / di-cap.        */
+const MAX_XP = QUESTIONS.length * 50; // 1500
 
 /* ── WALLET ── */
 function getProvList(){ const e=window.ethereum; if(!e)return[]; return e.providers||[e]; }
@@ -546,34 +560,75 @@ function selectAnswer(idx){
 function endQuiz(){
   clearInterval(timerInterval);
 
-  // Simpan ke localStorage — tambah ke array, jangan overwrite
+  // Validasi anti-cheat sederhana: cap skor ke maksimum yang mungkin
+  const finalXP = Math.min(xp, MAX_XP);
+
+  // 1. Simpan ke localStorage sebagai backup offline
   try {
     const lb = getLB();
-    lb.push({
+    const existIdx = lb.findIndex(e => e.wallet && connectedWallet &&
+      e.wallet.toLowerCase() === connectedWallet.toLowerCase());
+    const entry = {
       name:   playerName || 'Anonymous',
       wallet: connectedWallet || 'Disconnected',
-      exp:    xp,
+      exp:    finalXP,
       date:   new Date().toLocaleString()
-    });
+    };
+    if(existIdx >= 0){
+      // Update hanya jika skor baru lebih tinggi
+      if(finalXP >= (lb[existIdx].exp || 0)) lb[existIdx] = entry;
+    } else {
+      lb.push(entry);
+    }
     saveLB(lb);
-    console.log('Score saved to localStorage:', xp, 'XP');
+    console.log('✅ Score saved to localStorage:', finalXP, 'XP');
   } catch(e){
     console.error('Failed to save score locally:', e);
   }
 
-  // Coba simpan ke Firebase (opsional)
-  try {
-    push(ref(db, 'leaderboard'), {
-      name:   playerName || 'Anonymous',
-      wallet: connectedWallet || null,
-      exp:    xp
-    }).catch(e => console.warn('Firebase save failed (localStorage already saved):', e));
-  } catch(e){
-    console.warn('Firebase unavailable:', e);
+  // 2. Kirim ke Firebase — UPSERT per wallet (skor tertinggi yang disimpan)
+  if(connectedWallet && db){
+    const saveToFirebase = async () => {
+      try {
+        const walletKey = connectedWallet.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const userRef   = ref(db, 'leaderboard/' + walletKey);
+
+        // Cek apakah wallet ini sudah punya entri
+        const snap = await get(userRef);
+        if(snap.exists()){
+          const existing = snap.val();
+          // Hanya update jika skor baru lebih tinggi (anti-cheat)
+          if(finalXP > (existing.exp || 0)){
+            await set(userRef, {
+              name:      playerName || 'Anonymous',
+              wallet:    connectedWallet,
+              exp:       finalXP,
+              updatedAt: Date.now()
+            });
+            console.log('🔥 Firebase updated (new best):', finalXP, 'XP');
+          } else {
+            console.log('ℹ️ Firebase not updated (previous score higher):', existing.exp, 'XP');
+          }
+        } else {
+          // Entri baru
+          await set(userRef, {
+            name:      playerName || 'Anonymous',
+            wallet:    connectedWallet,
+            exp:       finalXP,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+          });
+          console.log('🔥 Firebase: new entry saved:', finalXP, 'XP');
+        }
+      } catch(e){
+        console.warn('⚠️ Firebase save failed (skor tetap tersimpan di localStorage):', e.message);
+      }
+    };
+    saveToFirebase();
   }
 
-  // Update UI hasil
-  document.getElementById('final-xp').textContent    = xp;
+  // 3. Update UI hasil
+  document.getElementById('final-xp').textContent    = finalXP;
   document.getElementById('stat-correct').textContent = correct;
   document.getElementById('stat-wrong').textContent   = wrong;
   const acc = Math.round((correct / totalQ) * 100);
