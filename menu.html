@@ -8,96 +8,52 @@
 <style>
 :root {
   --bg:#050810;--bg2:#0b1120;--card:#0f1929;--border:#1a2a42;
-  --accent:#4ade80;--accent2:#7c5cfc;--red:#f87171;--green:#4ade80;
-  --amber:#facc15;--cyan:#22d3ee;
-  --text:#e8eaf0;--muted:#5a7090;
+  --accent:#4ade80;--accent2:#7c5cfc;--text:#e8eaf0;--muted:#5a7090;
   --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg);}
-body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
 
-/* High-Density Data Canvas */
+/* FIX: Canvas Background */
 #net-canvas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: -1; /* Di bawah semua konten */
   pointer-events: none;
-  background: var(--bg);
 }
 
-.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.95);backdrop-filter:blur(16px);}
-.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.85);backdrop-filter:blur(12px);}
+.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:logopulse 2s infinite;}
 @keyframes logopulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
 
-.nav-right{display:flex;align-items:center;gap:0.6rem;}
 .nav-links{display:flex;gap:0.2rem;background:rgba(255,255,255,0.05);border-radius:9px;padding:3px;}
-.nav-link{padding:0.35rem 0.85rem;border-radius:6px;background:transparent;color:rgba(255,255,255,0.45);font-family:var(--font);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;border:none;}
-.nav-link:hover{color:rgba(255,255,255,0.8);}
-.nav-link.active{background:rgba(255,255,255,0.1);color:#fff;}
+.nav-link{padding:0.35rem 0.85rem;border-radius:6px;color:rgba(255,255,255,0.45);font-size:0.78rem;font-weight:500;text-decoration:none;transition:all 0.2s;}
+.nav-link:hover, .nav-link.active{color:#fff;background:rgba(255,255,255,0.1);}
 
-.page{position:relative;z-index:1;animation:fadeIn 0.25s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page{position:relative;z-index:1;padding-bottom:5rem;}
+.landing{min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--accent);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.72rem;font-weight:600;margin-bottom:1.5rem;text-transform:uppercase;}
 
-.landing{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
-.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--accent);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.72rem;font-weight:600;letter-spacing:0.05em;margin-bottom:1.5rem;text-transform:uppercase;}
-.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.landing h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.05;margin-bottom:1rem;}
+.landing h1 .accent{color:var(--accent);}
+.landing .hero-sub{color:rgba(255,255,255,0.45);font-size:1rem;max-width:460px;line-height:1.7;margin-bottom:1.5rem;}
 
-.landing h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1rem;text-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-.landing h1 .accent{color:var(--accent); text-shadow: 0 0 20px rgba(74,222,128,0.3);}
-.landing .hero-sub{color:rgba(255,255,255,0.45);font-size:1rem;max-width:460px;line-height:1.7;margin-bottom:0.75rem;}
+.cta-group{display:flex;gap:0.65rem;justify-content:center;margin-bottom:3rem;}
+.btn-primary{background:var(--accent);color:#050810;font-size:0.88rem;font-weight:700;padding:0.75rem 1.6rem;border-radius:9px;text-decoration:none;transition:0.2s;}
+.btn-ghost{background:rgba(255,255,255,0.05);color:#fff;font-size:0.88rem;padding:0.75rem 1.6rem;border-radius:9px;border:1px solid rgba(255,255,255,0.1);text-decoration:none;transition:0.2s;}
 
-.parlay-hook{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.25);color:rgba(255,255,255,0.6);padding:0.45rem 1rem;border-radius:8px;font-size:0.82rem;margin-bottom:1.75rem;max-width:480px;}
-.parlay-hook span{color:var(--accent2);}
+.menu-cards{display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:0.85rem;max-width:900px;margin:0 auto;padding:0 1.5rem;}
+.menu-card{background:rgba(15,25,41,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.35rem;text-decoration:none;color:var(--text);transition:0.25s;backdrop-filter:blur(5px);}
+.menu-card:hover{border-color:var(--accent);transform:translateY(-3px);background:rgba(15,25,41,0.8);}
+.card-icon{font-size:1.5rem;margin-bottom:1rem;display:block;}
+.card-title{font-weight:600;font-size:1rem;margin-bottom:0.4rem;display:block;}
+.card-desc{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.5;}
 
-.cta-group{display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem;}
-.btn-primary{background:var(--accent);color:#050810;font-family:var(--font);font-size:0.88rem;font-weight:700;padding:0.75rem 1.6rem;border-radius:9px;border:none;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;box-shadow: 0 4px 15px rgba(74,222,128,0.2);}
-.btn-primary:hover{background:#86efac;transform:translateY(-1px);box-shadow: 0 6px 20px rgba(74,222,128,0.3);}
-.btn-ghost{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75);font-family:var(--font);font-size:0.88rem;font-weight:500;padding:0.75rem 1.6rem;border-radius:9px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
-.btn-ghost:hover{background:rgba(255,255,255,0.09);}
-
-.explore-wrap{max-width:600px;margin:0 auto;padding:2.5rem 1.5rem;}
-.explore-wrap h2{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:0.3rem;}
-.explore-wrap .sub{color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.75rem;}
-
-.menu-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;}
-.menu-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.35rem;cursor:pointer;transition:all 0.25s;display:flex;flex-direction:column;gap:0.85rem;position:relative;overflow:hidden;text-decoration:none;color:var(--text);backdrop-filter: blur(4px);}
-.menu-card:hover{background:rgba(255,255,255,0.07);border-color:rgba(74,222,128,0.3);transform:translateY(-2px);}
-
-.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
-.card-icon.yellow{background:rgba(250,204,21,0.15);}
-.card-icon.green{background:rgba(74,222,128,0.15);}
-.card-icon.cyan{background:rgba(34,211,238,0.15);}
-.card-icon.purple{background:rgba(124,92,252,0.15);}
-
-.card-title{font-weight:600;font-size:0.95rem;}
-.card-desc{font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.5;}
-
-.how-section{max-width:860px;margin:0 auto;padding:1rem 2rem 4rem;}
-.how-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
-.how-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:2rem;}
-.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;}
-.how-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.25rem;backdrop-filter: blur(2px);}
-.how-num{font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);margin-bottom:0.6rem;}
-.how-card h3{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem;}
-.how-card p{font-size:0.78rem;color:rgba(255,255,255,0.38);line-height:1.6;}
-
-.site-footer{border-top:1px solid rgba(255,255,255,0.06);padding:2rem 1.5rem;background:rgba(5,8,16,0.9);position:relative;z-index:1;}
-.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:2rem;}
-.footer-logo{font-family:var(--font-head);font-size:1.1rem;font-weight:800;margin-bottom:0.5rem;display:flex;align-items:center;gap:7px;}
-
-.footer-bottom{max-width:1100px;margin:1.5rem auto 0;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;}
-.footer-bottom p{font-size:0.72rem;color:rgba(255,255,255,0.2);}
-.footer-builders{display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;color:rgba(255,255,255,0.2);}
-.builder-link{color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;}
-.builder-link:hover{color:var(--accent);}
-
-@media(max-width:600px){.menu-cards{grid-template-columns:1fr;}.footer-inner{grid-template-columns:1fr;}}
+@media(max-width:600px){ .nav-links{display:none;} }
 </style>
 </head>
 <body>
@@ -105,16 +61,12 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
 <canvas id="net-canvas"></canvas>
 
 <nav class="nav">
-  <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
-  <div class="nav-right">
-    <div class="nav-links">
-      <a class="nav-link active" href="menu.html">Home</a>
-      <a class="nav-link" href="wallet.html">Swap</a>
-      <a class="nav-link" href="garage.html">Garage</a>
-      <a class="nav-link" href="market.html">Market</a>
-      <a class="nav-link" href="quest.html">Quiz</a>
-      <a class="nav-link" href="leaderboard.html">Leaderboard</a>
-    </div>
+  <a class="nav-logo" href="#"><div class="logo-dot"></div>RIALO</a>
+  <div class="nav-links">
+    <a class="nav-link active" href="#">Home</a>
+    <a class="nav-link" href="#">Swap</a>
+    <a class="nav-link" href="#">Garage</a>
+    <a class="nav-link" href="#">Market</a>
   </div>
 </nav>
 
@@ -122,80 +74,30 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
   <div class="landing">
     <div class="badge">Supermodular L1 · 50ms Finality</div>
     <h1>The <span class="accent">Validator</span><br>Garage.</h1>
-    <p class="hero-sub">Mount your Validator Key. Assemble the Supermodular Stack. Monitor live engine telemetry from the Rialo L1 core.</p>
-    <div class="parlay-hook">
-      <span>Supermodular?</span> — Swap execution layers (EVM → SVM → MOVE) without rebuilding the chain. Sovereignty by design.
-    </div>
+    <p class="hero-sub">Mount your Validator Key. Monitor live engine telemetry from the Rialo L1 core stack.</p>
     <div class="cta-group">
-      <a class="btn-primary" href="garage.html">Open Garage</a>
-      <a class="btn-ghost" href="market.html">Live Markets</a>
+      <a class="btn-primary" href="#">Open Garage</a>
+      <a class="btn-ghost" href="#">Live Markets</a>
     </div>
   </div>
 
-  <div class="explore-wrap">
-    <h2>Explore</h2>
-    <p class="sub">Choose a module to access</p>
-    <div class="menu-cards">
-      <a class="menu-card" href="wallet.html">
-        <div class="card-icon yellow">🔄</div>
-        <div><div class="card-title">Swap</div><div class="card-desc">Swap Sepolia ETH to RIALO token on testnet</div></div>
-      </a>
-      <a class="menu-card" href="garage.html">
-        <div class="card-icon green">⚙️</div>
-        <div><div class="card-title">Validator Garage</div><div class="card-desc">Mount your key. Assemble the Supermodular Stack. Monitor live telemetry.</div></div>
-      </a>
-      <a class="menu-card" href="market.html">
-        <div class="card-icon cyan">📊</div>
-        <div><div class="card-title">Market</div><div class="card-desc">Live crypto prices, charts &amp; top movers</div></div>
-      </a>
-      <a class="menu-card" href="#about">
-        <div class="card-icon purple">ℹ️</div>
-        <div><div class="card-title">About</div><div class="card-desc">Learn about the Rialo Protocol and the team behind it</div></div>
-      </a>
-    </div>
+  <div class="menu-cards">
+    <a class="menu-card" href="#">
+      <span class="card-icon">🔄</span>
+      <span class="card-title">Swap</span>
+      <span class="card-desc">Trade RIALO tokens with ultra-low gas fees on testnet.</span>
+    </a>
+    <a class="menu-card" href="#">
+      <span class="card-icon">⚙️</span>
+      <span class="card-title">Validator Garage</span>
+      <span class="card-desc">Monitor hardware health and block production metrics.</span>
+    </a>
+    <a class="menu-card" href="#">
+      <span class="card-icon">📊</span>
+      <span class="card-title">Market</span>
+      <span class="card-desc">Real-time data for Move-based ecosystem tokens.</span>
+    </a>
   </div>
-
-  <div class="how-section" id="about">
-    <div class="how-label">How it works</div>
-    <div class="how-title">Node Ignition Protocol</div>
-    <div class="how-grid">
-      <div class="how-card">
-        <div class="how-num">01 / STANDBY</div>
-        <h3>Node Disconnected</h3>
-        <p>Neural network active in the background. Status: NODE_DISCONNECTED.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">02 / IGNITION</div>
-        <h3>Insert Validator Key</h3>
-        <p>Connect wallet to mount your validator key. One action, three layers ready.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">03 / ASSEMBLY</div>
-        <h3>Modular Stack Loaded</h3>
-        <p>RISC-V Engine → Ethereum Settlement → DA Layer. Assembled automatically.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">04 / TELEMETRY</div>
-        <h3>50ms Dashboard</h3>
-        <p>Engine live. Monitor gas, active VM, and finality gauge in real-time.</p>
-      </div>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-col">
-        <div class="footer-logo"><div class="logo-dot"></div>RIALO</div>
-        <p class="footer-tagline">Supermodular L1 Blockchain Stack. Built for operators.</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 Rialo Labs.</p>
-      <div class="footer-builders">
-        Built by <a class="builder-link" href="https://github.com/sheingelzs">Gelz</a> &amp; Sheina
-      </div>
-    </div>
-  </footer>
 </div>
 
 <script>
@@ -205,8 +107,8 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
   
   let lines = [];
   let bits = [];
-  const lineCount = 50; // Lebih padat
-  const bitCount = 35; // Biner rain
+  const lineCount = 60; // Sangat ramai
+  const bitCount = 40;
 
   function resize(){
     canvas.width = window.innerWidth;
@@ -220,10 +122,10 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
     reset(){
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.width = Math.random() * 400 + 150;
-      this.speed = Math.random() * 10 + 5; // Sangat cepat
-      this.opacity = Math.random() * 0.5 + 0.1;
-      this.h = Math.random() > 0.85 ? 2.5 : 1.2;
+      this.width = Math.random() * 300 + 100;
+      this.speed = Math.random() * 12 + 6; // Sangat cepat
+      this.opacity = Math.random() * 0.4 + 0.1;
+      this.thickness = Math.random() > 0.8 ? 2 : 1;
     }
     update(){
       this.x += this.speed;
@@ -233,14 +135,12 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
       }
     }
     draw(){
-      ctx.shadowBlur = 12;
-      ctx.shadowColor = 'rgba(74, 222, 128, 0.5)';
       const g = ctx.createLinearGradient(this.x, 0, this.x + this.width, 0);
       g.addColorStop(0, 'transparent');
       g.addColorStop(0.5, `rgba(74, 222, 128, ${this.opacity})`);
       g.addColorStop(1, 'transparent');
       ctx.fillStyle = g;
-      ctx.fillRect(this.x, this.y, this.width, this.h);
+      ctx.fillRect(this.x, this.y, this.width, this.thickness);
     }
   }
 
@@ -252,36 +152,15 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
       this.char = Math.random() > 0.5 ? "0" : "1";
       this.opacity = 0;
       this.maxOpacity = Math.random() * 0.3;
-      this.fadeSpeed = 0.005 + Math.random() * 0.015;
+      this.fade = 0.01;
     }
     draw(){
-      this.opacity += this.fadeSpeed;
-      if(this.opacity > this.maxOpacity || this.opacity < 0) this.fadeSpeed *= -1;
+      this.opacity += this.fade;
+      if(this.opacity > this.maxOpacity || this.opacity < 0) this.fade *= -1;
       if(this.opacity < -0.1) this.reset();
-      
-      ctx.font = "11px 'Space Mono'";
+      ctx.font = "10px 'Space Mono'";
       ctx.fillStyle = `rgba(74, 222, 128, ${this.opacity})`;
       ctx.fillText(this.char, this.x, this.y);
-    }
-  }
-
-  function drawCircuitGrid() {
-    ctx.lineWidth = 0.5;
-    const time = Date.now() * 0.001;
-    // Dynamic Grid Lines
-    for(let i = 0; i < canvas.width; i += 100) {
-      let alpha = 0.02 + Math.sin(time + i*0.01) * 0.01;
-      ctx.strokeStyle = `rgba(74, 222, 128, ${alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height);
-      ctx.stroke();
-    }
-    for(let i = 0; i < canvas.height; i += 100) {
-      let alpha = 0.02 + Math.cos(time + i*0.01) * 0.01;
-      ctx.strokeStyle = `rgba(74, 222, 128, ${alpha})`;
-      ctx.beginPath();
-      ctx.moveTo(0, i); ctx.lineTo(canvas.width, i);
-      ctx.stroke();
     }
   }
 
@@ -291,19 +170,21 @@ body{color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidde
   }
 
   function animate(){
-    // Menghasilkan efek motion blur dengan tidak membersihkan canvas 100%
-    ctx.fillStyle = 'rgba(5, 8, 16, 0.25)'; 
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // FIX: Tidak menggunakan tumpukan warna pekat agar konten tidak hilang
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
     
-    ctx.shadowBlur = 0;
-    drawCircuitGrid();
-    
+    // Grid static samar
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.03)';
+    ctx.lineWidth = 0.5;
+    for(let i=0; i<canvas.width; i+=100){
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke();
+    }
+
     bits.forEach(bit => bit.draw());
     lines.forEach(line => {
       line.update();
       line.draw();
     });
-    
     requestAnimationFrame(animate);
   }
 
