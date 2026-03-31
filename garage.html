@@ -200,14 +200,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 /* TX TOAST container */
 #tx-toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px;}
 
-@media(max-width:700px){
-  .tele-grid{grid-template-columns:1fr 1fr;}
-  .mod-grid{grid-template-columns:1fr;}
-  .dash-wrap{padding:1rem;}
-  .nav-links{display:none;}
-  #tx-toast{left:1rem;right:1rem;max-width:unset;}
-}
-
 /* ═══════════════════════════════════════════════════════════
    🔐 SECURITY CONTROL PANEL — Milk Tea / Beige Theme #d2b48c
    ═══════════════════════════════════════════════════════════ */
@@ -308,13 +300,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   color:rgba(210,180,140,.5);
 }
 .sec-info-chip .chip-dot{width:5px;height:5px;border-radius:50%;background:#d2b48c;opacity:.6;}
-@media(max-width:700px){.sec-btns{grid-template-columns:1fr;}}
+
+@media(max-width:700px){
+  .tele-grid{grid-template-columns:1fr 1fr;}
+  .mod-grid{grid-template-columns:1fr;}
+  .dash-wrap{padding:1rem;}
+  .nav-links{display:none;}
+  #tx-toast{left:1rem;right:1rem;max-width:unset;}
+  .sec-btns{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 <canvas id="net-canvas"></canvas>
 
-<!-- FIX: nav-btn sekarang di dalam nav-right, struktur benar -->
 <nav class="nav">
   <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
   <div class="nav-right">
@@ -474,7 +473,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
         </div>
         <div class="mod-card">
-          <div class="card-lbl">🔐 Approve &amp; Revoke · Sepolia</div>
+          <div class="card-lbl">🔐 Approve &amp; Revoke · Sepolia WETH</div>
           <div class="vpack">
             <div class="vpack-action">
               <div class="vpack-hd">
@@ -484,7 +483,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
               <div class="vpack-desc">Approve a contract for ERC-20 token access on Sepolia. No real costs.</div>
               <div class="vpack-input">
                 <input class="vpack-field" id="approve-token" type="text" placeholder="Default: WETH Sepolia"/>
-                <input class="vpack-field" id="approve-contract" type="text" placeholder="Default: OpenSea Spender"/>
+                <input class="vpack-field" id="approve-contract" type="text" placeholder="Default: Mock Router Spender"/>
                 <button class="vpack-btn" id="approve-btn" onclick="doApprove()">Approve →</button>
               </div>
             </div>
@@ -496,20 +495,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
               <div class="vpack-desc">Revoke approval from a contract on Sepolia.</div>
               <div class="vpack-input">
                 <input class="vpack-field" id="revoke-token" type="text" placeholder="Default: WETH Sepolia"/>
-                <input class="vpack-field" id="revoke-contract" type="text" placeholder="Default: OpenSea Spender"/>
+                <input class="vpack-field" id="revoke-contract" type="text" placeholder="Default: Mock Router Spender"/>
                 <button class="vpack-btn" id="revoke-btn" onclick="doRevoke()">Revoke →</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 🔐 SECURITY CONTROL PANEL — Pre-Staking Authorization -->
+
+      <!-- 🔐 SECURITY CONTROL PANEL — Pre-Staking Authorization (RIALO) -->
       <div class="sec-title">🔐 Security Control Panel</div>
       <div class="sec-panel-wrap">
         <div class="sec-panel">
 
           <div class="sec-panel-hdr">
-            <div class="sec-panel-title">🔐 Approve &amp; Revoke · RIALO</div>
+            <div class="sec-panel-title">🪙 RIALO Balance &amp; Approval</div>
             <span class="sec-panel-badge">Pre-Staking Auth</span>
           </div>
 
@@ -518,9 +518,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <span class="sec-info-chip"><span class="chip-dot"></span>Sepolia Testnet</span>
             <span class="sec-info-chip"><span class="chip-dot"></span>ERC-20 Mock Router</span>
             <span class="sec-info-chip"><span class="chip-dot"></span>Gas: Subsidized ⚡</span>
+            <span class="sec-info-chip"><span class="chip-dot"></span>Live from wallet.html</span>
           </div>
 
-          <!-- Kartu Saldo RIALO — auto-update dari localStorage (wallet.html) -->
+          <!-- ✅ Kartu Saldo RIALO Dinamis — auto-update dari localStorage (wallet.html) setiap 1 detik -->
           <div class="sec-bal-card">
             <div class="sec-bal-left">
               <div class="sec-bal-icon">🪙</div>
@@ -544,7 +545,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <span class="sec-spender-addr">0xRIALO…a84e3 (Mock Validator Router)</span>
           </div>
 
-          <!-- Tombol Approve & Revoke -->
+          <!-- Tombol Approve & Revoke RIALO -->
           <div class="sec-btns">
             <button class="sec-btn do-approve" id="garage-approve-btn" onclick="garageDoApprove()">
               ✅ Approve
@@ -556,7 +557,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
           <div class="sec-note">
             ⚠️ Lakukan Approve sebelum memulai staking validator. Revoke kapan saja untuk mencabut akses.<br>
-            Simulation only · No real assets involved.
+            Saldo RIALO diambil real-time dari wallet.html via localStorage · Simulation only · No real assets involved.
           </div>
 
         </div>
@@ -568,6 +569,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </div>
 
 <script>
+/* ── Particle Network Background ── */
 (function(){
   const canvas = document.getElementById('net-canvas');
   const ctx = canvas.getContext('2d');
@@ -634,6 +636,7 @@ const VM={
     desc:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management.'
   }
 };
+
 function updateGasUI(baseFee, priorityFee){
   const elBase=document.getElementById('gas-base');if(elBase){elBase.textContent=`${baseFee.toFixed(4)} GWEI`;elBase.classList.remove('pulse');}
   const elPriority=document.getElementById('gas-priority');if(elPriority)elPriority.textContent=`${priorityFee.toFixed(2)} GWEI`;
@@ -658,63 +661,80 @@ async function fetchSepoliaGas(){
 function startGasPolling(){fetchSepoliaGas();if(gasInterval)clearInterval(gasInterval);gasInterval=setInterval(fetchSepoliaGas,5000);}
 
 /* ══════════════════════════════════════════════════════════════
-   🔐 SECURITY CONTROL PANEL — Logic
-   Sinkronisasi saldo RIALO dari localStorage (wallet.html → garage.html)
-   setInterval polling setiap 1 detik = update real-time
+   💰 RIALO BALANCE SYNC
+   Sinkronisasi saldo dari localStorage (wallet.html → garage.html)
+   setInterval polling setiap 1 detik = real-time update
    ══════════════════════════════════════════════════════════════ */
 (function initRialoBalanceSync(){
-  let lastVal=null;
+  let lastVal = null;
   function syncBalance(){
-    const raw=localStorage.getItem('rialoBalance');
-    const val=raw!==null?parseFloat(raw):0;
-    const display=document.getElementById('garage-rlo-display');
-    if(!display)return;
-    const formatted=val.toFixed(4);
-    if(formatted!==lastVal){
-      lastVal=formatted;
-      display.textContent=formatted;
+    const raw = localStorage.getItem('rialoBalance');
+    const val = raw !== null ? parseFloat(raw) : 0;
+    const display = document.getElementById('garage-rlo-display');
+    if(!display) return;
+    const formatted = val.toFixed(4);
+    if(formatted !== lastVal){
+      lastVal = formatted;
+      display.textContent = formatted;
       // Flash animasi kuning saat angka berubah
       display.classList.remove('flash');
       void display.offsetWidth; // reflow untuk reset animasi
       display.classList.add('flash');
-      setTimeout(()=>display.classList.remove('flash'),950);
+      setTimeout(() => display.classList.remove('flash'), 950);
     }
   }
   syncBalance();
-  setInterval(syncBalance,1000);
+  setInterval(syncBalance, 1000);
 })();
 
+/* ══════════════════════════════════════════════════════════════
+   🔐 SECURITY PANEL — garageDoApprove & garageDoRevoke
+   Approve hanya jika saldo RIALO > 0 (cek dari localStorage)
+   ══════════════════════════════════════════════════════════════ */
 function garageDoApprove(){
-  if(!walletAddress){showToast('g-approve','error','Hubungkan wallet terlebih dahulu!');return;}
-  const rialoBal=parseFloat(localStorage.getItem('rialoBalance')||'0');
-  if(rialoBal<=0){showToast('g-approve','error','Saldo RIALO 0. Lakukan swap di halaman Swap dulu.');return;}
-  const btn=document.getElementById('garage-approve-btn');
-  const dot=document.getElementById('garage-approve-dot');
-  const txt=document.getElementById('garage-approve-txt');
-  btn.disabled=true;btn.textContent='⏳ Approving…';
-  setTimeout(()=>{
-    btn.disabled=false;btn.textContent='✅ Approve';
-    if(dot){dot.className='sec-status-dot approved';}
-    if(txt){txt.className='sec-status-txt approved';txt.textContent='Approved ✅';}
-    showToast('g-approve','success',`Approval granted! ${rialoBal.toFixed(4)} RIALO approved ke Mock Validator Router. Staking siap dimulai 🚀`);
-  },1500);
+  if(!walletAddress){
+    showToast('g-approve','error','Hubungkan wallet terlebih dahulu!');
+    return;
+  }
+  const rialoBal = parseFloat(localStorage.getItem('rialoBalance') || '0');
+  if(rialoBal <= 0){
+    showToast('g-approve','error','⚠️ Saldo RIALO 0. Lakukan swap di halaman Swap terlebih dahulu.');
+    return;
+  }
+  const btn = document.getElementById('garage-approve-btn');
+  const dot = document.getElementById('garage-approve-dot');
+  const txt = document.getElementById('garage-approve-txt');
+  btn.disabled = true; btn.textContent = '⏳ Approving…';
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = '✅ Approve';
+    if(dot){ dot.className = 'sec-status-dot approved'; }
+    if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
+    showToast('g-approve','success',
+      `Approval granted! ${rialoBal.toFixed(4)} RIALO approved ke Mock Validator Router. Staking siap dimulai 🚀`
+    );
+  }, 1500);
 }
 
 function garageDoRevoke(){
-  if(!walletAddress){showToast('g-revoke','error','Hubungkan wallet terlebih dahulu!');return;}
-  const btn=document.getElementById('garage-revoke-btn');
-  const dot=document.getElementById('garage-approve-dot');
-  const txt=document.getElementById('garage-approve-txt');
-  btn.disabled=true;btn.textContent='⏳ Revoking…';
-  setTimeout(()=>{
-    btn.disabled=false;btn.textContent='✕ Revoke';
-    if(dot){dot.className='sec-status-dot revoked';}
-    if(txt){txt.className='sec-status-txt revoked';txt.textContent='Revoked ✗';}
-    showToast('g-revoke','success','Approval dicabut. Mock Validator Router tidak lagi dapat transfer RIALO kamu 🔒');
-  },1500);
+  if(!walletAddress){
+    showToast('g-revoke','error','Hubungkan wallet terlebih dahulu!');
+    return;
+  }
+  const btn = document.getElementById('garage-revoke-btn');
+  const dot = document.getElementById('garage-approve-dot');
+  const txt = document.getElementById('garage-approve-txt');
+  btn.disabled = true; btn.textContent = '⏳ Revoking…';
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = '✕ Revoke';
+    if(dot){ dot.className = 'sec-status-dot revoked'; }
+    if(txt){ txt.className = 'sec-status-txt revoked'; txt.textContent = 'Revoked ✗'; }
+    showToast('g-revoke','success',
+      'Approval dicabut. Mock Validator Router tidak lagi dapat transfer RIALO kamu 🔒'
+    );
+  }, 1500);
 }
-/* ══ END SECURITY CONTROL PANEL ══ */
 
+/* ── Toast ── */
 const _timers={};
 function showToast(id,type,msg){
   const box=document.getElementById('tx-toast');
@@ -773,12 +793,12 @@ async function doSend(){
 }
 
 const WETH_SEPOLIA='0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9';
-const OPENSEA_SPENDER='0x1E0049783F008A0085193E00003D00cd54003c71';
+const MOCK_ROUTER_SPENDER='0x1E0049783F008A0085193E00003D00cd54003c71';
 
 async function doApprove(){
   const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet not connected.');return;}
   const token=(document.getElementById('approve-token').value.trim())||WETH_SEPOLIA;
-  const spender=(document.getElementById('approve-contract').value.trim())||OPENSEA_SPENDER;
+  const spender=(document.getElementById('approve-contract').value.trim())||MOCK_ROUTER_SPENDER;
   if(!token||token.length!==42||!token.startsWith('0x')){showToast('approve','error','Invalid token address.');return;}
   if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('approve','error','Invalid spender address.');return;}
   const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='Waiting…';
@@ -793,7 +813,7 @@ async function doApprove(){
 async function doRevoke(){
   const prov=AP();if(!prov||!walletAddress){showToast('revoke','error','Wallet not connected.');return;}
   const token=(document.getElementById('revoke-token').value.trim())||WETH_SEPOLIA;
-  const spender=(document.getElementById('revoke-contract').value.trim())||OPENSEA_SPENDER;
+  const spender=(document.getElementById('revoke-contract').value.trim())||MOCK_ROUTER_SPENDER;
   if(!token||token.length!==42||!token.startsWith('0x')){showToast('revoke','error','Invalid token address.');return;}
   if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('revoke','error','Invalid spender address.');return;}
   const btn=document.getElementById('revoke-btn');btn.disabled=true;btn.textContent='Waiting…';
@@ -815,6 +835,27 @@ function doDisconnect(){
   document.getElementById('node-badge').classList.remove('online');
   document.getElementById('badge-txt').textContent='NODE_STATUS: DISCONNECTED';
   showScreen('standby');renderPicker();
+}
+
+function switchVM(vm,btn){
+  currentVM=vm;const d=VM[vm];
+  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const fEl=document.getElementById('finality-text'),iEl=document.getElementById('integrity-text');
+  if(fEl){fEl.innerHTML=`${d.finality}<span style="font-size:1rem">ms</span>`;fEl.style.color=d.color;}
+  if(iEl){iEl.textContent=d.integrity;iEl.style.color=d.color;}
+  document.getElementById('finality-tag').innerHTML=`● ${d.fStatus}`;
+  document.getElementById('integrity-tag').innerHTML=`● ${d.iStatus}`;
+  const gp=document.getElementById('gauge-path'),gv=document.getElementById('gauge-val');
+  if(gp){gp.style.strokeDashoffset=d.gaugeOffset;gp.style.stroke=d.color;}
+  if(gv){gv.textContent=d.finality;gv.setAttribute('fill',d.color);}
+  const sc=document.getElementById('stack-card');
+  if(sc){
+    let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
+    d.stack.forEach((item,idx)=>{h+=`<div class="layer-item" style="animation:fadein .3s both;animation-delay:${idx*.1}s"><div class="li-n">0${idx+1}</div><div class="li-ico"><img src="${item.logo}" onerror="this.src='https://placehold.co/22x22/1a2a42/4ade80?text=?'" loading="lazy"></div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});
+    sc.innerHTML=h;
+  }
+  document.getElementById('vm-label').textContent=vm;document.getElementById('vm-label').style.color=d.color;
+  document.getElementById('vm-desc').innerHTML=d.desc;
 }
 
 function renderPicker(){
@@ -895,27 +936,6 @@ function initDash(){
   startGasPolling();
 }
 
-function switchVM(vm,btn){
-  currentVM=vm;const d=VM[vm];
-  document.querySelectorAll('.vm-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  const fEl=document.getElementById('finality-text'),iEl=document.getElementById('integrity-text');
-  if(fEl){fEl.innerHTML=`${d.finality}<span style="font-size:1rem">ms</span>`;fEl.style.color=d.color;}
-  if(iEl){iEl.textContent=d.integrity;iEl.style.color=d.color;}
-  document.getElementById('finality-tag').innerHTML=`● ${d.fStatus}`;
-  document.getElementById('integrity-tag').innerHTML=`● ${d.iStatus}`;
-  const gp=document.getElementById('gauge-path'),gv=document.getElementById('gauge-val');
-  if(gp){gp.style.strokeDashoffset=d.gaugeOffset;gp.style.stroke=d.color;}
-  if(gv){gv.textContent=d.finality;gv.setAttribute('fill',d.color);}
-  const sc=document.getElementById('stack-card');
-  if(sc){
-    let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
-    d.stack.forEach((item,idx)=>{h+=`<div class="layer-item" style="animation:fadein .3s both;animation-delay:${idx*.1}s"><div class="li-n">0${idx+1}</div><div class="li-ico"><img src="${item.logo}" onerror="this.src='https://placehold.co/22x22/1a2a42/4ade80?text=?'" loading="lazy"></div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});
-    sc.innerHTML=h;
-  }
-  document.getElementById('vm-label').textContent=vm;document.getElementById('vm-label').style.color=d.color;
-  document.getElementById('vm-desc').innerHTML=d.desc;
-}
-
 renderPicker();
 </script>
 
@@ -928,7 +948,6 @@ renderPicker();
     'wallet.html':      'Swap',
     'garage.html':      'Garage',
     'market.html':      'Market',
-    
     'quest.html':       'Quiz',
     'leaderboard.html': 'Leaderboard'
   };
