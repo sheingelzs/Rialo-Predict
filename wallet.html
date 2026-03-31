@@ -264,7 +264,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <div class="approve-bal-icon">🪙</div>
             <div>
               <div class="approve-bal-lbl">RIALO Balance</div>
-              <div class="approve-bal-num" id="approve-bal-display">0.00</div>
+              <div class="approve-bal-num" id="approve-bal-display">0.0000</div>
               <div class="approve-bal-suffix">RIALO · Sepolia Testnet</div>
             </div>
           </div>
@@ -387,6 +387,7 @@ function setNavBtn(addr){
 function navClick(){wallet?doDisconnect():renderWalletArea();}
 function doDisconnect(){
   wallet=null;prov=null;ethBalance=0;rialoBal=0;
+  localStorage.setItem('rialoBalance','0.0000');
   setNavBtn(null);renderWalletArea();updateActionBtn();
 }
 
@@ -510,7 +511,6 @@ function updateUI(){
   const abd=document.getElementById('approve-bal-display');
   if(abd){
     abd.textContent=rialoBal.toFixed(4);
-    // Flash kuning sebentar saat saldo berubah
     abd.classList.add('flash');
     setTimeout(()=>abd.classList.remove('flash'),800);
   }
@@ -523,10 +523,8 @@ function doApprove(){
   const dot=document.getElementById('approve-status-dot');
   const txt=document.getElementById('approve-status-txt');
   const abtn=document.getElementById('approve-btn');
-  const rbtn=document.getElementById('revoke-btn');
   if(!wallet){showToast('approve','error','Connect your wallet first!');return;}
-  if(rialoBal<=0){showToast('approve','error','You have no RIALO balance to approve.');return;}
-  // Simulasi loading
+  if(rialoBal<=0){showToast('approve','error','You have no RIALO balance to approve. Swap ETH first!');return;}
   abtn.disabled=true;abtn.textContent='⏳ Approving…';
   setTimeout(()=>{
     abtn.disabled=false;abtn.textContent='✅ Approve';
@@ -542,7 +540,6 @@ function doRevoke(){
   const txt=document.getElementById('approve-status-txt');
   const rbtn=document.getElementById('revoke-btn');
   if(!wallet){showToast('revoke','error','Connect your wallet first!');return;}
-  // Simulasi loading
   rbtn.disabled=true;rbtn.textContent='⏳ Revoking…';
   setTimeout(()=>{
     rbtn.disabled=false;rbtn.textContent='✕ Revoke';
@@ -551,6 +548,7 @@ function doRevoke(){
     showToast('revoke','success','Approval revoked. Mock Router can no longer transfer your RIALO.');
   },1500);
 }
+
 function setMax(){
   const safe=Math.max(0,ethBalance-0.001);
   const inp=document.getElementById('from-amt');if(inp){inp.value=safe.toFixed(6);calcSwap();}
@@ -590,6 +588,8 @@ async function doSwap(){
     const tx=await prov.request({method:'eth_sendTransaction',params:[{from:wallet,to:wallet,value:ethToHex(amt)}]});
     ethBalance=Math.max(0,parseFloat((ethBalance-amt).toFixed(6)));
     rialoBal=parseFloat((rialoBal+out).toFixed(4));
+    // ✅ Simpan ke localStorage SEBELUM updateUI() — garage.html langsung baca
+    localStorage.setItem('rialoBalance', rialoBal.toFixed(4));
     updateUI();
     txns.unshift({amtIn:amt,amtOut:out,hash:tx,time:'Just now'});
     renderTxns();
