@@ -3,65 +3,49 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RIALO · Alpha Core Dashboard</title>
+<title>RIALO · Supermodular Interface</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:#050810;--bg2:#0b1120;--card:rgba(15, 25, 41, 0.7);--border:rgba(255, 255, 255, 0.08);
-  --accent:#4ade80;--accent2:#7c5cfc;--text:#e8eaf0;--muted:rgba(232, 234, 240, 0.4);
-  --font:'Space Grotesk',sans-serif;--font-head:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+  --bg:#03050a;--accent:#4ade80;--accent-dim:rgba(74, 222, 128, 0.1);
+  --text:#e8eaf0;--muted:rgba(232, 234, 240, 0.4);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;}
 
-/* Background Canvas */
+/* Scanline Effect */
+body::before {
+  content: " ";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+  background-size: 100% 3px, 2px 100%;
+  z-index: 1000;
+  pointer-events: none;
+}
+
 #net-canvas {position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
 
-/* Navigation */
-.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.8);backdrop-filter:blur(15px);}
-.nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
-.logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;animation:logopulse 2s infinite;}
-@keyframes logopulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.5)}50%{box-shadow:0 0 0 7px rgba(74,222,128,0)}}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid rgba(255,255,255,0.05);position:sticky;top:0;z-index:100;background:rgba(3,5,10,0.8);backdrop-filter:blur(20px);}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;}
+.logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow: 0 0 15px var(--accent);}
 
-.nav-links{display:flex;gap:0.3rem;background:rgba(255,255,255,0.05);border-radius:10px;padding:4px;}
-.nav-link{padding:0.4rem 1rem;border-radius:7px;color:var(--muted);font-size:0.8rem;font-weight:500;text-decoration:none;transition:0.2s;}
-.nav-link:hover, .nav-link.active{color:#fff;background:rgba(255,255,255,0.1);}
+.page{max-width:1200px;margin:0 auto;position:relative;z-index:2;}
 
-/* Main Page */
-.page{position:relative;z-index:1;max-width:1200px;margin:0 auto;}
+.hero{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(3rem,10vw,6rem);line-height:0.9;margin-bottom:1.5rem;letter-spacing:-3px;}
+.hero h1 span{color:var(--accent);text-shadow: 0 0 40px rgba(74, 222, 128, 0.4);}
+.hero p{color:var(--muted);max-width:600px;font-size:1.1rem;margin-bottom:2rem;}
 
-/* Hero Section */
-.landing{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;text-align:center;}
-.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);color:var(--accent);padding:0.4rem 1rem;border-radius:999px;font-size:0.75rem;font-weight:700;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:1px;}
-.landing h1{font-family:var(--font-head);font-size:clamp(2.8rem,8vw,5rem);font-weight:800;line-height:1;margin-bottom:1.5rem;letter-spacing:-2px;}
-.landing h1 span{color:var(--accent);text-shadow: 0 0 30px rgba(74,222,128,0.2);}
-.hero-sub{color:var(--muted);font-size:1.1rem;max-width:550px;line-height:1.6;margin-bottom:2.5rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;padding:2rem;}
+.card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);padding:2.5rem;border-radius:24px;text-decoration:none;color:#fff;transition:0.4s;backdrop-filter:blur(10px);}
+.card:hover{background:rgba(74, 222, 128, 0.05);border-color:var(--accent);transform:translateY(-10px);box-shadow: 0 20px 40px rgba(0,0,0,0.4);}
+.card h3{font-family:'Syne',sans-serif;font-size:1.5rem;margin-bottom:1rem;color:var(--accent);}
+.card p{color:var(--muted);font-size:0.95rem;line-height:1.6;}
 
-.cta-group{display:flex;gap:1rem;justify-content:center;}
-.btn-primary{background:var(--accent);color:#050810;font-weight:700;padding:0.9rem 2rem;border-radius:10px;text-decoration:none;transition:0.2s;box-shadow: 0 5px 15px rgba(74,222,128,0.3);}
-.btn-primary:hover{transform:translateY(-2px);filter:brightness(1.1);}
-.btn-ghost{background:rgba(255,255,255,0.05);color:#fff;padding:0.9rem 2rem;border-radius:10px;border:1px solid var(--border);text-decoration:none;transition:0.2s;}
-.btn-ghost:hover{background:rgba(255,255,255,0.1);}
-
-/* Explore Section */
-.explore-wrap{padding:4rem 1.5rem;}
-.explore-wrap h2{font-family:var(--font-head);font-size:2rem;margin-bottom:2rem;text-align:center;}
-.menu-cards{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;}
-.menu-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;text-decoration:none;color:#fff;transition:0.3s;backdrop-filter:blur(10px);}
-.menu-card:hover{border-color:var(--accent);transform:translateY(-5px);background:rgba(15,25,41,0.9);}
-.card-icon{font-size:2rem;margin-bottom:1.5rem;display:block;}
-.card-title{font-size:1.2rem;font-weight:700;margin-bottom:0.5rem;display:block;}
-.card-desc{font-size:0.85rem;color:var(--muted);line-height:1.6;}
-
-/* Footer */
-footer{border-top:1px solid var(--border);padding:4rem 2rem;margin-top:4rem;text-align:center;}
-.footer-logo{font-family:var(--font-head);font-size:1.5rem;font-weight:800;margin-bottom:1rem;}
-.footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;}
-.footer-links a{color:var(--muted);text-decoration:none;font-size:0.9rem;transition:0.2s;}
-.footer-links a:hover{color:var(--accent);}
-.copy{font-size:0.8rem;color:rgba(255,255,255,0.2);}
-
-@media(max-width:600px){ .nav-links{display:none;} .landing h1{font-size:3.5rem;} }
+.btn{background:var(--accent);color:#000;padding:1rem 2.5rem;border-radius:12px;font-weight:700;text-decoration:none;display:inline-block;transition:0.3s;}
+.btn:hover{box-shadow: 0 0 30px var(--accent);transform:scale(1.05);}
 </style>
 </head>
 <body>
@@ -69,134 +53,110 @@ footer{border-top:1px solid var(--border);padding:4rem 2rem;margin-top:4rem;text
 <canvas id="net-canvas"></canvas>
 
 <nav class="nav">
-  <a class="nav-logo" href="#"><div class="logo-dot"></div>RIALO</a>
-  <div class="nav-links">
-    <a class="nav-link active" href="menu.html">Home</a>
-    <a class="nav-link" href="wallet.html">Swap</a>
-    <a class="nav-link" href="garage.html">Garage</a>
-    <a class="nav-link" href="market.html">Market</a>
-  </div>
+  <a class="nav-logo" href="#"><div class="logo-dot"></div>RIALO_CORE</a>
 </nav>
 
 <div class="page">
-  <section class="landing">
-    <div class="badge">L1 Move · 50ms Finality</div>
-    <h1>The <span>Validator</span><br>Garage Core.</h1>
-    <p class="hero-sub">Mount your Validator Key. Assemble the Supermodular Stack. Live engine telemetry from the Rialo L1 main-core.</p>
-    <div class="cta-group">
-      <a class="btn-primary" href="garage.html">Open Garage</a>
-      <a class="btn-ghost" href="market.html">Live Metrics</a>
-    </div>
+  <section class="hero">
+    <h1>SUPER<span>MODULAR</span></h1>
+    <p>The next evolution of L1 Stack. Real-time telemetry, 50ms finality, and sovereignty by design.</p>
+    <a href="#" class="btn">INITIALIZE CORE</a>
   </section>
 
-  <section class="explore-wrap">
-    <h2>Module Stack</h2>
-    <div class="menu-cards">
-      <a class="menu-card" href="wallet.html">
-        <span class="card-icon">🔄</span>
-        <span class="card-title">Token Swap</span>
-        <span class="card-desc">Low-latency swap engine for RIALO ecosystem assets.</span>
-      </a>
-      <a class="menu-card" href="garage.html">
-        <span class="card-icon">⚙️</span>
-        <span class="card-title">Node Telemetry</span>
-        <span class="card-desc">Monitor hardware, TPS, and block production in real-time.</span>
-      </a>
-      <a class="menu-card" href="market.html">
-        <span class="card-icon">📊</span>
-        <span class="card-title">Asset Market</span>
-        <span class="card-desc">Live pricing and charts for Move-based L1 tokens.</span>
-      </a>
-    </div>
+  <section class="grid">
+    <a href="#" class="card">
+      <h3>01 / SWAP</h3>
+      <p>High-frequency execution layer for Move-based assets.</p>
+    </a>
+    <a href="#" class="card">
+      <h3>02 / GARAGE</h3>
+      <p>Manage your validator nodes and monitor hardware health.</p>
+    </a>
+    <a href="#" class="card">
+      <h3>03 / MARKET</h3>
+      <p>Real-time analytics and prediction market simulation.</p>
+    </a>
   </section>
-
-  <footer>
-    <div class="footer-logo">RIALO CORE</div>
-    <div class="footer-links">
-      <a href="#">Docs</a>
-      <a href="https://github.com/sheingelzs">GitHub</a>
-      <a href="#">Discord</a>
-      <a href="#">Twitter</a>
-    </div>
-    <p class="copy">&copy; 2026 Rialo Labs. Developed by Gelz & Sheina.</p>
-  </footer>
 </div>
 
 <script>
-(function(){
-  const canvas = document.getElementById('net-canvas');
-  const ctx = canvas.getContext('2d');
-  let lines = [];
-  let bits = [];
-  
-  function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
+const canvas = document.getElementById('net-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const mouse = { x: null, y: null, radius: 150 };
 
-  class DataLine {
-    constructor(){ this.reset(); }
-    reset(){
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.w = Math.random() * 400 + 100;
-      this.s = Math.random() * 15 + 8; // Ngebut abis
-      this.o = Math.random() * 0.5;
-    }
-    update(){
-      this.x += this.s;
-      if(this.x > canvas.width) { this.x = -this.w; this.y = Math.random() * canvas.height; }
-    }
-    draw(){
-      const g = ctx.createLinearGradient(this.x, 0, this.x + this.w, 0);
-      g.addColorStop(0, 'transparent');
-      g.addColorStop(0.5, `rgba(74, 222, 128, ${this.o})`);
-      g.addColorStop(1, 'transparent');
-      ctx.fillStyle = g;
-      ctx.fillRect(this.x, this.y, this.w, 1.2);
-    }
-  }
+window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
 
-  class Bit {
-    constructor(){ this.reset(); }
-    reset(){
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.v = Math.random() > 0.5 ? "1" : "0";
-      this.o = 0;
-      this.f = 0.01 + Math.random() * 0.02;
-    }
-    draw(){
-      this.o += this.f;
-      if(this.o > 0.4 || this.o < 0) this.f *= -1;
-      ctx.fillStyle = `rgba(74, 222, 128, ${this.o})`;
-      ctx.font = "10px 'Space Mono'";
-      ctx.fillText(this.v, this.x, this.y);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 2 - 1;
+    this.speedY = Math.random() * 2 - 1;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+    // Interaction with mouse
+    let dx = mouse.x - this.x;
+    let dy = mouse.y - this.y;
+    let distance = Math.sqrt(dx*dx + dy*dy);
+    if (distance < mouse.radius) {
+      if (mouse.x < this.x && this.x < canvas.width - 10) this.x += 3;
+      if (mouse.x > this.x && this.x > 10) this.x -= 3;
+      if (mouse.y < this.y && this.y < canvas.height - 10) this.y += 3;
+      if (mouse.y > this.y && this.y > 10) this.y -= 3;
     }
   }
-
-  function init(){
-    for(let i=0; i<70; i++) lines.push(new DataLine()); // Ramein garisnya
-    for(let i=0; i<50; i++) bits.push(new Bit()); // Ramein binernya
+  draw() {
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
   }
+}
 
-  function animate(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Grid static
-    ctx.strokeStyle = 'rgba(74, 222, 128, 0.03)';
-    for(let i=0; i<canvas.width; i+=100){
-      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke();
+function init() {
+  particles = [];
+  for (let i = 0; i < 100; i++) particles.push(new Particle());
+}
+
+function handleParticles() {
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].update();
+    particles[i].draw();
+    for (let j = i; j < particles.length; j++) {
+      let dx = particles[i].x - particles[j].x;
+      let dy = particles[i].y - particles[j].y;
+      let distance = Math.sqrt(dx*dx + dy*dy);
+      if (distance < 120) {
+        ctx.strokeStyle = `rgba(74, 222, 128, ${1 - (distance/120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
     }
-    lines.forEach(l => { l.update(); l.draw(); });
-    bits.forEach(b => b.draw());
-    requestAnimationFrame(animate);
   }
+}
 
-  init();
-  animate();
-})();
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  handleParticles();
+  requestAnimationFrame(animate);
+}
+
+init();
+animate();
 </script>
 </body>
 </html>
