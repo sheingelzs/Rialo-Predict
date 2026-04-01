@@ -725,6 +725,7 @@ async function doSwap(){
     ethBalance=Math.max(0,parseFloat((ethBalance-amt).toFixed(6)));
     rialoBal=parseFloat((rialoBal+out).toFixed(4));
     localStorage.setItem('rialoBalance', rialoBal.toFixed(4));
+    localStorage.setItem('rialo_balance', rialoBal.toFixed(4));
     updateUI();
     txns.unshift({amtIn:amt,amtOut:out,hash:tx,time:'Just now'});
     renderTxns();
