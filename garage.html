@@ -531,7 +531,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
               <div>
                 <div class="sec-bal-lbl">RIALO Balance (from Swap)</div>
                 <div class="sec-bal-num" id="garage-rlo-display">0.0000</div>
-                <div class="sec-bal-suffix" id="garage-wallet-addr">RIALO · Sepolia Testnet</div>
+                <div class="sec-bal-suffix">RIALO · Sepolia Testnet</div>
               </div>
             </div>
             <div class="sec-status-wrap">
@@ -773,19 +773,42 @@ function garageDoApprove(){
     showToast('g-approve','error','Hubungkan wallet terlebih dahulu!');
     return;
   }
-  const rialoBal = parseFloat(localStorage.getItem('rialoBalance') || '0');
+  // Ambil saldo dari localStorage — coba kedua key, default '0'
+  const raw = localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0';
+  const rialoBal = parseFloat(raw) || 0;
   if(rialoBal <= 0){
     showToast('g-approve','error','⚠️ Saldo RIALO 0. Lakukan swap di halaman Swap terlebih dahulu.');
     return;
   }
+
   const btn = document.getElementById('garage-approve-btn');
   const dot = document.getElementById('garage-approve-dot');
   const txt = document.getElementById('garage-approve-txt');
   btn.disabled = true; btn.textContent = '⏳ Approving…';
+
   setTimeout(() => {
-    btn.disabled = false; btn.textContent = '✅ Approve';
+    // 1. Update tombol & status dot
+    btn.disabled = false; btn.textContent = '✅ Approved';
     if(dot){ dot.className = 'sec-status-dot approved'; }
     if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
+
+    // 2. Tulis saldo ke #garage-rlo-display (angka di panel coklat susu)
+    const balDisplay = document.getElementById('garage-rlo-display');
+    if(balDisplay){
+      balDisplay.textContent = rialoBal.toFixed(4);
+      balDisplay.classList.remove('flash');
+      void balDisplay.offsetWidth;
+      balDisplay.classList.add('flash');
+      setTimeout(() => balDisplay.classList.remove('flash'), 950);
+    }
+
+    // 3. Tulis alamat wallet ke .sec-bal-suffix (baris address di panel)
+    const suffixEl = document.querySelector('.sec-bal-suffix');
+    if(suffixEl && walletAddress){
+      suffixEl.textContent = walletAddress.slice(0,10) + '...' + walletAddress.slice(-6) + ' · Sepolia Testnet';
+    }
+
+    // 4. Toast sukses
     showToast('g-approve','success',
       `Approval granted! ${rialoBal.toFixed(4)} RIALO approved ke Mock Validator Router. Staking siap dimulai 🚀`
     );
@@ -883,22 +906,6 @@ async function doApprove(){
   try{
     const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data:encodeApprove(spender,MAX_UINT256),value:'0x0'}]});
     showToast('approve','success',`Approve successful! ✅<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-    // ── Sync RIALO balance from localStorage into Security Control Panel (milk tea table) ──
-    const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
-    const rloDisplay = document.getElementById('garage-rlo-display');
-    if(rloDisplay){
-      rloDisplay.textContent = rialoBal.toFixed(4);
-      rloDisplay.classList.remove('flash');
-      void rloDisplay.offsetWidth;
-      rloDisplay.classList.add('flash');
-      setTimeout(() => rloDisplay.classList.remove('flash'), 950);
-    }
-    const addrEl = document.getElementById('garage-wallet-addr');
-    if(addrEl && walletAddress) addrEl.textContent = walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';
-    const approveDot = document.getElementById('garage-approve-dot');
-    const approveTxt = document.getElementById('garage-approve-txt');
-    if(approveDot){ approveDot.className = 'sec-status-dot approved'; }
-    if(approveTxt){ approveTxt.className = 'sec-status-txt approved'; approveTxt.textContent = 'Approved ✅'; }
   }catch(e){showToast('approve','error',e.code===4001?'Rejected.':e.message||'Approve failed.');}
   finally{btn.disabled=false;btn.textContent='Approve →';}
 }
@@ -1025,9 +1032,6 @@ function initDash(){
   document.getElementById('node-badge').classList.add('online');
   document.getElementById('badge-txt').textContent='NODE_STATUS: ONLINE · SEPOLIA';
   document.getElementById('kbd-addr').textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6);
-  // Populate wallet address in Security Control Panel (milk tea table)
-  const addrEl = document.getElementById('garage-wallet-addr');
-  if(addrEl) addrEl.textContent = walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';
   switchVM('EVM',document.querySelector('.vm-tab'));
   startGasPolling();
 }
