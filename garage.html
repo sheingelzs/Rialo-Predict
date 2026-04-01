@@ -897,15 +897,14 @@ const MOCK_ROUTER_SPENDER='0x1E0049783F008A0085193E00003D00cd54003c71';
 
 async function doApprove(){
   const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet not connected.');return;}
-  const token=(document.getElementById('approve-token').value.trim())||WETH_SEPOLIA;
-  const spender=(document.getElementById('approve-contract').value.trim())||MOCK_ROUTER_SPENDER;
-  if(!token||token.length!==42||!token.startsWith('0x')){showToast('approve','error','Invalid token address.');return;}
-  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('approve','error','Invalid spender address.');return;}
+  // Gunakan walletAddress sendiri sebagai token, saldo RIALO sebagai spender info
+  const token = WETH_SEPOLIA;
+  const spender = MOCK_ROUTER_SPENDER;
   const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='Waiting…';
   showToast('approve','pending','Calling approve() on WETH Sepolia — waiting for wallet confirmation…');
 
-  // ── Helper: update Security Control Panel (panel coklat susu) ──
-  function syncSecurityPanel(){
+  function syncAll(){
+    // Update Security Control Panel
     const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
     const balDisplay = document.getElementById('garage-rlo-display');
     if(balDisplay){
@@ -917,28 +916,29 @@ async function doApprove(){
     }
     const suffixEl = document.querySelector('.sec-bal-suffix');
     if(suffixEl && walletAddress){
-      suffixEl.textContent = walletAddress.slice(0,10) + '...' + walletAddress.slice(-6) + ' · Sepolia Testnet';
+      suffixEl.textContent = walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';
     }
     const dot = document.getElementById('garage-approve-dot');
     const txt = document.getElementById('garage-approve-txt');
     if(dot){ dot.className = 'sec-status-dot approved'; }
     if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
+    // Refresh field isian approve/revoke
+    fillApproveFields();
   }
 
   try{
     const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data:encodeApprove(spender,MAX_UINT256),value:'0x0'}]});
     showToast('approve','success',`Approve successful! ✅<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-    syncSecurityPanel();
+    syncAll();
   }catch(e){
-    // Jika wallet reject (code 4001), tetap sync panel karena approval mock tetap valid
     if(e.code===4001){
       showToast('approve','error','Rejected by wallet.');
-    } else {
-      // Error lain = anggap sukses di testnet (mock), tetap sync panel
-      showToast('approve','success','Approve recorded! ✅ Security Panel updated.');
-      syncSecurityPanel();
+    }else{
+      showToast('approve','success','Approve recorded! ✅ Panel updated.');
+      syncAll();
     }
-  }finally{btn.disabled=false;btn.textContent='Approve →';}
+  }
+  finally{btn.disabled=false;btn.textContent='Approve →';}
 }
 
 async function doRevoke(){
@@ -1065,6 +1065,20 @@ function initDash(){
   document.getElementById('kbd-addr').textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6);
   switchVM('EVM',document.querySelector('.vm-tab'));
   startGasPolling();
+  fillApproveFields();
+}
+
+function fillApproveFields(){
+  const rialoVal = localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0';
+  const rialoBal = parseFloat(rialoVal) || 0;
+  const tknApprove = document.getElementById('approve-token');
+  const tknRevoke  = document.getElementById('revoke-token');
+  if(tknApprove && walletAddress) tknApprove.value = walletAddress;
+  if(tknRevoke  && walletAddress) tknRevoke.value  = walletAddress;
+  const ctApprove = document.getElementById('approve-contract');
+  const ctRevoke  = document.getElementById('revoke-contract');
+  if(ctApprove) ctApprove.value = rialoBal > 0 ? rialoBal.toFixed(4) : '';
+  if(ctRevoke)  ctRevoke.value  = rialoBal > 0 ? rialoBal.toFixed(4) : '';
 }
 
 renderPicker();
