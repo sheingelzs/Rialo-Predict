@@ -75,11 +75,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .retry-btn{padding:.5rem 1.25rem;background:transparent;border:1px solid rgba(74,222,128,.3);color:var(--accent);border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;}
 .retry-btn:hover{background:rgba(74,222,128,.08);}
 .no-wallet-warn{margin-top:.5rem;padding:.65rem 1rem;background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;font-size:.75rem;color:rgba(248,113,113,.85);line-height:1.55;text-align:left;}
-.mobile-link{display:block;text-align:center;margin-top:.5rem;font-size:.68rem;color:rgba(74,222,128,.6);font-family:var(--font-mono);text-decoration:none;}
-.mobile-link:hover{color:var(--accent);}
-.faucet-note{margin-top:.6rem;padding:.55rem .85rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:8px;font-size:.67rem;font-family:var(--font-mono);color:rgba(200,180,255,.6);line-height:1.6;text-align:center;}
-.faucet-note a{color:var(--accent2);text-decoration:none;}
-.faucet-note a:hover{text-decoration:underline;}
+.mobile-open-btn{display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:12px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;width:100%;text-decoration:none;}
+.mobile-open-btn:hover{background:rgba(74,222,128,.12);transform:translateY(-1px);}
 
 /* ASSEMBLY */
 #scr-assembly{flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:2rem;text-align:center;animation:fadein .3s ease;}
@@ -198,12 +195,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .li-name{font-size:.82rem;font-weight:700;}
 .li-pill{font-family:var(--font-mono);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:99px;}
 
-/* TX TOAST container */
 #tx-toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem;max-width:340px;}
 
-/* ═══════════════════════════════════════════════════════════
-   🔐 SECURITY CONTROL PANEL — Milk Tea / Beige Theme #d2b48c
-   ═══════════════════════════════════════════════════════════ */
+/* SECURITY PANEL */
 .sec-panel-wrap{margin-bottom:1.5rem;}
 .sec-panel{
   background:linear-gradient(135deg,rgba(210,180,140,.07),rgba(210,180,140,.02));
@@ -387,7 +381,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
 
       <div class="testnet-banner">
-        🧪 <div><strong>Sepolia Testnet</strong> — No real ETH is used. Free gas from faucet. No real costs. &nbsp;<a href="https://sepoliafaucet.com" target="_blank">Get SepoliaETH →</a></div>
+        🧪 <div><strong>Sepolia Testnet</strong> — No real ETH is used. Free gas. No real costs. &nbsp;<a href="https://sepoliafaucet.com" target="_blank">Get SepoliaETH →</a></div>
       </div>
 
       <div class="sec-title">Live Engine Telemetry</div>
@@ -499,7 +493,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         </div>
       </div>
 
-      <!-- 🔐 SECURITY CONTROL PANEL — Pre-Staking Authorization (RIALO) -->
+      <!-- SECURITY CONTROL PANEL -->
       <div class="sec-title">🔐 Security Control Panel</div>
       <div class="sec-panel-wrap">
         <div class="sec-panel">
@@ -509,15 +503,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <span class="sec-panel-badge">Pre-Staking Auth</span>
           </div>
 
-          <!-- Info chips -->
           <div class="sec-info-row">
             <span class="sec-info-chip"><span class="chip-dot"></span>Sepolia Testnet</span>
             <span class="sec-info-chip"><span class="chip-dot"></span>ERC-20 Mock Router</span>
             <span class="sec-info-chip"><span class="chip-dot"></span>Gas: Subsidized ⚡</span>
-            <span class="sec-info-chip"><span class="chip-dot"></span>Live from wallet.html</span>
+            <span class="sec-info-chip"><span class="chip-dot"></span>Live from Swap page</span>
           </div>
 
-          <!-- ✅ Kartu Saldo RIALO Dinamis — auto-update dari localStorage (wallet.html) setiap 1 detik -->
           <div class="sec-bal-card">
             <div class="sec-bal-left">
               <div class="sec-bal-icon">🪙</div>
@@ -535,13 +527,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
           <div class="sec-cyber-line"></div>
 
-          <!-- Spender info -->
           <div class="sec-spender-row">
             <span class="sec-spender-lbl">Spender Contract</span>
             <span class="sec-spender-addr">0xRIALO…a84e3 (Mock Validator Router)</span>
           </div>
 
-          <!-- Tombol Approve & Revoke RIALO -->
           <div class="sec-btns">
             <button class="sec-btn do-approve" id="garage-approve-btn" onclick="garageDoApprove()">
               ✅ Approve
@@ -552,119 +542,29 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
 
           <div class="sec-note">
-            ⚠️ Lakukan Approve sebelum memulai staking validator. Revoke kapan saja untuk mencabut akses.<br>
-            Saldo RIALO diambil real-time dari wallet.html via localStorage · Simulation only · No real assets involved.
+            ⚠️ Approve before starting validator staking. Revoke at any time to remove access.<br>
+            RIALO balance is synced real-time from the Swap page via localStorage · Simulation only · No real assets involved.
           </div>
 
         </div>
       </div>
-      <!-- /🔐 SECURITY CONTROL PANEL -->
 
     </div>
   </div>
 </div>
 
 <script>
-/* ══════════════════════════════════════════════
-   MOVE LANGUAGE DATA STREAM — Rialo Alpha Core
-   — Matrix-style vertical character rain
-   — Chars: binary 0/1 + Move lang keywords
-   — Color: --accent #4ade80 @ low opacity
-   — Font: 'Space Mono', monospace (sharp/Y2K)
-   — Glow: random per-char transfer effect
-   ══════════════════════════════════════════════ */
+/* ══ MATRIX RAIN BACKGROUND ══ */
 (function(){
-  const canvas = document.getElementById('blob-canvas');
-  const ctx    = canvas.getContext('2d');
-
-  function setupCanvas() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', () => { setupCanvas(); initStreams(); });
-  setupCanvas();
-
-  const CHARS = [
-    '0','1','0','1','0','1','0','1',
-    'm','o','d','u','l','e',
-    'e','n','t','r','y',
-    'f','u','n',
-    'p','u','b','l','i','c',
-    's','t','r','u','c','t',
-    'u','s','e',
-    '{','}','(',')',':',';','<','>',
-    '=','_','&','|','!',
-    'a','c','q','i','r','e','s',
-    'h','a','s',
-  ];
-
-  const FONT_SIZE  = 13;
-  const BASE_ALPHA = 0.07;
-  const GLOW_PROB  = 0.018;
-
-  let streams = [];
-
-  function initStreams() {
-    const cols = Math.floor(canvas.width / FONT_SIZE);
-    streams = Array.from({ length: cols }, (_, i) => ({
-      x:     i * FONT_SIZE,
-      y:     Math.random() * -canvas.height,
-      speed: 0.6 + Math.random() * 1.4,
-      chars: Array.from({ length: Math.floor(8 + Math.random() * 20) },
-               () => CHARS[Math.floor(Math.random() * CHARS.length)]),
-      glowIdx: -1,
-      glowTimer: 0,
-    }));
-  }
+  const canvas=document.getElementById('blob-canvas');const ctx=canvas.getContext('2d');
+  function setupCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  window.addEventListener('resize',()=>{setupCanvas();initStreams();});setupCanvas();
+  const CHARS=['0','1','0','1','0','1','0','1','m','o','d','u','l','e','e','n','t','r','y','f','u','n','p','u','b','l','i','c','s','t','r','u','c','t','u','s','e','{','}','(',')',':',';','<','>','=','_','&','|','!','a','c','q','i','r','e','s','h','a','s'];
+  const FONT_SIZE=13,BASE_ALPHA=0.07,GLOW_PROB=0.018;let streams=[];
+  function initStreams(){const cols=Math.floor(canvas.width/FONT_SIZE);streams=Array.from({length:cols},(_,i)=>({x:i*FONT_SIZE,y:Math.random()*-canvas.height,speed:0.6+Math.random()*1.4,chars:Array.from({length:Math.floor(8+Math.random()*20)},()=>CHARS[Math.floor(Math.random()*CHARS.length)]),glowIdx:-1,glowTimer:0}));}
   initStreams();
-
-  function draw() {
-    const w = canvas.width, h = canvas.height;
-    ctx.fillStyle = 'rgba(5,8,16,0.18)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.font = `${FONT_SIZE}px 'Space Mono', monospace`;
-    ctx.textBaseline = 'top';
-    streams.forEach(stream => {
-      stream.y += stream.speed;
-      const streamH = stream.chars.length * FONT_SIZE;
-      if (stream.y - streamH > h) {
-        stream.y     = -streamH - Math.random() * h * 0.5;
-        stream.speed = 0.6 + Math.random() * 1.4;
-        stream.chars = stream.chars.map(() =>
-          CHARS[Math.floor(Math.random() * CHARS.length)]
-        );
-      }
-      if (Math.random() < GLOW_PROB) {
-        stream.glowIdx   = Math.floor(Math.random() * stream.chars.length);
-        stream.glowTimer = 6 + Math.floor(Math.random() * 12);
-      }
-      if (stream.glowTimer > 0) stream.glowTimer--;
-      else stream.glowIdx = -1;
-      stream.chars.forEach((ch, ci) => {
-        const cy = stream.y + ci * FONT_SIZE;
-        if (cy < -FONT_SIZE || cy > h) return;
-        const isGlow = (ci === stream.glowIdx && stream.glowTimer > 0);
-        if (isGlow) {
-          ctx.save();
-          ctx.shadowColor  = '#4ade80';
-          ctx.shadowBlur   = 8;
-          ctx.fillStyle    = 'rgba(74,222,128,0.55)';
-          ctx.fillText(ch, stream.x, cy);
-          ctx.restore();
-        } else {
-          const headFade = ci === 0 ? 0.12 : BASE_ALPHA;
-          ctx.fillStyle = `rgba(74,222,128,${headFade})`;
-          ctx.fillText(ch, stream.x, cy);
-        }
-      });
-    });
-  }
-
-  function animate() {
-    draw();
-    requestAnimationFrame(animate);
-  }
-  requestAnimationFrame(animate);
+  function draw(){const w=canvas.width,h=canvas.height;ctx.fillStyle='rgba(5,8,16,0.18)';ctx.fillRect(0,0,w,h);ctx.font=`${FONT_SIZE}px 'Space Mono',monospace`;ctx.textBaseline='top';streams.forEach(stream=>{stream.y+=stream.speed;const streamH=stream.chars.length*FONT_SIZE;if(stream.y-streamH>h){stream.y=-streamH-Math.random()*h*0.5;stream.speed=0.6+Math.random()*1.4;stream.chars=stream.chars.map(()=>CHARS[Math.floor(Math.random()*CHARS.length)]);}if(Math.random()<GLOW_PROB){stream.glowIdx=Math.floor(Math.random()*stream.chars.length);stream.glowTimer=6+Math.floor(Math.random()*12);}if(stream.glowTimer>0)stream.glowTimer--;else stream.glowIdx=-1;stream.chars.forEach((ch,ci)=>{const cy=stream.y+ci*FONT_SIZE;if(cy<-FONT_SIZE||cy>h)return;const isGlow=(ci===stream.glowIdx&&stream.glowTimer>0);if(isGlow){ctx.save();ctx.shadowColor='#4ade80';ctx.shadowBlur=8;ctx.fillStyle='rgba(74,222,128,0.55)';ctx.fillText(ch,stream.x,cy);ctx.restore();}else{ctx.fillStyle=`rgba(74,222,128,${ci===0?0.12:BASE_ALPHA})`;ctx.fillText(ch,stream.x,cy);}});});}
+  function animate(){draw();requestAnimationFrame(animate);}requestAnimationFrame(animate);
 })();
 
 let walletAddress=null,currentVM='EVM',gasInterval=null;
@@ -674,44 +574,19 @@ const CHAIN_CONFIG={chainId:CHAIN_ID,chainName:CHAIN_NAME,nativeCurrency:{name:'
 const SEPOLIA_RPC='https://rpc.sepolia.org';
 const DEPOSIT_CONTRACT='0x7f268357A8c2552623316e2562D90e642bB538E5';
 const MAX_UINT256='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-const SIM_ETH_PRICE = 3200;
-let _lastBaseFee = 12;
+const SIM_ETH_PRICE=3200;
+let _lastBaseFee=12;
 
 const VM={
-  EVM:{
-    finality:50,fStatus:'OPTIMAL',integrity:'3 / 3',iStatus:'VERIFIED',color:'#4ade80',gaugeOffset:40,
-    stack:[
-      {name:"Ethereum", logo:"images/eth.png", status:"SETTLEMENT"},
-      {name:"Arbitrum", logo:"images/arb.png", status:"L2 EXECUTION"},
-      {name:"Optimism", logo:"images/op.png", status:"SCALING"}
-    ],
-    desc:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Sepolia Testnet. Gas: FREE.'
-  },
-  SVM:{
-    finality:22,fStatus:'ULTRA FAST',integrity:'12 / 12',iStatus:'STABLE',color:'#22d3ee',gaugeOffset:15,
-    stack:[
-      {name:"Solana", logo:"images/sol.png", status:"SVM CORE"},
-      {name:"Pyth Network", logo:"images/pyth.png", status:"ORACLE"},
-      {name:"Jupiter", logo:"images/jup.png", status:"AGGREGATOR"}
-    ],
-    desc:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel tx processing. Rust-based.'
-  },
-  MOVE:{
-    finality:45,fStatus:'SECURE',integrity:'5 / 5',iStatus:'SYNCHRONIZED',color:'#7c5cfc',gaugeOffset:55,
-    stack:[
-      {name:"Sui", logo:"images/sui.png", status:"OBJECT-VM"},
-      {name:"Aptos", logo:"images/apt.png", status:"MOVE-CORE"},
-      {name:"Movement", logo:"images/move.png", status:"M2 STACK"}
-    ],
-    desc:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management.'
-  }
+  EVM:{finality:50,fStatus:'OPTIMAL',integrity:'3 / 3',iStatus:'VERIFIED',color:'#4ade80',gaugeOffset:40,stack:[{name:"Ethereum",logo:"images/eth.png",status:"SETTLEMENT"},{name:"Arbitrum",logo:"images/arb.png",status:"L2 EXECUTION"},{name:"Optimism",logo:"images/op.png",status:"SCALING"}],desc:'Active: <strong>EVM</strong> — Ethereum-compatible execution. Sepolia Testnet. Gas: FREE.'},
+  SVM:{finality:22,fStatus:'ULTRA FAST',integrity:'12 / 12',iStatus:'STABLE',color:'#22d3ee',gaugeOffset:15,stack:[{name:"Solana",logo:"images/sol.png",status:"SVM CORE"},{name:"Pyth Network",logo:"images/pyth.png",status:"ORACLE"},{name:"Jupiter",logo:"images/jup.png",status:"AGGREGATOR"}],desc:'Active: <strong>SVM</strong> — Solana Virtual Machine. Parallel tx processing. Rust-based.'},
+  MOVE:{finality:45,fStatus:'SECURE',integrity:'5 / 5',iStatus:'SYNCHRONIZED',color:'#7c5cfc',gaugeOffset:55,stack:[{name:"Sui",logo:"images/sui.png",status:"OBJECT-VM"},{name:"Aptos",logo:"images/apt.png",status:"MOVE-CORE"},{name:"Movement",logo:"images/move.png",status:"M2 STACK"}],desc:'Active: <strong>MOVE</strong> — Move language VM. Resource-oriented, safe asset management.'}
 };
 
-function updateGasUI(baseFee, priorityFee){
+function updateGasUI(baseFee,priorityFee){
   const elBase=document.getElementById('gas-base');if(elBase){elBase.textContent=`${baseFee.toFixed(4)} GWEI`;elBase.classList.remove('pulse');}
   const elPriority=document.getElementById('gas-priority');if(elPriority)elPriority.textContent=`${priorityFee.toFixed(2)} GWEI`;
-  const totalGwei=baseFee+priorityFee;
-  const txCostUSD=(21000*totalGwei*1e-9)*SIM_ETH_PRICE;
+  const totalGwei=baseFee+priorityFee;const txCostUSD=(21000*totalGwei*1e-9)*SIM_ETH_PRICE;
   const elCost=document.getElementById('gas-cost');if(elCost)elCost.textContent=txCostUSD<0.01?'~$0.00':`~$${txCostUSD.toFixed(4)}`;
   const elSub=document.getElementById('subsidy-status');if(elSub){elSub.textContent='ACTIVE ⚡';elSub.style.animation='blink 1.8s infinite';}
   const elTele=document.getElementById('gas-tele-val');if(elTele)elTele.textContent='FREE';
@@ -721,117 +596,70 @@ async function fetchSepoliaGas(){
   const priorityFee=1.0+Math.random()*1.5;
   const activeProv=window._rialoProv||window.ethereum;
   if(activeProv){try{const hex=await activeProv.request({method:'eth_gasPrice',params:[]});const baseFee=parseInt(hex,16)/1e9;_lastBaseFee=baseFee;updateGasUI(baseFee,priorityFee);return;}catch(e){}}
-  try{
-    const r=await fetch(SEPOLIA_RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})});
-    const j=await r.json();if(j.result){const baseFee=parseInt(j.result,16)/1e9;_lastBaseFee=baseFee;updateGasUI(baseFee,priorityFee);return;}
-  }catch(e){}
+  try{const r=await fetch(SEPOLIA_RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})});const j=await r.json();if(j.result){const baseFee=parseInt(j.result,16)/1e9;_lastBaseFee=baseFee;updateGasUI(baseFee,priorityFee);return;}}catch(e){}
   const drift=(Math.random()-0.5)*2;_lastBaseFee=Math.min(20,Math.max(10,_lastBaseFee+drift));updateGasUI(_lastBaseFee,priorityFee);
 }
 
 function startGasPolling(){fetchSepoliaGas();if(gasInterval)clearInterval(gasInterval);gasInterval=setInterval(fetchSepoliaGas,5000);}
 
-/* ══════════════════════════════════════════════════════════════
-   💰 RIALO BALANCE SYNC
-   Sinkronisasi saldo dari localStorage (wallet.html → garage.html)
-   setInterval polling setiap 1 detik = real-time update
-   ══════════════════════════════════════════════════════════════ */
+/* RIALO BALANCE SYNC — real-time polling from localStorage */
 (function initRialoBalanceSync(){
-  let lastVal = null;
+  let lastVal=null;
   function syncBalance(){
-    const raw = localStorage.getItem('rialoBalance');
-    const val = raw !== null ? parseFloat(raw) : 0;
-    const display = document.getElementById('garage-rlo-display');
-    if(!display) return;
-    const formatted = val.toFixed(4);
-    if(formatted !== lastVal){
-      lastVal = formatted;
-      display.textContent = formatted;
-      // Flash animasi kuning saat angka berubah
-      display.classList.remove('flash');
-      void display.offsetWidth; // reflow untuk reset animasi
-      display.classList.add('flash');
-      setTimeout(() => display.classList.remove('flash'), 950);
+    const raw=localStorage.getItem('rialoBalance');
+    const val=raw!==null?parseFloat(raw):0;
+    const display=document.getElementById('garage-rlo-display');
+    if(!display)return;
+    const formatted=val.toFixed(4);
+    if(formatted!==lastVal){
+      lastVal=formatted;display.textContent=formatted;
+      display.classList.remove('flash');void display.offsetWidth;display.classList.add('flash');
+      setTimeout(()=>display.classList.remove('flash'),950);
     }
   }
-  syncBalance();
-  setInterval(syncBalance, 1000);
+  syncBalance();setInterval(syncBalance,1000);
 })();
 
-/* ══════════════════════════════════════════════════════════════
-   🔐 SECURITY PANEL — garageDoApprove & garageDoRevoke
-   Approve hanya jika saldo RIALO > 0 (cek dari localStorage)
-   ══════════════════════════════════════════════════════════════ */
+/* SECURITY PANEL — Approve & Revoke */
 function garageDoApprove(){
-  if(!walletAddress){
-    showToast('g-approve','error','Hubungkan wallet terlebih dahulu!');
-    return;
-  }
-  // Ambil saldo dari localStorage — coba kedua key, default '0'
-  const raw = localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0';
-  const rialoBal = parseFloat(raw) || 0;
-  if(rialoBal <= 0){
-    showToast('g-approve','error','⚠️ Saldo RIALO 0. Lakukan swap di halaman Swap terlebih dahulu.');
-    return;
-  }
-
-  const btn = document.getElementById('garage-approve-btn');
-  const dot = document.getElementById('garage-approve-dot');
-  const txt = document.getElementById('garage-approve-txt');
-  btn.disabled = true; btn.textContent = '⏳ Approving…';
-
-  setTimeout(() => {
-    // 1. Update tombol & status dot
-    btn.disabled = false; btn.textContent = '✅ Approved';
-    if(dot){ dot.className = 'sec-status-dot approved'; }
-    if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
-
-    // 2. Tulis saldo ke #garage-rlo-display (angka di panel coklat susu)
-    const balDisplay = document.getElementById('garage-rlo-display');
-    if(balDisplay){
-      balDisplay.textContent = rialoBal.toFixed(4);
-      balDisplay.classList.remove('flash');
-      void balDisplay.offsetWidth;
-      balDisplay.classList.add('flash');
-      setTimeout(() => balDisplay.classList.remove('flash'), 950);
-    }
-
-    // 3. Tulis alamat wallet ke .sec-bal-suffix (baris address di panel)
-    const suffixEl = document.querySelector('.sec-bal-suffix');
-    if(suffixEl && walletAddress){
-      suffixEl.textContent = walletAddress.slice(0,10) + '...' + walletAddress.slice(-6) + ' · Sepolia Testnet';
-    }
-
-    // 4. Toast sukses
-    showToast('g-approve','success',
-      `Approval granted! ${rialoBal.toFixed(4)} RIALO approved ke Mock Validator Router. Staking siap dimulai 🚀`
-    );
-  }, 1500);
+  if(!walletAddress){showToast('g-approve','error','Please connect your wallet first!');return;}
+  const raw=localStorage.getItem('rialo_balance')||localStorage.getItem('rialoBalance')||'0';
+  const rialoBal=parseFloat(raw)||0;
+  if(rialoBal<=0){showToast('g-approve','error','⚠️ RIALO balance is 0. Please swap ETH first on the Swap page.');return;}
+  const btn=document.getElementById('garage-approve-btn');
+  const dot=document.getElementById('garage-approve-dot');
+  const txt=document.getElementById('garage-approve-txt');
+  btn.disabled=true;btn.textContent='⏳ Approving…';
+  setTimeout(()=>{
+    btn.disabled=false;btn.textContent='✅ Approved';
+    if(dot){dot.className='sec-status-dot approved';}
+    if(txt){txt.className='sec-status-txt approved';txt.textContent='Approved ✅';}
+    const balDisplay=document.getElementById('garage-rlo-display');
+    if(balDisplay){balDisplay.textContent=rialoBal.toFixed(4);balDisplay.classList.remove('flash');void balDisplay.offsetWidth;balDisplay.classList.add('flash');setTimeout(()=>balDisplay.classList.remove('flash'),950);}
+    const suffixEl=document.querySelector('.sec-bal-suffix');
+    if(suffixEl&&walletAddress){suffixEl.textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';}
+    showToast('g-approve','success',`Approval granted! ${rialoBal.toFixed(4)} RIALO approved to Mock Validator Router. Ready to stake 🚀`);
+  },1500);
 }
 
 function garageDoRevoke(){
-  if(!walletAddress){
-    showToast('g-revoke','error','Hubungkan wallet terlebih dahulu!');
-    return;
-  }
-  const btn = document.getElementById('garage-revoke-btn');
-  const dot = document.getElementById('garage-approve-dot');
-  const txt = document.getElementById('garage-approve-txt');
-  btn.disabled = true; btn.textContent = '⏳ Revoking…';
-  setTimeout(() => {
-    btn.disabled = false; btn.textContent = '✕ Revoke';
-    if(dot){ dot.className = 'sec-status-dot revoked'; }
-    if(txt){ txt.className = 'sec-status-txt revoked'; txt.textContent = 'Revoked ✗'; }
-    showToast('g-revoke','success',
-      'Approval dicabut. Mock Validator Router tidak lagi dapat transfer RIALO kamu 🔒'
-    );
-  }, 1500);
+  if(!walletAddress){showToast('g-revoke','error','Please connect your wallet first!');return;}
+  const btn=document.getElementById('garage-revoke-btn');
+  const dot=document.getElementById('garage-approve-dot');
+  const txt=document.getElementById('garage-approve-txt');
+  btn.disabled=true;btn.textContent='⏳ Revoking…';
+  setTimeout(()=>{
+    btn.disabled=false;btn.textContent='✕ Revoke';
+    if(dot){dot.className='sec-status-dot revoked';}
+    if(txt){txt.className='sec-status-txt revoked';txt.textContent='Revoked ✗';}
+    showToast('g-revoke','success','Approval revoked. Mock Validator Router can no longer transfer your RIALO 🔒');
+  },1500);
 }
 
-/* ── Toast ── */
+/* TOAST */
 const _timers={};
 function showToast(id,type,msg){
-  const box=document.getElementById('tx-toast');
-  let el=document.getElementById('t-'+id);
+  const box=document.getElementById('tx-toast');let el=document.getElementById('t-'+id);
   if(!el){el=document.createElement('div');el.id='t-'+id;box.appendChild(el);}
   el.className=`toast ${type}`;
   el.innerHTML=`<span class="toast-ico">${type==='pending'?'⏳':type==='success'?'✅':'❌'}</span><span class="toast-msg">${msg}</span>`;
@@ -839,22 +667,46 @@ function showToast(id,type,msg){
   if(type!=='pending')_timers[id]=setTimeout(()=>{el.remove();},9000);
 }
 
-function encodeApprove(spender,amountHex){return '0x095ea7b3'+spender.toLowerCase().replace('0x','').padStart(64,'0')+amountHex.replace('0x','').padStart(64,'0');}
-function ethToHex(eth){return '0x'+BigInt(Math.round(parseFloat(eth)*1e18)).toString(16);}
+function encodeApprove(spender,amountHex){return'0x095ea7b3'+spender.toLowerCase().replace('0x','').padStart(64,'0')+amountHex.replace('0x','').padStart(64,'0');}
+function ethToHex(eth){return'0x'+BigInt(Math.round(parseFloat(eth)*1e18)).toString(16);}
+
+/* Universal provider detection */
+function getProviderList(){
+  const providers=[];
+  if(window.ethereum){
+    if(window.ethereum.providers&&Array.isArray(window.ethereum.providers)){providers.push(...window.ethereum.providers);}
+    else{providers.push(window.ethereum);}
+  }
+  if(window.okxwallet&&!providers.includes(window.okxwallet))providers.push(window.okxwallet);
+  if(window.phantom?.ethereum&&!providers.includes(window.phantom.ethereum))providers.push(window.phantom.ethereum);
+  return providers;
+}
 
 function getProvider(type){
-  const pp=window.ethereum?.providers||[];
-  if(type==='metamask'){if(pp.length){const p=pp.find(x=>x.isMetaMask&&!x.isBraveWallet&&!x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isMetaMask)return window.ethereum;return null;}
-  if(type==='coinbase'){if(pp.length){const p=pp.find(x=>x.isCoinbaseWallet);if(p)return p;}if(window.ethereum?.isCoinbaseWallet)return window.ethereum;if(window.coinbaseWalletExtension)return window.coinbaseWalletExtension;return null;}
-  if(type==='phantom'){if(window.phantom?.ethereum)return window.phantom.ethereum;if(pp.length){const p=pp.find(x=>x.isPhantom);if(p)return p;}if(window.ethereum?.isPhantom)return window.ethereum;return null;}
-  if(type==='okx'){if(window.okxwallet)return window.okxwallet;if(window.okexchain)return window.okexchain;if(pp.length){const p=pp.find(x=>x.isOkxWallet||x.isOKExWallet);if(p)return p;}return null;}
+  const pp=getProviderList();
+  if(type==='metamask')return pp.find(p=>p.isMetaMask&&!p.isPhantom&&!p.isCoinbaseWallet)||null;
+  if(type==='coinbase')return pp.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||window.coinbaseWalletExtension||null;
+  if(type==='phantom')return window.phantom?.ethereum||pp.find(p=>p.isPhantom)||null;
+  if(type==='okx')return window.okxwallet||pp.find(p=>p.isOkxWallet||p.isOKExWallet||p.isOKXWallet)||null;
   return window.ethereum||null;
 }
+
+function detectWallets(){
+  const pp=getProviderList();
+  return{
+    metamask:!!(pp.find(p=>p.isMetaMask&&!p.isPhantom&&!p.isCoinbaseWallet)),
+    coinbase:!!(pp.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||window.coinbaseWalletExtension),
+    phantom:!!(window.phantom?.ethereum||pp.find(p=>p.isPhantom)),
+    okx:!!(window.okxwallet||pp.find(p=>p.isOkxWallet||p.isOKExWallet||p.isOKXWallet))
+  };
+}
+
+function isMobile(){return/Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);}
 const AP=()=>window._rialoProv||window.ethereum;
 
 async function switchToSepolia(provider){
   try{await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:CHAIN_ID}]});}
-  catch(e){if(e.code===4902){await provider.request({method:'wallet_addEthereumChain',params:[CHAIN_CONFIG]});}}
+  catch(e){if(e.code===4902){try{await provider.request({method:'wallet_addEthereumChain',params:[CHAIN_CONFIG]});}catch(err){}}}
 }
 
 async function doStake(){
@@ -863,25 +715,20 @@ async function doStake(){
   if(!amt||amt<0.01){showToast('stake','error','Minimum stake is 0.01 sETH.');return;}
   const btn=document.getElementById('stake-btn');btn.disabled=true;btn.textContent='Waiting…';
   showToast('stake','pending','Waiting for stake confirmation in your wallet…');
-  try{
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:DEPOSIT_CONTRACT,value:ethToHex(amt),gas:'0x7A120'}]});
-    showToast('stake','success',`Sepolia stake successful! 🎉<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('stake','error',e.code===4001?'Rejected.':e.message||'Stake failed.');}
+  try{const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:DEPOSIT_CONTRACT,value:ethToHex(amt),gas:'0x7A120'}]});showToast('stake','success',`Sepolia stake successful! 🎉<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);}
+  catch(e){showToast('stake','error',e.code===4001?'Rejected.':e.message||'Stake failed.');}
   finally{btn.disabled=false;btn.textContent='Stake →';}
 }
 
 async function doSend(){
   const prov=AP();if(!prov||!walletAddress){showToast('send','error','Wallet not connected.');return;}
-  const to=document.getElementById('send-addr').value.trim();
-  const amt=parseFloat(document.getElementById('send-amount').value);
+  const to=document.getElementById('send-addr').value.trim();const amt=parseFloat(document.getElementById('send-amount').value);
   if(!to||!to.startsWith('0x')||to.length!==42){showToast('send','error','Invalid address.');return;}
   if(!amt||amt<=0){showToast('send','error','Enter an sETH amount.');return;}
   const btn=document.getElementById('send-btn');btn.disabled=true;btn.textContent='Waiting…';
   showToast('send','pending','Waiting for send confirmation in your wallet…');
-  try{
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to,value:ethToHex(amt),gas:'0x5208'}]});
-    showToast('send','success',`Sepolia send successful! 📤<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('send','error',e.code===4001?'Rejected.':e.message||'Send failed.');}
+  try{const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to,value:ethToHex(amt),gas:'0x5208'}]});showToast('send','success',`Sepolia send successful! 📤<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);}
+  catch(e){showToast('send','error',e.code===4001?'Rejected.':e.message||'Send failed.');}
   finally{btn.disabled=false;btn.textContent='Send →';}
 }
 
@@ -890,137 +737,38 @@ const MOCK_ROUTER_SPENDER='0x1E0049783F008A0085193E00003D00cd54003c71';
 
 async function doApprove(){
   const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet not connected.');return;}
-  const btn=document.getElementById('approve-btn');
-  btn.disabled=true;btn.textContent='⏳ Processing…';
-
+  const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='⏳ Processing…';
   function syncAll(){
-    const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
-    const balDisplay = document.getElementById('garage-rlo-display');
-    if(balDisplay){
-      balDisplay.textContent = rialoBal.toFixed(4);
-      balDisplay.classList.remove('flash');
-      void balDisplay.offsetWidth;
-      balDisplay.classList.add('flash');
-      setTimeout(() => balDisplay.classList.remove('flash'), 950);
-    }
-    const suffixEl = document.querySelector('.sec-bal-suffix');
-    if(suffixEl && walletAddress){
-      suffixEl.textContent = walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';
-    }
-    const dot = document.getElementById('garage-approve-dot');
-    const txt = document.getElementById('garage-approve-txt');
-    if(dot){ dot.className = 'sec-status-dot approved'; }
-    if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
-    fillApproveFields();
-    showCongratsModal();
+    const rialoBal=parseFloat(localStorage.getItem('rialo_balance')||localStorage.getItem('rialoBalance')||'0');
+    const balDisplay=document.getElementById('garage-rlo-display');
+    if(balDisplay){balDisplay.textContent=rialoBal.toFixed(4);balDisplay.classList.remove('flash');void balDisplay.offsetWidth;balDisplay.classList.add('flash');setTimeout(()=>balDisplay.classList.remove('flash'),950);}
+    const suffixEl=document.querySelector('.sec-bal-suffix');
+    if(suffixEl&&walletAddress){suffixEl.textContent=walletAddress.slice(0,10)+'...'+walletAddress.slice(-6)+' · Sepolia Testnet';}
+    const dot=document.getElementById('garage-approve-dot');const txt=document.getElementById('garage-approve-txt');
+    if(dot){dot.className='sec-status-dot approved';}if(txt){txt.className='sec-status-txt approved';txt.textContent='Approved ✅';}
+    fillApproveFields();showCongratsModal();
   }
-
   try{
     const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:WETH_SEPOLIA,data:encodeApprove(MOCK_ROUTER_SPENDER,MAX_UINT256),value:'0x0'}]});
     syncAll();
   }catch(e){
-    if(e.code===4001){
-      showToast('approve','error','Rejected by wallet.');
-    }else{
-      syncAll();
-    }
+    if(e.code===4001){showToast('approve','error','Rejected by wallet.');}
+    else{syncAll();}
   }
   finally{btn.disabled=false;btn.textContent='Approve →';}
 }
 
 function showCongratsModal(){
-  // Hapus modal lama kalau ada
-  const old = document.getElementById('congrats-modal');
-  if(old) old.remove();
-
-  const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
-  const modal = document.createElement('div');
-  modal.id = 'congrats-modal';
-  modal.style.cssText = `
-    position:fixed;inset:0;z-index:9999;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(5,8,16,.85);backdrop-filter:blur(12px);
-    animation:fadein .3s ease;
-  `;
-  modal.innerHTML = `
-    <div style="
-      background:linear-gradient(135deg,#0f1929,#1a2a42);
-      border:1px solid rgba(74,222,128,.35);
-      border-radius:24px;padding:2.5rem 2rem;
-      max-width:380px;width:90%;text-align:center;
-      position:relative;overflow:hidden;
-      box-shadow:0 0 60px rgba(74,222,128,.15);
-    ">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#4ade80,#22d3ee,#7c5cfc,#4ade80);"></div>
-
-      <!-- Confetti particles -->
-      <div id="confetti-wrap" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
-
-      <div style="font-size:3rem;margin-bottom:1rem;animation:float 2s ease-in-out infinite;">🎉</div>
-      <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#4ade80;margin-bottom:.5rem;letter-spacing:-.02em;">
-        Congratulations!
-      </div>
-      <div style="font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:1.25rem;">
-        You have successfully claimed your<br>
-        <span style="color:#4ade80;font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;">${rialoBal.toFixed(4)} RIALO</span><br>
-        tokens on Sepolia Testnet! 🚀
-      </div>
-      <div style="
-        background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);
-        border-radius:10px;padding:.6rem 1rem;margin-bottom:1.25rem;
-        font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.4);
-      ">
-        ${walletAddress ? walletAddress.slice(0,10)+'...'+walletAddress.slice(-6) : '—'} · Sepolia Testnet
-      </div>
-      <button onclick="document.getElementById('congrats-modal').remove()" style="
-        width:100%;padding:.85rem;border-radius:12px;border:none;
-        background:linear-gradient(135deg,#4ade80,#22d3ee);
-        color:#050810;font-family:'Space Grotesk',sans-serif;
-        font-size:.95rem;font-weight:700;cursor:pointer;
-        transition:filter .2s;
-      " onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">
-        ✅ Awesome, let's go!
-      </button>
-    </div>
-  `;
+  const old=document.getElementById('congrats-modal');if(old)old.remove();
+  const rialoBal=parseFloat(localStorage.getItem('rialo_balance')||localStorage.getItem('rialoBalance')||'0');
+  const modal=document.createElement('div');modal.id='congrats-modal';
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(5,8,16,.85);backdrop-filter:blur(12px);animation:fadein .3s ease;';
+  modal.innerHTML=`<div style="background:linear-gradient(135deg,#0f1929,#1a2a42);border:1px solid rgba(74,222,128,.35);border-radius:24px;padding:2.5rem 2rem;max-width:380px;width:90%;text-align:center;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(74,222,128,.15);"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#4ade80,#22d3ee,#7c5cfc,#4ade80);"></div><div id="confetti-wrap" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div><div style="font-size:3rem;margin-bottom:1rem;animation:float 2s ease-in-out infinite;">🎉</div><div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#4ade80;margin-bottom:.5rem;letter-spacing:-.02em;">Congratulations!</div><div style="font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:1.25rem;">You have successfully claimed your<br><span style="color:#4ade80;font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;">${rialoBal.toFixed(4)} RIALO</span><br>tokens on Sepolia Testnet! 🚀</div><div style="background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.6rem 1rem;margin-bottom:1.25rem;font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.4);">${walletAddress?walletAddress.slice(0,10)+'...'+walletAddress.slice(-6):'—'} · Sepolia Testnet</div><button onclick="document.getElementById('congrats-modal').remove()" style="width:100%;padding:.85rem;border-radius:12px;border:none;background:linear-gradient(135deg,#4ade80,#22d3ee);color:#050810;font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">✅ Awesome, let's go!</button></div>`;
   document.body.appendChild(modal);
-
-  // Confetti animation
-  const wrap = document.getElementById('confetti-wrap');
-  const colors = ['#4ade80','#22d3ee','#7c5cfc','#facc15','#f87171'];
-  for(let i=0;i<28;i++){
-    const p = document.createElement('div');
-    const size = 4+Math.random()*6;
-    p.style.cssText = `
-      position:absolute;
-      width:${size}px;height:${size}px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      border-radius:${Math.random()>0.5?'50%':'2px'};
-      left:${Math.random()*100}%;
-      top:-10px;
-      opacity:${0.5+Math.random()*0.5};
-      animation:confettiFall ${1.5+Math.random()*2}s ease-in ${Math.random()*0.8}s forwards;
-    `;
-    wrap.appendChild(p);
-  }
-
-  // Auto close setelah 6 detik
-  setTimeout(()=>{ const m=document.getElementById('congrats-modal'); if(m)m.remove(); }, 6000);
-}
-
-async function doRevoke(){
-  const prov=AP();if(!prov||!walletAddress){showToast('revoke','error','Wallet not connected.');return;}
-  const token=(document.getElementById('revoke-token').value.trim())||WETH_SEPOLIA;
-  const spender=(document.getElementById('revoke-contract').value.trim())||MOCK_ROUTER_SPENDER;
-  if(!token||token.length!==42||!token.startsWith('0x')){showToast('revoke','error','Invalid token address.');return;}
-  if(!spender||spender.length!==42||!spender.startsWith('0x')){showToast('revoke','error','Invalid spender address.');return;}
-  const btn=document.getElementById('revoke-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('revoke','pending','Calling approve(0) on WETH Sepolia — revoking access…');
-  try{
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data:encodeApprove(spender,'0x0000000000000000000000000000000000000000000000000000000000000000'),value:'0x0'}]});
-    showToast('revoke','success',`Revoke successful! 🔒<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
-  }catch(e){showToast('revoke','error',e.code===4001?'Rejected.':e.message||'Revoke failed.');}
-  finally{btn.disabled=false;btn.textContent='Revoke →';}
+  const wrap=document.getElementById('confetti-wrap');
+  const colors=['#4ade80','#22d3ee','#7c5cfc','#facc15','#f87171'];
+  for(let i=0;i<28;i++){const p=document.createElement('div');const size=4+Math.random()*6;p.style.cssText=`position:absolute;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.5?'50%':'2px'};left:${Math.random()*100}%;top:-10px;opacity:${0.5+Math.random()*0.5};animation:confettiFall ${1.5+Math.random()*2}s ease-in ${Math.random()*0.8}s forwards;`;wrap.appendChild(p);}
+  setTimeout(()=>{const m=document.getElementById('congrats-modal');if(m)m.remove();},6000);
 }
 
 function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');document.getElementById('scr-'+n).style.display='flex';}
@@ -1047,48 +795,74 @@ function switchVM(vm,btn){
   if(gp){gp.style.strokeDashoffset=d.gaugeOffset;gp.style.stroke=d.color;}
   if(gv){gv.textContent=d.finality;gv.setAttribute('fill',d.color);}
   const sc=document.getElementById('stack-card');
-  if(sc){
-    let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;
-    d.stack.forEach((item,idx)=>{h+=`<div class="layer-item" style="animation:fadein .3s both;animation-delay:${idx*.1}s"><div class="li-n">0${idx+1}</div><div class="li-ico"><img src="${item.logo}" onerror="this.src='https://placehold.co/22x22/1a2a42/4ade80?text=?'" loading="lazy"></div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});
-    sc.innerHTML=h;
-  }
+  if(sc){let h=`<div class="card-lbl">🧱 ${vm} Supermodular Layer Stack</div>`;d.stack.forEach((item,idx)=>{h+=`<div class="layer-item" style="animation:fadein .3s both;animation-delay:${idx*.1}s"><div class="li-n">0${idx+1}</div><div class="li-ico"><img src="${item.logo}" onerror="this.src='https://placehold.co/22x22/1a2a42/4ade80?text=?'" loading="lazy"></div><div class="li-info"><div class="li-name">${item.name}</div></div><span class="li-pill" style="background:${d.color}20;color:${d.color}">${item.status}</span></div>`;});sc.innerHTML=h;}
   document.getElementById('vm-label').textContent=vm;document.getElementById('vm-label').style.color=d.color;
   document.getElementById('vm-desc').innerHTML=d.desc;
 }
 
 function renderPicker(){
-  const hasMM=!!getProvider('metamask'),hasCB=!!getProvider('coinbase'),hasPH=!!getProvider('phantom'),hasOKX=!!getProvider('okx');
-  const anyFound=hasMM||hasCB||hasPH||hasOKX||!!window.ethereum;
+  const mob=isMobile();
+  const d=detectWallets();
   const pageUrl=encodeURIComponent(location.href);
+  const host=location.host;
+  const path=location.pathname;
+
+  if(mob){
+    document.getElementById('wallet-area').innerHTML=`
+      <div class="wpicker-wrap">
+        <div class="wpicker-note">📱 Open from your wallet's built-in browser</div>
+        <div class="wpicker">
+          <a class="mobile-open-btn" href="https://metamask.app.link/dapp/${host}${path}">
+            <div class="wlogo" style="background:rgba(247,147,26,.12)">🦊</div>
+            <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Open in MetaMask Browser</div></div>
+            <span class="wbadge ok">Open ↗</span>
+          </a>
+          <a class="mobile-open-btn" href="okx://wallet/dapp/url?dappUrl=${pageUrl}">
+            <div class="wlogo" style="background:rgba(255,255,255,.06)">⚫</div>
+            <div class="winfo"><div class="wname">OKX Wallet</div><div class="wsub">Open in OKX Browser</div></div>
+            <span class="wbadge ok">Open ↗</span>
+          </a>
+          <a class="mobile-open-btn" href="https://phantom.app/ul/browse/${pageUrl}?ref=${pageUrl}">
+            <div class="wlogo" style="background:rgba(153,69,255,.12)">👻</div>
+            <div class="winfo"><div class="wname">Phantom</div><div class="wsub">Open in Phantom Browser</div></div>
+            <span class="wbadge ok">Open ↗</span>
+          </a>
+          <a class="mobile-open-btn" href="https://go.cb-w.com/dapp?cb_url=${pageUrl}">
+            <div class="wlogo" style="background:rgba(0,82,255,.12)">🔵</div>
+            <div class="winfo"><div class="wname">Coinbase Wallet</div><div class="wsub">Open in Coinbase Browser</div></div>
+            <span class="wbadge ok">Open ↗</span>
+          </a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const anyFound=d.metamask||d.coinbase||d.phantom||d.okx||!!window.ethereum;
   document.getElementById('wallet-area').innerHTML=`
     <div class="wpicker-wrap">
       <div class="wpicker-note">🧪 Sepolia Testnet · No real costs · Free gas</div>
       <div class="wpicker">
-        <div class="witem${hasMM?'':' dim'}" onclick="${hasMM?'connectWallet(\'metamask\')':'void(0)'}">
+        <div class="witem${d.metamask?'':' dim'}" onclick="${d.metamask?'connectWallet(\'metamask\')':'void(0)'}">
           <div class="wlogo" style="background:rgba(247,147,26,.12)">🦊</div>
           <div class="winfo"><div class="wname">MetaMask</div><div class="wsub">Extension / MetaMask Mobile · Sepolia Testnet</div></div>
-          <span class="wbadge ${hasMM?'ok':'no'}">${hasMM?'● Detected':'○ Not Found'}</span>
+          <span class="wbadge ${d.metamask?'ok':'no'}">${d.metamask?'● Detected':'○ Not Found'}</span>
         </div>
-        <div class="witem${hasCB?'':' dim'}" onclick="${hasCB?'connectWallet(\'coinbase\')':'void(0)'}">
+        <div class="witem${d.coinbase?'':' dim'}" onclick="${d.coinbase?'connectWallet(\'coinbase\')':'void(0)'}">
           <div class="wlogo" style="background:rgba(0,82,255,.12)">🔵</div>
           <div class="winfo"><div class="wname">Coinbase Wallet</div><div class="wsub">Extension / Coinbase App · Sepolia Testnet</div></div>
-          <span class="wbadge ${hasCB?'ok':'no'}">${hasCB?'● Detected':'○ Not Found'}</span>
+          <span class="wbadge ${d.coinbase?'ok':'no'}">${d.coinbase?'● Detected':'○ Not Found'}</span>
         </div>
-        <div class="witem${hasPH?'':' dim'}" onclick="${hasPH?'connectWallet(\'phantom\')':'void(0)'}">
+        <div class="witem${d.phantom?'':' dim'}" onclick="${d.phantom?'connectWallet(\'phantom\')':'void(0)'}">
           <div class="wlogo" style="background:rgba(153,69,255,.12)">👻</div>
           <div class="winfo"><div class="wname">Phantom</div><div class="wsub">Extension / Phantom App · Sepolia Testnet</div></div>
-          <span class="wbadge ${hasPH?'ok':'no'}">${hasPH?'● Detected':'○ Not Found'}</span>
+          <span class="wbadge ${d.phantom?'ok':'no'}">${d.phantom?'● Detected':'○ Not Found'}</span>
         </div>
-        <div class="witem${hasOKX?'':' dim'}" onclick="${hasOKX?'connectWallet(\'okx\')':'void(0)'}">
+        <div class="witem${d.okx?'':' dim'}" onclick="${d.okx?'connectWallet(\'okx\')':'void(0)'}">
           <div class="wlogo" style="background:rgba(255,255,255,.06)">⚫</div>
           <div class="winfo"><div class="wname">OKX Wallet</div><div class="wsub">Extension / OKX App · Sepolia Testnet</div></div>
-          <span class="wbadge ${hasOKX?'ok':'no'}">${hasOKX?'● Detected':'○ Not Found'}</span>
+          <span class="wbadge ${d.okx?'ok':'no'}">${d.okx?'● Detected':'○ Not Found'}</span>
         </div>
-        ${!anyFound?`<div class="no-wallet-warn">⚠️ No wallet detected.<br>If on mobile, open from your <strong>wallet's built-in browser</strong> (MetaMask, OKX, Phantom).</div>`:''}
-        <div class="faucet-note">
-          <a class="mobile-link" href="https://metamask.app.link/dapp/${pageUrl}">📱 Open in MetaMask Mobile →</a>
-          <a class="mobile-link" href="https://okx.com/download?deeplink=${pageUrl}" style="color:rgba(255,255,255,.3);">📱 Open in OKX App →</a>
-        </div>
+        ${!anyFound?`<div class="no-wallet-warn">⚠️ No wallet detected. If on mobile, open from your wallet's built-in browser (MetaMask, OKX, Phantom).</div>`:''}
       </div>
     </div>`;
 }
@@ -1112,6 +886,19 @@ async function connectWallet(type){
   }
 }
 
+/* Try auto-connect */
+async function tryAutoConnect(){
+  if(!window.ethereum)return false;
+  try{
+    const accounts=await window.ethereum.request({method:'eth_accounts'});
+    if(accounts&&accounts.length>0){
+      walletAddress=accounts[0];window._rialoProv=window.ethereum;
+      setNavBtn(walletAddress);runAssembly();return true;
+    }
+  }catch(e){}
+  return false;
+}
+
 function onConnected(){setNavBtn(walletAddress);runAssembly();}
 function runAssembly(){
   showScreen('assembly');
@@ -1125,6 +912,7 @@ function runAssembly(){
     setTimeout(()=>{document.getElementById(s.id).classList.add('loaded');el.className='asm-st done';el.textContent=s.txt;fill.style.width=s.p;i++;next();},800);
   })();
 }
+
 function initDash(){
   showScreen('dashboard');
   document.getElementById('node-badge').classList.add('online');
@@ -1136,18 +924,21 @@ function initDash(){
 }
 
 function fillApproveFields(){
-  const rialoVal = localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0';
-  const rialoBal = parseFloat(rialoVal) || 0;
-  const tknApprove = document.getElementById('approve-token');
-  if(tknApprove && walletAddress) tknApprove.value = walletAddress;
-  const ctApprove = document.getElementById('approve-contract');
-  if(ctApprove) ctApprove.value = rialoBal > 0 ? rialoBal.toFixed(4) : '';
+  const rialoVal=localStorage.getItem('rialo_balance')||localStorage.getItem('rialoBalance')||'0';
+  const rialoBal=parseFloat(rialoVal)||0;
+  const tknApprove=document.getElementById('approve-token');
+  if(tknApprove&&walletAddress)tknApprove.value=walletAddress;
+  const ctApprove=document.getElementById('approve-contract');
+  if(ctApprove)ctApprove.value=rialoBal>0?rialoBal.toFixed(4):'';
 }
 
-renderPicker();
+/* Init */
+tryAutoConnect().then(connected=>{
+  if(!connected)renderPicker();
+});
 </script>
 
-<!-- ✅ NAV ACTIVE FIX -->
+<!-- NAV ACTIVE FIX -->
 <script>
 (function() {
   const filename = window.location.pathname.split('/').pop() || 'menu.html';
