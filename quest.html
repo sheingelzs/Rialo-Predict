@@ -14,7 +14,8 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
-#net-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#blob-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+#blob-canvas{position:absolute;width:100%;height:100%;}
 
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);}
 .nav-logo{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none;}
@@ -138,7 +139,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 </style>
 </head>
 <body>
-<canvas id="net-canvas"></canvas>
+<div id="blob-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;">
+  <canvas id="blob-canvas" style="position:absolute;width:100%;height:100%;"></canvas>
+</div>
 
 <nav class="nav">
   <a class="nav-logo" href="menu.html"><div class="logo-dot"></div>RIALO</a>
@@ -247,32 +250,42 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 <script type="module">
 
-/* ── CANVAS BACKGROUND ── */
+/* ── MATRIX RAIN BACKGROUND ── */
 (function(){
-  const canvas = document.getElementById('net-canvas');
-  const ctx = canvas.getContext('2d');
-  const particleCount = 110, connectionDistance = 150;
-  let particles = [];
-  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  window.addEventListener('resize', resize); resize();
-  class Particle {
-    constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4; this.radius=1.2; }
-    update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width)this.vx*=-1; if(this.y<0||this.y>canvas.height)this.vy*=-1; }
-    draw(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fillStyle='rgba(0,255,150,0.4)'; ctx.fill(); }
+  const canvas = document.getElementById('blob-canvas');
+  const ctx    = canvas.getContext('2d');
+  function setupCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+  window.addEventListener('resize', () => { setupCanvas(); initStreams(); });
+  setupCanvas();
+  const CHARS = ['0','1','0','1','0','1','0','1','m','o','d','u','l','e','e','n','t','r','y','f','u','n','p','u','b','l','i','c','s','t','r','u','c','t','u','s','e','{','}','(',')',':',';','<','>','=','_','&','|','!','a','c','q','i','r','e','s','h','a','s'];
+  const FONT_SIZE=13, BASE_ALPHA=0.07, GLOW_PROB=0.018;
+  let streams=[];
+  function initStreams(){
+    const cols=Math.floor(canvas.width/FONT_SIZE);
+    streams=Array.from({length:cols},(_,i)=>({x:i*FONT_SIZE,y:Math.random()*-canvas.height,speed:0.6+Math.random()*1.4,chars:Array.from({length:Math.floor(8+Math.random()*20)},()=>CHARS[Math.floor(Math.random()*CHARS.length)]),glowIdx:-1,glowTimer:0}));
   }
-  function init(){ particles=[]; for(let i=0;i<particleCount;i++) particles.push(new Particle()); }
-  function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(let i=0;i<particles.length;i++){
-      particles[i].update(); particles[i].draw();
-      for(let j=i+1;j<particles.length;j++){
-        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<connectionDistance){ ctx.beginPath(); ctx.strokeStyle=`rgba(0,255,150,${1-dist/connectionDistance})`; ctx.lineWidth=.6; ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke(); }
-      }
-    }
-    requestAnimationFrame(animate);
+  initStreams();
+  function draw(){
+    const w=canvas.width,h=canvas.height;
+    ctx.fillStyle='rgba(5,8,16,0.18)';ctx.fillRect(0,0,w,h);
+    ctx.font=`${FONT_SIZE}px 'Space Mono',monospace`;ctx.textBaseline='top';
+    streams.forEach(stream=>{
+      stream.y+=stream.speed;
+      const streamH=stream.chars.length*FONT_SIZE;
+      if(stream.y-streamH>h){stream.y=-streamH-Math.random()*h*0.5;stream.speed=0.6+Math.random()*1.4;stream.chars=stream.chars.map(()=>CHARS[Math.floor(Math.random()*CHARS.length)]);}
+      if(Math.random()<GLOW_PROB){stream.glowIdx=Math.floor(Math.random()*stream.chars.length);stream.glowTimer=6+Math.floor(Math.random()*12);}
+      if(stream.glowTimer>0)stream.glowTimer--;else stream.glowIdx=-1;
+      stream.chars.forEach((ch,ci)=>{
+        const cy=stream.y+ci*FONT_SIZE;
+        if(cy<-FONT_SIZE||cy>h)return;
+        const isGlow=(ci===stream.glowIdx&&stream.glowTimer>0);
+        if(isGlow){ctx.save();ctx.shadowColor='#4ade80';ctx.shadowBlur=8;ctx.fillStyle='rgba(74,222,128,0.55)';ctx.fillText(ch,stream.x,cy);ctx.restore();}
+        else{ctx.fillStyle=`rgba(74,222,128,${ci===0?0.12:BASE_ALPHA})`;ctx.fillText(ch,stream.x,cy);}
+      });
+    });
   }
-  init(); animate();
+  function animate(){draw();requestAnimationFrame(animate);}
+  requestAnimationFrame(animate);
 })();
 
 /* ── QUESTIONS ── */
@@ -310,398 +323,97 @@ const QUESTIONS = [
 ];
 
 /* ── STATE ── */
-let playerName = '';
-let connectedWallet = null;
-let currentQ = 0;
-let xp = 0;
-let correct = 0;
-let wrong = 0;
-let timerInterval = null;
-let timeLeft = 15;
-let answered = false;
-const totalQ = QUESTIONS.length;
+let playerName='',connectedWallet=null,currentQ=0,xp=0,correct=0,wrong=0,timerInterval=null,timeLeft=15,answered=false;
+const totalQ=QUESTIONS.length;
+const LB_KEY='rialo_final_lb';
+const MAX_XP=QUESTIONS.length*50;
 
-/* ── LOCALSTORAGE KEY — sama dengan leaderboard.html ── */
-const LB_KEY = 'rialo_final_lb';
+function getLB(){try{const raw=localStorage.getItem(LB_KEY);return raw?JSON.parse(raw):[]}catch(e){return[]}}
+function saveLB(entries){localStorage.setItem(LB_KEY,JSON.stringify(entries))}
 
-function getLB(){
-  try { const raw = localStorage.getItem(LB_KEY); return raw ? JSON.parse(raw) : []; }
-  catch(e){ return []; }
-}
-function saveLB(entries){ localStorage.setItem(LB_KEY, JSON.stringify(entries)); }
+const FB_CONFIG={apiKey:"AIzaSyBmoGJCQ4ybq4wkp42OUyuVMBgWSLQ-sLY",authDomain:"rialo-quiz-a84e3.firebaseapp.com",databaseURL:"https://rialo-quiz-a84e3-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"rialo-quiz-a84e3",storageBucket:"rialo-quiz-a84e3.firebasestorage.app",messagingSenderId:"874302850440",appId:"1:874302850440:web:47d5c7102803c97ea9e63d"};
 
-/* ══════════════════════════════════════════════════════════
-   🔥 FIREBASE CONFIG — GANTI DENGAN NILAI DARI FIREBASE CONSOLE
-   Langkah:
-   1. Buka https://console.firebase.google.com
-   2. Project Settings → General → scroll ke "Your apps"
-   3. Klik ikon </> (Web) atau pilih app yang sudah ada
-   4. Copy nilai apiKey, databaseURL, projectId, dll ke sini
-   ══════════════════════════════════════════════════════════ */
-const FB_CONFIG = {
-  apiKey:            "AIzaSyBmoGJCQ4ybq4wkp42OUyuVMBgWSLQ-sLY",
-  authDomain:        "rialo-quiz-a84e3.firebaseapp.com",
-  databaseURL:       "https://rialo-quiz-a84e3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:         "rialo-quiz-a84e3",
-  storageBucket:     "rialo-quiz-a84e3.firebasestorage.app",
-  messagingSenderId: "874302850440",
-  appId:             "1:874302850440:web:47d5c7102803c97ea9e63d"
-};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,push,set,get,query,orderByChild,equalTo}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const fbApp=initializeApp(FB_CONFIG);const db=getDatabase(fbApp);
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, set, get, query, orderByChild, equalTo }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const fbApp = initializeApp(FB_CONFIG);
-const db    = getDatabase(fbApp);
-
-/* ── ANTI-CHEAT: timestamp server-side + skor maksimum yang valid ──
-   Skor dikalkulasi di client, tapi kita validasi batas atas:
-   Max XP = jumlah soal × 50 = 1500 XP
-   Jika skor dikirim melebihi batas, entri diabaikan / di-cap.        */
-const MAX_XP = QUESTIONS.length * 50; // 1500
-
-/* ── WALLET ── */
-function getProvList(){ const e=window.ethereum; if(!e)return[]; return e.providers||[e]; }
-function findProv(key){
-  const L=getProvList();
-  if(key==='metamask') return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;
-  if(key==='phantom')  return L.find(p=>p.isPhantom)||null;
-  if(key==='okx')      return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;
-  if(key==='coinbase') return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;
-  return window.ethereum||null;
-}
-function detectW(){
-  const L=getProvList();
-  return{
-    metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),
-    phantom:!!(L.find(p=>p.isPhantom)),
-    okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),
-    coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser))
-  };
-}
+function getProvList(){const e=window.ethereum;if(!e)return[];return e.providers||[e]}
+function findProv(key){const L=getProvList();if(key==='metamask')return L.find(p=>p.isMetaMask&&!p.isPhantom)||null;if(key==='phantom')return L.find(p=>p.isPhantom)||null;if(key==='okx')return window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)||null;if(key==='coinbase')return L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser)||null;return window.ethereum||null}
+function detectW(){const L=getProvList();return{metamask:!!(L.find(p=>p.isMetaMask&&!p.isPhantom)),phantom:!!(L.find(p=>p.isPhantom)),okx:!!(window.okxwallet||L.find(p=>p.isOKExWallet||p.isOKXWallet)),coinbase:!!(L.find(p=>p.isCoinbaseWallet||p.isCoinbaseBrowser))}}
 
 function renderWalletConnect(){
-  const area = document.getElementById('wallet-connect-area');
-  if(!area) return;
-
-  // Sudah connect — tampilkan status
-  if(connectedWallet){
-    area.innerHTML=`
-      <div style="display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .9rem;font-size:.78rem;">
-        <div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0"></div>
-        <span style="font-family:monospace;color:rgba(255,255,255,.6)">${connectedWallet.slice(0,6)}…${connectedWallet.slice(-4)}</span>
-        <span style="margin-left:auto;font-size:.65rem;color:var(--accent);font-weight:700">✓ Connected</span>
-      </div>`;
-    checkStartReady();
-    return;
-  }
-
-  const d = detectW();
-  const wallets = [
-    {key:'metamask',icon:'🦊',bg:'rgba(247,147,26,.12)',name:'MetaMask',ok:d.metamask},
-    {key:'phantom', icon:'👻',bg:'rgba(153,69,255,.12)', name:'Phantom', ok:d.phantom},
-    {key:'okx',     icon:'⬛',bg:'rgba(255,255,255,.06)',name:'OKX Wallet',ok:d.okx},
-    {key:'coinbase',icon:'🔵',bg:'rgba(0,82,255,.12)',  name:'Coinbase', ok:d.coinbase},
-  ];
-  const isMob = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  if(isMob){
-    const cur = encodeURIComponent(location.href);
-    area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
-      <div style="font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.35rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">📱 Open from wallet browser</div>
-      ${[{icon:'🦊',name:'MetaMask',href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},
-         {icon:'👻',name:'Phantom', href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},
-         {icon:'⬛',name:'OKX',     href:`okx://wallet/dapp/url?dappUrl=${cur}`}]
-        .map(l=>`<div onclick="location.href='${l.href}'" style="display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:600">${l.icon} ${l.name} <span style="margin-left:auto;font-size:.65rem;color:var(--accent)">Open ↗</span></div>`)
-        .join('')}
-    </div>`;
-    return;
-  }
-
-  area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%">
-    <div style="font-size:.65rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.3rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">🔗 Connect wallet to submit score to global leaderboard</div>
-    ${wallets.map(w=>`
-      <div onclick="${w.ok?`window.connectWallet('${w.key}','${w.name}')`:''}"
-           style="display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:${w.ok?'pointer':'not-allowed'};opacity:${w.ok?'1':'.35'};font-size:.82rem;font-weight:600;transition:all .2s;">
-        <div style="width:32px;height:32px;border-radius:8px;background:${w.bg};display:flex;align-items:center;justify-content:center;font-size:1.1rem">${w.icon}</div>
-        <span>${w.name}</span>
-        <span style="margin-left:auto;font-size:.65rem;font-weight:700;color:${w.ok?'var(--accent)':'rgba(255,255,255,.22)'}">${w.ok?'● Detected':'○ Not Found'}</span>
-      </div>`).join('')}
-  </div>`;
+  const area=document.getElementById('wallet-connect-area');if(!area)return;
+  if(connectedWallet){area.innerHTML=`<div style="display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:.55rem .9rem;font-size:.78rem;"><div style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:lpulse 2s infinite;flex-shrink:0"></div><span style="font-family:monospace;color:rgba(255,255,255,.6)">${connectedWallet.slice(0,6)}…${connectedWallet.slice(-4)}</span><span style="margin-left:auto;font-size:.65rem;color:var(--accent);font-weight:700">✓ Connected</span></div>`;checkStartReady();return;}
+  const d=detectW();const isMob=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMob){const cur=encodeURIComponent(location.href);area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%"><div style="font-size:.68rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.35rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">📱 Open from wallet browser</div>${[{icon:'🦊',name:'MetaMask',href:`https://metamask.app.link/dapp/${location.host}${location.pathname}`},{icon:'👻',name:'Phantom',href:`https://phantom.app/ul/browse/${cur}?ref=${cur}`},{icon:'⬛',name:'OKX',href:`okx://wallet/dapp/url?dappUrl=${cur}`}].map(l=>`<div onclick="location.href='${l.href}'" style="display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:600">${l.icon} ${l.name} <span style="margin-left:auto;font-size:.65rem;color:var(--accent)">Open ↗</span></div>`).join('')}</div>`;return;}
+  const wallets=[{key:'metamask',icon:'🦊',bg:'rgba(247,147,26,.12)',name:'MetaMask',ok:d.metamask},{key:'phantom',icon:'👻',bg:'rgba(153,69,255,.12)',name:'Phantom',ok:d.phantom},{key:'okx',icon:'⬛',bg:'rgba(255,255,255,.06)',name:'OKX Wallet',ok:d.okx},{key:'coinbase',icon:'🔵',bg:'rgba(0,82,255,.12)',name:'Coinbase',ok:d.coinbase}];
+  area.innerHTML=`<div style="display:flex;flex-direction:column;gap:.4rem;width:100%"><div style="font-size:.65rem;color:rgba(200,180,255,.5);font-family:var(--font-mono);padding:.3rem .7rem;background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.15);border-radius:7px;margin-bottom:.2rem">🔗 Connect wallet to submit score to global leaderboard</div>${wallets.map(w=>`<div onclick="${w.ok?`window.connectWallet('${w.key}','${w.name}')`:''}" style="display:flex;align-items:center;gap:.7rem;padding:.65rem .9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:${w.ok?'pointer':'not-allowed'};opacity:${w.ok?'1':'.35'};font-size:.82rem;font-weight:600;transition:all .2s;"><div style="width:32px;height:32px;border-radius:8px;background:${w.bg};display:flex;align-items:center;justify-content:center;font-size:1.1rem">${w.icon}</div><span>${w.name}</span><span style="margin-left:auto;font-size:.65rem;font-weight:700;color:${w.ok?'var(--accent)':'rgba(255,255,255,.22)'}">${w.ok?'● Detected':'○ Not Found'}</span></div>`).join('')}</div>`;
 }
 
-async function connectWallet(key, name){
-  const area = document.getElementById('wallet-connect-area');
+async function connectWallet(key,name){
+  const area=document.getElementById('wallet-connect-area');
   area.innerHTML=`<div style="display:flex;align-items:center;gap:.7rem;padding:.75rem;font-size:.8rem;color:var(--muted)"><div style="width:20px;height:20px;border:2px solid rgba(74,222,128,.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0"></div>Waiting for ${name}…</div>`;
-  const p = findProv(key);
-  if(!p){ renderWalletConnect(); return; }
-  try{
-    const accounts = await p.request({method:'eth_requestAccounts'});
-    if(!accounts?.length) throw new Error('No account');
-    connectedWallet = accounts[0];
-    window.connectedWallet = accounts[0];
-    renderWalletConnect();
-  } catch(e){
-    console.warn('Wallet connect error:', e);
-    renderWalletConnect();
-  }
+  const p=findProv(key);if(!p){renderWalletConnect();return;}
+  try{const accounts=await p.request({method:'eth_requestAccounts'});if(!accounts?.length)throw new Error('No account');connectedWallet=accounts[0];window.connectedWallet=accounts[0];renderWalletConnect();}
+  catch(e){console.warn('Wallet connect error:',e);renderWalletConnect();}
 }
 
-function checkStartReady(){
-  const name = (document.getElementById('player-name')?.value || '').trim();
-  const btn  = document.getElementById('start-btn');
-  if(!btn) return;
-  const ready = connectedWallet && name.length >= 2;
-  btn.disabled = !ready;
-  btn.style.opacity = ready ? '1' : '.4';
-  btn.style.cursor  = ready ? 'pointer' : 'not-allowed';
-}
+function checkStartReady(){const name=(document.getElementById('player-name')?.value||'').trim();const btn=document.getElementById('start-btn');if(!btn)return;const ready=connectedWallet&&name.length>=2;btn.disabled=!ready;btn.style.opacity=ready?'1':'.4';btn.style.cursor=ready?'pointer':'not-allowed';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-/* ── SCREENS ── */
-function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-
-/* ── START QUIZ ── */
 function startQuiz(){
-  const nameEl = document.getElementById('player-name');
-  playerName = (nameEl && nameEl.value.trim()) || 'Anonymous';
-  if(!connectedWallet){ alert('Please connect your wallet first!'); return; }
-  if(playerName.length < 2){ alert('Please enter your name (min 2 characters)!'); return; }
-  currentQ = 0; xp = 0; correct = 0; wrong = 0;
-  document.getElementById('xp-count').textContent = '0';
-  showScreen('scr-quiz');
-  renderQuestion();
+  const nameEl=document.getElementById('player-name');playerName=(nameEl&&nameEl.value.trim())||'Anonymous';
+  if(!connectedWallet){alert('Please connect your wallet first!');return;}
+  if(playerName.length<2){alert('Please enter your name (min 2 characters)!');return;}
+  currentQ=0;xp=0;correct=0;wrong=0;document.getElementById('xp-count').textContent='0';showScreen('scr-quiz');renderQuestion();
 }
 
-/* ── RENDER QUESTION ── */
 function renderQuestion(){
-  if(currentQ >= totalQ){ endQuiz(); return; }
-
-  answered = false;
-  document.getElementById('timeout-notice').style.display = 'none';
-
-  const q = QUESTIONS[currentQ];
-
-  document.getElementById('q-progress').textContent = `Question ${currentQ + 1} / ${totalQ}`;
-  document.getElementById('q-num-tag').textContent   = `Q${currentQ + 1}`;
-  document.getElementById('q-text').textContent      = q.q;
-  document.getElementById('progress-bar').style.width = `${((currentQ + 1) / totalQ) * 100}%`;
-
-  const grid = document.getElementById('options-grid');
-  grid.innerHTML = '';
-  q.opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.innerHTML = `<div class="opt-letter">${String.fromCharCode(65 + i)}</div><span>${opt}</span>`;
-    btn.onclick = () => selectAnswer(i);
-    grid.appendChild(btn);
-  });
-
+  if(currentQ>=totalQ){endQuiz();return;}
+  answered=false;document.getElementById('timeout-notice').style.display='none';
+  const q=QUESTIONS[currentQ];
+  document.getElementById('q-progress').textContent=`Question ${currentQ+1} / ${totalQ}`;
+  document.getElementById('q-num-tag').textContent=`Q${currentQ+1}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('progress-bar').style.width=`${((currentQ+1)/totalQ)*100}%`;
+  const grid=document.getElementById('options-grid');grid.innerHTML='';
+  q.opts.forEach((opt,i)=>{const btn=document.createElement('button');btn.className='opt-btn';btn.innerHTML=`<div class="opt-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span>`;btn.onclick=()=>selectAnswer(i);grid.appendChild(btn);});
   startTimer();
 }
 
-/* ── TIMER ── */
-function startTimer(){
-  timeLeft = 15;
-  clearInterval(timerInterval);
-  updateTimerUI(15);
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerUI(timeLeft);
-    if(timeLeft <= 0){ clearInterval(timerInterval); if(!answered) timeOut(); }
-  }, 1000);
-}
+function startTimer(){timeLeft=15;clearInterval(timerInterval);updateTimerUI(15);timerInterval=setInterval(()=>{timeLeft--;updateTimerUI(timeLeft);if(timeLeft<=0){clearInterval(timerInterval);if(!answered)timeOut();}},1000);}
+function updateTimerUI(t){document.getElementById('timer-num').textContent=t;const circle=document.getElementById('timer-circle');const circumference=150.8;circle.style.strokeDashoffset=circumference-(t/15)*circumference;const pct=t/15;circle.style.stroke=pct>0.5?'var(--accent)':pct>0.25?'var(--amber)':'var(--red)';}
+function timeOut(){answered=true;wrong++;const q=QUESTIONS[currentQ];document.querySelectorAll('.opt-btn').forEach((btn,i)=>{btn.disabled=true;if(i===q.ans)btn.classList.add('correct');else btn.classList.add('reveal');});document.getElementById('timeout-notice').style.display='block';setTimeout(()=>{currentQ++;renderQuestion();},2000);}
 
-function updateTimerUI(t){
-  document.getElementById('timer-num').textContent = t;
-  const circle = document.getElementById('timer-circle');
-  const circumference = 150.8;
-  circle.style.strokeDashoffset = circumference - (t / 15) * circumference;
-  const pct = t / 15;
-  circle.style.stroke = pct > 0.5 ? 'var(--accent)' : pct > 0.25 ? 'var(--amber)' : 'var(--red)';
-}
-
-function timeOut(){
-  answered = true; wrong++;
-  const q = QUESTIONS[currentQ];
-  document.querySelectorAll('.opt-btn').forEach((btn, i) => {
-    btn.disabled = true;
-    if(i === q.ans) btn.classList.add('correct'); else btn.classList.add('reveal');
-  });
-  document.getElementById('timeout-notice').style.display = 'block';
-  setTimeout(() => { currentQ++; renderQuestion(); }, 2000);
-}
-
-/* ── SELECT ANSWER ── */
 function selectAnswer(idx){
-  if(answered) return;
-  answered = true;
-  clearInterval(timerInterval);
-  const q = QUESTIONS[currentQ];
-  const opts = document.querySelectorAll('.opt-btn');
-  opts.forEach(btn => btn.disabled = true);
-
-  if(idx === q.ans){
-    opts[idx].classList.add('correct');
-    correct++; xp += 50;
-    document.getElementById('xp-count').textContent = xp;
-    showCongratsAnim();
-    setTimeout(() => { currentQ++; renderQuestion(); }, 2200);
-  } else {
-    opts[idx].classList.add('wrong');
-    opts[q.ans].classList.add('correct');
-    opts.forEach((btn, i) => { if(i !== idx && i !== q.ans) btn.classList.add('reveal'); });
-    wrong++;
-    setTimeout(() => { currentQ++; renderQuestion(); }, 1800);
-  }
+  if(answered)return;answered=true;clearInterval(timerInterval);
+  const q=QUESTIONS[currentQ];const opts=document.querySelectorAll('.opt-btn');opts.forEach(btn=>btn.disabled=true);
+  if(idx===q.ans){opts[idx].classList.add('correct');correct++;xp+=50;document.getElementById('xp-count').textContent=xp;showCongratsAnim();setTimeout(()=>{currentQ++;renderQuestion();},2200);}
+  else{opts[idx].classList.add('wrong');opts[q.ans].classList.add('correct');opts.forEach((btn,i)=>{if(i!==idx&&i!==q.ans)btn.classList.add('reveal');});wrong++;setTimeout(()=>{currentQ++;renderQuestion();},1800);}
 }
 
-/* ── END QUIZ — simpan ke localStorage dengan key rialo_final_lb ── */
 function endQuiz(){
-  clearInterval(timerInterval);
-
-  // Validasi anti-cheat sederhana: cap skor ke maksimum yang mungkin
-  const finalXP = Math.min(xp, MAX_XP);
-
-  // 1. Simpan ke localStorage sebagai backup offline
-  try {
-    const lb = getLB();
-    const existIdx = lb.findIndex(e => e.wallet && connectedWallet &&
-      e.wallet.toLowerCase() === connectedWallet.toLowerCase());
-    const entry = {
-      name:   playerName || 'Anonymous',
-      wallet: connectedWallet || 'Disconnected',
-      exp:    finalXP,
-      date:   new Date().toLocaleString()
-    };
-    if(existIdx >= 0){
-      // Update hanya jika skor baru lebih tinggi
-      if(finalXP >= (lb[existIdx].exp || 0)) lb[existIdx] = entry;
-    } else {
-      lb.push(entry);
-    }
-    saveLB(lb);
-    console.log('✅ Score saved to localStorage:', finalXP, 'XP');
-  } catch(e){
-    console.error('Failed to save score locally:', e);
-  }
-
-  // 2. Kirim ke Firebase — UPSERT per wallet (skor tertinggi yang disimpan)
-  if(connectedWallet && db){
-    const saveToFirebase = async () => {
-      try {
-        const walletKey = connectedWallet.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const userRef   = ref(db, 'leaderboard/' + walletKey);
-
-        // Cek apakah wallet ini sudah punya entri
-        const snap = await get(userRef);
-        if(snap.exists()){
-          const existing = snap.val();
-          // Hanya update jika skor baru lebih tinggi (anti-cheat)
-          if(finalXP > (existing.exp || 0)){
-            await set(userRef, {
-              name:      playerName || 'Anonymous',
-              wallet:    connectedWallet,
-              exp:       finalXP,
-              updatedAt: Date.now()
-            });
-            console.log('🔥 Firebase updated (new best):', finalXP, 'XP');
-          } else {
-            console.log('ℹ️ Firebase not updated (previous score higher):', existing.exp, 'XP');
-          }
-        } else {
-          // Entri baru
-          await set(userRef, {
-            name:      playerName || 'Anonymous',
-            wallet:    connectedWallet,
-            exp:       finalXP,
-            createdAt: Date.now(),
-            updatedAt: Date.now()
-          });
-          console.log('🔥 Firebase: new entry saved:', finalXP, 'XP');
-        }
-      } catch(e){
-        console.warn('⚠️ Firebase save failed (skor tetap tersimpan di localStorage):', e.message);
-      }
-    };
-    saveToFirebase();
-  }
-
-  // 3. Update UI hasil
-  document.getElementById('final-xp').textContent    = finalXP;
-  document.getElementById('stat-correct').textContent = correct;
-  document.getElementById('stat-wrong').textContent   = wrong;
-  const acc = Math.round((correct / totalQ) * 100);
-  document.getElementById('stat-acc').textContent = acc + '%';
-
-  let title = 'Quiz Complete!', sub = 'Your score has been saved to the global leaderboard.';
-  if(acc >= 80){ title = '🔥 Rialo Expert!';  sub = 'Outstanding! Your score is now live on the global leaderboard!'; }
-  else if(acc >= 60){ title = '💡 Well Played!'; sub = 'Solid knowledge. Your score has been saved globally!'; }
-  else { title = 'Keep Learning!'; sub = 'Study the Rialo protocol deeper and try again!'; }
-
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent   = sub;
-
-  const circumference = 339.3;
-  const fill = document.getElementById('rs-fill');
-  fill.style.strokeDashoffset = circumference;
-  setTimeout(() => { fill.style.strokeDashoffset = circumference - (correct / totalQ) * circumference; }, 100);
-
+  clearInterval(timerInterval);const finalXP=Math.min(xp,MAX_XP);
+  try{const lb=getLB();const existIdx=lb.findIndex(e=>e.wallet&&connectedWallet&&e.wallet.toLowerCase()===connectedWallet.toLowerCase());const entry={name:playerName||'Anonymous',wallet:connectedWallet||'Disconnected',exp:finalXP,date:new Date().toLocaleString()};if(existIdx>=0){if(finalXP>=(lb[existIdx].exp||0))lb[existIdx]=entry;}else{lb.push(entry);}saveLB(lb);}catch(e){console.error('Failed to save score locally:',e);}
+  if(connectedWallet&&db){(async()=>{try{const walletKey=connectedWallet.toLowerCase().replace(/[^a-z0-9]/g,'_');const userRef=ref(db,'leaderboard/'+walletKey);const snap=await get(userRef);if(snap.exists()){const existing=snap.val();if(finalXP>(existing.exp||0)){await set(userRef,{name:playerName||'Anonymous',wallet:connectedWallet,exp:finalXP,updatedAt:Date.now()});}}else{await set(userRef,{name:playerName||'Anonymous',wallet:connectedWallet,exp:finalXP,createdAt:Date.now(),updatedAt:Date.now()});}}catch(e){console.warn('Firebase save failed:',e.message);}})();}
+  document.getElementById('final-xp').textContent=finalXP;document.getElementById('stat-correct').textContent=correct;document.getElementById('stat-wrong').textContent=wrong;const acc=Math.round((correct/totalQ)*100);document.getElementById('stat-acc').textContent=acc+'%';
+  let title='Quiz Complete!',sub='Your score has been saved to the global leaderboard.';
+  if(acc>=80){title='🔥 Rialo Expert!';sub='Outstanding! Your score is now live on the global leaderboard!';}
+  else if(acc>=60){title='💡 Well Played!';sub='Solid knowledge. Your score has been saved globally!';}
+  else{title='Keep Learning!';sub='Study the Rialo protocol deeper and try again!';}
+  document.getElementById('result-title').textContent=title;document.getElementById('result-sub').textContent=sub;
+  const circumference=339.3;const fill=document.getElementById('rs-fill');fill.style.strokeDashoffset=circumference;setTimeout(()=>{fill.style.strokeDashoffset=circumference-(correct/totalQ)*circumference;},100);
   showScreen('scr-result');
 }
 
-/* ── CONFETTI ── */
-function showCongratsAnim(){
-  const overlay = document.getElementById('congrats-overlay');
-  const canvas  = document.getElementById('confetti-canvas');
-  overlay.style.display = 'block';
-  spawnConfetti(canvas);
-  setTimeout(() => { overlay.style.display = 'none'; stopConfetti(); }, 2000);
-}
-let confettiParticles = [], confettiRAF = null;
-function spawnConfetti(canvas){
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  confettiParticles = [];
-  const colors = ['#4ade80','#22d3ee','#facc15','#7c5cfc','#f87171','#fff'];
-  for(let i = 0; i < 120; i++){
-    confettiParticles.push({x:Math.random()*canvas.width,y:-10-Math.random()*200,vx:(Math.random()-.5)*4,vy:2+Math.random()*5,rot:Math.random()*360,rotV:(Math.random()-.5)*8,w:8+Math.random()*10,h:4+Math.random()*6,color:colors[Math.floor(Math.random()*colors.length)],opacity:1});
-  }
-  function loop(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    confettiParticles.forEach(p => {
-      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV;
-      if(p.y > canvas.height + 20) p.y = -20;
-      ctx.save(); ctx.globalAlpha=p.opacity; ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
-    });
-    confettiRAF = requestAnimationFrame(loop);
-  }
-  loop();
-}
-function stopConfetti(){
-  if(confettiRAF) cancelAnimationFrame(confettiRAF);
-  const c = document.getElementById('confetti-canvas');
-  c.getContext('2d').clearRect(0, 0, window.innerWidth, window.innerHeight);
-}
+function showCongratsAnim(){const overlay=document.getElementById('congrats-overlay');const canvas=document.getElementById('confetti-canvas');overlay.style.display='block';spawnConfetti(canvas);setTimeout(()=>{overlay.style.display='none';stopConfetti();},2000);}
+let confettiParticles=[],confettiRAF=null;
+function spawnConfetti(canvas){const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;confettiParticles=[];const colors=['#4ade80','#22d3ee','#facc15','#7c5cfc','#f87171','#fff'];for(let i=0;i<120;i++){confettiParticles.push({x:Math.random()*canvas.width,y:-10-Math.random()*200,vx:(Math.random()-.5)*4,vy:2+Math.random()*5,rot:Math.random()*360,rotV:(Math.random()-.5)*8,w:8+Math.random()*10,h:4+Math.random()*6,color:colors[Math.floor(Math.random()*colors.length)],opacity:1});}function loop(){ctx.clearRect(0,0,canvas.width,canvas.height);confettiParticles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;if(p.y>canvas.height+20)p.y=-20;ctx.save();ctx.globalAlpha=p.opacity;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});confettiRAF=requestAnimationFrame(loop);}loop();}
+function stopConfetti(){if(confettiRAF)cancelAnimationFrame(confettiRAF);const c=document.getElementById('confetti-canvas');c.getContext('2d').clearRect(0,0,window.innerWidth,window.innerHeight);}
 
-function escHtml(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('start-btn');if(btn){btn.disabled=true;btn.style.opacity='.4';btn.style.cursor='not-allowed';}const nameInput=document.getElementById('player-name');if(nameInput)nameInput.addEventListener('input',checkStartReady);renderWalletConnect();});
 
-/* ── INIT ── */
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('start-btn');
-  if(btn){ btn.disabled=true; btn.style.opacity='.4'; btn.style.cursor='not-allowed'; }
-  const nameInput = document.getElementById('player-name');
-  if(nameInput) nameInput.addEventListener('input', checkStartReady);
-  renderWalletConnect();
-});
-
-/* ── EXPOSE KE GLOBAL (wajib karena script type="module") ── */
-window.startQuiz        = startQuiz;
-window.selectAnswer     = selectAnswer;
-window.renderQuestion   = renderQuestion;
-window.connectWallet    = connectWallet;
-window.renderWalletConnect = renderWalletConnect;
-
+window.startQuiz=startQuiz;window.selectAnswer=selectAnswer;window.renderQuestion=renderQuestion;window.connectWallet=connectWallet;window.renderWalletConnect=renderWalletConnect;
 </script>
 
 <!-- NAV ACTIVE FIX -->
