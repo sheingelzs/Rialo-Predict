@@ -149,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .approve-badge{font-size:.6rem;font-weight:700;font-family:var(--font-mono);padding:2px 8px;border-radius:99px;background:rgba(210,180,140,.12);border:1px solid rgba(210,180,140,.25);color:#d2b48c;letter-spacing:.08em;text-transform:uppercase;}
 .approve-bal-card{background:rgba(0,0,0,.25);border:1px solid rgba(210,180,140,.15);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
 .approve-bal-left{display:flex;align-items:center;gap:.75rem;}
-.approve-bal-icon{width:40px;height:40px;border-radius:10px;background:rgba(210,180,140,.12);border:1px solid rgba(210,180,140,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;overflow:hidden;}
+.approve-bal-icon{width:40px;height:40px;border-radius:10px;background:rgba(210,180,140,.12);border:1px solid rgba(210,180,140,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
 .approve-bal-lbl{font-size:.65rem;color:rgba(210,180,140,.5);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;}
 .approve-bal-num{font-family:var(--font-head);font-size:1.35rem;font-weight:800;color:#d2b48c;transition:all .4s ease;}
 .approve-bal-num.flash{color:#facc15;text-shadow:0 0 12px rgba(250,204,21,.5);}
@@ -233,7 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="tp-label">You Receive</div>
         <div class="tp-row">
           <div class="t-select">
-            <div class="t-icon t-rlo"><img src="images/merket.png" alt="RIALO" style="width:100%;height:100%;object-fit:contain;border-radius:50%;"/></div>
+            <div class="t-icon t-rlo"><img src="images/market.png" alt="RIALO" style="width:100%;height:100%;object-fit:contain;border-radius:50%;"/></div>
             <span class="t-sym">RIALO</span>
           </div>
           <input class="t-input" id="to-amt" type="number" placeholder="0.0" readonly style="color:var(--accent)"/>
@@ -269,9 +269,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
         <div class="approve-bal-card">
           <div class="approve-bal-left">
-            <div class="approve-bal-icon">
-              <img src="images/merket.png" alt="RIALO" style="width:100%;height:100%;object-fit:contain;border-radius:50%;"/>
-            </div>
+            <div class="approve-bal-icon">🪙</div>
             <div>
               <div class="approve-bal-lbl">RIALO Balance</div>
               <div class="approve-bal-num" id="approve-bal-display">0.0000</div>
@@ -477,6 +475,7 @@ function renderWalletArea(){
   const path=location.pathname;
 
   if(mob){
+    /* On mobile: show deep links to open in each wallet's browser */
     area.innerHTML=`
       <div class="wpicker-wrap">
         <div class="wpicker-note">📱 Open from your wallet's built-in browser</div>
@@ -504,6 +503,7 @@ function renderWalletArea(){
         </div>
       </div>`;
   } else {
+    /* Desktop: detect installed extensions */
     const anyFound=d.metamask||d.coinbase||d.phantom||d.okx||!!window.ethereum;
     area.innerHTML=`
       <div class="wpicker-wrap">
@@ -560,6 +560,7 @@ async function connectWallet(key){
   }
 }
 
+/* Try auto-connect if already approved */
 async function tryAutoConnect(){
   if(!window.ethereum)return;
   try{
