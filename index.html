@@ -324,7 +324,7 @@ canvas{display:block;width:100%}
 
 <div class="app">
 
-<!-- ══ NAV ══ -->
+<!-- NAV -->
 <nav>
   <div class="logo">
     <div class="logo-hex">⬡</div>
@@ -378,10 +378,10 @@ canvas{display:block;width:100%}
   </div>
 </nav>
 
-<!-- ══ TICKER ══ -->
+<!-- TICKER -->
 <div class="ticker"><div class="tick-track" id="tickTrack"></div></div>
 
-<!-- ══ DASHBOARD ══ -->
+<!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
   <div class="dash-grid">
     <div class="stat-card" style="--c:var(--cyan-glow)">
@@ -446,7 +446,7 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ SWAP ══ -->
+<!-- SWAP -->
 <div class="page" id="page-swap">
   <div style="max-width:560px;margin:0 auto">
     <div style="text-align:center;margin-bottom:24px">
@@ -518,7 +518,7 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ BRIDGE ══ -->
+<!-- BRIDGE -->
 <div class="page" id="page-bridge">
   <div style="max-width:540px;margin:0 auto">
     <div style="text-align:center;margin-bottom:24px">
@@ -567,7 +567,7 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ STAKING ══ -->
+<!-- STAKING -->
 <div class="page" id="page-stake">
   <div style="margin-bottom:24px">
     <div style="font-size:26px;font-weight:800;margin-bottom:6px">Staking & Yield</div>
@@ -586,7 +586,7 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ GOVERNANCE ══ -->
+<!-- GOVERNANCE -->
 <div class="page" id="page-gov">
   <div style="margin-bottom:24px">
     <div style="font-size:26px;font-weight:800;margin-bottom:6px">Governance</div>
@@ -602,7 +602,7 @@ canvas{display:block;width:100%}
 
 </div><!-- .app -->
 
-<!-- ══ TOKEN PICKER MODAL ══ -->
+<!-- TOKEN PICKER MODAL -->
 <div class="token-picker-overlay" id="tokenPickerOverlay" onclick="if(event.target===this)closeTokenPicker()">
   <div class="token-picker">
     <div class="tp-header">
@@ -614,7 +614,7 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ WALLET MODAL ══ -->
+<!-- WALLET MODAL -->
 <div class="overlay" id="walletOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="modal-x" onclick="closeModal()">✕</button>
@@ -646,13 +646,11 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<!-- ══ TOAST ══ -->
+<!-- TOAST -->
 <div class="toast" id="toast"><span class="ti" id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
 
 <script>
-/* ══════════════════════════════════════════
-   STARS
-══════════════════════════════════════════ */
+/* STARS */
 (()=>{
   const c=document.querySelector('.cosmos');
   for(let i=0;i<70;i++){
@@ -663,33 +661,27 @@ canvas{display:block;width:100%}
   }
 })();
 
-/* ══════════════════════════════════════════
-   GLOBAL STATE
-══════════════════════════════════════════ */
+/* GLOBAL STATE */
 const STATE = {
-  prices: {},          // symbol → {price, chg24h, high, low, vol, prevClose}
-  chartData: {},       // symbol → [prices array]
-  walletConnected: false,
-  walletAddress: '',
-  walletName: '',
-  walletBalance: '0',
-  currentChainId: 11155111, // Sepolia
-  currentChart: 'BTCUSDT',
-  ws: null,
-  wsReady: false,
-  fromTok: 'ETH',
-  toTok: 'BTC',
-  tpTarget: 'from',
+  prices:{},
+  chartData:{},
+  walletConnected:false,
+  walletAddress:'',
+  walletName:'',
+  walletBalance:'0',
+  currentChainId:11155111,
+  currentChart:'BTCUSDT',
+  ws:null,
+  wsReady:false,
+  fromTok:'ETH',
+  toTok:'BTC',
+  tpTarget:'from',
 };
 
-/* ══════════════════════════════════════════
-   BINANCE WEBSOCKET — UNLIMITED REALTIME
-══════════════════════════════════════════ */
-// All 8 symbols in ONE combined stream — zero rate limit
-const WS_SYMBOLS = ['btcusdt','ethusdt','solusdt','bnbusdt','xrpusdt','adausdt','avaxusdt','dotusdt'];
-const WS_STREAM = WS_SYMBOLS.map(s=>`${s}@ticker`).join('/');
+const WS_SYMBOLS=['btcusdt','ethusdt','solusdt','bnbusdt','xrpusdt','adausdt','avaxusdt','dotusdt'];
+const WS_STREAM=WS_SYMBOLS.map(s=>`${s}@ticker`).join('/');
 
-const COIN_META = {
+const COIN_META={
   BTCUSDT:{sym:'BTC',name:'Bitcoin',   bg:'#F7931A18',color:'#F7931A',icon:'₿'},
   ETHUSDT:{sym:'ETH',name:'Ethereum',  bg:'#627EEA18',color:'#627EEA',icon:'Ξ'},
   SOLUSDT:{sym:'SOL',name:'Solana',    bg:'#9945FF18',color:'#9945FF',icon:'◎'},
@@ -700,75 +692,62 @@ const COIN_META = {
   DOTUSDT:{sym:'DOT',name:'Polkadot', bg:'#E6007A18',color:'#E6007A',icon:'●'},
 };
 
+/* ── WebSocket ── */
 function initWS(){
-  if(STATE.ws){STATE.ws.close();}
-  const url = `wss://stream.binance.com:9443/stream?streams=${WS_STREAM}`;
+  if(STATE.ws){try{STATE.ws.close();}catch(_){}}
+  const url=`wss://stream.binance.com:9443/stream?streams=${WS_STREAM}`;
   try{
-    const ws = new WebSocket(url);
-    STATE.ws = ws;
-
-    ws.onopen = () => {
-      setWsStatus('connected','Live');
-      STATE.wsReady = true;
-    };
-
-    ws.onmessage = (e) => {
+    const ws=new WebSocket(url);
+    STATE.ws=ws;
+    ws.onopen=()=>{setWsStatus('connected','Live');STATE.wsReady=true;};
+    ws.onmessage=(e)=>{
       try{
-        const msg = JSON.parse(e.data);
+        const msg=JSON.parse(e.data);
         if(!msg.data) return;
-        const d = msg.data;
-        const sym = d.s; // e.g. "BTCUSDT"
+        const d=msg.data;
+        const sym=d.s;
         if(!COIN_META[sym]) return;
-
-        const price  = parseFloat(d.c);
-        const chg    = parseFloat(d.P);
-        const high   = parseFloat(d.h);
-        const low    = parseFloat(d.l);
-        const vol    = parseFloat(d.q); // quote volume in USDT
-        const prev   = STATE.prices[sym]?.price;
-
-        STATE.prices[sym] = { price, chg24h: chg, high, low, vol, prev };
-
-        // Update chart data (keep last 100 ticks)
-        if(!STATE.chartData[sym]) STATE.chartData[sym] = [];
+        const price=parseFloat(d.c);
+        const chg=parseFloat(d.P);
+        const high=parseFloat(d.h);
+        const low=parseFloat(d.l);
+        const vol=parseFloat(d.q);
+        const prev=STATE.prices[sym]?.price;
+        STATE.prices[sym]={price,chg24h:chg,high,low,vol,prev};
+        if(!STATE.chartData[sym]) STATE.chartData[sym]=[];
         STATE.chartData[sym].push(price);
-        if(STATE.chartData[sym].length > 100) STATE.chartData[sym].shift();
-
-        // Partial DOM updates (fast path — no full re-render)
-        updateTickerItem(sym, price, chg, prev);
+        if(STATE.chartData[sym].length>100) STATE.chartData[sym].shift();
+        updateTickerItem(sym,price,chg,prev);
         updateMarketRow(sym);
-        if(STATE.currentChart === sym) updateChartDisplay(sym);
+        if(STATE.currentChart===sym) updateChartDisplay(sym);
         updateSwapRate();
-      } catch(_){}
+      }catch(_){}
     };
-
-    ws.onerror = () => setWsStatus('error','WS Error');
-    ws.onclose = () => {
+    ws.onerror=()=>setWsStatus('error','WS Error');
+    ws.onclose=()=>{
       setWsStatus('error','Reconnecting…');
-      STATE.wsReady = false;
-      setTimeout(initWS, 3000); // auto-reconnect
+      STATE.wsReady=false;
+      setTimeout(initWS,3000);
     };
-  } catch(err){
+  }catch(err){
     setWsStatus('error','WS Failed');
-    console.warn('WebSocket failed, using fallback', err);
     initFallback();
   }
 }
 
 function initFallback(){
-  // Fallback: fetch Binance REST API (no rate limit for basic price data)
   fetchBinanceREST();
-  setInterval(fetchBinanceREST, 3000);
+  setInterval(fetchBinanceREST,3000);
 }
 
 async function fetchBinanceREST(){
   try{
-    const syms = Object.keys(COIN_META);
-    const r = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(syms)}`);
+    const syms=Object.keys(COIN_META);
+    const r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(syms)}`);
     if(!r.ok) throw 0;
-    const data = await r.json();
+    const data=await r.json();
     data.forEach(d=>{
-      const prev = STATE.prices[d.symbol]?.price;
+      const prev=STATE.prices[d.symbol]?.price;
       STATE.prices[d.symbol]={
         price:parseFloat(d.lastPrice),
         chg24h:parseFloat(d.priceChangePercent),
@@ -777,13 +756,13 @@ async function fetchBinanceREST(){
         vol:parseFloat(d.quoteVolume),
         prev
       };
-      if(!STATE.chartData[d.symbol])STATE.chartData[d.symbol]=[];
+      if(!STATE.chartData[d.symbol]) STATE.chartData[d.symbol]=[];
       STATE.chartData[d.symbol].push(parseFloat(d.lastPrice));
-      if(STATE.chartData[d.symbol].length>100)STATE.chartData[d.symbol].shift();
+      if(STATE.chartData[d.symbol].length>100) STATE.chartData[d.symbol].shift();
     });
     setWsStatus('connected','REST Live');
     renderAll();
-  } catch(_){
+  }catch(_){
     setWsStatus('error','API Error');
     useMockPrices();
     renderAll();
@@ -803,7 +782,7 @@ function useMockPrices(){
   };
   Object.entries(mock).forEach(([k,v])=>{
     if(!STATE.prices[k]) STATE.prices[k]=v;
-    if(!STATE.chartData[k]) STATE.chartData[k]=genSpark(v.price,.02);
+    if(!STATE.chartData[k]||STATE.chartData[k].length<2) STATE.chartData[k]=genSpark(v.price,.02);
   });
 }
 
@@ -818,13 +797,11 @@ function setWsStatus(type,label){
   const lbl=document.getElementById('wsLabel');
   if(!dot||!lbl) return;
   const map={connected:'var(--green)',connecting:'var(--gold)',error:'var(--red)'};
-  dot.style.background = map[type]||'var(--gold)';
-  lbl.textContent = label;
+  dot.style.background=map[type]||'var(--gold)';
+  lbl.textContent=label;
 }
 
-/* ══════════════════════════════════════════
-   FORMATTERS
-══════════════════════════════════════════ */
+/* ── Formatters ── */
 function fmt(n){
   if(n==null||isNaN(n)) return '$—';
   if(n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
@@ -833,51 +810,49 @@ function fmt(n){
   if(n>=1000) return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   return '$'+n.toFixed(n<1?4:2);
 }
-function fmtP(n,p=2){if(n==null)return '—';return n.toFixed(p);}
 
-/* ══════════════════════════════════════════
-   TICKER
-══════════════════════════════════════════ */
-const tickerItems = {}; // sym → DOM element references
-
+/* ── Ticker ──
+   FIX: build once, update data-sym attributes so BOTH clones update live */
 function buildTicker(){
-  const items = Object.keys(COIN_META);
-  let html = '';
-  items.forEach(sym=>{
-    const m = COIN_META[sym];
-    html += `<div class="tick-item" id="ti-${sym}">
+  const items=Object.keys(COIN_META);
+  // Build ONE set of items (we duplicate with CSS via animation, not DOM)
+  const makeItem=(sym,suffix)=>{
+    const m=COIN_META[sym];
+    return `<div class="tick-item">
       <span class="tick-sym">${m.sym}/USDT</span>
-      <span class="tick-price" id="tp-${sym}">—</span>
-      <span class="tick-chg" id="tc-${sym}">—</span>
+      <span class="tick-price" id="tp-${sym}${suffix}">—</span>
+      <span class="tick-chg" id="tc-${sym}${suffix}">—</span>
     </div>`;
+  };
+  let html='';
+  // First copy
+  items.forEach(sym=>{ html+=makeItem(sym,''); });
+  // Second copy (for seamless loop) — suffix "b"
+  items.forEach(sym=>{ html+=makeItem(sym,'b'); });
+  document.getElementById('tickTrack').innerHTML=html;
+}
+
+/* FIX: update BOTH ticker copies */
+function updateTickerItem(sym,price,chg,prevPrice){
+  ['','b'].forEach(suffix=>{
+    const priceEl=document.getElementById('tp-'+sym+suffix);
+    const chgEl=document.getElementById('tc-'+sym+suffix);
+    if(!priceEl) return;
+    priceEl.textContent=fmt(price);
+    chgEl.textContent=(chg>=0?'▲':'▼')+Math.abs(chg).toFixed(2)+'%';
+    chgEl.className='tick-chg '+(chg>=0?'up':'dn');
+    if(prevPrice!=null&&price!==prevPrice){
+      priceEl.className='tick-price '+(price>prevPrice?'flash-up':'flash-dn');
+      setTimeout(()=>{ if(priceEl) priceEl.className='tick-price'; },400);
+    }
   });
-  document.getElementById('tickTrack').innerHTML = html+html; // double for seamless loop
 }
 
-function updateTickerItem(sym, price, chg, prevPrice){
-  // Update first instance (second is clone)
-  const priceEl = document.getElementById('tp-'+sym);
-  const chgEl   = document.getElementById('tc-'+sym);
-  if(!priceEl) return;
-  priceEl.textContent = fmt(price);
-  chgEl.textContent   = (chg>=0?'▲':'▼')+Math.abs(chg).toFixed(2)+'%';
-  chgEl.className = 'tick-chg '+(chg>=0?'up':'dn');
-  // Flash on price change
-  if(prevPrice != null && price !== prevPrice){
-    priceEl.className = 'tick-price '+(price>prevPrice?'flash-up':'flash-dn');
-    setTimeout(()=>{ if(priceEl) priceEl.className='tick-price'; }, 400);
-  }
-}
-
-/* ══════════════════════════════════════════
-   MARKET TABLE
-══════════════════════════════════════════ */
-const marketRowMap = {}; // sym → { priceEl, chgEl, ... }
-
+/* ── Market Table ── */
 function buildMarketTable(){
-  let html = '';
-  Object.entries(COIN_META).forEach(([sym, m])=>{
-    html += `<div class="pool-row" id="mr-${sym}">
+  let html='';
+  Object.entries(COIN_META).forEach(([sym,m])=>{
+    html+=`<div class="pool-row" id="mr-${sym}">
       <div style="display:flex;align-items:center;gap:10px">
         <div class="tok-icon" style="background:${m.bg};color:${m.color}">${m.icon}</div>
         <div><div style="font-weight:700;font-size:14px">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.sym}</div></div>
@@ -888,28 +863,28 @@ function buildMarketTable(){
       <div class="mono" style="color:var(--text2)" id="mrv-${sym}">—</div>
     </div>`;
   });
-  document.getElementById('marketRows').innerHTML = html;
+  document.getElementById('marketRows').innerHTML=html;
 }
 
 function updateMarketRow(sym){
-  const d = STATE.prices[sym];
+  const d=STATE.prices[sym];
   if(!d) return;
-  const up = d.chg24h >= 0;
-  const pe = document.getElementById('mrp-'+sym);
-  const ce = document.getElementById('mrc-'+sym);
-  const he = document.getElementById('mrhl-'+sym);
-  const ve = document.getElementById('mrv-'+sym);
-  if(pe) pe.textContent = fmt(d.price);
-  if(ce){ ce.textContent = (up?'▲':'▼')+Math.abs(d.chg24h).toFixed(2)+'%'; ce.className='mono '+(up?'up':'dn'); ce.style.fontWeight='700'; }
-  if(he) he.textContent = `${fmt(d.high)} / ${fmt(d.low)}`;
-  if(ve) ve.textContent = fmt(d.vol);
+  const up=d.chg24h>=0;
+  const pe=document.getElementById('mrp-'+sym);
+  const ce=document.getElementById('mrc-'+sym);
+  const he=document.getElementById('mrhl-'+sym);
+  const ve=document.getElementById('mrv-'+sym);
+  if(pe) pe.textContent=fmt(d.price);
+  if(ce){ce.textContent=(up?'▲':'▼')+Math.abs(d.chg24h).toFixed(2)+'%';ce.className='mono '+(up?'up':'dn');ce.style.fontWeight='700';}
+  if(he) he.textContent=`${fmt(d.high)} / ${fmt(d.low)}`;
+  if(ve) ve.textContent=fmt(d.vol);
 }
 
 function renderAll(){
   Object.keys(COIN_META).forEach(sym=>{
-    const d = STATE.prices[sym];
+    const d=STATE.prices[sym];
     if(!d) return;
-    updateTickerItem(sym, d.price, d.chg24h, d.prev);
+    updateTickerItem(sym,d.price,d.chg24h,d.prev);
     updateMarketRow(sym);
   });
   updateChartDisplay(STATE.currentChart);
@@ -917,88 +892,89 @@ function renderAll(){
   renderTopPools();
 }
 
-/* ══════════════════════════════════════════
-   CHART
-══════════════════════════════════════════ */
+/* ── Chart ──
+   FIX: use requestAnimationFrame + check offsetWidth > 0 before drawing */
 function updateChartDisplay(sym){
-  const d = STATE.prices[sym];
+  const d=STATE.prices[sym];
   if(!d) return;
-  const m = COIN_META[sym];
-  const up = d.chg24h >= 0;
-
-  const cpEl = document.getElementById('chartPrice');
-  const cmEl = document.getElementById('chartMeta');
-  const clEl = document.getElementById('chartLabel');
-  if(cpEl){ cpEl.textContent = fmt(d.price); cpEl.style.color = up?'var(--green)':'var(--red)'; }
-  if(cmEl) cmEl.innerHTML = `<span class="${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(d.chg24h).toFixed(2)}%</span>&nbsp;·&nbsp;Vol <span style="color:var(--text2)">${fmt(d.vol)}</span>`;
-  if(clEl && m) clEl.textContent = `${m.sym} / USDT · Binance Live`;
-
-  const chartArr = STATE.chartData[sym];
-  if(chartArr && chartArr.length > 1) drawChart(chartArr, up);
+  const m=COIN_META[sym];
+  const up=d.chg24h>=0;
+  const cpEl=document.getElementById('chartPrice');
+  const cmEl=document.getElementById('chartMeta');
+  const clEl=document.getElementById('chartLabel');
+  if(cpEl){cpEl.textContent=fmt(d.price);cpEl.style.color=up?'var(--green)':'var(--red)';}
+  if(cmEl) cmEl.innerHTML=`<span class="${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(d.chg24h).toFixed(2)}%</span>&nbsp;·&nbsp;Vol <span style="color:var(--text2)">${fmt(d.vol)}</span>`;
+  if(clEl&&m) clEl.textContent=`${m.sym} / USDT · Binance Live`;
+  const chartArr=STATE.chartData[sym];
+  if(chartArr&&chartArr.length>1){
+    requestAnimationFrame(()=>drawChart(chartArr,up));
+  }
 }
 
-function switchChart(el, sym, label){
+function switchChart(el,sym){
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  STATE.currentChart = sym;
-  if(!STATE.chartData[sym] && STATE.prices[sym]){
-    STATE.chartData[sym] = genSpark(STATE.prices[sym].price, .02);
+  STATE.currentChart=sym;
+  // Ensure spark data exists
+  if(!STATE.chartData[sym]||STATE.chartData[sym].length<2){
+    const base=STATE.prices[sym]?.price||100;
+    STATE.chartData[sym]=genSpark(base,.02);
   }
   updateChartDisplay(sym);
 }
 
-function drawChart(data, up){
-  const cv = document.getElementById('mainChart');
+function drawChart(data,up){
+  const cv=document.getElementById('mainChart');
   if(!cv||data.length<2) return;
-  const dpr = window.devicePixelRatio||1;
-  cv.width  = cv.offsetWidth*dpr;
-  cv.height = 200*dpr;
-  const ctx = cv.getContext('2d');
+  // FIX: wait until element has layout width
+  if(cv.offsetWidth===0){
+    requestAnimationFrame(()=>drawChart(data,up));
+    return;
+  }
+  const dpr=window.devicePixelRatio||1;
+  cv.width=cv.offsetWidth*dpr;
+  cv.height=200*dpr;
+  const ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
-  const W=cv.width, H=cv.height;
-  const min=Math.min(...data), max=Math.max(...data), range=max-min||1;
+  const W=cv.width,H=cv.height;
+  const min=Math.min(...data),max=Math.max(...data),range=max-min||1;
   const pts=data.map((v,i)=>({
     x:i/(data.length-1)*W,
     y:H-((v-min)/range)*(H*.82)-(H*.09)
   }));
-  const color = up ? '#00ffaa' : '#ff4466';
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, color+'48');
-  grad.addColorStop(1, color+'00');
+  const color=up?'#00ffaa':'#ff4466';
+  const grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,color+'48');
+  grad.addColorStop(1,color+'00');
   ctx.beginPath();
-  ctx.moveTo(pts[0].x, H);
+  ctx.moveTo(pts[0].x,H);
   pts.forEach(p=>ctx.lineTo(p.x,p.y));
-  ctx.lineTo(pts[pts.length-1].x, H);
+  ctx.lineTo(pts[pts.length-1].x,H);
   ctx.closePath();
-  ctx.fillStyle = grad;
+  ctx.fillStyle=grad;
   ctx.fill();
-  // Line
   ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
+  ctx.moveTo(pts[0].x,pts[0].y);
   pts.forEach((p,i)=>{
     if(i>0){
       const pv=pts[i-1];
       ctx.bezierCurveTo((pv.x+p.x)/2,pv.y,(pv.x+p.x)/2,p.y,p.x,p.y);
     }
   });
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2/dpr;
+  ctx.strokeStyle=color;
+  ctx.lineWidth=2/dpr;
   ctx.stroke();
-  // End dot
   const last=pts[pts.length-1];
   ctx.beginPath();
-  ctx.arc(last.x, last.y, 4/dpr, 0, Math.PI*2);
-  ctx.fillStyle = color;
+  ctx.arc(last.x,last.y,4/dpr,0,Math.PI*2);
+  ctx.fillStyle=color;
   ctx.fill();
-  ctx.strokeStyle = '#03060f';
-  ctx.lineWidth = 1.5/dpr;
+  ctx.strokeStyle='#03060f';
+  ctx.lineWidth=1.5/dpr;
   ctx.stroke();
 }
 
-/* ══════════════════════════════════════════
-   TOP POOLS
-══════════════════════════════════════════ */
+/* ── Top Pools ── */
 function renderTopPools(){
   const pools=[
     {a:'ETH',b:'USDC',apr:'12.4',tvl:'$84.2M'},
@@ -1016,21 +992,19 @@ function renderTopPools(){
     </div>`).join('');
 }
 
-/* ══════════════════════════════════════════
-   STAKING
-══════════════════════════════════════════ */
+/* ── Staking ── */
 function renderStakePools(){
   const pools=[
-    {name:'ETH/USDC',  chain:'Ethereum',  apr:12.4, tvl:'$84.2M', filled:72, hl:'#00d4ff',badge:'🔵 Stable',   bc:'#00d4ff22',tc:'var(--cyan)'},
-    {name:'SOL/USDC',  chain:'Solana',    apr:18.2, tvl:'$31.5M', filled:55, hl:'#9945FF',badge:'⚡ High APR', bc:'#9945FF22',tc:'#9945FF'},
-    {name:'BTC/ETH',   chain:'Multi-chain',apr:9.8, tvl:'$62.7M', filled:88, hl:'#F7931A',badge:'🔥 Popular',  bc:'#F7931A22',tc:'#F7931A'},
-    {name:'BNB/BUSD',  chain:'BNB Chain', apr:14.6, tvl:'$28.3M', filled:43, hl:'#F3BA2F',badge:'🌟 Boosted',  bc:'#F3BA2F22',tc:'#F3BA2F'},
-    {name:'AVAX/USDT', chain:'Avalanche', apr:22.1, tvl:'$19.8M', filled:38, hl:'#E84142',badge:'🚀 New Pool', bc:'#E8414222',tc:'#E84142'},
-    {name:'DOT/USDC',  chain:'Polkadot',  apr:16.3, tvl:'$11.4M', filled:29, hl:'#E6007A',badge:'💜 Featured', bc:'#E6007A22',tc:'#E6007A'},
+    {name:'ETH/USDC',  chain:'Ethereum',  apr:12.4,tvl:'$84.2M',filled:72,hl:'#00d4ff',badge:'🔵 Stable',   bc:'#00d4ff22',tc:'var(--cyan)'},
+    {name:'SOL/USDC',  chain:'Solana',    apr:18.2,tvl:'$31.5M',filled:55,hl:'#9945FF',badge:'⚡ High APR', bc:'#9945FF22',tc:'#9945FF'},
+    {name:'BTC/ETH',   chain:'Multi-chain',apr:9.8,tvl:'$62.7M',filled:88,hl:'#F7931A',badge:'🔥 Popular',  bc:'#F7931A22',tc:'#F7931A'},
+    {name:'BNB/BUSD',  chain:'BNB Chain', apr:14.6,tvl:'$28.3M',filled:43,hl:'#F3BA2F',badge:'🌟 Boosted',  bc:'#F3BA2F22',tc:'#F3BA2F'},
+    {name:'AVAX/USDT', chain:'Avalanche', apr:22.1,tvl:'$19.8M',filled:38,hl:'#E84142',badge:'🚀 New Pool', bc:'#E8414222',tc:'#E84142'},
+    {name:'DOT/USDC',  chain:'Polkadot',  apr:16.3,tvl:'$11.4M',filled:29,hl:'#E6007A',badge:'💜 Featured', bc:'#E6007A22',tc:'#E6007A'},
   ];
-  const el = document.getElementById('stakePools');
+  const el=document.getElementById('stakePools');
   if(!el) return;
-  el.innerHTML = pools.map(p=>`
+  el.innerHTML=pools.map(p=>`
     <div class="stake-card" style="--hl:${p.hl}">
       <span class="stake-badge" style="background:${p.bc};color:${p.tc}">${p.badge}</span>
       <div class="stake-apr" style="background:linear-gradient(135deg,${p.hl},#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${p.apr}%</div>
@@ -1045,9 +1019,7 @@ function renderStakePools(){
     </div>`).join('');
 }
 
-/* ══════════════════════════════════════════
-   GOVERNANCE
-══════════════════════════════════════════ */
+/* ── Governance ── */
 function renderProposals(){
   const props=[
     {id:'RIP-042',title:'Reduce bridge fees from 0.3% to 0.1% for transactions under $1000',desc:'Make cross-chain transfers more accessible for retail users by reducing fees on small transactions.',yes:72,no:18,status:'active',voters:'4,821',ends:'2d 14h'},
@@ -1055,10 +1027,10 @@ function renderProposals(){
     {id:'RIP-040',title:'Launch Rialo Liquidity Mining Program — Season 2',desc:'Allocate 15M protocol tokens over 90 days to incentivize top 10 liquidity pools with boosted APR.',yes:58,no:32,status:'active',voters:'3,147',ends:'5d 2h'},
     {id:'RIP-039',title:'Implement ve-Token model for governance voting power',desc:'Transition to vote-escrowed model where longer lock periods grant higher voting weight.',yes:34,no:51,status:'failed',voters:'5,892',ends:'Ended'},
   ];
-  const el = document.getElementById('proposals');
+  const el=document.getElementById('proposals');
   if(!el) return;
-  el.innerHTML = props.map(p=>{
-    const sc = p.status==='active'?'s-active':p.status==='passed'?'s-passed':p.status==='failed'?'s-failed':'s-pending';
+  el.innerHTML=props.map(p=>{
+    const sc=p.status==='active'?'s-active':p.status==='passed'?'s-passed':p.status==='failed'?'s-failed':'s-pending';
     return `<div class="proposal-card ${sc}">
       <div class="prop-head">
         <div><div class="prop-id">${p.id}</div><div class="prop-title">${p.title}</div></div>
@@ -1086,152 +1058,145 @@ function renderProposals(){
   }).join('');
 }
 
-/* ══════════════════════════════════════════
-   SWAP — Token Picker
-══════════════════════════════════════════ */
-const TOKEN_DEFS = {
-  ETH: {icon:'Ξ',bg:'#627EEA18',c:'#627EEA',wsKey:'ETHUSDT'},
-  BTC: {icon:'₿',bg:'#F7931A18',c:'#F7931A',wsKey:'BTCUSDT'},
-  SOL: {icon:'◎',bg:'#9945FF18',c:'#9945FF',wsKey:'SOLUSDT'},
-  BNB: {icon:'B',bg:'#F3BA2F18',c:'#F3BA2F',wsKey:'BNBUSDT'},
-  USDC:{icon:'$',bg:'#2775CA18',c:'#2775CA',wsKey:null},
-  USDT:{icon:'₮',bg:'#26A17B18',c:'#26A17B',wsKey:null},
-  XRP: {icon:'✕',bg:'#00AAE418',c:'#00AAE4',wsKey:'XRPUSDT'},
-  ADA: {icon:'₳',bg:'#0055D420',c:'#4488ff',wsKey:'ADAUSDT'},
-  AVAX:{icon:'A',bg:'#E8414218',c:'#E84142',wsKey:'AVAXUSDT'},
+/* ── Token Picker & Swap ── */
+const TOKEN_DEFS={
+  ETH:{icon:'Ξ', bg:'#627EEA18',c:'#627EEA',wsKey:'ETHUSDT', name:'Ethereum'},
+  BTC:{icon:'₿', bg:'#F7931A18',c:'#F7931A',wsKey:'BTCUSDT', name:'Bitcoin'},
+  SOL:{icon:'◎', bg:'#9945FF18',c:'#9945FF',wsKey:'SOLUSDT', name:'Solana'},
+  BNB:{icon:'B', bg:'#F3BA2F18',c:'#F3BA2F',wsKey:'BNBUSDT', name:'BNB'},
+  USDC:{icon:'$',bg:'#2775CA18',c:'#2775CA',wsKey:null,       name:'USD Coin'},
+  USDT:{icon:'₮',bg:'#26A17B18',c:'#26A17B',wsKey:null,       name:'Tether'},
+  XRP:{icon:'✕', bg:'#00AAE418',c:'#00AAE4',wsKey:'XRPUSDT',  name:'XRP'},
+  ADA:{icon:'₳', bg:'#0055D420',c:'#4488ff',wsKey:'ADAUSDT',  name:'Cardano'},
+  AVAX:{icon:'A',bg:'#E8414218',c:'#E84142',wsKey:'AVAXUSDT', name:'Avalanche'},
 };
 
 function getPrice(tok){
-  const def = TOKEN_DEFS[tok];
+  const def=TOKEN_DEFS[tok];
   if(!def) return 1;
   if(tok==='USDC'||tok==='USDT') return 1;
-  const d = STATE.prices[def.wsKey];
-  return d ? d.price : 1;
+  const d=STATE.prices[def.wsKey];
+  return d?d.price:1;
 }
 
 function openTokenPicker(target){
-  STATE.tpTarget = target;
-  document.getElementById('tpSearch').value = '';
+  STATE.tpTarget=target;
+  document.getElementById('tpSearch').value='';
   filterTokens();
   document.getElementById('tokenPickerOverlay').classList.add('open');
-  document.getElementById('tpSearch').focus();
+  setTimeout(()=>document.getElementById('tpSearch').focus(),100);
 }
-function closeTokenPicker(){ document.getElementById('tokenPickerOverlay').classList.remove('open'); }
+function closeTokenPicker(){document.getElementById('tokenPickerOverlay').classList.remove('open');}
 
+/* FIX: filter was checking includes twice with same value — now checks name too */
 function filterTokens(){
-  const q = document.getElementById('tpSearch').value.toLowerCase();
-  const list = document.getElementById('tpList');
-  list.innerHTML = Object.entries(TOKEN_DEFS).filter(([sym])=>sym.toLowerCase().includes(q)||sym.toLowerCase().includes(q)).map(([sym,d])=>{
-    const price = getPrice(sym);
-    const wsData = d.wsKey ? STATE.prices[d.wsKey] : null;
-    const chg = wsData ? wsData.chg24h : 0;
-    return `<div class="tp-item" onclick="selectToken('${sym}')">
-      <div class="tp-item-icon" style="background:${d.bg};color:${d.c}">${d.icon}</div>
-      <div><div class="tp-name">${sym}</div><div class="tp-sym">${sym==='USDC'?'USD Coin':sym==='USDT'?'Tether':COIN_META[d.wsKey]?.name||sym}</div></div>
-      <div class="tp-price">
-        <div>${fmt(price)}</div>
-        ${wsData?`<div style="font-size:11px;color:${chg>=0?'var(--green)':'var(--red)'};margin-top:2px">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
+  const q=document.getElementById('tpSearch').value.toLowerCase();
+  const list=document.getElementById('tpList');
+  list.innerHTML=Object.entries(TOKEN_DEFS)
+    .filter(([sym,d])=>!q||sym.toLowerCase().includes(q)||d.name.toLowerCase().includes(q))
+    .map(([sym,d])=>{
+      const price=getPrice(sym);
+      const wsData=d.wsKey?STATE.prices[d.wsKey]:null;
+      const chg=wsData?wsData.chg24h:0;
+      return `<div class="tp-item" onclick="selectToken('${sym}')">
+        <div class="tp-item-icon" style="background:${d.bg};color:${d.c}">${d.icon}</div>
+        <div><div class="tp-name">${sym}</div><div class="tp-sym">${d.name}</div></div>
+        <div class="tp-price">
+          <div>${fmt(price)}</div>
+          ${wsData?`<div style="font-size:11px;color:${chg>=0?'var(--green)':'var(--red)'};margin-top:2px">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:''}
+        </div>
+      </div>`;
+    }).join('');
 }
 
+/* FIX: selectToken — clean rewrite, no recursive calls, no state corruption */
 function selectToken(sym){
   closeTokenPicker();
-  const d = TOKEN_DEFS[sym];
+  const d=TOKEN_DEFS[sym];
   if(!d) return;
   if(STATE.tpTarget==='from'){
-    STATE.fromTok = sym;
-    if(STATE.toTok===sym) STATE.toTok = sym==='ETH'?'BTC':'ETH';
-    document.getElementById('fromTok').textContent = sym;
-    document.getElementById('fromIcon').textContent = d.icon;
-    document.getElementById('fromIcon').style.background = d.bg;
-    document.getElementById('fromIcon').style.color = d.c;
-    document.getElementById('rFrom').textContent = sym;
+    // Avoid same token on both sides
+    if(sym===STATE.toTok) STATE.toTok=(sym==='ETH'?'BTC':'ETH');
+    STATE.fromTok=sym;
   } else {
-    STATE.toTok = sym;
-    if(STATE.fromTok===sym) STATE.fromTok = sym==='ETH'?'BTC':'ETH';
-    document.getElementById('toTok').textContent = sym;
-    document.getElementById('toIcon').textContent = d.icon;
-    document.getElementById('toIcon').style.background = d.bg;
-    document.getElementById('toIcon').style.color = d.c;
-    document.getElementById('rTo').textContent = sym;
+    if(sym===STATE.fromTok) STATE.fromTok=(sym==='ETH'?'BTC':'ETH');
+    STATE.toTok=sym;
   }
-  updateSwapRate();
+  syncSwapUI();
 }
 
+/* FIX: flipTokens — simple atomic swap, no selectToken calls */
 function flipTokens(){
-  const tmp = STATE.fromTok;
-  selectToken(STATE.toTok); // sets toTok → fromTok
-  STATE.tpTarget='to'; selectToken(tmp);
-  // Simpler direct swap:
-  [STATE.fromTok, STATE.toTok] = [STATE.toTok, STATE.fromTok];
-  const fd=TOKEN_DEFS[STATE.fromTok], td=TOKEN_DEFS[STATE.toTok];
+  const tmp=STATE.fromTok;
+  STATE.fromTok=STATE.toTok;
+  STATE.toTok=tmp;
+  syncSwapUI();
+}
+
+/* Centralized UI sync for swap tokens */
+function syncSwapUI(){
+  const fd=TOKEN_DEFS[STATE.fromTok];
+  const td=TOKEN_DEFS[STATE.toTok];
   document.getElementById('fromTok').textContent=STATE.fromTok;
   document.getElementById('toTok').textContent=STATE.toTok;
-  document.getElementById('fromIcon').textContent=fd.icon;document.getElementById('fromIcon').style.background=fd.bg;document.getElementById('fromIcon').style.color=fd.c;
-  document.getElementById('toIcon').textContent=td.icon;document.getElementById('toIcon').style.background=td.bg;document.getElementById('toIcon').style.color=td.c;
-  document.getElementById('rFrom').textContent=STATE.fromTok;document.getElementById('rTo').textContent=STATE.toTok;
+  const fi=document.getElementById('fromIcon');
+  fi.textContent=fd.icon;fi.style.background=fd.bg;fi.style.color=fd.c;
+  const ti2=document.getElementById('toIcon');
+  ti2.textContent=td.icon;ti2.style.background=td.bg;ti2.style.color=td.c;
+  document.getElementById('rFrom').textContent=STATE.fromTok;
+  document.getElementById('rTo').textContent=STATE.toTok;
   updateSwapRate();
 }
 
 function updateSwapRate(){
-  const fp=getPrice(STATE.fromTok), tp=getPrice(STATE.toTok);
+  const fp=getPrice(STATE.fromTok),tp=getPrice(STATE.toTok);
   if(!fp||!tp) return;
-  const rate = (fp/tp);
-  const rateStr = rate<0.001?rate.toFixed(8):rate<1?rate.toFixed(6):rate.toFixed(4);
-  const rateEl = document.getElementById('swapRate');
-  if(rateEl) rateEl.textContent = `1 ${STATE.fromTok} = ${rateStr} ${STATE.toTok}`;
+  const rate=fp/tp;
+  const rateStr=rate<0.001?rate.toFixed(8):rate<1?rate.toFixed(6):rate.toFixed(4);
+  const rateEl=document.getElementById('swapRate');
+  if(rateEl) rateEl.textContent=`1 ${STATE.fromTok} = ${rateStr} ${STATE.toTok}`;
   calcSwap();
 }
 
 function calcSwap(){
-  const amt = parseFloat(document.getElementById('fromAmt')?.value)||0;
-  const fp=getPrice(STATE.fromTok), tp=getPrice(STATE.toTok);
-  const receive = amt*(fp/tp)*0.9995;
-  const receiveStr = receive<0.001?receive.toFixed(8):receive<1?receive.toFixed(6):receive.toFixed(4);
+  const amt=parseFloat(document.getElementById('fromAmt')?.value)||0;
+  const fp=getPrice(STATE.fromTok),tp=getPrice(STATE.toTok);
+  const receive=amt*(fp/tp)*0.9995;
+  const prec=receive<0.001?8:receive<1?6:4;
+  const receiveStr=receive.toFixed(prec);
   const toAmtEl=document.getElementById('toAmt');
   const fromUsdEl=document.getElementById('fromUsd');
   const toUsdEl=document.getElementById('toUsd');
   const minRecEl=document.getElementById('minRec');
-  if(toAmtEl) toAmtEl.value = amt ? receiveStr : '';
-  if(fromUsdEl) fromUsdEl.textContent = amt ? `≈ ${fmt(amt*fp)}` : '≈ $0.00';
-  if(toUsdEl) toUsdEl.textContent = (amt&&receive) ? `≈ ${fmt(receive*tp)}` : '≈ $0.00';
-  if(minRecEl) minRecEl.textContent = amt ? `${(receive*0.995).toFixed(receiveStr.length>5?8:4)} ${STATE.toTok}` : '—';
+  if(toAmtEl) toAmtEl.value=amt?receiveStr:'';
+  if(fromUsdEl) fromUsdEl.textContent=amt?`≈ ${fmt(amt*fp)}`:'≈ $0.00';
+  if(toUsdEl) toUsdEl.textContent=(amt&&receive)?`≈ ${fmt(receive*tp)}`:'≈ $0.00';
+  if(minRecEl) minRecEl.textContent=amt?`${(receive*0.995).toFixed(prec)} ${STATE.toTok}`:'—';
 }
 
 function maxSwap(){
-  const bal = parseFloat(STATE.walletBalance)||0;
-  if(bal>0){
-    document.getElementById('fromAmt').value = bal.toFixed(6);
-    calcSwap();
-  }
+  const bal=parseFloat(STATE.walletBalance)||0;
+  if(bal>0){document.getElementById('fromAmt').value=bal.toFixed(6);calcSwap();}
 }
 
 async function doSwap(){
-  if(!STATE.walletConnected){ openWalletModal(); return; }
-  const amt = parseFloat(document.getElementById('fromAmt')?.value)||0;
-  if(!amt||amt<=0){ toast('⚠️','Please enter an amount'); return; }
+  if(!STATE.walletConnected){openWalletModal();return;}
+  const amt=parseFloat(document.getElementById('fromAmt')?.value)||0;
+  if(!amt||amt<=0){toast('⚠️','Please enter an amount');return;}
   toast('🔄',`Preparing swap: ${amt} ${STATE.fromTok} → ${STATE.toTok}…`);
-  // Simulate tx confirmation
-  setTimeout(()=>toast('✅',`Swap submitted! ${amt} ${STATE.fromTok} → ${STATE.toTok} · Check wallet for confirmation`),1500);
+  setTimeout(()=>toast('✅',`Swap submitted! ${amt} ${STATE.fromTok} → ${STATE.toTok}`),1500);
 }
 
-/* ══════════════════════════════════════════
-   BRIDGE
-══════════════════════════════════════════ */
+/* ── Bridge ── */
 function calcBridge(){
-  const amt = parseFloat(document.getElementById('bridgeAmt')?.value)||0;
-  const el = document.getElementById('bridgeReceive');
-  if(el) el.textContent = amt ? (amt*0.999).toFixed(6) : '0.0000';
+  const amt=parseFloat(document.getElementById('bridgeAmt')?.value)||0;
+  const el=document.getElementById('bridgeReceive');
+  if(el) el.textContent=amt?(amt*0.999).toFixed(6):'0.0000';
 }
 
 function maxBridge(){
-  const bal = parseFloat(STATE.walletBalance)||0;
-  if(bal>0){
-    document.getElementById('bridgeAmt').value = bal.toFixed(6);
-    calcBridge();
-  }
+  const bal=parseFloat(STATE.walletBalance)||0;
+  if(bal>0){document.getElementById('bridgeAmt').value=bal.toFixed(6);calcBridge();}
 }
 
 function flipBridge(){
@@ -1243,185 +1208,147 @@ function flipBridge(){
 }
 
 function doBridge(){
-  if(!STATE.walletConnected){ openWalletModal(); return; }
-  const amt = parseFloat(document.getElementById('bridgeAmt')?.value)||0;
-  if(!amt||amt<=0){ toast('⚠️','Enter an amount to bridge'); return; }
+  if(!STATE.walletConnected){openWalletModal();return;}
+  const amt=parseFloat(document.getElementById('bridgeAmt')?.value)||0;
+  if(!amt||amt<=0){toast('⚠️','Enter an amount to bridge');return;}
   toast('🌉',`Initiating bridge: ${amt} ETH → est. 2–4 min confirmation`);
 }
 
-/* ══════════════════════════════════════════
-   STAKING / GOV ACTIONS
-══════════════════════════════════════════ */
+/* ── Staking / Gov ── */
 function doStake(pool){
-  if(!STATE.walletConnected){ openWalletModal(); return; }
+  if(!STATE.walletConnected){openWalletModal();return;}
   toast('💧',`Opening deposit interface for ${pool} pool`);
 }
 
-function doVote(id, dir, e){
+function doVote(id,dir,e){
   e.stopPropagation();
-  if(!STATE.walletConnected){ openWalletModal(); return; }
+  if(!STATE.walletConnected){openWalletModal();return;}
   toast('🗳️',`Vote cast: ${dir==='yes'?'✓ For':'✗ Against'} on ${id}`);
 }
 
-/* ══════════════════════════════════════════
-   REAL WALLET CONNECTION
-══════════════════════════════════════════ */
-const SEPOLIA_CHAIN_ID = '0xaa36a7'; // 11155111 in hex
+/* ── Wallet Connection ── */
+const SEPOLIA_CHAIN_ID='0xaa36a7';
 
-function openWalletModal(){ document.getElementById('walletOverlay').classList.add('open'); }
-function closeModal(){ document.getElementById('walletOverlay').classList.remove('open'); }
+function openWalletModal(){document.getElementById('walletOverlay').classList.add('open');}
+function closeModal(){document.getElementById('walletOverlay').classList.remove('open');}
 
-// ── MetaMask / OKX (EIP-1193) ──
-async function connectEIP1193(provider, name, emoji){
-  if(!provider){ toast('❌',`${name} not found. Please install the extension.`); return; }
+async function connectEIP1193(provider,name,emoji){
+  if(!provider){toast('❌',`${name} not found. Please install the extension.`);return;}
   closeModal();
   try{
     toast('⏳',`Connecting to ${name}…`);
-
-    // Request accounts
-    const accounts = await provider.request({ method:'eth_requestAccounts' });
+    const accounts=await provider.request({method:'eth_requestAccounts'});
     if(!accounts||accounts.length===0) throw new Error('No accounts');
-    const address = accounts[0];
-
-    // Switch to or add Sepolia
+    const address=accounts[0];
     try{
-      await provider.request({
-        method:'wallet_switchEthereumChain',
-        params:[{chainId: SEPOLIA_CHAIN_ID}]
-      });
-    } catch(switchErr){
+      await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:SEPOLIA_CHAIN_ID}]});
+    }catch(switchErr){
       if(switchErr.code===4902){
-        // Add Sepolia if not present
-        await provider.request({
-          method:'wallet_addEthereumChain',
-          params:[{
-            chainId: SEPOLIA_CHAIN_ID,
-            chainName:'Sepolia Testnet',
-            rpcUrls:['https://rpc.sepolia.org','https://sepolia.infura.io/v3/'],
-            nativeCurrency:{name:'SepoliaETH',symbol:'ETH',decimals:18},
-            blockExplorerUrls:['https://sepolia.etherscan.io']
-          }]
-        });
+        await provider.request({method:'wallet_addEthereumChain',params:[{
+          chainId:SEPOLIA_CHAIN_ID,
+          chainName:'Sepolia Testnet',
+          rpcUrls:['https://rpc.sepolia.org'],
+          nativeCurrency:{name:'SepoliaETH',symbol:'ETH',decimals:18},
+          blockExplorerUrls:['https://sepolia.etherscan.io']
+        }]});
       } else {
         toast('⚠️','Could not switch to Sepolia. Please switch manually.');
       }
     }
-
-    // Get ETH balance on Sepolia
-    const balHex = await provider.request({
-      method:'eth_getBalance',
-      params:[address,'latest']
-    });
-    const balWei = BigInt(balHex);
-    const balEth = Number(balWei) / 1e18;
-
-    onWalletConnected(address, balEth, name, emoji);
-
-    // Listen for account/chain changes
-    provider.on('accountsChanged', (accs)=>{
+    const balHex=await provider.request({method:'eth_getBalance',params:[address,'latest']});
+    const balEth=Number(BigInt(balHex))/1e18;
+    onWalletConnected(address,balEth,name,emoji);
+    provider.on('accountsChanged',(accs)=>{
       if(accs.length===0) disconnectWallet();
       else{
-        STATE.walletAddress = accs[0];
+        STATE.walletAddress=accs[0];
         updateWalletUI();
         toast('🔄','Account switched to '+accs[0].slice(0,6)+'…'+accs[0].slice(-4));
       }
     });
-    provider.on('chainChanged', ()=>{ toast('🔗','Network changed — reconnecting…'); setTimeout(()=>connectEIP1193(provider,name,emoji),500); });
-
-  } catch(err){
-    const msg = err.code===4001 ? 'Connection rejected by user' : (err.message||'Connection failed');
-    toast('❌', msg);
+    provider.on('chainChanged',()=>{
+      toast('🔗','Network changed — reconnecting…');
+      setTimeout(()=>connectEIP1193(provider,name,emoji),500);
+    });
+  }catch(err){
+    const msg=err.code===4001?'Connection rejected by user':(err.message||'Connection failed');
+    toast('❌',msg);
   }
 }
 
 async function connectMetaMask(){
-  if(typeof window.ethereum !== 'undefined'){
-    // Could be MM or another injected wallet
-    let provider = window.ethereum;
-    // If multiple wallets (EIP-6963), prefer MetaMask
+  if(typeof window.ethereum!=='undefined'){
+    let provider=window.ethereum;
     if(window.ethereum.providers?.length){
-      provider = window.ethereum.providers.find(p=>p.isMetaMask) || window.ethereum;
+      provider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum;
     }
-    await connectEIP1193(provider, 'MetaMask', '🦊');
+    await connectEIP1193(provider,'MetaMask','🦊');
   } else {
     toast('❌','MetaMask not found. Install from metamask.io');
   }
 }
 
 async function connectOKX(){
-  const provider = window.okxwallet || window.ethereum;
-  if(!provider){
-    toast('❌','OKX Wallet not found. Install from okx.com/web3');
-    return;
-  }
-  await connectEIP1193(provider, 'OKX Wallet', '⬛');
+  const provider=window.okxwallet||window.ethereum;
+  if(!provider){toast('❌','OKX Wallet not found. Install from okx.com/web3');return;}
+  await connectEIP1193(provider,'OKX Wallet','⬛');
 }
 
 async function connectPhantom(){
-  // Phantom supports both Solana and EVM
   if(window.phantom?.ethereum){
-    await connectEIP1193(window.phantom.ethereum, 'Phantom', '👻');
+    await connectEIP1193(window.phantom.ethereum,'Phantom','👻');
   } else if(window.phantom?.solana){
-    // Solana connection (no EVM)
     try{
       closeModal();
       toast('⏳','Connecting Phantom (Solana)…');
-      const resp = await window.phantom.solana.connect();
-      const address = resp.publicKey.toString();
-      onWalletConnected(address, 0, 'Phantom (Solana)', '👻', true);
-    } catch(e){
-      toast('❌', e.message||'Phantom connection failed');
-    }
+      const resp=await window.phantom.solana.connect();
+      const address=resp.publicKey.toString();
+      onWalletConnected(address,0,'Phantom (Solana)','👻',true);
+    }catch(e){toast('❌',e.message||'Phantom connection failed');}
   } else {
     toast('❌','Phantom not found. Install from phantom.app');
   }
 }
 
-function onWalletConnected(address, balEth, name, emoji, isSolana=false){
-  STATE.walletConnected = true;
-  STATE.walletAddress   = address;
-  STATE.walletBalance   = balEth.toString();
-  STATE.walletName      = name;
-
+function onWalletConnected(address,balEth,name,emoji,isSolana=false){
+  STATE.walletConnected=true;
+  STATE.walletAddress=address;
+  STATE.walletBalance=balEth.toString();
+  STATE.walletName=name;
   updateWalletUI();
-  updateAfterConnect(address, balEth, name, emoji, isSolana);
-  toast('✅', `${emoji} ${name} connected! ${address.slice(0,6)}…${address.slice(-4)}`);
+  updateAfterConnect(address,balEth,name,emoji,isSolana);
+  toast('✅',`${emoji} ${name} connected! ${address.slice(0,6)}…${address.slice(-4)}`);
 }
 
 function updateWalletUI(){
-  const addr = STATE.walletAddress;
-  const short = addr.slice(0,6)+'…'+addr.slice(-4);
-  const emoji = STATE.walletName.includes('MetaMask')?'🦊':STATE.walletName.includes('OKX')?'⬛':'👻';
-
-  const btn = document.getElementById('connectBtn');
-  if(btn){ btn.className='connect-btn connected'; btn.textContent=`${emoji} ${short}`; }
-
-  // Wallet panel in Swap page
-  const panel = document.getElementById('walletPanelSwap');
-  if(panel){ panel.style.display='block'; }
+  const addr=STATE.walletAddress;
+  const short=addr.slice(0,6)+'…'+addr.slice(-4);
+  const emoji=STATE.walletName.includes('MetaMask')?'🦊':STATE.walletName.includes('OKX')?'⬛':'👻';
+  const btn=document.getElementById('connectBtn');
+  if(btn){
+    btn.className='connect-btn connected';
+    btn.textContent=`${emoji} ${short}`;
+    // FIX: reassign onclick so it doesn't call openWalletModal again on re-click
+    btn.onclick=null;
+  }
+  const panel=document.getElementById('walletPanelSwap');
+  if(panel) panel.style.display='block';
   const addrEl=document.getElementById('wp-addr'),netEl=document.getElementById('wp-net'),balEl=document.getElementById('wp-bal');
-  if(addrEl) addrEl.textContent = short;
-  if(netEl)  netEl.textContent  = 'Sepolia Testnet';
-  if(balEl)  balEl.textContent  = parseFloat(STATE.walletBalance).toFixed(6)+' ETH';
-
-  // Update balance display in swap
-  const fromBalEl = document.getElementById('fromBal');
-  if(fromBalEl && STATE.fromTok==='ETH') fromBalEl.textContent = parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
-
-  // Bridge balance
-  const bridgeBalEl = document.getElementById('bridgeBal');
-  if(bridgeBalEl) bridgeBalEl.textContent = parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
-
-  // Update action buttons
+  if(addrEl) addrEl.textContent=short;
+  if(netEl)  netEl.textContent='Sepolia Testnet';
+  if(balEl)  balEl.textContent=parseFloat(STATE.walletBalance).toFixed(6)+' ETH';
+  const fromBalEl=document.getElementById('fromBal');
+  if(fromBalEl&&STATE.fromTok==='ETH') fromBalEl.textContent=parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
+  const bridgeBalEl=document.getElementById('bridgeBal');
+  if(bridgeBalEl) bridgeBalEl.textContent=parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
   const swapBtn=document.getElementById('swapBtn');
-  if(swapBtn){ swapBtn.textContent='Swap Now'; swapBtn.disabled=false; }
+  if(swapBtn){swapBtn.textContent='Swap Now';swapBtn.disabled=false;}
   const bridgeBtn=document.getElementById('bridgeBtn');
   if(bridgeBtn) bridgeBtn.textContent='Bridge Now';
 }
 
-function updateAfterConnect(address, balEth, name, emoji, isSolana){
-  // Show staking positions
-  const myStake = document.getElementById('myStake');
+function updateAfterConnect(address,balEth,name,emoji,isSolana){
+  const myStake=document.getElementById('myStake');
   if(myStake){
     const positions=[
       {pool:'ETH/USDC',chain:'Ethereum',dep:'$4,820',earn:'$142.30',apr:'12.4%'},
@@ -1438,32 +1365,34 @@ function updateAfterConnect(address, balEth, name, emoji, isSolana){
   }
 }
 
+/* FIX: disconnectWallet — reset button onclick properly */
 function disconnectWallet(){
-  STATE.walletConnected = false;
-  STATE.walletAddress   = '';
-  STATE.walletBalance   = '0';
+  STATE.walletConnected=false;
+  STATE.walletAddress='';
+  STATE.walletBalance='0';
   const btn=document.getElementById('connectBtn');
-  if(btn){ btn.className='connect-btn disconnected'; btn.textContent='Connect Wallet'; btn.onclick=openWalletModal; }
+  if(btn){
+    btn.className='connect-btn disconnected';
+    btn.textContent='Connect Wallet';
+    btn.onclick=openWalletModal;
+  }
   toast('🔌','Wallet disconnected');
 }
 
-/* ══════════════════════════════════════════
-   CHAIN SELECTOR
-══════════════════════════════════════════ */
+/* ── Chain Selector ── */
 function toggleChainMenu(e){
   e.stopPropagation();
   document.getElementById('chainMenu').classList.toggle('open');
 }
 
-function pickChain(el, name, color, chainId){
+function pickChain(el,name,color,chainId){
   document.querySelectorAll('.cm-item').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
-  document.getElementById('chainName').textContent = name;
-  document.getElementById('chainDot').style.background = color;
+  document.getElementById('chainName').textContent=name;
+  document.getElementById('chainDot').style.background=color;
   document.getElementById('chainMenu').classList.remove('open');
-  STATE.currentChainId = chainId;
-  // If wallet is connected, request chain switch
-  if(STATE.walletConnected && window.ethereum){
+  STATE.currentChainId=chainId;
+  if(STATE.walletConnected&&window.ethereum){
     window.ethereum.request({
       method:'wallet_switchEthereumChain',
       params:[{chainId:'0x'+chainId.toString(16)}]
@@ -1472,69 +1401,68 @@ function pickChain(el, name, color, chainId){
   toast('🔗',`Network: ${name}`);
 }
 
-document.addEventListener('click', e=>{
-  if(!e.target.closest('.chain-dropdown')) document.getElementById('chainMenu').classList.remove('open');
+/* FIX: close chain menu on outside click */
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.chain-dropdown')){
+    document.getElementById('chainMenu').classList.remove('open');
+  }
 });
 
-/* ══════════════════════════════════════════
-   PAGE NAVIGATION
-══════════════════════════════════════════ */
-function goPage(id, el){
+/* ── Page Navigation ── */
+function goPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nl').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(el) el.classList.add('active');
-  if(id==='dashboard') setTimeout(()=>updateChartDisplay(STATE.currentChart),50);
+  if(id==='dashboard'){
+    // FIX: defer chart draw until page is visible and has layout
+    requestAnimationFrame(()=>setTimeout(()=>updateChartDisplay(STATE.currentChart),50));
+  }
   if(id==='swap') updateSwapRate();
 }
 
-/* ══════════════════════════════════════════
-   CHAIN SELECTOR (dropdown)
-══════════════════════════════════════════ */
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
-function toast(icon, msg){
-  document.getElementById('toastIcon').textContent = icon;
-  document.getElementById('toastMsg').textContent  = msg;
-  const t = document.getElementById('toast');
+/* ── Toast ── */
+function toast(icon,msg){
+  document.getElementById('toastIcon').textContent=icon;
+  document.getElementById('toastMsg').textContent=msg;
+  const t=document.getElementById('toast');
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.remove('show'), 4500);
+  t._t=setTimeout(()=>t.classList.remove('show'),4500);
 }
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
+/* ── INIT ── */
 buildTicker();
 buildMarketTable();
 renderTopPools();
 renderStakePools();
 renderProposals();
 
-// Load mock data immediately for instant display
+// Immediate mock data for instant display
 useMockPrices();
 renderAll();
 
-// Then try real WebSocket
+// Then connect to live data
 initWS();
 
-// Reconnect chart on resize
-window.addEventListener('resize', ()=>updateChartDisplay(STATE.currentChart));
+// Redraw chart on resize
+window.addEventListener('resize',()=>{
+  requestAnimationFrame(()=>updateChartDisplay(STATE.currentChart));
+});
 
-// Check if wallet already connected (e.g. MetaMask auto-connect)
-window.addEventListener('load', async ()=>{
-  if(typeof window.ethereum !== 'undefined'){
+// Auto-reconnect if wallet was already connected
+window.addEventListener('load',async()=>{
+  if(typeof window.ethereum!=='undefined'){
     try{
-      const accounts = await window.ethereum.request({ method:'eth_accounts' });
-      if(accounts && accounts.length > 0){
-        const balHex = await window.ethereum.request({method:'eth_getBalance',params:[accounts[0],'latest']});
-        const bal = Number(BigInt(balHex)) / 1e18;
-        const name = window.ethereum.isMetaMask ? 'MetaMask' : window.okxwallet ? 'OKX Wallet' : 'Wallet';
-        const emoji = window.ethereum.isMetaMask ? '🦊' : '⬛';
-        onWalletConnected(accounts[0], bal, name, emoji);
+      const accounts=await window.ethereum.request({method:'eth_accounts'});
+      if(accounts&&accounts.length>0){
+        const balHex=await window.ethereum.request({method:'eth_getBalance',params:[accounts[0],'latest']});
+        const bal=Number(BigInt(balHex))/1e18;
+        const name=window.ethereum.isMetaMask?'MetaMask':window.okxwallet?'OKX Wallet':'Wallet';
+        const emoji=window.ethereum.isMetaMask?'🦊':'⬛';
+        onWalletConnected(accounts[0],bal,name,emoji);
       }
-    } catch(_){}
+    }catch(_){}
   }
 });
 </script>
