@@ -1,264 +1,400 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIALO - Alpha Core Technical Oracle</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rialo Character Animation</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #050f0f; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }
 
-        body { font-family: 'Inter', sans-serif; background-color: #020202; color: white; margin: 0; overflow: hidden; }
-        #neural-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .ui-layer { position: relative; z-index: 10; }
-        .hidden-ui { display: none !important; }
-        .chat-bubble { border-radius: 4px; border-left: 3px solid #9333ea; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(12px); border-top: 1px solid rgba(255,255,255,0.05); }
-        #chat-container { scroll-behavior: smooth; height: calc(100vh - 200px); overflow-y: auto; }
-        .cursor { display: inline-block; width: 8px; height: 15px; background: #9333ea; margin-left: 4px; animation: blink 0.8s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        #scan-screen { position: fixed; inset: 0; background: #020202; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; color: #9333ea; }
-        .progress-bar { width: 240px; height: 2px; background: #111; margin-top: 20px; position: relative; overflow: hidden; }
-        .progress-fill { position: absolute; height: 100%; background: #9333ea; animation: fill 3s ease-in-out forwards; }
-        @keyframes fill { from { width: 0; } to { width: 100%; } }
+.stage {
+  width: 800px; height: 540px;
+  background: #0d2a2a;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,255,180,0.15);
+}
 
-        /* ===== 3D COIN SYSTEM ===== */
-        .logo-scene {
-            width: 160px;
-            height: 160px;
-            perspective: 500px;
-            perspective-origin: 50% 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+.bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,180,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,180,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
 
-        .logo-coin {
-            width: 140px;
-            height: 140px;
-            position: relative;
-            transform-style: preserve-3d;
-            animation: coinSpin 5s linear infinite;
-        }
+.bg-glow {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 240px;
+  background: radial-gradient(ellipse, rgba(120,0,255,0.2) 0%, transparent 70%);
+}
 
-        @keyframes coinSpin {
-            from { transform: rotateY(0deg) rotateX(18deg); }
-            to   { transform: rotateY(360deg) rotateX(18deg); }
-        }
+.ground-line {
+  position: absolute; bottom: 90px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,255,180,0.4), transparent);
+}
 
-        .coin-face {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+.char-wrap {
+  position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+  width: 260px; height: 380px;
+  transition: all 1.4s cubic-bezier(0.22,1,0.36,1);
+}
 
-        .coin-face-front {
-            background: radial-gradient(circle at 38% 32%, #2d1050, #0f0525);
-            border: 2px solid rgba(160, 70, 255, 0.7);
-            transform: translateZ(10px);
-            box-shadow:
-                inset 0 0 25px rgba(147, 51, 234, 0.4),
-                0 0 50px rgba(147, 51, 234, 0.6),
-                0 0 100px rgba(147, 51, 234, 0.25);
-        }
+.char-img {
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: center bottom;
+  filter: drop-shadow(0 0 20px rgba(255,80,80,0.4));
+  transition: filter 0.5s;
+}
+.char-img.active {
+  filter: drop-shadow(0 0 40px rgba(255,80,80,0.9)) drop-shadow(0 0 80px rgba(180,0,255,0.5));
+}
 
-        .coin-face-back {
-            background: radial-gradient(circle at 62% 68%, #1c0a38, #070212);
-            border: 2px solid rgba(80, 20, 160, 0.5);
-            transform: translateZ(-10px) rotateY(180deg);
-            box-shadow: inset 0 0 20px rgba(80, 20, 160, 0.3);
-        }
+.energy-head {
+  position: absolute; top: 22px; right: 30px;
+  width: 60px; height: 60px; pointer-events: none;
+}
+.energy-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 2px solid rgba(0,255,200,0);
+}
+.energy-ring.active {
+  border-color: rgba(0,255,200,0.9);
+  animation: ringPulse 0.5s ease-out infinite;
+}
+@keyframes ringPulse {
+  0% { transform: scale(0.7); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
 
-        .coin-face img {
-            width: 72%;
-            height: 72%;
-            object-fit: contain;
-        }
+.spark {
+  position: absolute; width: 3px; height: 16px;
+  background: #00ffcc; border-radius: 2px;
+  left: 50%; top: -10px; transform-origin: bottom center;
+  opacity: 0;
+}
+.spark.active { animation: sparkAnim 0.35s ease-out infinite; }
+@keyframes sparkAnim {
+  0% { opacity: 1; transform: translateX(-50%) scaleY(1) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) scaleY(0.3) translateY(-20px); }
+}
 
-        /* Specular highlight on front face */
-        .coin-shine {
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: linear-gradient(
-                140deg,
-                rgba(255,255,255,0.18) 0%,
-                rgba(200,150,255,0.08) 35%,
-                transparent 65%
-            );
-            transform: translateZ(11px);
-            pointer-events: none;
-        }
+.sword-wrap {
+  position: absolute; bottom: 90px; right: 190px;
+  width: 16px; height: 220px;
+  transform-origin: bottom center;
+  transform: rotate(30deg);
+  opacity: 0;
+  transition: all 0.5s ease-out;
+}
+.sword-blade {
+  width: 7px; height: 185px;
+  background: linear-gradient(to bottom, #d0d8ff, #8890cc, #444);
+  border-radius: 4px 4px 0 0; margin: 0 auto; position: relative;
+}
+.sword-energy-fx {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 18px; height: 185px;
+  border-radius: 9px;
+  background: linear-gradient(to bottom, rgba(170,0,255,0.95), rgba(100,0,200,0.4), transparent);
+  opacity: 0; filter: blur(3px);
+}
+.sword-energy-fx.active { opacity: 1; animation: swordPulse 0.4s ease-in-out infinite; }
+@keyframes swordPulse {
+  0%,100% { opacity: 0.8; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 1; transform: translateX(-50%) scaleX(1.5); }
+}
+.sword-guard { width: 26px; height: 8px; background: #7a6030; border-radius: 4px; margin: 0 auto; }
+.sword-handle { width: 9px; height: 32px; background: #4a3018; border-radius: 3px; margin: 0 auto; }
 
-        /* Ground reflection */
-        .coin-shadow {
-            width: 110px;
-            height: 14px;
-            background: radial-gradient(ellipse, rgba(147,51,234,0.8) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(5px);
-            margin-top: 8px;
-            animation: shadowAnim 5s linear infinite;
-        }
+.melon {
+  position: absolute; width: 50px; height: 46px;
+  border-radius: 50%; background: #3db832;
+  border: 3px solid #2a8a1a;
+  bottom: 220px; right: 240px; opacity: 0;
+  transition: all 0.5s ease-out;
+}
+.melon::after {
+  content: '';
+  position: absolute; top: 8px; left: 8px;
+  width: 30px; height: 3px;
+  background: rgba(0,0,0,0.2); border-radius: 2px;
+  box-shadow: 0 9px 0 rgba(0,0,0,0.15), 0 18px 0 rgba(0,0,0,0.1);
+}
 
-        @keyframes shadowAnim {
-            0%   { transform: scaleX(0.6); opacity: 0.4; }
-            25%  { transform: scaleX(1.1); opacity: 0.9; }
-            50%  { transform: scaleX(0.6); opacity: 0.4; }
-            75%  { transform: scaleX(1.1); opacity: 0.9; }
-            100% { transform: scaleX(0.6); opacity: 0.4; }
-        }
+.melon-half {
+  position: absolute; width: 26px; height: 46px;
+  background: #e03030; border: 2px solid #b02020;
+  opacity: 0; bottom: 220px;
+  transition: all 0.4s ease-out;
+}
+.mh-l { border-radius: 26px 0 0 26px; right: 262px; }
+.mh-r { border-radius: 0 26px 26px 0; right: 235px; transform: scaleX(-1); }
 
-        .logo-coin:hover { animation-play-state: paused; }
-        /* ===== END 3D COIN ===== */
-    </style>
+.slash-effect {
+  position: absolute; bottom: 130px; right: 60px;
+  width: 340px; height: 200px; opacity: 0;
+  pointer-events: none; transition: opacity 0.1s;
+}
+.slash-line {
+  position: absolute; height: 3px;
+  background: linear-gradient(90deg, transparent, #cc44ff, #ffffff, transparent);
+  border-radius: 2px; transform-origin: left center;
+}
+
+.burst {
+  position: absolute; bottom: 170px; right: 200px;
+  width: 140px; height: 140px; opacity: 0;
+  pointer-events: none; transition: opacity 0.1s;
+}
+.burst-ring {
+  position: absolute; inset: 14px; border-radius: 50%;
+  border: 3px solid #cc44ff;
+  animation: none;
+}
+.burst-ring.pop { animation: burstPop 0.4s ease-out forwards; }
+@keyframes burstPop {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.burst-ray {
+  position: absolute; width: 2px; height: 50px;
+  background: linear-gradient(to top, #cc44ff, transparent);
+  left: 50%; top: 0; transform-origin: bottom center;
+}
+
+.particles { position: absolute; inset: 0; pointer-events: none; }
+
+.phase-label {
+  position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 13px; color: rgba(0,255,180,0.75); letter-spacing: 3px;
+  white-space: nowrap;
+}
+
+.controls {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 14px;
+}
+.btn {
+  padding: 8px 24px;
+  background: rgba(0,255,180,0.07);
+  border: 1px solid rgba(0,255,180,0.3);
+  border-radius: 20px;
+  color: #00ffb4; font-size: 12px; cursor: pointer;
+  font-family: monospace; letter-spacing: 1.5px;
+  transition: all 0.2s;
+}
+.btn:hover { background: rgba(0,255,180,0.18); }
+.btn.purple { border-color: rgba(180,0,255,0.5); color: #cc88ff; background: rgba(150,0,255,0.07); }
+.btn.purple:hover { background: rgba(150,0,255,0.18); }
+</style>
 </head>
-<body class="antialiased">
+<body>
+<div class="stage" id="stage">
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="ground-line"></div>
+  <div class="particles" id="particles"></div>
 
-    <canvas id="neural-canvas"></canvas>
+  <div class="phase-label" id="phaseLabel">— STANDBY —</div>
 
-    <!-- LANDING PAGE -->
-    <div id="landing-page" class="ui-layer flex flex-col min-h-screen items-center justify-center p-6 text-center">
-
-        <div class="mb-10 flex flex-col items-center">
-            <!-- 3D Coin Logo -->
-            <div class="logo-scene">
-                <div class="logo-coin" id="logoCoin">
-                    <div class="coin-face coin-face-front">
-                        <img src="images/market.png" alt="Rialo Logo">
-                    </div>
-                    <div class="coin-face coin-face-back">
-                        <img src="images/market.png" alt="" style="opacity:0.35; transform:scaleX(-1);">
-                    </div>
-                    <div class="coin-shine"></div>
-                    <!-- Edge segments built by JS below -->
-                </div>
-            </div>
-            <div class="coin-shadow"></div>
-        </div>
-
-        <h1 class="text-6xl md:text-8xl font-black tracking-tighter italic uppercase mb-4 leading-none">RIALO <span class="text-purple-600">NETWORK</span></h1>
-        <p class="text-gray-400 font-mono text-[10px] tracking-[0.5em] uppercase mb-12">The Supermodular L1 Blockchain Stack</p>
-
-        <div class="flex flex-col sm:flex-row gap-4 items-center">
-            <button onclick="startScanning('terminal')" class="px-12 py-5 bg-white text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-purple-600 hover:text-white transition-all active:scale-95">
-                Initialize Alpha Core
-            </button>
-            <button onclick="startScanning('app')" class="px-12 py-5 bg-transparent border border-purple-600 text-purple-400 font-black uppercase text-xs tracking-[0.2em] hover:bg-purple-600 hover:text-white transition-all active:scale-95">
-                Get Started
-            </button>
-        </div>
+  <div class="char-wrap" id="charWrap" style="transform:translateX(-50%) scale(0.5) translateY(100px); opacity:0.6;">
+    <img class="char-img" id="charImg" src="IMG_1045.png" alt="Rialo Character"/>
+    <div class="energy-head">
+      <div class="energy-ring" id="energyRing"></div>
+      <div class="spark" id="sp1" style="transform:rotate(0deg) translateX(-50%);transform-origin:bottom center;"></div>
+      <div class="spark" id="sp2" style="transform:rotate(60deg);left:50%;top:-10px;transform-origin:bottom center;"></div>
+      <div class="spark" id="sp3" style="transform:rotate(120deg);left:50%;top:-10px;transform-origin:bottom center;"></div>
+      <div class="spark" id="sp4" style="transform:rotate(180deg);left:50%;top:-10px;transform-origin:bottom center;"></div>
+      <div class="spark" id="sp5" style="transform:rotate(240deg);left:50%;top:-10px;transform-origin:bottom center;"></div>
+      <div class="spark" id="sp6" style="transform:rotate(300deg);left:50%;top:-10px;transform-origin:bottom center;"></div>
     </div>
+  </div>
 
-    <!-- SCAN SCREEN -->
-    <div id="scan-screen">
-        <div class="text-[9px] tracking-[0.6em] mb-2 uppercase opacity-40">Security Protocol Alpha-7</div>
-        <div class="text-xs font-bold uppercase italic tracking-widest text-white">Establishing Neural Link...</div>
-        <div class="progress-bar"><div class="progress-fill"></div></div>
+  <div class="sword-wrap" id="swordWrap">
+    <div class="sword-blade">
+      <div class="sword-energy-fx" id="swordFx"></div>
     </div>
+    <div class="sword-guard"></div>
+    <div class="sword-handle"></div>
+  </div>
 
-    <!-- TERMINAL UI -->
-    <div id="terminal-ui" class="hidden-ui flex-col h-screen ui-layer">
-        <nav class="p-6 border-b border-white/5 flex justify-between items-center bg-[#020202]/70 backdrop-blur-lg">
-            <span class="text-xs font-black uppercase tracking-widest italic">RIALO <span class="text-purple-600">ORACLE</span></span>
-            <button onclick="location.reload()" class="text-[9px] text-gray-600 hover:text-white uppercase font-mono tracking-widest border border-gray-900 px-3 py-1 rounded">Terminate</button>
-        </nav>
-        <main id="chat-container" class="flex-grow p-6 space-y-8 max-w-5xl mx-auto w-full">
-            <div class="chat-bubble p-6 text-[11px] font-mono leading-relaxed text-purple-300">
-                [SYSTEM]: DATA PROTOCOLS LOADED. RIALO CORE v2.4 ONLINE. <br><br>
-                Welcome, Builder. Query the Oracle using keywords like RIALO, BACKED, or ROADMAP.
-            </div>
-        </main>
-        <div class="p-6 bg-[#020202]/90 border-t border-white/5 backdrop-blur-xl">
-            <div class="max-w-5xl mx-auto flex gap-4">
-                <div class="relative flex-grow">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600 font-bold text-xs">>>></span>
-                    <input type="text" id="user-input" autocomplete="off" placeholder="Type your query..." class="w-full bg-[#0a0a0a]/60 border border-white/10 p-4 pl-14 text-xs font-mono focus:outline-none focus:border-purple-600 text-purple-100 transition-all">
-                </div>
-                <button onclick="handleSend()" class="bg-white text-black px-8 font-black uppercase text-xs hover:bg-purple-600 hover:text-white transition-all active:scale-95">EXECUTE</button>
-            </div>
-        </div>
-    </div>
+  <div class="melon" id="melon"></div>
+  <div class="melon-half mh-l" id="mhL"></div>
+  <div class="melon-half mh-r" id="mhR"></div>
 
-    <script src="ai.js"></script>
-    <script>
-        // ===== BUILD COIN EDGE (60 thin panels forming a cylinder) =====
-        (function() {
-            const coin   = document.getElementById('logoCoin');
-            const R      = 70;   // radius px (half of 140)
-            const thick  = 20;   // coin thickness in px
-            const count  = 60;   // number of edge panels
+  <div class="slash-effect" id="slashFx">
+    <div class="slash-line" style="top:38%;width:300px;transform:rotate(-18deg);"></div>
+    <div class="slash-line" style="top:52%;width:240px;transform:rotate(-14deg);opacity:0.6;"></div>
+    <div class="slash-line" style="top:26%;width:180px;transform:rotate(-24deg);opacity:0.35;"></div>
+  </div>
 
-            for (let i = 0; i < count; i++) {
-                const angle  = (i / count) * 360;
-                const radian = (i / count) * Math.PI * 2;
-                const arcLen = (2 * Math.PI * R / count) + 0.5;
+  <div class="burst" id="burst">
+    <div class="burst-ring" id="burstRing"></div>
+    <div class="burst-ray" style="transform:rotate(0deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(45deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(90deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(135deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(180deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(225deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(270deg) translateX(-50%);"></div>
+    <div class="burst-ray" style="transform:rotate(315deg) translateX(-50%);"></div>
+  </div>
 
-                const panel = document.createElement('div');
-                panel.style.cssText = `
-                    position: absolute;
-                    width: ${thick}px;
-                    height: ${arcLen}px;
-                    left: ${R + R * Math.sin(radian) - thick / 2}px;
-                    top:  ${R - R * Math.cos(radian) - arcLen / 2}px;
-                    transform: rotateZ(${angle}deg) translateX(${R - thick / 2}px) rotateY(90deg);
-                    transform-origin: left center;
-                    background: linear-gradient(
-                        to right,
-                        rgba(70, 20, 140, 0.95),
-                        rgba(120, 50, 220, 0.8),
-                        rgba(70, 20, 140, 0.95)
-                    );
-                    border-top: 1px solid rgba(200,100,255,0.15);
-                    border-bottom: 1px solid rgba(30,5,60,0.5);
-                `;
+  <div class="controls">
+    <button class="btn" id="btnPlay" onclick="startSeq()">▶ JALANKAN</button>
+    <button class="btn purple" onclick="resetAll()">↺ RESET</button>
+  </div>
+</div>
 
-                // Correct approach: use CSS 3D transform to place panel on cylinder
-                panel.style.position    = 'absolute';
-                panel.style.width       = `${thick}px`;
-                panel.style.height      = `${arcLen}px`;
-                panel.style.left        = `${R - thick / 2}px`;
-                panel.style.top         = `${R - arcLen / 2}px`;
-                panel.style.transform   = `rotateY(${angle}deg) translateZ(${R}px)`;
-                panel.style.background  = `linear-gradient(
-                    to right,
-                    rgba(50,10,110,1),
-                    rgba(130,60,240,0.9),
-                    rgba(50,10,110,1)
-                )`;
-                panel.style.borderLeft  = '1px solid rgba(180,80,255,0.2)';
-                panel.style.borderRight = '1px solid rgba(10,0,30,0.6)';
+<script>
+const charWrap = document.getElementById('charWrap');
+const charImg = document.getElementById('charImg');
+const energyRing = document.getElementById('energyRing');
+const swordWrap = document.getElementById('swordWrap');
+const swordFx = document.getElementById('swordFx');
+const melon = document.getElementById('melon');
+const mhL = document.getElementById('mhL');
+const mhR = document.getElementById('mhR');
+const slashFx = document.getElementById('slashFx');
+const burst = document.getElementById('burst');
+const burstRing = document.getElementById('burstRing');
+const phaseLabel = document.getElementById('phaseLabel');
+const btnPlay = document.getElementById('btnPlay');
+const particlesCont = document.getElementById('particles');
+const sparks = document.querySelectorAll('.spark');
+let running = false;
+let flameInt = null;
 
-                coin.appendChild(panel);
-            }
-        })();
+function label(t) { phaseLabel.textContent = t; }
 
-        // ===== NAVIGATION =====
-        let scanDestination = 'terminal';
+function spawnParticle(x, bottom, color) {
+  const p = document.createElement('div');
+  p.style.cssText = `position:absolute;width:9px;height:14px;border-radius:50% 50% 30% 30%;background:${color};left:${x}px;bottom:${bottom}px;opacity:1;pointer-events:none;`;
+  particlesCont.appendChild(p);
+  let vy = 1.5 + Math.random()*2.5, vx = (Math.random()-0.5)*2.5, op = 1, by = bottom;
+  const t = setInterval(() => {
+    by += vy; p.style.left = (parseFloat(p.style.left)+vx)+'px';
+    op -= 0.035; p.style.bottom = by+'px'; p.style.opacity = op;
+    if(op <= 0) { clearInterval(t); p.remove(); }
+  }, 16);
+}
 
-        function startScanning(destination) {
-            scanDestination = destination || 'terminal';
-            document.getElementById('landing-page').classList.add('hidden-ui');
-            const scanner = document.getElementById('scan-screen');
-            scanner.style.display = 'flex';
+function flames(on) {
+  if(!on) return;
+  const fc = ['#ff4400','#ff8800','#ffaa00'];
+  const pc = ['#cc44ff','#9900ff'];
+  for(let i=0;i<5;i++) spawnParticle(360+Math.random()*80-40, 260+Math.random()*50, fc[Math.floor(Math.random()*3)]);
+  for(let i=0;i<3;i++) spawnParticle(230+Math.random()*60-30, 150+Math.random()*40, pc[Math.floor(Math.random()*2)]);
+}
 
-            setTimeout(() => {
-                if (scanDestination === 'app') {
-                    window.location.href = 'menu.html';
-                } else {
-                    scanner.style.display = 'none';
-                    const terminal = document.getElementById('terminal-ui');
-                    terminal.classList.remove('hidden-ui');
-                    terminal.classList.add('flex');
-                }
-            }, 3000);
-        }
-    </script>
+function startSeq() {
+  if(running) return;
+  running = true;
+  btnPlay.style.opacity = '0.4';
+
+  label('— APPROACH —');
+  charWrap.style.transition = 'all 1.5s cubic-bezier(0.22,1,0.36,1)';
+  charWrap.style.transform = 'translateX(-50%) scale(1) translateY(0px)';
+  charWrap.style.opacity = '1';
+
+  setTimeout(() => {
+    label('— ARMS READY —');
+    swordWrap.style.opacity = '1';
+    melon.style.opacity = '1';
+  }, 1500);
+
+  setTimeout(() => {
+    label('— ENERGY AWAKENS —');
+    energyRing.classList.add('active');
+    sparks.forEach(s => s.classList.add('active'));
+    charImg.classList.add('active');
+    swordFx.classList.add('active');
+    flameInt = setInterval(() => flames(true), 100);
+  }, 2800);
+
+  setTimeout(() => {
+    label('— THROW —');
+    melon.style.transition = 'all 0.55s cubic-bezier(0.5,-0.4,0.8,1)';
+    melon.style.right = '340px';
+    melon.style.bottom = '330px';
+    melon.style.transform = 'rotate(400deg) scale(0.8)';
+  }, 4000);
+
+  setTimeout(() => {
+    melon.style.transition = 'all 0.2s ease-in';
+    melon.style.right = '210px';
+    melon.style.bottom = '220px';
+    melon.style.transform = 'rotate(720deg) scale(1)';
+  }, 4560);
+
+  setTimeout(() => {
+    label('— SLASH —');
+    melon.style.opacity = '0';
+    swordWrap.style.transition = 'all 0.1s ease-in';
+    swordWrap.style.transform = 'rotate(-65deg) translateY(-40px)';
+    slashFx.style.opacity = '1';
+    for(let i=0;i<14;i++) {
+      setTimeout(() => {
+        spawnParticle(160+Math.random()*140, 150+Math.random()*70, i%2===0?'#cc44ff':'#ff6600');
+      }, i*18);
+    }
+  }, 4800);
+
+  setTimeout(() => {
+    mhL.style.opacity = '1'; mhR.style.opacity = '1';
+    mhL.style.right = '290px'; mhL.style.bottom = '250px';
+    mhR.style.right = '222px'; mhR.style.bottom = '230px';
+    burst.style.opacity = '1';
+    burstRing.classList.add('pop');
+  }, 4960);
+
+  setTimeout(() => { slashFx.style.opacity = '0'; }, 5300);
+  setTimeout(() => { burst.style.opacity = '0'; burstRing.classList.remove('pop'); }, 5400);
+
+  setTimeout(() => {
+    label('— POWER UNLEASHED —');
+    swordWrap.style.transition = 'all 0.5s ease-out';
+    swordWrap.style.transform = 'rotate(-8deg)';
+    charWrap.style.filter = 'drop-shadow(0 0 50px #cc44ff) drop-shadow(0 0 20px #ff4400)';
+  }, 5500);
+
+  setTimeout(() => {
+    label('— COMPLETE —');
+    btnPlay.style.opacity = '1';
+    running = false;
+    if(flameInt) { clearInterval(flameInt); flameInt = null; }
+  }, 7500);
+}
+
+function resetAll() {
+  running = false;
+  if(flameInt) { clearInterval(flameInt); flameInt = null; }
+  particlesCont.innerHTML = '';
+  charWrap.style.transition = 'all 0.5s';
+  charWrap.style.transform = 'translateX(-50%) scale(0.5) translateY(100px)';
+  charWrap.style.opacity = '0.6';
+  charWrap.style.filter = '';
+  charImg.classList.remove('active');
+  energyRing.classList.remove('active');
+  sparks.forEach(s => s.classList.remove('active'));
+  swordWrap.style.transition = 'all 0.4s';
+  swordWrap.style.opacity = '0';
+  swordWrap.style.transform = 'rotate(30deg)';
+  swordFx.classList.remove('active');
+  melon.style.opacity = '0';
+  melon.style.right = '240px'; melon.style.bottom = '220px'; melon.style.transform = '';
+  mhL.style.opacity = '0'; mhR.style.opacity = '0';
+  mhL.style.right = '262px'; mhR.style.right = '235px';
+  mhL.style.bottom = '220px'; mhR.style.bottom = '220px';
+  slashFx.style.opacity = '0';
+  burst.style.opacity = '0';
+  burstRing.classList.remove('pop');
+  btnPlay.style.opacity = '1';
+  label('— STANDBY —');
+}
+</script>
 </body>
 </html>
