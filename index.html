@@ -23,7 +23,6 @@
 }
 html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 
-/* ── COSMOS BG ── */
 .cosmos{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .nebula{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18}
 .n1{width:600px;height:400px;background:radial-gradient(var(--blue),transparent);top:-100px;left:-100px;animation:nb 12s ease-in-out infinite}
@@ -33,10 +32,9 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-hei
 .grid-lines{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px}
 .star{position:absolute;border-radius:50%;background:#fff;animation:tw var(--d,4s) ease-in-out infinite var(--dd,0s)}
 @keyframes tw{0%,100%{opacity:.1}50%{opacity:.5}}
-
 .app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
 
-/* ── NAV ── */
+/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:64px;border-bottom:1px solid var(--border);background:rgba(3,6,15,.9);backdrop-filter:blur(24px);position:sticky;top:0;z-index:200}
 .logo{display:flex;align-items:center;gap:12px;cursor:pointer}
 .logo-hex{width:36px;height:36px;background:linear-gradient(135deg,var(--cyan),var(--blue));clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:16px;animation:hexglow 3s ease-in-out infinite}
@@ -49,7 +47,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px
 .nl.active{color:var(--cyan);background:var(--cyan-glow);border-color:var(--border2)}
 .nav-right{display:flex;align-items:center;gap:8px}
 
-/* ── CHAIN DROPDOWN ── */
+/* CHAIN DROPDOWN */
 .chain-dropdown{position:relative}
 .chain-sel{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:var(--r10);border:1px solid var(--border2);background:var(--bg3);font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .2s;user-select:none}
 .chain-sel:hover{border-color:var(--border3);color:var(--text)}
@@ -63,19 +61,19 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px
 .cm-badge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
 .cm-test{background:#ffd16620;color:#ffd166}
 
-/* ── CONNECT BTN ── */
+/* CONNECT BTN */
 .connect-btn{padding:9px 20px;border-radius:var(--r14);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:all .25s;white-space:nowrap}
 .connect-btn.disconnected{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#03060f}
 .connect-btn.disconnected:hover{transform:translateY(-1px);box-shadow:0 6px 28px var(--cyan-glow2)}
 .connect-btn.connected{background:var(--bg3);border:1px solid var(--border2);color:var(--cyan)}
 .connect-btn.connected:hover{border-color:var(--border3)}
 
-/* ── LIVE INDICATOR ── */
+/* LIVE INDICATOR */
 .live-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-glow);border:1px solid #00ffaa25;padding:5px 10px;border-radius:20px;white-space:nowrap}
 .ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #00ffaa60}50%{box-shadow:0 0 0 4px transparent}}
 
-/* ── TICKER ── */
+/* TICKER */
 .ticker{background:var(--bg2);border-bottom:1px solid var(--border);padding:9px 0;overflow:hidden;position:relative;height:38px}
 .ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:1;pointer-events:none}
 .ticker::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent)}
@@ -91,10 +89,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px
 .dn{color:var(--red)!important;background:var(--red-glow)}
 .flash-up{animation:flashUp .5s ease}
 .flash-dn{animation:flashDn .5s ease}
-@keyframes flashUp{0%,100%{background:transparent}40%{background:#00ffaa22;color:var(--green)}}
-@keyframes flashDn{0%,100%{background:transparent}40%{background:#ff446622;color:var(--red)}}
+@keyframes flashUp{0%,100%{background:transparent}40%{background:#00ffaa22}}
+@keyframes flashDn{0%,100%{background:transparent}40%{background:#ff446622}}
 
-/* ── PAGES ── */
+/* PAGES */
 .page{display:none;padding:28px 32px;animation:fadeIn .3s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -103,7 +101,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r20);padding:24px;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan-glow2),transparent)}
 
-/* ── DASHBOARD STATS ── */
+/* DASHBOARD STATS */
 .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r14);padding:18px 20px;position:relative;overflow:hidden;transition:all .2s}
 .stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -114,18 +112,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px
 .sdelta{font-size:12px;font-weight:700}
 .sicon{position:absolute;top:16px;right:16px;font-size:20px;opacity:.2}
 
-/* ── DASHBOARD BODY ── */
+/* DASHBOARD BODY */
 .dash-body{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-bottom:20px}
-.chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .chart-price{font-size:26px;font-weight:800;font-family:var(--mono);letter-spacing:-1px;transition:color .3s}
 .chart-meta{font-size:13px;color:var(--text2);margin-top:4px}
-.timebtns{display:flex;gap:4px}
+.timebtns{display:flex;gap:4px;flex-wrap:wrap}
 .tbtn{padding:5px 11px;border-radius:var(--r6);font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text3);background:none;font-family:var(--font);transition:all .15s}
 .tbtn.active,.tbtn:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan)}
 .chart-canvas-wrap{position:relative;width:100%}
 canvas{display:block;width:100%!important}
 
-/* ── MARKET TABLE ── */
+/* MARKET TABLE */
 .pool-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:10px 16px;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
 .pool-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:13px 16px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;transition:background .15s}
 .pool-row:hover{background:var(--bg3)}
@@ -134,7 +132,7 @@ canvas{display:block;width:100%!important}
 .mono{font-family:var(--mono);font-size:13px;font-weight:500}
 .apr-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--green-glow);color:var(--green);border:1px solid #00ffaa25}
 
-/* ── SWAP ── */
+/* SWAP */
 .swap-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r28);padding:26px;position:relative;overflow:hidden;max-width:500px;margin:0 auto}
 .swap-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
 .swap-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
@@ -163,10 +161,10 @@ canvas{display:block;width:100%!important}
 .action-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px var(--cyan-glow2)}
 .action-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
 
-/* ── TOKEN PICKER ── */
+/* TOKEN PICKER */
 .token-picker-overlay{position:fixed;inset:0;background:rgba(3,6,15,.8);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center}
 .token-picker-overlay.open{display:flex;animation:fadeIn .2s ease}
-.token-picker{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:20px;width:360px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;gap:0}
+.token-picker{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:20px;width:360px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column}
 .tp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .tp-search{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r10);padding:10px 14px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;margin-bottom:12px}
 .tp-search:focus{border-color:var(--border3)}
@@ -178,7 +176,7 @@ canvas{display:block;width:100%!important}
 .tp-sym{font-size:12px;color:var(--text2)}
 .tp-price{margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:600;text-align:right}
 
-/* ── LIQUIDITY MINING ── */
+/* LIQUIDITY MINING */
 .lm-hero{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border2);border-radius:var(--r20);padding:28px;margin-bottom:22px;position:relative;overflow:hidden}
 .lm-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--teal))}
 .lm-hero::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(var(--cyan-glow2),transparent);border-radius:50%}
@@ -212,19 +210,17 @@ canvas{display:block;width:100%!important}
 .pc-btn-outline{background:none;border-color:var(--border2);color:var(--cyan)}
 .pc-btn-outline:hover{background:var(--cyan-glow);border-color:var(--cyan)}
 
-/* ── MY POSITIONS ── */
+/* MY POSITIONS */
 .pos-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r14);padding:18px;margin-bottom:10px;transition:all .2s;position:relative;overflow:hidden}
 .pos-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cyan),var(--blue))}
 .pos-card:hover{border-color:var(--border2)}
 .pos-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;align-items:center;gap:12px}
-.pos-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
-.pos-val{font-family:var(--mono);font-size:14px;font-weight:600}
 .claim-btn{padding:7px 14px;border-radius:var(--r10);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);background:none;border:1px solid #00ffaa40;color:var(--green);transition:all .2s}
 .claim-btn:hover{background:var(--green-glow)}
 .claim-all-btn{padding:10px 20px;border-radius:var(--r10);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);background:linear-gradient(135deg,var(--green),var(--teal));color:var(--bg);border:none;transition:all .2s;display:none}
 .claim-all-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--green-glow)}
 
-/* ── ANALYTICS ── */
+/* ANALYTICS */
 .anl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .anl-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r14);padding:18px;position:relative;overflow:hidden;transition:all .2s}
 .anl-stat:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -248,12 +244,12 @@ canvas{display:block;width:100%!important}
 .vol-bar:hover{opacity:.8}
 .vol-bar-lbl{font-size:10px;color:var(--text3);font-family:var(--mono)}
 
-/* ── TX FEED ── */
+/* TX FEED */
 .tx-feed{max-height:280px;overflow-y:auto}
 .tx-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;animation:txIn .3s ease}
 @keyframes txIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
 .tx-item:last-child{border-bottom:none}
-.tx-type{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;min-width:50px;text-align:center;flex-shrink:0}
+.tx-type{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;min-width:60px;text-align:center;flex-shrink:0}
 .tx-swap{background:var(--cyan-glow2);color:var(--cyan)}
 .tx-bridge{background:var(--blue-glow);color:var(--blue)}
 .tx-add{background:var(--green-glow);color:var(--green)}
@@ -263,7 +259,7 @@ canvas{display:block;width:100%!important}
 .tx-val{font-family:var(--mono);font-weight:600;color:var(--text);text-align:right;white-space:nowrap}
 .tx-time{font-size:10px;color:var(--text3);min-width:52px;text-align:right;font-family:var(--mono)}
 
-/* ── BRIDGE ── */
+/* BRIDGE */
 .bridge-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r28);padding:26px;max-width:520px;margin:0 auto;position:relative;overflow:hidden}
 .bridge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
 .chain-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r14);padding:16px}
@@ -283,7 +279,7 @@ canvas{display:block;width:100%!important}
 .bridge-btn{width:100%;padding:15px;border-radius:var(--r14);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font);border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#03060f;transition:all .25s;margin-top:4px}
 .bridge-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--blue-glow)}
 
-/* ── WALLET MODAL ── */
+/* WALLET MODAL */
 .overlay{position:fixed;inset:0;background:rgba(3,6,15,.88);backdrop-filter:blur(16px);z-index:500;display:none;align-items:center;justify-content:center}
 .overlay.open{display:flex;animation:fadeIn .25s ease}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r28);padding:30px;width:400px;max-width:92vw;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);position:relative}
@@ -303,14 +299,14 @@ canvas{display:block;width:100%!important}
 .modal-x:hover{color:var(--text)}
 .sepolia-note{background:var(--gold-glow);border:1px solid #ffd16625;border-radius:var(--r10);padding:10px 14px;font-size:12px;color:var(--gold);margin-top:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
 
-/* ── WALLET PANEL ── */
+/* WALLET PANEL */
 .wallet-panel{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r14);padding:14px 16px;margin-bottom:20px}
 .wp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .wp-row:last-child{margin-bottom:0}
 .wp-label{font-size:12px;color:var(--text3);font-weight:600}
 .wp-val{font-family:var(--mono);font-size:13px;font-weight:600}
 
-/* ── DEPOSIT MODAL ── */
+/* DEPOSIT MODAL */
 .deposit-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r20);padding:28px;width:420px;max-width:92vw;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);position:relative}
 .dm-title{font-size:20px;font-weight:800;margin-bottom:4px}
 .dm-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
@@ -322,28 +318,34 @@ canvas{display:block;width:100%!important}
 .dm-info-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
 .dm-info-row:last-child{margin-bottom:0}
 
-/* ── TOAST ── */
+/* API STATUS BADGE */
+.api-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--bg3);border:1px solid var(--border2);color:var(--text3)}
+.api-badge.live{color:var(--green);border-color:#00ffaa25;background:var(--green-glow)}
+.api-badge.error{color:var(--red);border-color:#ff446625;background:var(--red-glow)}
+.api-badge.loading{color:var(--gold);border-color:#ffd16625;background:var(--gold-glow)}
+
+/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg2);border:1px solid var(--border3);border-radius:var(--r14);padding:13px 18px;font-size:13px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 40px #00000060;transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);max-width:340px}
 .toast.show{transform:none;opacity:1}
 .ti{font-size:18px;flex-shrink:0}
 
-/* ── WS STATUS ── */
+/* WS STATUS */
 .ws-status{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text2)}
 .ws-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
-/* ── EMPTY STATE ── */
+/* EMPTY STATE */
 .empty-state{text-align:center;padding:48px 0;color:var(--text3)}
 .empty-icon{font-size:40px;margin-bottom:14px;opacity:.6}
 .empty-text{font-size:14px}
 .empty-sub{font-size:12px;color:var(--text3);margin-top:6px;opacity:.7}
 
-/* ── SCROLLBAR ── */
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
 ::-webkit-scrollbar-thumb:hover{background:var(--bg5)}
 
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media(max-width:900px){
   .dash-grid{grid-template-columns:repeat(2,1fr)}
   .dash-body{grid-template-columns:1fr}
@@ -466,15 +468,15 @@ canvas{display:block;width:100%!important}
     <div class="card">
       <div class="chart-header">
         <div>
-          <div id="chartLabel" style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">BTC / USDT · Binance Live</div>
+          <div id="chartLabel" style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">BTC / USD · CoinGecko Live</div>
           <div class="chart-price" id="chartPrice">—</div>
-          <div class="chart-meta" id="chartMeta">Connecting to live feed…</div>
+          <div class="chart-meta" id="chartMeta">Fetching live data…</div>
         </div>
         <div class="timebtns">
-          <button class="tbtn active" onclick="switchChart(this,'BTCUSDT','BTC')">BTC</button>
-          <button class="tbtn" onclick="switchChart(this,'ETHUSDT','ETH')">ETH</button>
-          <button class="tbtn" onclick="switchChart(this,'SOLUSDT','SOL')">SOL</button>
-          <button class="tbtn" onclick="switchChart(this,'BNBUSDT','BNB')">BNB</button>
+          <button class="tbtn active" onclick="switchChart(this,'bitcoin','BTC')">BTC</button>
+          <button class="tbtn" onclick="switchChart(this,'ethereum','ETH')">ETH</button>
+          <button class="tbtn" onclick="switchChart(this,'solana','SOL')">SOL</button>
+          <button class="tbtn" onclick="switchChart(this,'binancecoin','BNB')">BNB</button>
         </div>
       </div>
       <div class="chart-canvas-wrap" id="chartWrap">
@@ -490,10 +492,13 @@ canvas{display:block;width:100%!important}
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
       <div class="sec-title" style="margin-bottom:0">Live Market</div>
-      <div class="live-badge"><div class="ldot"></div><span id="marketSource">Binance WS</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="api-badge" id="apiBadge">● Loading…</span>
+        <div class="live-badge"><div class="ldot"></div><span id="marketSource">CoinGecko</span></div>
+      </div>
     </div>
     <div class="pool-header">
-      <span>Asset</span><span>Price</span><span>24h Change</span><span>High/Low</span><span>Volume</span>
+      <span>Asset</span><span>Price</span><span>24h Change</span><span>High/Low (24h)</span><span>Market Cap</span>
     </div>
     <div id="marketRows"></div>
   </div>
@@ -523,7 +528,7 @@ canvas{display:block;width:100%!important}
           <input class="swap-amt" id="fromAmt" placeholder="0.00" type="number" min="0" step="any" oninput="calcSwap()">
         </div>
         <div class="swap-sub">
-          <div class="swap-bal">Bal: <span id="fromBal" onclick="maxSwap()">—</span></div>
+          <div class="swap-bal">Bal: <span id="fromBal" onclick="maxSwap()" style="cursor:pointer">—</span></div>
           <div class="swap-usd" id="fromUsd">≈ $0.00</div>
         </div>
       </div>
@@ -780,485 +785,427 @@ canvas{display:block;width:100%!important}
 <script>
 'use strict';
 
-/* ══════════════════════════════════════════
-   STARS
-══════════════════════════════════════════ */
+/* ══ STARS ══ */
 (()=>{
   const c = document.querySelector('.cosmos');
-  for(let i = 0; i < 70; i++){
-    const s = document.createElement('div');
-    s.className = 'star';
-    const z = Math.random() * 2 + .5;
-    s.style.cssText = `width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;position:absolute;--d:${(Math.random()*4+2).toFixed(1)}s;--dd:${(Math.random()*6).toFixed(1)}s`;
+  for(let i=0;i<70;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const z=Math.random()*2+.5;
+    s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;position:absolute;--d:${(Math.random()*4+2).toFixed(1)}s;--dd:${(Math.random()*6).toFixed(1)}s`;
     c.appendChild(s);
   }
 })();
 
-/* ══════════════════════════════════════════
-   GLOBAL STATE
-══════════════════════════════════════════ */
+/* ══ GLOBAL STATE ══ */
 const STATE = {
-  prices: {},
-  chartData: {},
+  prices: {},          // cgId -> { price, chg24h, high, low, mktCap, vol24h }
+  chartData: {},       // cgId -> price[]
   walletConnected: false,
   walletAddress: '',
   walletName: '',
   walletBalance: '0',
   currentChainId: 11155111,
-  currentChart: 'BTCUSDT',
-  ws: null,
-  wsReady: false,
-  wsMode: 'ws', // 'ws' | 'rest'
+  currentChart: 'bitcoin',  // CoinGecko ID
   fromTok: 'ETH',
   toTok: 'BTC',
   tpTarget: 'from',
   positions: [],
   txCount: 14821,
+  fetchInProgress: false,
+  lastFetchTime: 0,
 };
 
-/* ══════════════════════════════════════════
-   COIN / TOKEN META
-══════════════════════════════════════════ */
-const WS_SYMBOLS = ['btcusdt','ethusdt','solusdt','bnbusdt','xrpusdt','adausdt','avaxusdt','dotusdt'];
-const WS_STREAM  = WS_SYMBOLS.map(s => `${s}@ticker`).join('/');
+/* ══ COINGECKO IDs & METADATA ══ */
+// Map: CoinGecko ID -> UI meta
+const CG_COINS = {
+  bitcoin:     { sym:'BTC',  name:'Bitcoin',   icon:'₿', bg:'#F7931A18', c:'#F7931A' },
+  ethereum:    { sym:'ETH',  name:'Ethereum',  icon:'Ξ', bg:'#627EEA18', c:'#627EEA' },
+  solana:      { sym:'SOL',  name:'Solana',    icon:'◎', bg:'#9945FF18', c:'#9945FF' },
+  binancecoin: { sym:'BNB',  name:'BNB',       icon:'B', bg:'#F3BA2F18', c:'#F3BA2F' },
+  ripple:      { sym:'XRP',  name:'XRP',       icon:'✕', bg:'#00AAE418', c:'#00AAE4' },
+  cardano:     { sym:'ADA',  name:'Cardano',   icon:'₳', bg:'#0055D420', c:'#4488ff' },
+  avalanche:   { sym:'AVAX', name:'Avalanche', icon:'A', bg:'#E8414218', c:'#E84142' },
+  polkadot:    { sym:'DOT',  name:'Polkadot',  icon:'●', bg:'#E6007A18', c:'#E6007A' },
+};
+const CG_IDS = Object.keys(CG_COINS);
 
-const COIN_META = {
-  BTCUSDT:  {sym:'BTC', name:'Bitcoin',    bg:'#F7931A18', color:'#F7931A', icon:'₿'},
-  ETHUSDT:  {sym:'ETH', name:'Ethereum',   bg:'#627EEA18', color:'#627EEA', icon:'Ξ'},
-  SOLUSDT:  {sym:'SOL', name:'Solana',     bg:'#9945FF18', color:'#9945FF', icon:'◎'},
-  BNBUSDT:  {sym:'BNB', name:'BNB',        bg:'#F3BA2F18', color:'#F3BA2F', icon:'B'},
-  XRPUSDT:  {sym:'XRP', name:'XRP',        bg:'#00AAE418', color:'#00AAE4', icon:'✕'},
-  ADAUSDT:  {sym:'ADA', name:'Cardano',    bg:'#0055D420', color:'#4488ff', icon:'₳'},
-  AVAXUSDT: {sym:'AVAX',name:'Avalanche',  bg:'#E8414218', color:'#E84142', icon:'A'},
-  DOTUSDT:  {sym:'DOT', name:'Polkadot',   bg:'#E6007A18', color:'#E6007A', icon:'●'},
+// Map: token symbol -> CG ID
+const SYM_TO_CG = {
+  BTC:'bitcoin', ETH:'ethereum', SOL:'solana', BNB:'binancecoin',
+  XRP:'ripple',  ADA:'cardano',  AVAX:'avalanche', DOT:'polkadot',
+  USDC:null, USDT:null,
 };
 
 const TOKEN_DEFS = {
-  ETH:  {icon:'Ξ', bg:'#627EEA18', c:'#627EEA', wsKey:'ETHUSDT'},
-  BTC:  {icon:'₿', bg:'#F7931A18', c:'#F7931A', wsKey:'BTCUSDT'},
-  SOL:  {icon:'◎', bg:'#9945FF18', c:'#9945FF', wsKey:'SOLUSDT'},
-  BNB:  {icon:'B', bg:'#F3BA2F18', c:'#F3BA2F', wsKey:'BNBUSDT'},
-  USDC: {icon:'$', bg:'#2775CA18', c:'#2775CA', wsKey:null},
-  USDT: {icon:'₮', bg:'#26A17B18', c:'#26A17B', wsKey:null},
-  XRP:  {icon:'✕', bg:'#00AAE418', c:'#00AAE4', wsKey:'XRPUSDT'},
-  ADA:  {icon:'₳', bg:'#0055D420', c:'#4488ff', wsKey:'ADAUSDT'},
-  AVAX: {icon:'A', bg:'#E8414218', c:'#E84142', wsKey:'AVAXUSDT'},
+  ETH:  { icon:'Ξ', bg:'#627EEA18', c:'#627EEA', cgId:'ethereum' },
+  BTC:  { icon:'₿', bg:'#F7931A18', c:'#F7931A', cgId:'bitcoin' },
+  SOL:  { icon:'◎', bg:'#9945FF18', c:'#9945FF', cgId:'solana' },
+  BNB:  { icon:'B', bg:'#F3BA2F18', c:'#F3BA2F', cgId:'binancecoin' },
+  USDC: { icon:'$', bg:'#2775CA18', c:'#2775CA', cgId:null },
+  USDT: { icon:'₮', bg:'#26A17B18', c:'#26A17B', cgId:null },
+  XRP:  { icon:'✕', bg:'#00AAE418', c:'#00AAE4', cgId:'ripple' },
+  ADA:  { icon:'₳', bg:'#0055D420', c:'#4488ff', cgId:'cardano' },
+  AVAX: { icon:'A', bg:'#E8414218', c:'#E84142', cgId:'avalanche' },
 };
-
 const TOKEN_NAMES = {
   USDC:'USD Coin', USDT:'Tether', ETH:'Ethereum', BTC:'Bitcoin',
   SOL:'Solana', BNB:'BNB', XRP:'XRP', ADA:'Cardano', AVAX:'Avalanche',
 };
 
-/* ══════════════════════════════════════════
-   FORMATTERS
-══════════════════════════════════════════ */
+/* ══ FORMATTERS ══ */
 function fmt(n) {
-  if(n == null || isNaN(n)) return '$—';
-  if(n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T';
-  if(n >= 1e9)  return '$' + (n/1e9).toFixed(2) + 'B';
-  if(n >= 1e6)  return '$' + (n/1e6).toFixed(2) + 'M';
-  if(n >= 1000) return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  if(n >= 1)    return '$' + n.toFixed(2);
-  return '$' + n.toFixed(4);
+  if(n==null||isNaN(n)) return '$—';
+  if(n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if(n>=1e9)  return '$'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6)  return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1000) return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(n>=1)    return '$'+n.toFixed(2);
+  return '$'+n.toFixed(4);
 }
-
-function fmtShort(n) {
-  if(n >= 1e9)  return (n/1e9).toFixed(2)+'B';
-  if(n >= 1e6)  return (n/1e6).toFixed(2)+'M';
-  if(n >= 1000) return (n/1000).toFixed(1)+'K';
+function fmtShort(n){
+  if(n>=1e9)  return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6)  return (n/1e6).toFixed(2)+'M';
+  if(n>=1000) return (n/1000).toFixed(1)+'K';
   return n.toFixed(2);
 }
 
-/* ══════════════════════════════════════════
-   BINANCE WEBSOCKET
-══════════════════════════════════════════ */
-let _wsRetryCount = 0;
-let _wsRetryTimer = null;
-let _wsAlive = false;
-
-function initWS() {
-  if(_wsRetryTimer) { clearTimeout(_wsRetryTimer); _wsRetryTimer = null; }
-  if(STATE.ws) {
-    try { STATE.ws.onopen = STATE.ws.onclose = STATE.ws.onerror = STATE.ws.onmessage = null; STATE.ws.close(); } catch(_){}
-    STATE.ws = null;
-  }
-  setWsStatus('connecting', 'Connecting…');
-  try {
-    const ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${WS_STREAM}`);
-    STATE.ws = ws;
-    ws.onopen = () => {
-      _wsRetryCount = 0;
-      _wsAlive = true;
-      STATE.wsMode = 'ws';
-      setWsStatus('connected', 'Live WS');
-      updateMarketSource('Binance WS');
-    };
-    ws.onmessage = (e) => {
-      _wsAlive = true;
-      try {
-        const { data: d } = JSON.parse(e.data);
-        if(!d || !COIN_META[d.s]) return;
-        const sym = d.s;
-        const price = parseFloat(d.c), chg = parseFloat(d.P),
-              high = parseFloat(d.h), low = parseFloat(d.l), vol = parseFloat(d.q);
-        const prev = STATE.prices[sym]?.price;
-        STATE.prices[sym] = { price, chg24h: chg, high, low, vol, prev };
-        if(!STATE.chartData[sym]) STATE.chartData[sym] = genSpark(price, .015);
-        STATE.chartData[sym].push(price);
-        if(STATE.chartData[sym].length > 120) STATE.chartData[sym].shift();
-        updateTickerItem(sym, price, chg, prev);
-        updateMarketRow(sym);
-        if(STATE.currentChart === sym) scheduleChartDraw(sym);
-        updateSwapRateDisplay();
-        nudgeStats();
-      } catch(_) {}
-    };
-    ws.onerror = () => { /* onclose will handle retry */ };
-    ws.onclose = () => {
-      STATE.wsMode = 'rest';
-      _wsRetryCount++;
-      const delay = Math.min(1000 * Math.pow(2, _wsRetryCount - 1), 30000);
-      setWsStatus('error', `Retry in ${Math.round(delay/1000)}s`);
-      startRESTFallback();
-      _wsRetryTimer = setTimeout(initWS, delay);
-    };
-  } catch(_) {
-    setWsStatus('error', 'WS failed');
-    startRESTFallback();
-    _wsRetryTimer = setTimeout(initWS, 10000);
-  }
-}
-
-let _restInterval = null;
-function startRESTFallback() {
-  if(_restInterval) return;
-  fetchBinanceREST();
-  _restInterval = setInterval(() => {
-    // Only keep polling if WS is not alive
-    if(STATE.wsMode === 'ws' && _wsAlive) {
-      clearInterval(_restInterval);
-      _restInterval = null;
-      return;
-    }
-    fetchBinanceREST();
-  }, 5000);
-}
-
-async function fetchBinanceREST() {
-  try {
-    const syms = Object.keys(COIN_META);
-    const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=${encodeURIComponent(JSON.stringify(syms))}`;
-    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const data = await r.json();
-    let updated = 0;
-    data.forEach(d => {
-      const prev = STATE.prices[d.symbol]?.price;
-      const price = parseFloat(d.lastPrice);
-      STATE.prices[d.symbol] = { price, chg24h: parseFloat(d.priceChangePercent), high: parseFloat(d.highPrice), low: parseFloat(d.lowPrice), vol: parseFloat(d.quoteVolume), prev };
-      if(!STATE.chartData[d.symbol]) STATE.chartData[d.symbol] = genSpark(price, .015);
-      STATE.chartData[d.symbol].push(price);
-      if(STATE.chartData[d.symbol].length > 120) STATE.chartData[d.symbol].shift();
-      updated++;
-    });
-    if(updated > 0) {
-      setWsStatus('connected', 'REST Live');
-      updateMarketSource('Binance REST');
-      renderAllMarket();
-    }
-  } catch(_) {
-    setWsStatus('error', 'API Error');
-    if(!Object.keys(STATE.prices).length) {
-      useMockPrices();
-      renderAllMarket();
-    }
-  }
-}
-
+/* ══ MOCK PRICES (fallback) ══ */
 function useMockPrices() {
   const mock = {
-    BTCUSDT: {price:68420, chg24h:2.85,  high:69100, low:67200, vol:1.8e9},
-    ETHUSDT: {price:3890,  chg24h:-0.92, high:3950,  low:3820,  vol:820e6},
-    SOLUSDT: {price:172,   chg24h:5.34,  high:178,   low:165,   vol:420e6},
-    BNBUSDT: {price:598,   chg24h:1.23,  high:608,   low:590,   vol:180e6},
-    XRPUSDT: {price:0.62,  chg24h:-1.45, high:0.64,  low:0.60,  vol:90e6},
-    ADAUSDT: {price:0.48,  chg24h:3.21,  high:0.50,  low:0.46,  vol:55e6},
-    AVAXUSDT:{price:38.5,  chg24h:-2.1,  high:40,    low:37.5,  vol:45e6},
-    DOTUSDT: {price:7.85,  chg24h:0.88,  high:8.1,   low:7.7,   vol:30e6},
+    bitcoin:     { price:68420,  chg24h:2.85,   high:69100, low:67200, mktCap:1.35e12, vol24h:28e9 },
+    ethereum:    { price:3890,   chg24h:-0.92,  high:3950,  low:3820,  mktCap:468e9,   vol24h:14e9 },
+    solana:      { price:172,    chg24h:5.34,   high:178,   low:165,   mktCap:79e9,    vol24h:4.2e9 },
+    binancecoin: { price:598,    chg24h:1.23,   high:608,   low:590,   mktCap:89e9,    vol24h:1.8e9 },
+    ripple:      { price:0.62,   chg24h:-1.45,  high:0.64,  low:0.60,  mktCap:34e9,    vol24h:1.2e9 },
+    cardano:     { price:0.48,   chg24h:3.21,   high:0.50,  low:0.46,  mktCap:17e9,    vol24h:550e6 },
+    avalanche:   { price:38.5,   chg24h:-2.1,   high:40,    low:37.5,  mktCap:16e9,    vol24h:450e6 },
+    polkadot:    { price:7.85,   chg24h:0.88,   high:8.1,   low:7.7,   mktCap:11e9,    vol24h:300e6 },
   };
-  Object.entries(mock).forEach(([k,v]) => {
+  Object.entries(mock).forEach(([k,v])=>{
     if(!STATE.prices[k]) {
-      STATE.prices[k] = {...v};
-      if(!STATE.chartData[k]) STATE.chartData[k] = genSpark(v.price, .015);
+      STATE.prices[k]={...v,prev:v.price};
+      STATE.chartData[k]=genSpark(v.price,.015);
     }
   });
 }
 
-function genSpark(base, vol = .015, n = 80) {
-  const d = [base];
-  for(let i = 1; i < n; i++) d.push(Math.max(d[i-1] * (1 + (Math.random() - .49) * vol), 0.0001));
+function genSpark(base,vol=.015,n=80){
+  const d=[base];
+  for(let i=1;i<n;i++) d.push(Math.max(d[i-1]*(1+(Math.random()-.49)*vol),0.0001));
   return d;
 }
 
-function setWsStatus(type, label) {
-  const dot = document.getElementById('wsDot');
-  const lbl = document.getElementById('wsLabel');
-  if(!dot || !lbl) return;
-  const map = { connected:'var(--green)', connecting:'var(--gold)', error:'var(--red)' };
-  dot.style.background = map[type] || 'var(--gold)';
-  lbl.textContent = label;
+/* ══ COINGECKO API ══ */
+const CG_BASE = 'https://api.coingecko.com/api/v3';
+let _fetchTimer = null;
+let _retryCount = 0;
+let _fetchActive = false;
+
+async function fetchCoinGecko() {
+  if(_fetchActive) return;
+  _fetchActive = true;
+  setApiStatus('loading','Fetching…');
+  try {
+    const ids = CG_IDS.join(',');
+    const url = `${CG_BASE}/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h`;
+    const r = await fetch(url, { signal:AbortSignal.timeout(12000) });
+    if(r.status===429) throw new Error('rate_limit');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    let updated=0;
+    data.forEach(coin=>{
+      const prev = STATE.prices[coin.id]?.price;
+      STATE.prices[coin.id] = {
+        price:     coin.current_price,
+        chg24h:    coin.price_change_percentage_24h||0,
+        high:      coin.high_24h,
+        low:       coin.low_24h,
+        mktCap:    coin.market_cap,
+        vol24h:    coin.total_volume,
+        prev:      prev,
+      };
+      // Extend sparkline data
+      if(!STATE.chartData[coin.id]) STATE.chartData[coin.id]=genSpark(coin.current_price,.015);
+      else { STATE.chartData[coin.id].push(coin.current_price); if(STATE.chartData[coin.id].length>120) STATE.chartData[coin.id].shift(); }
+      updated++;
+    });
+    _retryCount=0;
+    STATE.lastFetchTime=Date.now();
+    setApiStatus('live',`CoinGecko ✓`);
+    setWsStatus('connected','Live Data');
+    updateMarketSource('CoinGecko');
+    renderAllMarket();
+  } catch(err) {
+    _retryCount++;
+    const isRateLimit = err.message==='rate_limit';
+    const delay = isRateLimit ? 65000 : Math.min(10000*Math.pow(1.5,_retryCount-1),60000);
+    setApiStatus('error', isRateLimit ? 'Rate limit — wait 60s' : 'API Error — retrying');
+    setWsStatus('error', isRateLimit ? 'Rate limited' : 'API Error');
+    // Use mock if no data yet
+    if(!Object.keys(STATE.prices).length) { useMockPrices(); renderAllMarket(); }
+    clearTimeout(_fetchTimer);
+    _fetchTimer = setTimeout(fetchCoinGecko, delay);
+  } finally {
+    _fetchActive = false;
+  }
 }
 
-function updateMarketSource(label) {
-  const el = document.getElementById('marketSource');
-  if(el) el.textContent = label;
+function setApiStatus(type,label){
+  const el=document.getElementById('apiBadge');
+  if(!el) return;
+  el.className='api-badge '+type;
+  el.textContent='● '+label;
 }
 
-/* ══════════════════════════════════════════
-   TICKER — Built once, updated with data attrs
-══════════════════════════════════════════ */
-function buildTicker() {
-  const items = Object.keys(COIN_META);
-  let html = '';
-  // Duplicate for seamless loop
-  for(let pass = 0; pass < 2; pass++) {
-    items.forEach(sym => {
-      const m = COIN_META[sym];
-      html += `<div class="tick-item">
-        <span class="tick-sym">${m.sym}/USDT</span>
-        <span class="tick-price" data-tp="${sym}">—</span>
-        <span class="tick-chg" data-tc="${sym}">—</span>
+function startPolling(){
+  // Initial fetch
+  fetchCoinGecko();
+  // CoinGecko free tier: 30 calls/min → poll every 30s to stay safe
+  setInterval(()=>fetchCoinGecko(),30000);
+}
+
+function setWsStatus(type,label){
+  const dot=document.getElementById('wsDot');
+  const lbl=document.getElementById('wsLabel');
+  if(!dot||!lbl) return;
+  const map={connected:'var(--green)',connecting:'var(--gold)',error:'var(--red)'};
+  dot.style.background=map[type]||'var(--gold)';
+  lbl.textContent=label;
+}
+function updateMarketSource(label){
+  const el=document.getElementById('marketSource');
+  if(el) el.textContent=label;
+}
+
+/* ══ TICKER — built once, updated via data-attrs ══ */
+function buildTicker(){
+  let html='';
+  for(let pass=0;pass<2;pass++){
+    CG_IDS.forEach(id=>{
+      const m=CG_COINS[id];
+      html+=`<div class="tick-item">
+        <span class="tick-sym">${m.sym}/USD</span>
+        <span class="tick-price" data-tp="${id}">—</span>
+        <span class="tick-chg" data-tc="${id}">—</span>
       </div>`;
     });
   }
-  document.getElementById('tickTrack').innerHTML = html;
+  document.getElementById('tickTrack').innerHTML=html;
 }
 
-function updateTickerItem(sym, price, chg, prevPrice) {
-  document.querySelectorAll(`[data-tp="${sym}"]`).forEach(el => {
-    el.textContent = fmt(price);
-    if(prevPrice != null && price !== prevPrice) {
+function updateTickerItem(id,price,chg,prevPrice){
+  document.querySelectorAll(`[data-tp="${id}"]`).forEach(el=>{
+    el.textContent=fmt(price);
+    if(prevPrice!=null&&price!==prevPrice){
       el.classList.remove('flash-up','flash-dn');
-      void el.offsetWidth; // reflow
-      el.classList.add(price > prevPrice ? 'flash-up' : 'flash-dn');
+      void el.offsetWidth;
+      el.classList.add(price>prevPrice?'flash-up':'flash-dn');
     }
   });
-  document.querySelectorAll(`[data-tc="${sym}"]`).forEach(el => {
-    el.textContent = (chg >= 0 ? '▲' : '▼') + Math.abs(chg).toFixed(2) + '%';
-    el.className = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn');
+  document.querySelectorAll(`[data-tc="${id}"]`).forEach(el=>{
+    el.textContent=(chg>=0?'▲':'▼')+Math.abs(chg).toFixed(2)+'%';
+    el.className='tick-chg '+(chg>=0?'up':'dn');
   });
 }
 
-/* ══════════════════════════════════════════
-   MARKET TABLE
-══════════════════════════════════════════ */
-function buildMarketTable() {
-  let html = '';
-  Object.entries(COIN_META).forEach(([sym,m]) => {
-    html += `<div class="pool-row" id="mr-${sym}" onclick="switchChart(document.querySelector('.tbtn.active'),'${sym}','${m.sym}')">
+/* ══ MARKET TABLE ══ */
+function buildMarketTable(){
+  let html='';
+  CG_IDS.forEach(id=>{
+    const m=CG_COINS[id];
+    html+=`<div class="pool-row" onclick="switchChart(null,'${id}','${m.sym}')">
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="tok-icon" style="background:${m.bg};color:${m.color}">${m.icon}</div>
+        <div class="tok-icon" style="background:${m.bg};color:${m.c}">${m.icon}</div>
         <div><div style="font-weight:700;font-size:14px">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.sym}</div></div>
       </div>
-      <div class="mono" id="mrp-${sym}">—</div>
-      <div class="mono" id="mrc-${sym}">—</div>
-      <div class="mono" style="color:var(--text2);font-size:12px" id="mrhl-${sym}">—</div>
-      <div class="mono" style="color:var(--text2)" id="mrv-${sym}">—</div>
+      <div class="mono" id="mrp-${id}">—</div>
+      <div class="mono" id="mrc-${id}">—</div>
+      <div class="mono" style="color:var(--text2);font-size:12px" id="mrhl-${id}">—</div>
+      <div class="mono" style="color:var(--text2)" id="mrmc-${id}">—</div>
     </div>`;
   });
-  document.getElementById('marketRows').innerHTML = html;
+  document.getElementById('marketRows').innerHTML=html;
 }
 
-function updateMarketRow(sym) {
-  const d = STATE.prices[sym];
+function updateMarketRow(id){
+  const d=STATE.prices[id];
   if(!d) return;
-  const up = d.chg24h >= 0;
-  const pe  = document.getElementById(`mrp-${sym}`);
-  const ce  = document.getElementById(`mrc-${sym}`);
-  const he  = document.getElementById(`mrhl-${sym}`);
-  const ve  = document.getElementById(`mrv-${sym}`);
-  if(pe) pe.textContent = fmt(d.price);
-  if(ce) { ce.textContent = (up?'▲':'▼') + Math.abs(d.chg24h).toFixed(2) + '%'; ce.className = 'mono ' + (up?'up':'dn'); }
-  if(he) he.textContent = `${fmt(d.high)} / ${fmt(d.low)}`;
-  if(ve) ve.textContent = fmt(d.vol);
+  const up=d.chg24h>=0;
+  const pe=document.getElementById(`mrp-${id}`);
+  const ce=document.getElementById(`mrc-${id}`);
+  const he=document.getElementById(`mrhl-${id}`);
+  const ve=document.getElementById(`mrmc-${id}`);
+  if(pe) pe.textContent=fmt(d.price);
+  if(ce){ ce.textContent=(up?'▲':'▼')+Math.abs(d.chg24h).toFixed(2)+'%'; ce.className='mono '+(up?'up':'dn'); }
+  if(he) he.textContent=`${fmt(d.high)} / ${fmt(d.low)}`;
+  if(ve) ve.textContent=fmt(d.mktCap);
 }
 
-function renderAllMarket() {
-  Object.keys(COIN_META).forEach(sym => {
-    const d = STATE.prices[sym];
+function renderAllMarket(){
+  CG_IDS.forEach(id=>{
+    const d=STATE.prices[id];
     if(!d) return;
-    updateTickerItem(sym, d.price, d.chg24h, d.prev);
-    updateMarketRow(sym);
+    updateTickerItem(id,d.price,d.chg24h,d.prev);
+    updateMarketRow(id);
   });
   scheduleChartDraw(STATE.currentChart);
   updateSwapRateDisplay();
   renderTopPools();
   updateAnalyticsTokenPerf();
+  nudgeStats();
 }
 
-/* ══════════════════════════════════════════
-   NUDGE STATS
-══════════════════════════════════════════ */
-let _nudge = { tvl: 284.7, vol: 47.3 };
-function nudgeStats() {
-  _nudge.tvl += _nudge.tvl * 0.000003 * (Math.random() - .48);
-  _nudge.vol += _nudge.vol * 0.00008  * (Math.random() - .48);
-  const fees = _nudge.vol * 0.0005;
-  const tvlStr  = '$' + _nudge.tvl.toFixed(1) + 'M';
-  const volStr  = '$' + _nudge.vol.toFixed(1) + 'M';
-  const feesStr = '$' + (fees * 1000).toFixed(1) + 'K';
-  ['d-tvl','lm-tvl','anl-tvl'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = tvlStr; });
-  ['d-vol','lm-vol','anl-vol'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = volStr; });
-  const feesEl = document.getElementById('anl-fees'); if(feesEl) feesEl.textContent = feesStr;
+/* ══ NUDGE STATS ══ */
+let _nudge={tvl:284.7,vol:47.3};
+function nudgeStats(){
+  _nudge.tvl+=_nudge.tvl*0.000003*(Math.random()-.48);
+  _nudge.vol+=_nudge.vol*0.00008*(Math.random()-.48);
+  const fees=_nudge.vol*0.0005;
+  const tvlStr='$'+_nudge.tvl.toFixed(1)+'M';
+  const volStr='$'+_nudge.vol.toFixed(1)+'M';
+  const feesStr='$'+(fees*1000).toFixed(1)+'K';
+  ['d-tvl','lm-tvl','anl-tvl'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=tvlStr;});
+  ['d-vol','lm-vol','anl-vol'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=volStr;});
+  const feesEl=document.getElementById('anl-fees');if(feesEl)feesEl.textContent=feesStr;
 }
 
-/* ══════════════════════════════════════════
-   CHART — FIX: proper DPR scaling + resize
-══════════════════════════════════════════ */
-let _chartRAF = null;
-let _resizeObserver = null;
+/* ══ CHART — DPR-aware, resize-safe ══ */
+let _chartRAF=null;
+let _resizeObserver=null;
 
-function scheduleChartDraw(sym) {
+function scheduleChartDraw(cgId){
   if(_chartRAF) cancelAnimationFrame(_chartRAF);
-  _chartRAF = requestAnimationFrame(() => {
-    const arr = STATE.chartData[sym];
-    const d = STATE.prices[sym];
-    if(!arr || arr.length < 2 || !d) return;
-    updateChartPriceLabel(sym);
-    drawChart(arr, d.chg24h >= 0);
-    _chartRAF = null;
+  _chartRAF=requestAnimationFrame(()=>{
+    const arr=STATE.chartData[cgId];
+    const d=STATE.prices[cgId];
+    if(!arr||arr.length<2||!d) return;
+    updateChartPriceLabel(cgId);
+    drawChart(arr,d.chg24h>=0);
+    _chartRAF=null;
   });
 }
 
-function updateChartPriceLabel(sym) {
-  const d = STATE.prices[sym];
+function updateChartPriceLabel(cgId){
+  const d=STATE.prices[cgId];
   if(!d) return;
-  const m = COIN_META[sym];
-  const up = d.chg24h >= 0;
-  const cpEl = document.getElementById('chartPrice');
-  const cmEl = document.getElementById('chartMeta');
-  const clEl = document.getElementById('chartLabel');
-  if(cpEl) { cpEl.textContent = fmt(d.price); cpEl.style.color = up ? 'var(--green)' : 'var(--red)'; }
-  if(cmEl) cmEl.innerHTML = `<span class="${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(d.chg24h).toFixed(2)}%</span>&nbsp;·&nbsp;H: <span style="color:var(--text2)">${fmt(d.high)}</span>&nbsp;·&nbsp;L: <span style="color:var(--text2)">${fmt(d.low)}</span>`;
-  if(clEl && m) clEl.textContent = `${m.sym} / USDT · Binance Live`;
+  const m=CG_COINS[cgId];
+  const up=d.chg24h>=0;
+  const cpEl=document.getElementById('chartPrice');
+  const cmEl=document.getElementById('chartMeta');
+  const clEl=document.getElementById('chartLabel');
+  if(cpEl){cpEl.textContent=fmt(d.price);cpEl.style.color=up?'var(--green)':'var(--red)';}
+  if(cmEl) cmEl.innerHTML=`<span class="${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(d.chg24h).toFixed(2)}%</span>&nbsp;·&nbsp;H:&nbsp;<span style="color:var(--text2)">${fmt(d.high)}</span>&nbsp;·&nbsp;L:&nbsp;<span style="color:var(--text2)">${fmt(d.low)}</span>`;
+  if(clEl&&m) clEl.textContent=`${m.sym} / USD · CoinGecko`;
 }
 
-function updateChartDisplay(sym) {
-  if(!STATE.prices[sym]) {
+function updateChartDisplay(cgId){
+  if(!STATE.prices[cgId]){
     useMockPrices();
-    if(!STATE.chartData[sym]) STATE.chartData[sym] = genSpark(STATE.prices[sym].price, .015);
+    if(!STATE.chartData[cgId]) STATE.chartData[cgId]=genSpark(STATE.prices[cgId]?.price||1000,.015);
   }
-  updateChartPriceLabel(sym);
-  scheduleChartDraw(sym);
+  updateChartPriceLabel(cgId);
+  scheduleChartDraw(cgId);
 }
 
-function switchChart(el, sym, _label) {
-  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
-  // el can be null if called from market row click
+// switchChart — accepts cgId directly (from market rows) or derived from button label
+function switchChart(el,cgId,sym){
+  // el may be null (market row click)
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
-  // Map sym to WS key if it's a short name
-  const wsKey = sym.includes('USDT') ? sym : (sym + 'USDT');
-  if(COIN_META[wsKey]) {
-    STATE.currentChart = wsKey;
-    updateChartDisplay(wsKey);
-    // Highlight correct tab button
-    document.querySelectorAll('.tbtn').forEach(b => {
-      if(b.textContent === COIN_META[wsKey].sym) b.classList.add('active');
+  // If cgId passed is actually a CG coin id, use it directly; otherwise figure out
+  const resolvedId = CG_COINS[cgId] ? cgId : null;
+  if(!resolvedId) return;
+  STATE.currentChart=resolvedId;
+  updateChartDisplay(resolvedId);
+  // Highlight correct button by sym
+  if(!el){
+    document.querySelectorAll('.tbtn').forEach(b=>{
+      if(b.textContent===CG_COINS[resolvedId]?.sym) b.classList.add('active');
     });
   }
 }
 
-function drawChart(data, up) {
-  const cv = document.getElementById('mainChart');
+function drawChart(data,up){
+  const cv=document.getElementById('mainChart');
   if(!cv) return;
-  const wrap = document.getElementById('chartWrap');
-  const W_css = wrap ? wrap.clientWidth : cv.parentElement?.clientWidth || 600;
-  const H_css = 200;
-  if(W_css <= 0) return;
-  const dpr = window.devicePixelRatio || 1;
-  cv.width  = W_css * dpr;
-  cv.height = H_css * dpr;
-  cv.style.width  = W_css + 'px';
-  cv.style.height = H_css + 'px';
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-  const min = Math.min(...data), max = Math.max(...data), range = max - min || 1;
-  const PAD_T = 0.1, PAD_B = 0.1;
-  const pts = data.map((v, i) => ({
-    x: (i / (data.length - 1)) * W,
-    y: H - (((v - min) / range) * (1 - PAD_T - PAD_B) + PAD_B) * H,
+  const wrap=document.getElementById('chartWrap');
+  const W_css=wrap?wrap.clientWidth:(cv.parentElement?.clientWidth||600);
+  const H_css=200;
+  if(W_css<=0) return;
+  const dpr=window.devicePixelRatio||1;
+  cv.width=W_css*dpr;
+  cv.height=H_css*dpr;
+  cv.style.width=W_css+'px';
+  cv.style.height=H_css+'px';
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  const min=Math.min(...data),max=Math.max(...data),range=max-min||1;
+  const PAD_T=0.1,PAD_B=0.1;
+  const pts=data.map((v,i)=>({
+    x:(i/(data.length-1))*W,
+    y:H-(((v-min)/range)*(1-PAD_T-PAD_B)+PAD_B)*H,
   }));
-  const color = up ? '#00ffaa' : '#ff4466';
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0,   color + '50');
-  grad.addColorStop(0.7, color + '10');
-  grad.addColorStop(1,   color + '00');
+  const color=up?'#00ffaa':'#ff4466';
+  const grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,color+'50');
+  grad.addColorStop(0.7,color+'10');
+  grad.addColorStop(1,color+'00');
   ctx.beginPath();
-  ctx.moveTo(pts[0].x, H);
-  pts.forEach(p => ctx.lineTo(p.x, p.y));
-  ctx.lineTo(pts[pts.length-1].x, H);
+  ctx.moveTo(pts[0].x,H);
+  pts.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[pts.length-1].x,H);
   ctx.closePath();
-  ctx.fillStyle = grad;
+  ctx.fillStyle=grad;
   ctx.fill();
-  // Line
   ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for(let i = 1; i < pts.length; i++) {
-    const cpX = (pts[i-1].x + pts[i].x) / 2;
-    ctx.bezierCurveTo(cpX, pts[i-1].y, cpX, pts[i].y, pts[i].x, pts[i].y);
+  ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){
+    const cpX=(pts[i-1].x+pts[i].x)/2;
+    ctx.bezierCurveTo(cpX,pts[i-1].y,cpX,pts[i].y,pts[i].x,pts[i].y);
   }
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2 * dpr;
-  ctx.lineJoin = 'round';
+  ctx.strokeStyle=color;
+  ctx.lineWidth=2*dpr;
+  ctx.lineJoin='round';
   ctx.stroke();
-  // Live dot
-  const last = pts[pts.length - 1];
+  const last=pts[pts.length-1];
   ctx.beginPath();
-  ctx.arc(last.x, last.y, 4 * dpr, 0, Math.PI * 2);
-  ctx.fillStyle = color;
+  ctx.arc(last.x,last.y,4*dpr,0,Math.PI*2);
+  ctx.fillStyle=color;
   ctx.fill();
-  // Glow ring
   ctx.beginPath();
-  ctx.arc(last.x, last.y, 7 * dpr, 0, Math.PI * 2);
-  ctx.strokeStyle = color + '55';
-  ctx.lineWidth = 1.5 * dpr;
+  ctx.arc(last.x,last.y,7*dpr,0,Math.PI*2);
+  ctx.strokeStyle=color+'55';
+  ctx.lineWidth=1.5*dpr;
   ctx.stroke();
-  // Subtle grid
-  ctx.strokeStyle = 'rgba(0,212,255,0.05)';
-  ctx.lineWidth = 1 * dpr;
-  for(let i = 1; i < 4; i++) {
-    const y = (H / 4) * i;
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  ctx.strokeStyle='rgba(0,212,255,0.05)';
+  ctx.lineWidth=1*dpr;
+  for(let i=1;i<4;i++){
+    const y=(H/4)*i;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
   }
 }
 
-// ResizeObserver for chart — no layout thrash
-function setupChartResize() {
-  const wrap = document.getElementById('chartWrap');
+function setupChartResize(){
+  const wrap=document.getElementById('chartWrap');
   if(!wrap) return;
   if(_resizeObserver) _resizeObserver.disconnect();
-  _resizeObserver = new ResizeObserver(() => {
-    scheduleChartDraw(STATE.currentChart);
-  });
+  _resizeObserver=new ResizeObserver(()=>scheduleChartDraw(STATE.currentChart));
   _resizeObserver.observe(wrap);
 }
 
-/* ══════════════════════════════════════════
-   TOP POOLS
-══════════════════════════════════════════ */
-function renderTopPools() {
-  const pools = [
-    {a:'ETH', b:'USDC', apr:'12.4', tvl:(STATE.prices['ETHUSDT']?.price||3890)*21600},
-    {a:'BTC', b:'USDT', apr:'8.7',  tvl:(STATE.prices['BTCUSDT']?.price||68420)*930},
-    {a:'SOL', b:'USDC', apr:'18.2', tvl:(STATE.prices['SOLUSDT']?.price||172)*183000},
-    {a:'BNB', b:'USDT', apr:'10.1', tvl:(STATE.prices['BNBUSDT']?.price||598)*47000},
+/* ══ TOP POOLS ══ */
+function renderTopPools(){
+  const pools=[
+    {a:'ETH',b:'USDC',apr:'12.4',tvl:(STATE.prices['ethereum']?.price||3890)*21600},
+    {a:'BTC',b:'USDT',apr:'8.7', tvl:(STATE.prices['bitcoin']?.price||68420)*930},
+    {a:'SOL',b:'USDC',apr:'18.2',tvl:(STATE.prices['solana']?.price||172)*183000},
+    {a:'BNB',b:'USDT',apr:'10.1',tvl:(STATE.prices['binancecoin']?.price||598)*47000},
   ];
-  const el = document.getElementById('topPools');
+  const el=document.getElementById('topPools');
   if(!el) return;
-  el.innerHTML = pools.map(p => `
+  el.innerHTML=pools.map(p=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap">
       <div style="font-weight:700;font-size:13px">${p.a}/${p.b}</div>
       <span class="apr-badge">⚡ ${p.apr}% APR</span>
@@ -1266,26 +1213,24 @@ function renderTopPools() {
     </div>`).join('');
 }
 
-/* ══════════════════════════════════════════
-   MINING POOLS
-══════════════════════════════════════════ */
-const MINING_POOLS = [
-  {id:'eth-usdc', name:'ETH/USDC',  chain:'Ethereum', tok1:{sym:'ETH', c:'#627EEA',bg:'#627EEA22',icon:'Ξ'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:12.4, tvl:'$84.2M', rewards:['RLO','ETH Fees'], hl:'#627EEA', filled:72, cat:'stable'},
-  {id:'sol-usdc', name:'SOL/USDC',  chain:'Solana',   tok1:{sym:'SOL', c:'#9945FF',bg:'#9945FF22',icon:'◎'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:18.2, tvl:'$31.5M', rewards:['RLO','SOL Fees'], hl:'#9945FF', filled:55, cat:'boosted'},
-  {id:'btc-eth',  name:'BTC/ETH',   chain:'Multi-chain',tok1:{sym:'BTC',c:'#F7931A',bg:'#F7931A22',icon:'₿'}, tok2:{sym:'ETH', c:'#627EEA',bg:'#627EEA22',icon:'Ξ'}, apr:9.8,  tvl:'$62.7M', rewards:['RLO'],           hl:'#F7931A', filled:88, cat:'all'},
-  {id:'bnb-usdt', name:'BNB/USDT',  chain:'BNB Chain',tok1:{sym:'BNB', c:'#F3BA2F',bg:'#F3BA2F22',icon:'B'}, tok2:{sym:'USDT',c:'#26A17B',bg:'#26A17B22',icon:'₮'}, apr:14.6, tvl:'$28.3M', rewards:['RLO','BNB Fees'], hl:'#F3BA2F', filled:43, cat:'boosted'},
-  {id:'avax-usdc',name:'AVAX/USDC', chain:'Avalanche',tok1:{sym:'AVAX',c:'#E84142',bg:'#E8414222',icon:'A'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:22.1, tvl:'$19.8M', rewards:['RLO','AVAX Fees'],hl:'#E84142', filled:38, cat:'boosted'},
-  {id:'dot-usdc', name:'DOT/USDC',  chain:'Polkadot', tok1:{sym:'DOT', c:'#E6007A',bg:'#E6007A22',icon:'●'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:16.3, tvl:'$11.4M', rewards:['RLO'],           hl:'#E6007A', filled:29, cat:'stable'},
+/* ══ MINING POOLS ══ */
+const MINING_POOLS=[
+  {id:'eth-usdc', name:'ETH/USDC',  chain:'Ethereum',   tok1:{sym:'ETH', c:'#627EEA',bg:'#627EEA22',icon:'Ξ'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:12.4, tvl:'$84.2M', rewards:['RLO','ETH Fees'], hl:'#627EEA', filled:72, cat:'stable'},
+  {id:'sol-usdc', name:'SOL/USDC',  chain:'Solana',     tok1:{sym:'SOL', c:'#9945FF',bg:'#9945FF22',icon:'◎'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:18.2, tvl:'$31.5M', rewards:['RLO','SOL Fees'], hl:'#9945FF', filled:55, cat:'boosted'},
+  {id:'btc-eth',  name:'BTC/ETH',   chain:'Multi-chain',tok1:{sym:'BTC', c:'#F7931A',bg:'#F7931A22',icon:'₿'}, tok2:{sym:'ETH', c:'#627EEA',bg:'#627EEA22',icon:'Ξ'}, apr:9.8,  tvl:'$62.7M', rewards:['RLO'],           hl:'#F7931A', filled:88, cat:'all'},
+  {id:'bnb-usdt', name:'BNB/USDT',  chain:'BNB Chain',  tok1:{sym:'BNB', c:'#F3BA2F',bg:'#F3BA2F22',icon:'B'}, tok2:{sym:'USDT',c:'#26A17B',bg:'#26A17B22',icon:'₮'}, apr:14.6, tvl:'$28.3M', rewards:['RLO','BNB Fees'], hl:'#F3BA2F', filled:43, cat:'boosted'},
+  {id:'avax-usdc',name:'AVAX/USDC', chain:'Avalanche',  tok1:{sym:'AVAX',c:'#E84142',bg:'#E8414222',icon:'A'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:22.1, tvl:'$19.8M', rewards:['RLO','AVAX Fees'],hl:'#E84142', filled:38, cat:'boosted'},
+  {id:'dot-usdc', name:'DOT/USDC',  chain:'Polkadot',   tok1:{sym:'DOT', c:'#E6007A',bg:'#E6007A22',icon:'●'}, tok2:{sym:'USDC',c:'#2775CA',bg:'#2775CA22',icon:'$'}, apr:16.3, tvl:'$11.4M', rewards:['RLO'],           hl:'#E6007A', filled:29, cat:'stable'},
 ];
 
-function renderMiningPools(filter = 'all') {
-  const el = document.getElementById('miningPools');
+function renderMiningPools(filter='all'){
+  const el=document.getElementById('miningPools');
   if(!el) return;
-  const filtered = filter === 'all' ? MINING_POOLS :
-    filter === 'boosted' ? MINING_POOLS.filter(p => p.apr >= 14) :
-    MINING_POOLS.filter(p => p.cat === filter);
-  el.innerHTML = filtered.map(p => {
-    const chips = p.rewards.map(r => `<span class="reward-chip" style="border-color:${p.hl}40;color:${p.hl};background:${p.hl}12">+${r}</span>`).join('');
+  const filtered=filter==='all'?MINING_POOLS:
+    filter==='boosted'?MINING_POOLS.filter(p=>p.apr>=14):
+    MINING_POOLS.filter(p=>p.cat===filter);
+  el.innerHTML=filtered.map(p=>{
+    const chips=p.rewards.map(r=>`<span class="reward-chip" style="border-color:${p.hl}40;color:${p.hl};background:${p.hl}12">+${r}</span>`).join('');
     return `<div class="pool-card" style="--hl:${p.hl}">
       <div class="pc-header">
         <div class="pc-tokens">
@@ -1309,156 +1254,151 @@ function renderMiningPools(filter = 'all') {
       </div>
     </div>`;
   }).join('');
-  // Animate bars after paint
-  requestAnimationFrame(() => setTimeout(() => {
-    el.querySelectorAll('.pc-bar-fill[data-fill]').forEach(b => { b.style.width = b.dataset.fill + '%'; });
-  }, 80));
+  requestAnimationFrame(()=>setTimeout(()=>{
+    el.querySelectorAll('.pc-bar-fill[data-fill]').forEach(b=>{b.style.width=b.dataset.fill+'%';});
+  },80));
 }
 
-function filterPools(f) {
-  ['fAll','fStable','fBoosted'].forEach(id => {
-    const btn = document.getElementById(id);
-    if(btn) { btn.style.borderColor = 'var(--border2)'; btn.style.color = 'var(--text2)'; }
+function filterPools(f){
+  ['fAll','fStable','fBoosted'].forEach(id=>{
+    const btn=document.getElementById(id);
+    if(btn){btn.style.borderColor='var(--border2)';btn.style.color='var(--text2)';}
   });
-  const map = { all:'fAll', stable:'fStable', boosted:'fBoosted' };
-  const btn = document.getElementById(map[f]);
-  if(btn) { btn.style.borderColor = 'var(--cyan)'; btn.style.color = 'var(--cyan)'; }
+  const map={all:'fAll',stable:'fStable',boosted:'fBoosted'};
+  const btn=document.getElementById(map[f]);
+  if(btn){btn.style.borderColor='var(--cyan)';btn.style.color='var(--cyan)';}
   renderMiningPools(f);
 }
 
-/* ══════════════════════════════════════════
-   DEPOSIT
-══════════════════════════════════════════ */
-let _depositPool = null;
-function openDeposit(poolId) {
-  if(!STATE.walletConnected) { openWalletModal(); return; }
-  _depositPool = MINING_POOLS.find(p => p.id === poolId);
+/* ══ DEPOSIT ══ */
+let _depositPool=null;
+function openDeposit(poolId){
+  if(!STATE.walletConnected){openWalletModal();return;}
+  _depositPool=MINING_POOLS.find(p=>p.id===poolId);
   if(!_depositPool) return;
-  document.getElementById('dm-title').textContent = 'Deposit into ' + _depositPool.name;
-  document.getElementById('dm-sub').textContent   = _depositPool.chain + ' · ' + _depositPool.apr + '% APR';
-  document.getElementById('dm-amount').value = '';
-  document.getElementById('dm-apr').textContent   = _depositPool.apr + '%';
-  document.getElementById('dm-daily').textContent = '—';
-  document.getElementById('dm-share').textContent = '—';
+  document.getElementById('dm-title').textContent='Deposit into '+_depositPool.name;
+  document.getElementById('dm-sub').textContent=_depositPool.chain+' · '+_depositPool.apr+'% APR';
+  document.getElementById('dm-amount').value='';
+  document.getElementById('dm-apr').textContent=_depositPool.apr+'%';
+  document.getElementById('dm-daily').textContent='—';
+  document.getElementById('dm-share').textContent='—';
   document.getElementById('depositOverlay').classList.add('open');
 }
-function closeDeposit() { document.getElementById('depositOverlay').classList.remove('open'); }
+function closeDeposit(){document.getElementById('depositOverlay').classList.remove('open');}
 
-function calcDeposit() {
+function calcDeposit(){
   if(!_depositPool) return;
-  const amt = parseFloat(document.getElementById('dm-amount').value) || 0;
-  const daily = amt * (_depositPool.apr / 100) / 365;
-  const tvlNum = parseFloat(_depositPool.tvl.replace(/[$M]/g,'')) * 1e6;
-  const share  = amt / (tvlNum + amt) * 100;
-  document.getElementById('dm-daily').textContent = amt ? '~$' + daily.toFixed(4) + '/day' : '—';
-  document.getElementById('dm-share').textContent = amt ? (share < 0.001 ? '<0.001' : '~' + share.toFixed(4)) + '%' : '—';
+  const amt=parseFloat(document.getElementById('dm-amount').value)||0;
+  const daily=amt*(_depositPool.apr/100)/365;
+  const tvlNum=parseFloat(_depositPool.tvl.replace(/[$M]/g,''))*1e6;
+  const share=amt/(tvlNum+amt)*100;
+  document.getElementById('dm-daily').textContent=amt?'~$'+daily.toFixed(4)+'/day':'—';
+  document.getElementById('dm-share').textContent=amt?(share<0.001?'<0.001':'~'+share.toFixed(4))+'%':'—';
 }
 
-function confirmDeposit() {
+function confirmDeposit(){
   if(!_depositPool) return;
-  const amt = parseFloat(document.getElementById('dm-amount').value) || 0;
-  if(!amt || amt <= 0) { toast('⚠️','Enter an amount to deposit'); return; }
+  const amt=parseFloat(document.getElementById('dm-amount').value)||0;
+  if(!amt||amt<=0){toast('⚠️','Enter an amount to deposit');return;}
   closeDeposit();
-  const existing = STATE.positions.find(p => p.id === _depositPool.id);
-  if(existing) { existing.deposited += amt; }
-  else { STATE.positions.push({id:_depositPool.id, pool:_depositPool.name, chain:_depositPool.chain, deposited:amt, earned:0, apr:_depositPool.apr, hl:_depositPool.hl}); }
+  const existing=STATE.positions.find(p=>p.id===_depositPool.id);
+  if(existing){existing.deposited+=amt;}
+  else{STATE.positions.push({id:_depositPool.id,pool:_depositPool.name,chain:_depositPool.chain,deposited:amt,earned:0,apr:_depositPool.apr,hl:_depositPool.hl});}
   renderPositions();
   startEarningSimulation();
-  toast('✅', `Deposited $${amt.toFixed(2)} into ${_depositPool.name}`);
+  toast('✅',`Deposited $${amt.toFixed(2)} into ${_depositPool.name}`);
 }
 
-function renderPositions() {
-  const el = document.getElementById('myPositions');
+function renderPositions(){
+  const el=document.getElementById('myPositions');
   if(!el) return;
-  const claimBtn = document.getElementById('claimAllBtn');
-  if(!STATE.positions.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">💧</div><div class="empty-text">No active positions</div><div class="empty-sub">Connect wallet and deposit into a pool to start earning</div></div>`;
-    if(claimBtn) claimBtn.style.display = 'none';
-    const te = document.getElementById('totalEarned'); if(te) te.textContent = '$0.00';
+  const claimBtn=document.getElementById('claimAllBtn');
+  if(!STATE.positions.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">💧</div><div class="empty-text">No active positions</div><div class="empty-sub">Connect wallet and deposit into a pool to start earning</div></div>`;
+    if(claimBtn) claimBtn.style.display='none';
+    const te=document.getElementById('totalEarned');if(te)te.textContent='$0.00';
     return;
   }
-  const totalEarned = STATE.positions.reduce((s,p) => s + p.earned, 0);
-  const te = document.getElementById('totalEarned'); if(te) te.textContent = '$' + totalEarned.toFixed(4);
-  if(claimBtn) claimBtn.style.display = 'inline-flex';
-  el.innerHTML = `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:0 0 10px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;gap:12px;flex-wrap:wrap">
+  const totalEarned=STATE.positions.reduce((s,p)=>s+p.earned,0);
+  const te=document.getElementById('totalEarned');if(te)te.textContent='$'+totalEarned.toFixed(4);
+  if(claimBtn) claimBtn.style.display='inline-flex';
+  el.innerHTML=`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:0 0 10px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;gap:12px">
     <span>Pool</span><span>Deposited</span><span>Earned</span><span>APR</span><span>Action</span>
-  </div>` + STATE.positions.map((p,i) => `
+  </div>`+STATE.positions.map((p,i)=>`
     <div class="pos-card">
       <div class="pos-grid">
         <div><div style="font-weight:700;font-size:14px">${p.pool}</div><div style="font-size:11px;color:var(--text3)">${p.chain}</div></div>
-        <div class="pos-val">$${p.deposited.toFixed(2)}</div>
-        <div class="pos-val" style="color:var(--green)" id="earned-${i}">$${p.earned.toFixed(4)}</div>
-        <div class="pos-val" style="color:var(--cyan)">${p.apr}%</div>
+        <div style="font-family:var(--mono);font-size:14px;font-weight:600">$${p.deposited.toFixed(2)}</div>
+        <div style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--green)" id="earned-${i}">$${p.earned.toFixed(4)}</div>
+        <div style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--cyan)">${p.apr}%</div>
         <button class="claim-btn" onclick="claimReward(${i})">Claim</button>
       </div>
     </div>`).join('');
 }
 
-let _earningInterval = null;
-function startEarningSimulation() {
+let _earningInterval=null;
+function startEarningSimulation(){
   if(_earningInterval) return;
-  _earningInterval = setInterval(() => {
+  _earningInterval=setInterval(()=>{
     if(!STATE.positions.length) return;
-    let total = 0;
-    STATE.positions.forEach((p,i) => {
-      const perSec = (p.deposited * (p.apr / 100)) / (365 * 24 * 3600);
-      p.earned += perSec * 2;
-      total += p.earned;
-      const earnEl = document.getElementById('earned-' + i);
-      if(earnEl) earnEl.textContent = '$' + p.earned.toFixed(4);
+    let total=0;
+    STATE.positions.forEach((p,i)=>{
+      const perSec=(p.deposited*(p.apr/100))/(365*24*3600);
+      p.earned+=perSec*2;
+      total+=p.earned;
+      const earnEl=document.getElementById('earned-'+i);
+      if(earnEl) earnEl.textContent='$'+p.earned.toFixed(4);
     });
-    const te = document.getElementById('totalEarned'); if(te) te.textContent = '$' + total.toFixed(4);
-    const lr = document.getElementById('lm-rewards');  if(lr) lr.textContent = total.toFixed(2);
-  }, 2000);
+    const te=document.getElementById('totalEarned');if(te)te.textContent='$'+total.toFixed(4);
+    const lr=document.getElementById('lm-rewards');if(lr)lr.textContent=total.toFixed(2);
+  },2000);
 }
 
-function claimReward(i) {
-  const p = STATE.positions[i];
-  if(!p || p.earned < 0.0001) { toast('⚠️','No rewards to claim yet'); return; }
-  toast('💸', `Claimed $${p.earned.toFixed(4)} from ${p.pool}`);
-  p.earned = 0;
+function claimReward(i){
+  const p=STATE.positions[i];
+  if(!p||p.earned<0.0001){toast('⚠️','No rewards to claim yet');return;}
+  toast('💸',`Claimed $${p.earned.toFixed(4)} from ${p.pool}`);
+  p.earned=0;
   renderPositions();
 }
-function claimAll() {
-  const total = STATE.positions.reduce((s,p) => s + p.earned, 0);
-  if(total < 0.0001) { toast('⚠️','No rewards to claim'); return; }
-  toast('⚡', `Claimed all rewards: $${total.toFixed(4)}`);
-  STATE.positions.forEach(p => p.earned = 0);
+function claimAll(){
+  const total=STATE.positions.reduce((s,p)=>s+p.earned,0);
+  if(total<0.0001){toast('⚠️','No rewards to claim');return;}
+  toast('⚡',`Claimed all rewards: $${total.toFixed(4)}`);
+  STATE.positions.forEach(p=>p.earned=0);
   renderPositions();
 }
 
-/* ══════════════════════════════════════════
-   ANALYTICS
-══════════════════════════════════════════ */
-const CHAIN_DATA = [
-  {name:'Ethereum',  color:'#627EEA', dot:'🔵', pct:42},
-  {name:'BNB Chain', color:'#F3BA2F', dot:'🟡', pct:24},
-  {name:'Solana',    color:'#9945FF', dot:'🟣', pct:18},
-  {name:'Arbitrum',  color:'#28A0F0', dot:'🔷', pct:10},
-  {name:'Avalanche', color:'#E84142', dot:'🔴', pct:4},
-  {name:'Polygon',   color:'#8247E5', dot:'🟪', pct:2},
+/* ══ ANALYTICS ══ */
+const CHAIN_DATA=[
+  {name:'Ethereum',  color:'#627EEA',dot:'🔵',pct:42},
+  {name:'BNB Chain', color:'#F3BA2F',dot:'🟡',pct:24},
+  {name:'Solana',    color:'#9945FF',dot:'🟣',pct:18},
+  {name:'Arbitrum',  color:'#28A0F0',dot:'🔷',pct:10},
+  {name:'Avalanche', color:'#E84142',dot:'🔴',pct:4},
+  {name:'Polygon',   color:'#8247E5',dot:'🟪',pct:2},
 ];
 
-function renderChainBars() {
-  const el = document.getElementById('chainBars');
+function renderChainBars(){
+  const el=document.getElementById('chainBars');
   if(!el) return;
-  el.innerHTML = CHAIN_DATA.map(c => `
+  el.innerHTML=CHAIN_DATA.map(c=>`
     <div class="chain-bar-row">
       <div class="chain-bar-label"><span style="font-size:14px">${c.dot}</span>${c.name}</div>
       <div class="chain-bar-track"><div class="chain-bar-fill" style="width:${c.pct}%;background:linear-gradient(90deg,${c.color},${c.color}88)"></div></div>
-      <div class="chain-bar-val">${fmt(47300000 * c.pct / 100)}</div>
+      <div class="chain-bar-val">${fmt(47300000*c.pct/100)}</div>
     </div>`).join('');
 }
 
-function renderVolBars() {
-  const el = document.getElementById('volBars');
+function renderVolBars(){
+  const el=document.getElementById('volBars');
   if(!el) return;
-  const today = new Date().getDay();
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const vols = [28,35,42,31,47,55,47];
-  const max  = Math.max(...vols);
-  el.innerHTML = vols.map((v,i) => {
-    const isTd = i === today;
+  const today=new Date().getDay();
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const vols=[28,35,42,31,47,55,47];
+  const max=Math.max(...vols);
+  el.innerHTML=vols.map((v,i)=>{
+    const isTd=i===today;
     return `<div class="vol-bar-wrap" title="${days[i]}: $${v}M">
       <div class="vol-bar" style="height:${(v/max)*100}%;background:linear-gradient(180deg,${isTd?'var(--cyan)':'var(--blue)'},${isTd?'var(--blue)':'var(--bg4)'});opacity:${isTd?1:0.65}"></div>
       <span class="vol-bar-lbl" style="${isTd?'color:var(--cyan)':''}">${days[i]}</span>
@@ -1466,17 +1406,17 @@ function renderVolBars() {
   }).join('');
 }
 
-function renderFeeRows() {
-  const el = document.getElementById('feeRows');
+function renderFeeRows(){
+  const el=document.getElementById('feeRows');
   if(!el) return;
-  const fees = [
-    {pool:'ETH/USDC', fees:'$8,420', apr:'12.4%', share:STATE.walletConnected?'0.018%':'—'},
-    {pool:'BTC/ETH',  fees:'$6,130', apr:'9.8%',  share:STATE.walletConnected?'0.011%':'—'},
-    {pool:'SOL/USDC', fees:'$4,280', apr:'18.2%', share:STATE.walletConnected?'0.024%':'—'},
-    {pool:'BNB/USDT', fees:'$2,640', apr:'14.6%', share:'—'},
-    {pool:'AVAX/USDC',fees:'$1,820', apr:'22.1%', share:'—'},
+  const fees=[
+    {pool:'ETH/USDC',fees:'$8,420',apr:'12.4%',share:STATE.walletConnected?'0.018%':'—'},
+    {pool:'BTC/ETH', fees:'$6,130',apr:'9.8%', share:STATE.walletConnected?'0.011%':'—'},
+    {pool:'SOL/USDC',fees:'$4,280',apr:'18.2%',share:STATE.walletConnected?'0.024%':'—'},
+    {pool:'BNB/USDT',fees:'$2,640',apr:'14.6%',share:'—'},
+    {pool:'AVAX/USDC',fees:'$1,820',apr:'22.1%',share:'—'},
   ];
-  el.innerHTML = fees.map(f => `
+  el.innerHTML=fees.map(f=>`
     <div class="fee-row">
       <span style="font-weight:700">${f.pool}</span>
       <span style="font-family:var(--mono);color:var(--gold)">${f.fees}</span>
@@ -1485,19 +1425,17 @@ function renderFeeRows() {
     </div>`).join('');
 }
 
-// FIX: updateAnalyticsTokenPerf — no duplicate rows
-function updateAnalyticsTokenPerf() {
-  const el = document.getElementById('tokenPerf');
+function updateAnalyticsTokenPerf(){
+  const el=document.getElementById('tokenPerf');
   if(!el) return;
-  const syms = ['BTCUSDT','ETHUSDT','SOLUSDT','BNBUSDT'];
-  // Rebuild completely — it's only 4 rows, no flicker
-  el.innerHTML = syms.map(sym => {
-    const m = COIN_META[sym], d = STATE.prices[sym];
-    if(!m || !d) return '';
-    const up = d.chg24h >= 0;
+  const ids=['bitcoin','ethereum','solana','binancecoin'];
+  el.innerHTML=ids.map(id=>{
+    const m=CG_COINS[id],d=STATE.prices[id];
+    if(!m||!d) return '';
+    const up=d.chg24h>=0;
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:8px">
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:26px;height:26px;border-radius:50%;background:${m.bg};color:${m.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${m.icon}</div>
+        <div style="width:26px;height:26px;border-radius:50%;background:${m.bg};color:${m.c};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${m.icon}</div>
         <span style="font-weight:700">${m.sym}</span>
       </div>
       <span style="font-family:var(--mono);font-size:13px">${fmt(d.price)}</span>
@@ -1506,402 +1444,377 @@ function updateAnalyticsTokenPerf() {
   }).join('');
 }
 
-/* ══════════════════════════════════════════
-   LIVE TX FEED — FIX: proper timestamps
-══════════════════════════════════════════ */
-const TX_TYPES   = ['Swap','Bridge','Add Liq','Remove'];
-const TX_CLASSES = ['tx-swap','tx-bridge','tx-add','tx-remove'];
-const TX_PAIRS   = ['ETH→USDC','BTC→ETH','SOL→USDC','BNB→USDT','AVAX→USDC','XRP→USDT'];
+/* ══ LIVE TX FEED ══ */
+const TX_TYPES=['Swap','Bridge','Add Liq','Remove'];
+const TX_CLASSES=['tx-swap','tx-bridge','tx-add','tx-remove'];
+const TX_PAIRS=['ETH→USDC','BTC→ETH','SOL→USDC','BNB→USDT','AVAX→USDC','XRP→USDT'];
 
-function pushTx() {
-  const type = Math.floor(Math.random() * 4);
-  const pair = TX_PAIRS[Math.floor(Math.random() * TX_PAIRS.length)];
-  const val  = (Math.random() * 50000 + 200).toFixed(2);
-  const addr = '0x' + Math.random().toString(16).slice(2,8) + '…' + Math.random().toString(16).slice(2,6);
-  const chain = CHAIN_DATA[Math.floor(Math.random() * 4)].name;
-  const el = document.getElementById('txFeed');
+function pushTx(){
+  const type=Math.floor(Math.random()*4);
+  const pair=TX_PAIRS[Math.floor(Math.random()*TX_PAIRS.length)];
+  const val=(Math.random()*50000+200).toFixed(2);
+  const addr='0x'+Math.random().toString(16).slice(2,8)+'…'+Math.random().toString(16).slice(2,6);
+  const chain=CHAIN_DATA[Math.floor(Math.random()*4)].name;
+  const el=document.getElementById('txFeed');
   if(!el) return;
-  const item = document.createElement('div');
-  item.className = 'tx-item';
-  item.dataset.ts = Date.now().toString();
-  item.innerHTML = `<span class="tx-type ${TX_CLASSES[type]}">${TX_TYPES[type]}</span>
+  const item=document.createElement('div');
+  item.className='tx-item';
+  item.dataset.ts=Date.now().toString();
+  item.innerHTML=`<span class="tx-type ${TX_CLASSES[type]}">${TX_TYPES[type]}</span>
     <div class="tx-detail"><strong>${addr}</strong> ${pair} on ${chain}</div>
     <div class="tx-val">${fmt(parseFloat(val))}</div>
     <div class="tx-time">just now</div>`;
-  el.insertBefore(item, el.firstChild);
+  el.insertBefore(item,el.firstChild);
   STATE.txCount++;
-  const txEl = document.getElementById('anl-txs');
-  if(txEl) txEl.textContent = STATE.txCount.toLocaleString();
-  while(el.children.length > 30) el.removeChild(el.lastChild);
+  const txEl=document.getElementById('anl-txs');
+  if(txEl) txEl.textContent=STATE.txCount.toLocaleString();
+  while(el.children.length>30) el.removeChild(el.lastChild);
 }
 
-// FIX: accurate relative timestamps
-function updateTxTimestamps() {
-  const el = document.getElementById('txFeed');
+function updateTxTimestamps(){
+  const el=document.getElementById('txFeed');
   if(!el) return;
-  const now = Date.now();
-  el.querySelectorAll('.tx-item').forEach(item => {
-    const ts = parseInt(item.dataset.ts, 10);
+  const now=Date.now();
+  el.querySelectorAll('.tx-item').forEach(item=>{
+    const ts=parseInt(item.dataset.ts,10);
     if(!ts) return;
-    const secs = Math.floor((now - ts) / 1000);
-    const timeEl = item.querySelector('.tx-time');
+    const secs=Math.floor((now-ts)/1000);
+    const timeEl=item.querySelector('.tx-time');
     if(!timeEl) return;
-    if(secs < 5)        timeEl.textContent = 'just now';
-    else if(secs < 60)  timeEl.textContent = secs + 's ago';
-    else if(secs < 3600)timeEl.textContent = Math.floor(secs/60) + 'm ago';
-    else                timeEl.textContent = Math.floor(secs/3600) + 'h ago';
+    if(secs<5)         timeEl.textContent='just now';
+    else if(secs<60)   timeEl.textContent=secs+'s ago';
+    else if(secs<3600) timeEl.textContent=Math.floor(secs/60)+'m ago';
+    else               timeEl.textContent=Math.floor(secs/3600)+'h ago';
   });
 }
 
-/* ══════════════════════════════════════════
-   SWAP
-══════════════════════════════════════════ */
-function getPrice(tok) {
-  if(tok === 'USDC' || tok === 'USDT') return 1;
-  const def = TOKEN_DEFS[tok];
-  if(!def || !def.wsKey) return 1;
-  return STATE.prices[def.wsKey]?.price || null;
+/* ══ SWAP ══ */
+function getPriceBySymbol(sym){
+  if(sym==='USDC'||sym==='USDT') return 1;
+  const cgId=SYM_TO_CG[sym];
+  if(!cgId) return null;
+  return STATE.prices[cgId]?.price||null;
 }
 
-function openTokenPicker(target) {
-  STATE.tpTarget = target;
-  const search = document.getElementById('tpSearch');
-  if(search) search.value = '';
+function openTokenPicker(target){
+  STATE.tpTarget=target;
+  const search=document.getElementById('tpSearch');
+  if(search) search.value='';
   filterTokens();
   document.getElementById('tokenPickerOverlay').classList.add('open');
-  setTimeout(() => document.getElementById('tpSearch')?.focus(), 60);
+  setTimeout(()=>document.getElementById('tpSearch')?.focus(),60);
 }
-function closeTokenPicker() { document.getElementById('tokenPickerOverlay').classList.remove('open'); }
+function closeTokenPicker(){document.getElementById('tokenPickerOverlay').classList.remove('open');}
 
-function filterTokens() {
-  const q = (document.getElementById('tpSearch')?.value || '').toLowerCase().trim();
-  const list = document.getElementById('tpList');
+function filterTokens(){
+  const q=(document.getElementById('tpSearch')?.value||'').toLowerCase().trim();
+  const list=document.getElementById('tpList');
   if(!list) return;
-  const entries = Object.entries(TOKEN_DEFS).filter(([sym]) => {
+  const entries=Object.entries(TOKEN_DEFS).filter(([sym])=>{
     if(!q) return true;
-    const name = (TOKEN_NAMES[sym] || '').toLowerCase();
-    return sym.toLowerCase().includes(q) || name.includes(q);
+    const name=(TOKEN_NAMES[sym]||'').toLowerCase();
+    return sym.toLowerCase().includes(q)||name.includes(q);
   });
-  list.innerHTML = entries.map(([sym, d]) => {
-    const price = getPrice(sym);
-    const wsData = d.wsKey ? STATE.prices[d.wsKey] : null;
-    const chg = wsData ? wsData.chg24h : 0;
-    const name = TOKEN_NAMES[sym] || sym;
+  list.innerHTML=entries.map(([sym,d])=>{
+    const price=getPriceBySymbol(sym);
+    const cgId=d.cgId;
+    const wsData=cgId?STATE.prices[cgId]:null;
+    const chg=wsData?wsData.chg24h:0;
+    const name=TOKEN_NAMES[sym]||sym;
     return `<div class="tp-item" onclick="selectToken('${sym}')">
       <div class="tp-item-icon" style="background:${d.bg};color:${d.c}">${d.icon}</div>
-      <div>
-        <div class="tp-name">${sym}</div>
-        <div class="tp-sym">${name}</div>
-      </div>
+      <div><div class="tp-name">${sym}</div><div class="tp-sym">${name}</div></div>
       <div class="tp-price">
-        <div>${price != null ? fmt(price) : '—'}</div>
-        ${wsData ? `<div style="font-size:11px;color:${chg>=0?'var(--green)':'var(--red)'};margin-top:2px">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>` : ''}
+        <div>${price!=null?fmt(price):'$1.00'}</div>
+        ${wsData?`<div style="font-size:11px;color:${chg>=0?'var(--green)':'var(--red)'};margin-top:2px">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</div>`:''}
       </div>
     </div>`;
-  }).join('') || '<div style="padding:20px;text-align:center;color:var(--text3)">No tokens found</div>';
+  }).join('')||'<div style="padding:20px;text-align:center;color:var(--text3)">No tokens found</div>';
 }
 
-function selectToken(sym) {
+function selectToken(sym){
   closeTokenPicker();
-  const d = TOKEN_DEFS[sym];
+  const d=TOKEN_DEFS[sym];
   if(!d) return;
-  if(STATE.tpTarget === 'from') {
-    if(STATE.toTok === sym) { STATE.toTok = sym === 'ETH' ? 'BTC' : 'ETH'; applyTokenUI('to', STATE.toTok); }
-    STATE.fromTok = sym;
-    applyTokenUI('from', sym);
-  } else {
-    if(STATE.fromTok === sym) { STATE.fromTok = sym === 'ETH' ? 'BTC' : 'ETH'; applyTokenUI('from', STATE.fromTok); }
-    STATE.toTok = sym;
-    applyTokenUI('to', sym);
+  if(STATE.tpTarget==='from'){
+    if(STATE.toTok===sym){STATE.toTok=sym==='ETH'?'BTC':'ETH';applyTokenUI('to',STATE.toTok);}
+    STATE.fromTok=sym;
+    applyTokenUI('from',sym);
+  }else{
+    if(STATE.fromTok===sym){STATE.fromTok=sym==='ETH'?'BTC':'ETH';applyTokenUI('from',STATE.fromTok);}
+    STATE.toTok=sym;
+    applyTokenUI('to',sym);
   }
   updateFromBal();
   updateSwapRateDisplay();
 }
 
-function applyTokenUI(side, sym) {
-  const d = TOKEN_DEFS[sym];
+function applyTokenUI(side,sym){
+  const d=TOKEN_DEFS[sym];
   if(!d) return;
-  const iconEl = document.getElementById(side + 'Icon');
-  const tokEl  = document.getElementById(side + 'Tok');
-  const routeEl = document.getElementById(side === 'from' ? 'rFrom' : 'rTo');
-  if(iconEl) { iconEl.textContent = d.icon; iconEl.style.background = d.bg; iconEl.style.color = d.c; }
-  if(tokEl) tokEl.textContent = sym;
-  if(routeEl) routeEl.textContent = sym;
+  const iconEl=document.getElementById(side+'Icon');
+  const tokEl=document.getElementById(side+'Tok');
+  const routeEl=document.getElementById(side==='from'?'rFrom':'rTo');
+  if(iconEl){iconEl.textContent=d.icon;iconEl.style.background=d.bg;iconEl.style.color=d.c;}
+  if(tokEl) tokEl.textContent=sym;
+  if(routeEl) routeEl.textContent=sym;
 }
 
-function flipTokens() {
-  [STATE.fromTok, STATE.toTok] = [STATE.toTok, STATE.fromTok];
-  applyTokenUI('from', STATE.fromTok);
-  applyTokenUI('to', STATE.toTok);
+function flipTokens(){
+  [STATE.fromTok,STATE.toTok]=[STATE.toTok,STATE.fromTok];
+  applyTokenUI('from',STATE.fromTok);
+  applyTokenUI('to',STATE.toTok);
   updateFromBal();
   updateSwapRateDisplay();
 }
 
-function updateFromBal() {
-  const fromBalEl = document.getElementById('fromBal');
-  const toBalEl   = document.getElementById('toBal');
-  if(fromBalEl) {
-    if(STATE.walletConnected && STATE.fromTok === 'ETH') fromBalEl.textContent = parseFloat(STATE.walletBalance).toFixed(4) + ' ETH';
-    else if(STATE.walletConnected) fromBalEl.textContent = '0.00 ' + STATE.fromTok;
-    else fromBalEl.textContent = '—';
+function updateFromBal(){
+  const fromBalEl=document.getElementById('fromBal');
+  const toBalEl=document.getElementById('toBal');
+  if(fromBalEl){
+    if(STATE.walletConnected&&STATE.fromTok==='ETH') fromBalEl.textContent=parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
+    else if(STATE.walletConnected) fromBalEl.textContent='0.00 '+STATE.fromTok;
+    else fromBalEl.textContent='—';
   }
-  if(toBalEl) toBalEl.textContent = STATE.walletConnected ? '0.00 ' + STATE.toTok : '—';
+  if(toBalEl) toBalEl.textContent=STATE.walletConnected?'0.00 '+STATE.toTok:'—';
 }
 
-function updateSwapRateDisplay() {
-  const fp = getPrice(STATE.fromTok);
-  const tp = getPrice(STATE.toTok);
-  if(!fp || !tp) return;
-  const rate = fp / tp;
-  const prec = rate < 0.001 ? 8 : rate < 1 ? 6 : rate < 100 ? 4 : 2;
-  const rateEl = document.getElementById('swapRate');
-  if(rateEl) rateEl.textContent = `1 ${STATE.fromTok} = ${rate.toFixed(prec)} ${STATE.toTok}`;
+function updateSwapRateDisplay(){
+  const fp=getPriceBySymbol(STATE.fromTok);
+  const tp=getPriceBySymbol(STATE.toTok);
+  if(!fp||!tp) return;
+  const rate=fp/tp;
+  const prec=rate<0.001?8:rate<1?6:rate<100?4:2;
+  const rateEl=document.getElementById('swapRate');
+  if(rateEl) rateEl.textContent=`1 ${STATE.fromTok} = ${rate.toFixed(prec)} ${STATE.toTok}`;
   calcSwap();
 }
 
-function calcSwap() {
-  const amt = parseFloat(document.getElementById('fromAmt')?.value) || 0;
-  const fp = getPrice(STATE.fromTok);
-  const tp = getPrice(STATE.toTok);
-  if(!fp || !tp) return;
-  const receive = amt * (fp / tp) * 0.9995;
-  const prec = receive < 0.001 ? 8 : receive < 1 ? 6 : receive < 100 ? 4 : 2;
-  const toAmtEl  = document.getElementById('toAmt');
-  const fromUsdEl = document.getElementById('fromUsd');
-  const toUsdEl  = document.getElementById('toUsd');
-  const minRecEl = document.getElementById('minRec');
-  if(toAmtEl)  toAmtEl.value   = amt ? receive.toFixed(prec) : '';
-  if(fromUsdEl) fromUsdEl.textContent = amt ? `≈ ${fmt(amt * fp)}`       : '≈ $0.00';
-  if(toUsdEl)  toUsdEl.textContent   = (amt && receive) ? `≈ ${fmt(receive * tp)}` : '≈ $0.00';
-  if(minRecEl) minRecEl.textContent  = amt ? `${(receive * 0.995).toFixed(prec)} ${STATE.toTok}` : '—';
+function calcSwap(){
+  const amt=parseFloat(document.getElementById('fromAmt')?.value)||0;
+  const fp=getPriceBySymbol(STATE.fromTok);
+  const tp=getPriceBySymbol(STATE.toTok);
+  if(!fp||!tp) return;
+  const receive=amt*(fp/tp)*0.9995;
+  const prec=receive<0.001?8:receive<1?6:receive<100?4:2;
+  const toAmtEl=document.getElementById('toAmt');
+  const fromUsdEl=document.getElementById('fromUsd');
+  const toUsdEl=document.getElementById('toUsd');
+  const minRecEl=document.getElementById('minRec');
+  if(toAmtEl)   toAmtEl.value=amt?receive.toFixed(prec):'';
+  if(fromUsdEl) fromUsdEl.textContent=amt?`≈ ${fmt(amt*fp)}`:'≈ $0.00';
+  if(toUsdEl)   toUsdEl.textContent=(amt&&receive)?`≈ ${fmt(receive*tp)}`:'≈ $0.00';
+  if(minRecEl)  minRecEl.textContent=amt?`${(receive*0.995).toFixed(prec)} ${STATE.toTok}`:'—';
 }
 
-function maxSwap() {
-  const bal = parseFloat(STATE.walletBalance) || 0;
-  if(bal > 0) { document.getElementById('fromAmt').value = (bal * 0.999).toFixed(6); calcSwap(); }
+function maxSwap(){
+  const bal=parseFloat(STATE.walletBalance)||0;
+  if(bal>0){document.getElementById('fromAmt').value=(bal*0.999).toFixed(6);calcSwap();}
   else toast('⚠️','Connect wallet to use MAX');
 }
 
-async function doSwap() {
-  if(!STATE.walletConnected) { openWalletModal(); return; }
-  const amt = parseFloat(document.getElementById('fromAmt')?.value) || 0;
-  if(!amt || amt <= 0) { toast('⚠️','Please enter an amount'); return; }
-  const toAmt = document.getElementById('toAmt')?.value;
-  toast('🔄', `Swapping ${amt} ${STATE.fromTok} → ${STATE.toTok}…`);
-  setTimeout(() => toast('✅', `Swap executed! ${amt} ${STATE.fromTok} → ${parseFloat(toAmt).toFixed(6)} ${STATE.toTok}`), 1800);
+async function doSwap(){
+  if(!STATE.walletConnected){openWalletModal();return;}
+  const amt=parseFloat(document.getElementById('fromAmt')?.value)||0;
+  if(!amt||amt<=0){toast('⚠️','Please enter an amount');return;}
+  const toAmt=document.getElementById('toAmt')?.value;
+  toast('🔄',`Swapping ${amt} ${STATE.fromTok} → ${STATE.toTok}…`);
+  setTimeout(()=>toast('✅',`Swap executed! ${amt} ${STATE.fromTok} → ${parseFloat(toAmt||0).toFixed(6)} ${STATE.toTok}`),1800);
 }
 
-/* ══════════════════════════════════════════
-   BRIDGE
-══════════════════════════════════════════ */
-function calcBridge() {
-  const amt = parseFloat(document.getElementById('bridgeAmt')?.value) || 0;
-  const el = document.getElementById('bridgeReceive');
-  if(el) el.textContent = amt ? (amt * 0.999).toFixed(6) : '0.0000';
+/* ══ BRIDGE ══ */
+function calcBridge(){
+  const amt=parseFloat(document.getElementById('bridgeAmt')?.value)||0;
+  const el=document.getElementById('bridgeReceive');
+  if(el) el.textContent=amt?(amt*0.999).toFixed(6):'0.0000';
 }
-function maxBridge() {
-  const bal = parseFloat(STATE.walletBalance) || 0;
-  if(bal > 0) { document.getElementById('bridgeAmt').value = (bal * 0.999).toFixed(6); calcBridge(); }
+function maxBridge(){
+  const bal=parseFloat(STATE.walletBalance)||0;
+  if(bal>0){document.getElementById('bridgeAmt').value=(bal*0.999).toFixed(6);calcBridge();}
   else toast('⚠️','Connect wallet to use MAX');
 }
-function flipBridge() {
-  const fn = document.getElementById('bFromName');
-  const tn = document.getElementById('bToName');
-  const fe = document.getElementById('bFromEmoji');
-  const te = document.getElementById('bToEmoji');
-  if(!fn || !tn) return;
-  [fn.textContent, tn.textContent] = [tn.textContent, fn.textContent];
-  [fe.textContent, te.textContent] = [te.textContent, fe.textContent];
+function flipBridge(){
+  const fn=document.getElementById('bFromName');
+  const tn=document.getElementById('bToName');
+  const fe=document.getElementById('bFromEmoji');
+  const te=document.getElementById('bToEmoji');
+  if(!fn||!tn) return;
+  [fn.textContent,tn.textContent]=[tn.textContent,fn.textContent];
+  [fe.textContent,te.textContent]=[te.textContent,fe.textContent];
   toast('↕️','Networks swapped');
 }
-async function doBridge() {
-  if(!STATE.walletConnected) { openWalletModal(); return; }
-  const amt = parseFloat(document.getElementById('bridgeAmt')?.value) || 0;
-  if(!amt || amt <= 0) { toast('⚠️','Enter an amount to bridge'); return; }
-  toast('🌉', `Initiating bridge: ${amt} ETH · est. 2–4 min`);
+async function doBridge(){
+  if(!STATE.walletConnected){openWalletModal();return;}
+  const amt=parseFloat(document.getElementById('bridgeAmt')?.value)||0;
+  if(!amt||amt<=0){toast('⚠️','Enter an amount to bridge');return;}
+  toast('🌉',`Initiating bridge: ${amt} ETH · est. 2–4 min`);
 }
 
-/* ══════════════════════════════════════════
-   CHAIN SELECTOR
-══════════════════════════════════════════ */
-function toggleChainMenu(e) {
+/* ══ CHAIN SELECTOR ══ */
+function toggleChainMenu(e){
   e.stopPropagation();
   document.getElementById('chainMenu').classList.toggle('open');
 }
-function pickChain(el, name, color, chainId) {
-  document.querySelectorAll('.cm-item').forEach(e => e.classList.remove('sel'));
+function pickChain(el,name,color,chainId){
+  document.querySelectorAll('.cm-item').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
-  document.getElementById('chainName').textContent = name;
-  document.getElementById('chainDot').style.background = color;
+  document.getElementById('chainName').textContent=name;
+  document.getElementById('chainDot').style.background=color;
   document.getElementById('chainMenu').classList.remove('open');
-  STATE.currentChainId = chainId;
-  if(STATE.walletConnected && window.ethereum) {
-    window.ethereum.request({method:'wallet_switchEthereumChain', params:[{chainId:'0x'+chainId.toString(16)}]}).catch(()=>{});
+  STATE.currentChainId=chainId;
+  if(STATE.walletConnected&&window.ethereum){
+    window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+chainId.toString(16)}]}).catch(()=>{});
   }
-  toast('🔗', `Network: ${name}`);
+  toast('🔗',`Network: ${name}`);
 }
-document.addEventListener('click', e => {
+document.addEventListener('click',e=>{
   if(!e.target.closest('.chain-dropdown')) document.getElementById('chainMenu')?.classList.remove('open');
 });
 
-/* ══════════════════════════════════════════
-   PAGE NAVIGATION
-══════════════════════════════════════════ */
-function goPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nl').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id)?.classList.add('active');
+/* ══ PAGE NAVIGATION ══ */
+function goPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nl').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
   if(el) el.classList.add('active');
-  // Per-page init
-  if(id === 'dashboard') {
-    setTimeout(() => { updateChartDisplay(STATE.currentChart); renderTopPools(); }, 50);
-  }
-  if(id === 'swap') { updateFromBal(); updateSwapRateDisplay(); }
-  if(id === 'mining') { renderPositions(); }
-  if(id === 'analytics') { renderChainBars(); renderVolBars(); renderFeeRows(); updateAnalyticsTokenPerf(); }
+  if(id==='dashboard'){setTimeout(()=>{updateChartDisplay(STATE.currentChart);renderTopPools();},50);}
+  if(id==='swap'){updateFromBal();updateSwapRateDisplay();}
+  if(id==='mining'){renderPositions();}
+  if(id==='analytics'){renderChainBars();renderVolBars();renderFeeRows();updateAnalyticsTokenPerf();}
 }
 
-/* ══════════════════════════════════════════
-   WALLET
-══════════════════════════════════════════ */
-const SEPOLIA_CHAIN_ID = '0xaa36a7';
+/* ══ WALLET ══ */
+const SEPOLIA_CHAIN_ID='0xaa36a7';
 
-function openWalletModal() { document.getElementById('walletOverlay').classList.add('open'); }
-function closeModal()      { document.getElementById('walletOverlay').classList.remove('open'); }
+function openWalletModal(){document.getElementById('walletOverlay').classList.add('open');}
+function closeModal(){document.getElementById('walletOverlay').classList.remove('open');}
 
-async function connectEIP1193(provider, name, emoji) {
-  if(!provider) { toast('❌', `${name} not found. Please install the extension.`); return; }
+async function connectEIP1193(provider,name,emoji){
+  if(!provider){toast('❌',`${name} not found. Please install the extension.`);return;}
   closeModal();
-  try {
-    toast('⏳', `Connecting to ${name}…`);
-    const accounts = await provider.request({method:'eth_requestAccounts'});
+  try{
+    toast('⏳',`Connecting to ${name}…`);
+    const accounts=await provider.request({method:'eth_requestAccounts'});
     if(!accounts?.length) throw new Error('No accounts returned');
-    const address = accounts[0];
-    // Switch to Sepolia
-    try {
-      await provider.request({method:'wallet_switchEthereumChain', params:[{chainId:SEPOLIA_CHAIN_ID}]});
-    } catch(se) {
-      if(se.code === 4902) {
-        await provider.request({method:'wallet_addEthereumChain', params:[{
-          chainId: SEPOLIA_CHAIN_ID,
-          chainName: 'Sepolia Testnet',
-          rpcUrls: ['https://rpc.sepolia.org','https://ethereum-sepolia.blockpi.network/v1/rpc/public'],
-          nativeCurrency: {name:'SepoliaETH', symbol:'ETH', decimals:18},
-          blockExplorerUrls: ['https://sepolia.etherscan.io'],
+    const address=accounts[0];
+    try{
+      await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:SEPOLIA_CHAIN_ID}]});
+    }catch(se){
+      if(se.code===4902){
+        await provider.request({method:'wallet_addEthereumChain',params:[{
+          chainId:SEPOLIA_CHAIN_ID,
+          chainName:'Sepolia Testnet',
+          rpcUrls:['https://rpc.sepolia.org','https://ethereum-sepolia.blockpi.network/v1/rpc/public'],
+          nativeCurrency:{name:'SepoliaETH',symbol:'ETH',decimals:18},
+          blockExplorerUrls:['https://sepolia.etherscan.io'],
         }]});
       }
     }
-    // Balance
-    let balEth = 0;
-    try {
-      const balHex = await provider.request({method:'eth_getBalance', params:[address,'latest']});
-      balEth = Number(BigInt(balHex)) / 1e18;
-    } catch(_) {}
-    onWalletConnected(address, balEth, name, emoji);
-    provider.on('accountsChanged', accs => {
+    let balEth=0;
+    try{
+      const balHex=await provider.request({method:'eth_getBalance',params:[address,'latest']});
+      balEth=Number(BigInt(balHex))/1e18;
+    }catch(_){}
+    onWalletConnected(address,balEth,name,emoji);
+    provider.on('accountsChanged',accs=>{
       if(!accs.length) disconnectWallet();
-      else { STATE.walletAddress = accs[0]; updateWalletUI(); }
+      else{STATE.walletAddress=accs[0];updateWalletUI();}
     });
-    provider.on('chainChanged', () => setTimeout(() => connectEIP1193(provider, name, emoji), 500));
-  } catch(err) {
-    toast('❌', err.code === 4001 ? 'Connection rejected by user' : (err.message || 'Connection failed'));
+    provider.on('chainChanged',()=>setTimeout(()=>connectEIP1193(provider,name,emoji),500));
+  }catch(err){
+    toast('❌',err.code===4001?'Connection rejected by user':(err.message||'Connection failed'));
   }
 }
 
-async function connectMetaMask() {
-  if(typeof window.ethereum === 'undefined') { toast('❌','MetaMask not found. Install at metamask.io'); return; }
-  let provider = window.ethereum;
-  if(window.ethereum.providers?.length) provider = window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum;
-  await connectEIP1193(provider, 'MetaMask', '🦊');
+async function connectMetaMask(){
+  if(typeof window.ethereum==='undefined'){toast('❌','MetaMask not found. Install at metamask.io');return;}
+  let provider=window.ethereum;
+  if(window.ethereum.providers?.length) provider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum;
+  await connectEIP1193(provider,'MetaMask','🦊');
 }
-async function connectOKX() {
-  const provider = window.okxwallet || window.ethereum;
-  if(!provider) { toast('❌','OKX Wallet not found. Install at okx.com/web3'); return; }
-  await connectEIP1193(provider, 'OKX Wallet', '⬛');
+async function connectOKX(){
+  const provider=window.okxwallet||window.ethereum;
+  if(!provider){toast('❌','OKX Wallet not found. Install at okx.com/web3');return;}
+  await connectEIP1193(provider,'OKX Wallet','⬛');
 }
-async function connectPhantom() {
-  if(window.phantom?.ethereum) {
-    await connectEIP1193(window.phantom.ethereum, 'Phantom', '👻');
-  } else if(window.phantom?.solana) {
-    try {
+async function connectPhantom(){
+  if(window.phantom?.ethereum){
+    await connectEIP1193(window.phantom.ethereum,'Phantom','👻');
+  }else if(window.phantom?.solana){
+    try{
       closeModal();
       toast('⏳','Connecting Phantom (Solana)…');
-      const resp = await window.phantom.solana.connect();
-      onWalletConnected(resp.publicKey.toString(), 0, 'Phantom (Solana)', '👻');
-    } catch(e) { toast('❌', e.message || 'Phantom connection failed'); }
-  } else {
+      const resp=await window.phantom.solana.connect();
+      onWalletConnected(resp.publicKey.toString(),0,'Phantom (Solana)','👻');
+    }catch(e){toast('❌',e.message||'Phantom connection failed');}
+  }else{
     toast('❌','Phantom not found. Install at phantom.app');
   }
 }
 
-function onWalletConnected(address, balEth, name, emoji) {
-  STATE.walletConnected = true;
-  STATE.walletAddress   = address;
-  STATE.walletBalance   = balEth.toString();
-  STATE.walletName      = name;
+function onWalletConnected(address,balEth,name,emoji){
+  STATE.walletConnected=true;
+  STATE.walletAddress=address;
+  STATE.walletBalance=balEth.toString();
+  STATE.walletName=name;
   updateWalletUI();
-  // Seed demo positions
-  if(!STATE.positions.length) {
-    STATE.positions = [
-      {id:'eth-usdc', pool:'ETH/USDC', chain:'Ethereum', deposited:4820, earned:142.30, apr:12.4, hl:'#627EEA'},
-      {id:'sol-usdc', pool:'SOL/USDC', chain:'Solana',   deposited:2100, earned:63.40,  apr:18.2, hl:'#9945FF'},
+  if(!STATE.positions.length){
+    STATE.positions=[
+      {id:'eth-usdc',pool:'ETH/USDC',chain:'Ethereum', deposited:4820,earned:142.30,apr:12.4,hl:'#627EEA'},
+      {id:'sol-usdc',pool:'SOL/USDC',chain:'Solana',   deposited:2100,earned:63.40, apr:18.2,hl:'#9945FF'},
     ];
     renderPositions();
     startEarningSimulation();
   }
   renderFeeRows();
-  toast('✅', `${emoji} ${name} connected! ${address.slice(0,6)}…${address.slice(-4)}`);
+  toast('✅',`${emoji} ${name} connected! ${address.slice(0,6)}…${address.slice(-4)}`);
 }
 
-function updateWalletUI() {
-  const addr  = STATE.walletAddress;
-  const short = addr.length > 12 ? addr.slice(0,6) + '…' + addr.slice(-4) : addr;
-  const emoji = STATE.walletName.includes('MetaMask') ? '🦊' : STATE.walletName.includes('OKX') ? '⬛' : '👻';
-  const btn = document.getElementById('connectBtn');
-  if(btn) { btn.className = 'connect-btn connected'; btn.textContent = `${emoji} ${short}`; }
-  const panel = document.getElementById('walletPanelSwap');
-  if(panel) panel.style.display = 'block';
-  const addrEl = document.getElementById('wp-addr'); if(addrEl) addrEl.textContent = short;
-  const netEl  = document.getElementById('wp-net');  if(netEl)  netEl.textContent  = 'Sepolia Testnet';
-  const balEl  = document.getElementById('wp-bal');  if(balEl)  balEl.textContent  = parseFloat(STATE.walletBalance).toFixed(6) + ' ETH';
+function updateWalletUI(){
+  const addr=STATE.walletAddress;
+  const short=addr.length>12?addr.slice(0,6)+'…'+addr.slice(-4):addr;
+  const emoji=STATE.walletName.includes('MetaMask')?'🦊':STATE.walletName.includes('OKX')?'⬛':'👻';
+  const btn=document.getElementById('connectBtn');
+  if(btn){btn.className='connect-btn connected';btn.textContent=`${emoji} ${short}`;}
+  const panel=document.getElementById('walletPanelSwap');
+  if(panel) panel.style.display='block';
+  const addrEl=document.getElementById('wp-addr');if(addrEl)addrEl.textContent=short;
+  const netEl=document.getElementById('wp-net');if(netEl)netEl.textContent='Sepolia Testnet';
+  const balEl=document.getElementById('wp-bal');if(balEl)balEl.textContent=parseFloat(STATE.walletBalance).toFixed(6)+' ETH';
   updateFromBal();
-  const bbal = document.getElementById('bridgeBal'); if(bbal) bbal.textContent = parseFloat(STATE.walletBalance).toFixed(4) + ' ETH';
-  const swapBtn = document.getElementById('swapBtn');
-  if(swapBtn) { swapBtn.textContent = 'Swap Now'; swapBtn.disabled = false; }
-  const bridgeBtn = document.getElementById('bridgeBtn');
-  if(bridgeBtn) bridgeBtn.textContent = 'Bridge Now';
+  const bbal=document.getElementById('bridgeBal');if(bbal)bbal.textContent=parseFloat(STATE.walletBalance).toFixed(4)+' ETH';
+  const swapBtn=document.getElementById('swapBtn');
+  if(swapBtn){swapBtn.textContent='Swap Now';swapBtn.disabled=false;}
+  const bridgeBtn=document.getElementById('bridgeBtn');
+  if(bridgeBtn) bridgeBtn.textContent='Bridge Now';
 }
 
-function disconnectWallet() {
-  STATE.walletConnected = false; STATE.walletAddress = ''; STATE.walletBalance = '0';
-  const btn = document.getElementById('connectBtn');
-  if(btn) { btn.className = 'connect-btn disconnected'; btn.textContent = 'Connect Wallet'; }
+function disconnectWallet(){
+  STATE.walletConnected=false;STATE.walletAddress='';STATE.walletBalance='0';
+  const btn=document.getElementById('connectBtn');
+  if(btn){btn.className='connect-btn disconnected';btn.textContent='Connect Wallet';}
   toast('🔌','Wallet disconnected');
 }
 
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
-let _toastTimer = null;
-function toast(icon, msg) {
-  const iconEl = document.getElementById('toastIcon');
-  const msgEl  = document.getElementById('toastMsg');
-  const t = document.getElementById('toast');
+/* ══ TOAST ══ */
+let _toastTimer=null;
+function toast(icon,msg){
+  const iconEl=document.getElementById('toastIcon');
+  const msgEl=document.getElementById('toastMsg');
+  const t=document.getElementById('toast');
   if(!t) return;
-  if(iconEl) iconEl.textContent = icon;
-  if(msgEl)  msgEl.textContent  = msg;
+  if(iconEl) iconEl.textContent=icon;
+  if(msgEl)  msgEl.textContent=msg;
   t.classList.remove('show');
   void t.offsetWidth;
   t.classList.add('show');
   if(_toastTimer) clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove('show'), 4500);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),4500);
 }
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
-(function init() {
-  // 1. Build static DOM structures
+/* ══ INIT ══ */
+(function init(){
+  // 1. Build static DOM
   buildTicker();
   buildMarketTable();
   renderMiningPools();
@@ -1909,45 +1822,41 @@ function toast(icon, msg) {
   renderVolBars();
   renderFeeRows();
 
-  // 2. Seed mock prices so UI is never blank
+  // 2. Seed mock data so UI never empty
   useMockPrices();
-
-  // 3. Render immediately with mock data
   renderAllMarket();
-  renderTopPools();
 
-  // 4. Start live feed
-  initWS();
+  // 3. Start CoinGecko live polling
+  startPolling();
 
-  // 5. Seed TX feed
-  for(let i = 0; i < 6; i++) setTimeout(pushTx, i * 180);
-  setInterval(pushTx, 3500);
+  // 4. Seed TX feed
+  for(let i=0;i<6;i++) setTimeout(pushTx,i*180);
+  setInterval(pushTx,3500);
 
-  // 6. Timestamp updater every 5s
-  setInterval(updateTxTimestamps, 5000);
+  // 5. Timestamp updater
+  setInterval(updateTxTimestamps,5000);
 
-  // 7. Chart resize observer (after layout settles)
-  setTimeout(setupChartResize, 200);
+  // 6. Chart resize observer
+  setTimeout(setupChartResize,200);
 
-  // 8. Auto-connect if wallet already approved
-  window.addEventListener('load', async () => {
-    if(typeof window.ethereum !== 'undefined') {
-      try {
-        const accounts = await window.ethereum.request({method:'eth_accounts'});
-        if(accounts?.length) {
-          let balEth = 0;
-          try {
-            const balHex = await window.ethereum.request({method:'eth_getBalance', params:[accounts[0],'latest']});
-            balEth = Number(BigInt(balHex)) / 1e18;
-          } catch(_) {}
-          const name  = window.ethereum.isMetaMask ? 'MetaMask' : 'Wallet';
-          const emoji = window.ethereum.isMetaMask ? '🦊' : '⬛';
-          onWalletConnected(accounts[0], balEth, name, emoji);
+  // 7. Auto-connect if wallet already approved
+  window.addEventListener('load',async()=>{
+    if(typeof window.ethereum!=='undefined'){
+      try{
+        const accounts=await window.ethereum.request({method:'eth_accounts'});
+        if(accounts?.length){
+          let balEth=0;
+          try{
+            const balHex=await window.ethereum.request({method:'eth_getBalance',params:[accounts[0],'latest']});
+            balEth=Number(BigInt(balHex))/1e18;
+          }catch(_){}
+          const name=window.ethereum.isMetaMask?'MetaMask':'Wallet';
+          const emoji=window.ethereum.isMetaMask?'🦊':'⬛';
+          onWalletConnected(accounts[0],balEth,name,emoji);
         }
-      } catch(_) {}
+      }catch(_){}
     }
-    // Redraw chart after full layout
-    setTimeout(() => updateChartDisplay(STATE.currentChart), 150);
+    setTimeout(()=>updateChartDisplay(STATE.currentChart),150);
   });
 })();
 </script>
