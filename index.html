@@ -4,975 +4,1767 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rialo TrustLayer — Trust should be visible.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --void: #03040a;
-  --abyss: #060b18;
-  --deep: #080f20;
-  --navy: #0c1830;
-  --c1: #00c8f0;
-  --c2: #0090c8;
-  --c-glow: rgba(0,200,240,0.12);
-  --c-soft: rgba(0,200,240,0.06);
-  --silver: #6b82a8;
-  --silver-2: #8fa8cc;
-  --pearl: #c8daf0;
-  --white: #e8f2ff;
-  --success: #00e8a0;
-  --warn: #f0a000;
-  --danger: #f04060;
-  --gold: #e8c060;
-  --font-display: 'DM Serif Display', serif;
-  --font-body: 'Outfit', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
+  :root {
+    --black: #030508;
+    --navy: #050c18;
+    --navy2: #07111f;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --cyan-dim: rgba(0,212,255,0.12);
+    --cyan-glow: rgba(0,212,255,0.25);
+    --gold: #c9a84c;
+    --silver: rgba(180,200,220,0.7);
+    --glass: rgba(8,20,38,0.6);
+    --glass2: rgba(0,212,255,0.04);
+    --border: rgba(0,212,255,0.15);
+    --border2: rgba(0,212,255,0.3);
+    --text: rgba(200,220,240,0.92);
+    --text-dim: rgba(140,170,200,0.6);
+  }
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+  html { scroll-behavior: smooth; }
 
-body {
-  background: var(--void);
-  color: var(--white);
-  font-family: var(--font-body);
-  overflow-x: hidden;
-  cursor: none;
-  min-height: 100vh;
-}
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-/* ─── CURSOR ─── */
-#cur, #cur2 {
-  position: fixed; border-radius: 50%;
-  pointer-events: none; z-index: 9999;
-  mix-blend-mode: screen;
-}
-#cur { width:6px; height:6px; background:var(--c1); transition:transform .08s; }
-#cur2 {
-  width:28px; height:28px;
-  border:1px solid rgba(0,200,240,.35);
-  transform:translate(-50%,-50%);
-  transition:transform .18s cubic-bezier(.4,0,.2,1), width .3s, height .3s, border-color .3s;
-}
-body:has(button:hover) #cur2, body:has(a:hover) #cur2 {
-  width:44px; height:44px; border-color:rgba(0,200,240,.7);
-}
+  /* Custom cursor */
+  #cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, opacity 0.3s;
+    box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 28px; height: 28px;
+    border: 1px solid rgba(0,212,255,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.3s, height 0.3s, opacity 0.3s;
+  }
 
-/* ─── LAYERS ─── */
-#bgCanvas { position:fixed; inset:0; z-index:0; pointer-events:none; }
-.noise {
-  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
-}
-.vignette {
-  position:fixed; inset:0; z-index:2; pointer-events:none;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(3,4,10,.85) 100%);
-}
-.grid {
-  position:fixed; inset:0; z-index:2; pointer-events:none;
-  background-image:
-    linear-gradient(rgba(0,200,240,.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,200,240,.028) 1px, transparent 1px);
-  background-size: 80px 80px;
-}
+  /* Background canvas */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
 
-/* ─── NAV ─── */
-nav {
-  position:fixed; top:0; left:0; right:0; z-index:500;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:20px 56px;
-  backdrop-filter:blur(20px) saturate(180%);
-  background:rgba(3,4,10,.5);
-  border-bottom:1px solid rgba(0,200,240,.07);
-}
-.nav-logo {
-  font-family:var(--font-mono); font-size:14px; font-weight:500;
-  letter-spacing:.15em; color:var(--white); display:flex; align-items:center; gap:10px;
-}
-.nav-pulse {
-  width:7px; height:7px; border-radius:50%; background:var(--c1);
-  box-shadow:0 0 10px var(--c1), 0 0 20px rgba(0,200,240,.4);
-  animation:beat 2.5s ease-in-out infinite;
-}
-@keyframes beat { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(.7);opacity:.4} }
-.nav-links { display:flex; gap:36px; list-style:none; }
-.nav-links a {
-  font-size:12px; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--silver); text-decoration:none; transition:color .3s;
-}
-.nav-links a:hover { color:var(--c1); }
-.nav-pill {
-  font-family:var(--font-mono); font-size:10px; letter-spacing:.12em;
-  color:rgba(0,200,240,.7); border:1px solid rgba(0,200,240,.2);
-  padding:6px 14px; background:rgba(0,200,240,.04);
-}
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(3,5,8,0.9), transparent);
+    backdrop-filter: blur(0px);
+  }
 
-/* ─── SECTIONS ─── */
-section { position:relative; z-index:10; }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-/* ─── HERO ─── */
-#hero {
-  min-height:100vh;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:120px 48px 80px; text-align:center; gap:0;
-}
-.hero-tag {
-  display:inline-flex; align-items:center; gap:8px;
-  font-family:var(--font-mono); font-size:10px; letter-spacing:.25em;
-  text-transform:uppercase; color:rgba(0,200,240,.6);
-  border:1px solid rgba(0,200,240,.15); padding:7px 18px;
-  background:rgba(0,200,240,.04); margin-bottom:48px;
-  animation:fadeUp .8s .2s ease both;
-}
-.hero-tag-dot { width:5px; height:5px; border-radius:50%; background:var(--c1); animation:beat 1.5s infinite; }
+  .nav-logo::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--cyan);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
 
-.hero-h1 {
-  font-family:var(--font-display); font-size:clamp(52px,7.5vw,108px);
-  font-weight:400; line-height:1.0; letter-spacing:-.01em;
-  margin-bottom:28px;
-  animation:fadeUp .9s .4s ease both;
-}
-.hero-h1 em { font-style:italic; color:transparent; position:relative;
-  -webkit-text-stroke:1px rgba(0,200,240,.5); }
-.hero-h1 em .fill {
-  position:absolute; inset:0;
-  background:linear-gradient(135deg, var(--c1) 0%, #60d8f8 50%, var(--c2) 100%);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  background-clip:text;
-  clip-path:inset(0 100% 0 0);
-  animation:revealText 1.4s 1.2s cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes revealText { to { clip-path:inset(0 0% 0 0); } }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
 
-.hero-sub {
-  font-size:18px; font-weight:300; color:var(--silver-2); line-height:1.7;
-  max-width:520px; margin-bottom:56px;
-  animation:fadeUp .9s .65s ease both;
-}
-.hero-sub strong { color:var(--pearl); font-weight:400; }
+  .nav-links a {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
 
-/* NODE VISUALIZER */
-#nodeViz {
-  width:min(600px,90vw); height:min(600px,90vw); max-height:480px;
-  margin-bottom:52px; position:relative;
-  animation:fadeUp 1s .5s ease both;
-}
-#nodeCanvas { width:100%; height:100%; display:block; }
+  /* HERO */
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    overflow: hidden;
+  }
 
-.btn-cta {
-  position:relative; display:inline-flex; align-items:center; gap:14px;
-  padding:18px 44px; background:transparent;
-  border:1px solid rgba(0,200,240,.5); color:var(--c1);
-  font-family:var(--font-mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
-  cursor:none; overflow:hidden; transition:color .4s, box-shadow .4s;
-  animation:fadeUp .9s .9s ease both;
-}
-.btn-cta::before {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(90deg, transparent, rgba(0,200,240,.12), transparent);
-  transform:translateX(-100%); transition:transform .6s ease;
-}
-.btn-cta:hover::before { transform:translateX(100%); }
-.btn-cta-bg {
-  position:absolute; inset:0;
-  background:linear-gradient(90deg,rgba(0,200,240,.08),rgba(0,144,200,.08));
-  transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.4,0,.2,1);
-}
-.btn-cta:hover .btn-cta-bg { transform:scaleX(1); }
-.btn-cta:hover { color:var(--white); box-shadow:0 0 40px rgba(0,200,240,.2), inset 0 0 20px rgba(0,200,240,.06); }
-.btn-cta-text { position:relative; z-index:1; }
-.btn-cta-icon { position:relative; z-index:1; width:16px; height:16px; transition:transform .4s; }
-.btn-cta:hover .btn-cta-icon { transform:rotate(180deg) scale(1.2); }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 32px;
+    backdrop-filter: blur(12px);
+    animation: fade-up 0.8s ease both;
+  }
 
-.hero-stats {
-  display:flex; gap:72px; margin-top:72px;
-  animation:fadeUp .9s 1.1s ease both;
-  border-top:1px solid rgba(0,200,240,.07); padding-top:40px;
-}
-.stat { text-align:center; }
-.stat-n { font-family:var(--font-display); font-size:36px; color:var(--white); }
-.stat-l {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.18em;
-  text-transform:uppercase; color:var(--silver); margin-top:5px;
-}
+  .hero-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--cyan);
+    border-radius: 50%;
+    animation: pulse-dot 1.5s ease infinite;
+  }
 
-/* ─── SCAN OVERLAY ─── */
-#scanOv {
-  display:none; position:fixed; inset:0; z-index:600;
-  align-items:center; justify-content:center; flex-direction:column; gap:40px;
-  background:var(--void);
-}
-#scanOv.on { display:flex; }
-#scanOv canvas { position:absolute; inset:0; z-index:0; }
-.scan-inner { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:32px; }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--cyan); }
+    50% { opacity: 0.4; box-shadow: none; }
+  }
 
-.scan-orb {
-  position:relative; width:180px; height:180px;
-}
-.orb-ring {
-  position:absolute; inset:0; border-radius:50%;
-  border:1px solid rgba(0,200,240,.15);
-  animation:orbPulse 2.2s ease-in-out infinite;
-}
-.orb-ring:nth-child(2) { inset:18px; border-color:rgba(0,200,240,.25); animation-delay:-.4s; }
-.orb-ring:nth-child(3) { inset:36px; border-color:rgba(0,200,240,.4); animation-delay:-.8s; }
-@keyframes orbPulse {
-  0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.06);opacity:1}
-}
-.orb-core {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:54px; height:54px; border-radius:50%;
-  border:1px solid var(--c1); display:flex; align-items:center; justify-content:center;
-  box-shadow:0 0 24px rgba(0,200,240,.5), inset 0 0 20px rgba(0,200,240,.1);
-}
-.orb-scan {
-  position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,var(--c1),transparent);
-  box-shadow:0 0 8px var(--c1), 0 2px 12px rgba(0,200,240,.4);
-  animation:scanSweep 1.8s linear infinite;
-}
-@keyframes scanSweep { 0%{top:0;opacity:1} 85%{opacity:1} 100%{top:100%;opacity:0} }
+  h1.hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: #fff;
+    animation: fade-up 0.9s 0.1s ease both;
+    max-width: 900px;
+  }
 
-.scan-label {
-  font-family:var(--font-mono); font-size:11px; letter-spacing:.25em;
-  color:var(--c1); text-transform:uppercase; text-align:center;
-  min-height:20px;
-}
-.scan-bar { width:300px; height:1px; background:rgba(0,200,240,.1); position:relative; }
-.scan-fill {
-  position:absolute; left:0; top:0; height:1px;
-  background:var(--c1); box-shadow:0 0 8px var(--c1);
-  transition:width .12s;
-}
-.scan-dots { display:flex; gap:6px; }
-.sdot {
-  width:5px; height:5px; border-radius:50%;
-  background:rgba(0,200,240,.12); transition:all .4s;
-}
-.sdot.lit { background:var(--c1); box-shadow:0 0 6px var(--c1); }
+  h1.hero-title .word-trust {
+    background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-/* ─── DASHBOARD ─── */
-#dash { display:none; }
-#dash.on { display:block; }
+  .hero-sub {
+    font-size: clamp(15px, 2vw, 19px);
+    font-weight: 300;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.7;
+    margin-top: 24px;
+    animation: fade-up 1s 0.2s ease both;
+    letter-spacing: 0.01em;
+  }
 
-.dash-wrap { padding:88px 48px 60px; max-width:1300px; margin:0 auto; }
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    animation: fade-up 1s 0.35s ease both;
+    align-items: center;
+  }
 
-.dash-topbar {
-  display:flex; align-items:flex-start; justify-content:space-between;
-  padding-bottom:28px; margin-bottom:32px;
-  border-bottom:1px solid rgba(0,200,240,.08);
-}
-.wallet-chip {
-  display:flex; flex-direction:column; gap:6px;
-}
-.wallet-label {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.2em;
-  text-transform:uppercase; color:var(--silver); opacity:.6;
-}
-.wallet-addr {
-  font-family:var(--font-mono); font-size:14px; color:var(--pearl); letter-spacing:.05em;
-}
-.wallet-addr span { color:var(--c1); }
-.wallet-net {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.15em;
-  color:var(--success); display:flex; align-items:center; gap:6px; margin-top:4px;
-}
-.wdot { width:5px; height:5px; border-radius:50%; background:var(--success); box-shadow:0 0 6px var(--success); animation:beat 2s infinite; }
+  /* CONNECT WALLET BUTTON */
+  .btn-connect {
+    position: relative;
+    padding: 14px 36px;
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: none;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 0 rgba(0,212,255,0);
+  }
 
-.ts-badge {
-  display:flex; align-items:center; gap:16px;
-  padding:16px 28px;
-  border:1px solid rgba(0,232,160,.2);
-  background:rgba(0,232,160,.04);
-  position:relative; overflow:hidden;
-}
-.ts-badge::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,var(--success),transparent);
-}
-.ts-num { font-family:var(--font-display); font-size:44px; color:var(--success); line-height:1; }
-.ts-info { display:flex; flex-direction:column; gap:3px; }
-.ts-title { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--silver); }
-.ts-sub { font-size:12px; color:var(--silver-2); }
+  .btn-connect::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+    z-index: -1;
+  }
 
-/* CARD GRID */
-.cg3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-bottom:1px; }
-.cg2 { display:grid; grid-template-columns:1.7fr 1fr; gap:1px; margin-bottom:1px; }
-.cg-full { margin-bottom:1px; }
+  .btn-connect:hover {
+    color: #000;
+    box-shadow: 0 0 30px var(--cyan-glow), 0 0 60px rgba(0,212,255,0.15);
+  }
 
-.gc {
-  background:rgba(8,15,32,.65); backdrop-filter:blur(12px);
-  border:1px solid rgba(0,200,240,.07);
-  padding:28px 32px; position:relative; overflow:hidden;
-  transition:border-color .4s, background .4s;
-}
-.gc::after {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,200,240,.5),transparent);
-  transform:scaleX(0); transform-origin:left; transition:transform .5s;
-}
-.gc:hover::after { transform:scaleX(1); }
-.gc:hover { border-color:rgba(0,200,240,.18); background:rgba(8,18,38,.8); }
+  .btn-connect:hover::before { transform: scaleX(1); }
 
-.gc-label {
-  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.22em;
-  text-transform:uppercase; color:var(--silver); margin-bottom:20px; opacity:.7;
-}
-.gc-val { font-family:var(--font-display); font-size:32px; margin-bottom:10px; }
-.gc-val.g { color:var(--success); } .gc-val.c { color:var(--c1); }
-.gc-val.w { color:var(--warn); } .gc-val.d { color:var(--danger); } .gc-val.gold { color:var(--gold); }
+  .btn-connect .btn-glow {
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.15), transparent 70%);
+    animation: btn-glow-rotate 3s linear infinite;
+    pointer-events: none;
+  }
 
-.info-row { display:flex; align-items:center; gap:8px; margin-top:8px; }
-.idot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
-.idot.g { background:var(--success); box-shadow:0 0 5px var(--success); }
-.idot.c { background:var(--c1); box-shadow:0 0 5px var(--c1); }
-.idot.w { background:var(--warn); box-shadow:0 0 5px var(--warn); }
-.idot.d { background:var(--danger); box-shadow:0 0 5px var(--danger); }
-.idot.gold { background:var(--gold); box-shadow:0 0 5px var(--gold); }
-.itext { font-size:12px; color:var(--silver-2); line-height:1.5; }
+  @keyframes btn-glow-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 
-/* CONSTELLATION */
-#constWrap {
-  background:rgba(6,11,24,.8); backdrop-filter:blur(12px);
-  border:1px solid rgba(0,200,240,.07); position:relative; overflow:hidden;
-}
-#constWrap::before {
-  content:'IDENTITY CONSTELLATION'; position:absolute; top:28px; left:32px;
-  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.22em;
-  color:var(--silver); opacity:.7; z-index:2;
-}
-#constCanvas { width:100%; height:340px; display:block; }
-.const-legend {
-  display:flex; gap:28px; padding:16px 32px; border-top:1px solid rgba(0,200,240,.06);
-  background:rgba(3,4,10,.4);
-}
-.leg-item { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--silver); }
-.leg-dot { width:8px; height:8px; border-radius:50%; }
+  /* Animated border */
+  .btn-connect-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .btn-connect-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--cyan), transparent, var(--cyan), transparent);
+    background-size: 300% 100%;
+    animation: border-move 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+  }
+  .btn-connect-wrap:hover::after { opacity: 1; }
 
-/* RISK CARD */
-.gc.risk { border-color:rgba(240,64,96,.1) !important; background:rgba(240,64,96,.02) !important; }
-.risk-alert {
-  padding:14px 16px; background:rgba(240,64,96,.05);
-  border:1px solid rgba(240,64,96,.15); margin-top:16px;
-  font-size:12px; color:rgba(240,64,96,.9); line-height:1.6;
-}
-.glitch-txt {
-  animation:glitch 4s ease-in-out infinite;
-}
-@keyframes glitch {
-  0%,88%,100%{transform:none;filter:none}
-  89%{transform:skewX(-3deg);filter:hue-rotate(80deg)}
-  91%{transform:skewX(3deg) translateX(2px);filter:none}
-  93%{transform:translateX(-2px);filter:hue-rotate(-60deg)}
-  95%{transform:none;filter:none}
-}
+  @keyframes border-move {
+    from { background-position: 0% 0%; }
+    to { background-position: 300% 0%; }
+  }
 
-/* HISTORY */
-.hist-row {
-  display:flex; align-items:center; gap:16px; padding:14px 0;
-  border-bottom:1px solid rgba(0,200,240,.05); font-size:12px;
-  transition:background .2s;
-}
-.hist-row:last-child { border:none; }
-.hist-row:hover { background:rgba(0,200,240,.02); padding-left:8px; }
-.hist-tag {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.08em;
-  padding:3px 9px; border-radius:2px; white-space:nowrap;
-}
-.ht-gov { color:var(--gold); background:rgba(232,192,96,.07); border:1px solid rgba(232,192,96,.2); }
-.ht-build { color:var(--c1); background:rgba(0,200,240,.07); border:1px solid rgba(0,200,240,.2); }
-.ht-defi { color:var(--success); background:rgba(0,232,160,.07); border:1px solid rgba(0,232,160,.2); }
-.ht-audit { color:var(--warn); background:rgba(240,160,0,.07); border:1px solid rgba(240,160,0,.2); }
-.hist-hash { font-family:var(--font-mono); font-size:10px; color:var(--silver); flex:1; }
-.hist-desc { color:var(--pearl); flex:3; }
-.hist-time { font-family:var(--font-mono); font-size:9px; color:rgba(107,130,168,.45); white-space:nowrap; }
+  .btn-secondary {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    cursor: none;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .btn-secondary:hover { color: var(--text); }
+  .btn-secondary svg { transition: transform 0.3s; }
+  .btn-secondary:hover svg { transform: translateX(4px); }
 
-/* SIGN MODAL */
-#signMod {
-  display:none; position:fixed; inset:0; z-index:700;
-  align-items:center; justify-content:center;
-  background:rgba(3,4,10,.92); backdrop-filter:blur(24px);
-}
-#signMod.on { display:flex; }
-.modal {
-  width:500px; background:var(--navy);
-  border:1px solid rgba(0,200,240,.2); position:relative; overflow:hidden;
-}
-.modal::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,transparent,var(--c1),transparent);
-}
-.modal-head {
-  padding:32px 36px 20px;
-  border-bottom:1px solid rgba(0,200,240,.07);
-}
-.modal-title { font-family:var(--font-display); font-size:22px; margin-bottom:6px; }
-.modal-from { font-family:var(--font-mono); font-size:10px; color:var(--silver); letter-spacing:.08em; }
-.modal-body { padding:24px 36px; }
-.rialo-notice {
-  display:flex; gap:10px; align-items:flex-start; padding:12px 16px;
-  background:rgba(0,200,240,.05); border:1px solid rgba(0,200,240,.15);
-  margin-bottom:20px; font-size:12px; color:var(--silver-2); line-height:1.5;
-}
-.ri-icon { color:var(--c1); font-size:14px; margin-top:1px; }
-.perm {
-  padding:16px; border:1px solid rgba(0,200,240,.08);
-  background:rgba(0,200,240,.02); margin-bottom:10px; position:relative;
-  transition:border-color .3s;
-}
-.perm:hover { border-color:rgba(0,200,240,.18); }
-.perm.bad { border-color:rgba(240,64,96,.15); background:rgba(240,64,96,.02); }
-.perm-raw {
-  font-family:var(--font-mono); font-size:9px; color:rgba(107,130,168,.4);
-  text-decoration:line-through; margin-bottom:7px; letter-spacing:.05em;
-}
-.perm-human { font-size:13px; color:var(--pearl); line-height:1.55; }
-.perm.bad .perm-human { color:rgba(240,80,100,.9); }
-.perm-badge {
-  position:absolute; right:14px; top:50%; transform:translateY(-50%);
-  font-size:15px;
-}
-.modal-foot {
-  padding:20px 36px 28px;
-  display:flex; gap:12px;
-  border-top:1px solid rgba(0,200,240,.06);
-}
-.btn-rej {
-  flex:1; padding:14px; background:transparent;
-  border:1px solid rgba(240,64,96,.35); color:var(--danger);
-  font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; cursor:none;
-  transition:background .3s;
-}
-.btn-rej:hover { background:rgba(240,64,96,.08); }
-.btn-app {
-  flex:1.2; padding:14px; background:rgba(0,200,240,.9);
-  border:1px solid var(--c1); color:var(--void);
-  font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; font-weight:500; cursor:none;
-  transition:background .3s, box-shadow .3s;
-}
-.btn-app:hover { background:var(--c1); box-shadow:0 0 30px rgba(0,200,240,.4); }
+  /* Center visualization canvas */
+  #trust-canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
+  }
 
-/* SHOW SIGN BTN */
-.ghost-btn {
-  display:inline-flex; align-items:center; gap:8px; margin-top:20px;
-  padding:10px 18px; border:1px solid rgba(0,200,240,.2);
-  color:rgba(0,200,240,.6); font-family:var(--font-mono); font-size:9px;
-  letter-spacing:.15em; text-transform:uppercase; cursor:none; transition:all .3s;
-  background:rgba(0,200,240,.03);
-}
-.ghost-btn:hover { border-color:rgba(0,200,240,.45); color:var(--c1); background:rgba(0,200,240,.07); }
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.4;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    animation: fade-up 1s 0.6s ease both;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+    animation: scroll-line 2s ease infinite;
+  }
+  @keyframes scroll-line {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
 
-/* FOOTER */
-footer {
-  position:relative; z-index:10;
-  border-top:1px solid rgba(0,200,240,.06);
-  padding:20px 56px;
-  display:flex; align-items:center; justify-content:space-between;
-}
-.foot-l { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; color:rgba(107,130,168,.4); text-transform:uppercase; }
-.foot-r { font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; color:rgba(0,200,240,.3); }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-/* ANIM */
-@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  /* SCANNING OVERLAY */
+  #scan-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    background: rgba(3,5,8,0.85);
+  }
+  #scan-overlay.active { display: flex; }
 
-/* SCROLLBAR */
-::-webkit-scrollbar { width:3px; } ::-webkit-scrollbar-track { background:var(--void); }
-::-webkit-scrollbar-thumb { background:rgba(0,200,240,.18); border-radius:2px; }
+  .scan-container {
+    position: relative;
+    width: 500px;
+    text-align: center;
+  }
 
-/* SELECTION */
-::selection { background:rgba(0,200,240,.25); color:var(--white); }
+  .scan-ring {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 40px;
+  }
+
+  .scan-ring svg {
+    width: 100%; height: 100%;
+    animation: spin 3s linear infinite;
+  }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .scan-inner {
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.08), transparent);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--cyan);
+  }
+
+  .scan-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--cyan), transparent);
+    animation: scan-sweep 2s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--cyan);
+  }
+
+  @keyframes scan-sweep {
+    0% { top: 0; opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .scan-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .scan-status {
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    opacity: 0.8;
+    min-height: 20px;
+  }
+
+  .scan-address {
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .scan-address.show { opacity: 1; }
+
+  .scan-bars {
+    display: flex;
+    gap: 4px;
+    margin: 24px auto;
+    width: 200px;
+    align-items: flex-end;
+    height: 40px;
+    justify-content: center;
+  }
+
+  .scan-bar {
+    flex: 1;
+    background: var(--cyan);
+    opacity: 0.4;
+    border-radius: 2px;
+    animation: bar-pulse 1s ease infinite;
+  }
+
+  @keyframes bar-pulse {
+    0%, 100% { opacity: 0.2; transform: scaleY(0.3); }
+    50% { opacity: 0.8; transform: scaleY(1); }
+  }
+
+  .scan-complete-btn {
+    margin-top: 32px;
+    padding: 12px 32px;
+    background: var(--cyan);
+    color: #000;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    border-radius: 4px;
+    display: none;
+    transition: box-shadow 0.3s;
+  }
+  .scan-complete-btn.show { display: inline-block; }
+  .scan-complete-btn:hover { box-shadow: 0 0 30px var(--cyan-glow); }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    opacity: 0.7;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  /* IDENTITY DASHBOARD */
+  #dashboard {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: none;
+  }
+  #dashboard.show { display: block; }
+
+  .dashboard-header {
+    margin-bottom: 60px;
+  }
+
+  .dashboard-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .wallet-aura {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid rgba(0,212,255,0.3);
+    background: rgba(0,212,255,0.06);
+    font-size: 13px;
+    color: var(--cyan);
+    margin-top: 16px;
+  }
+
+  .aura-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  /* Dashboard grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s, transform 0.3s;
+    animation: card-appear 0.5s ease both;
+  }
+
+  .metric-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-4px);
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .metric-card:hover::before { opacity: 1; }
+
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -50%;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse, var(--cyan-dim), transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .metric-card:hover::after { opacity: 1; }
+
+  @keyframes card-appear {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .metric-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .metric-value.cyan { color: var(--cyan); }
+  .metric-value.gold { color: var(--gold); }
+  .metric-value.good {
+    background: linear-gradient(135deg, #fff 30%, #4eff91);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .metric-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .metric-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-cyan { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+  .badge-gold { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+  .badge-green { background: rgba(78,255,145,0.08); color: #4eff91; border: 1px solid rgba(78,255,145,0.2); }
+  .badge-blue { background: rgba(60,130,255,0.1); color: #5b9eff; border: 1px solid rgba(60,130,255,0.2); }
+
+  /* Wide cards */
+  .wide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-full {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s;
+    animation: card-appear 0.6s ease both;
+  }
+  .card-full:hover { border-color: var(--border2); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Activity bar chart */
+  .activity-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 80px;
+  }
+
+  .act-bar {
+    flex: 1;
+    background: var(--cyan);
+    border-radius: 2px 2px 0 0;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    animation: bar-grow 0.6s ease both;
+  }
+  .act-bar:hover { opacity: 1; }
+
+  @keyframes bar-grow {
+    from { transform: scaleY(0); transform-origin: bottom; }
+    to { transform: scaleY(1); transform-origin: bottom; }
+  }
+
+  /* Chain indicators */
+  .chain-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chain-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text);
+    transition: border-color 0.3s;
+  }
+  .chain-pill:hover { border-color: var(--border2); }
+
+  .chain-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  /* CONSTELLATION SECTION */
+  #constellation {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 500px;
+    margin: 0 auto 60px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  #constellation-canvas {
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(5,12,24,0.8);
+  }
+
+  /* FEATURES ROW */
+  #features {
+    padding: 120px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    padding: 36px 28px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(5,12,24,0.5);
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-6px);
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 120px; height: 120px;
+    background: radial-gradient(ellipse, var(--cyan-dim), transparent);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    background: var(--glass2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* PERMISSION MODAL */
+  #permission-demo {
+    padding: 80px 48px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .permission-modal {
+    background: var(--glass);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 32px;
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .permission-modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--cyan), transparent);
+  }
+
+  .permission-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .perm-icon {
+    width: 48px; height: 48px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .perm-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .perm-source {
+    font-size: 12px;
+    color: var(--cyan);
+    opacity: 0.7;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .perm-body {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .perm-technical {
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .perm-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .perm-deny {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255,60,60,0.06);
+    border: 1px solid rgba(255,60,60,0.2);
+    color: rgba(255,100,100,0.8);
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    cursor: none;
+    letter-spacing: 0.08em;
+    transition: background 0.3s;
+  }
+  .perm-deny:hover { background: rgba(255,60,60,0.12); }
+
+  .perm-approve {
+    flex: 2;
+    padding: 12px;
+    background: var(--cyan);
+    border: none;
+    color: #000;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: none;
+    letter-spacing: 0.08em;
+    transition: box-shadow 0.3s;
+  }
+  .perm-approve:hover { box-shadow: 0 0 20px var(--cyan-glow); }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* Divider */
+  .h-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Scroll-triggered visibility */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
 </style>
 </head>
 <body>
 
-<div id="cur"></div>
-<div id="cur2"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-<canvas id="bgCanvas"></canvas>
-<div class="noise"></div>
-<div class="vignette"></div>
-<div class="grid"></div>
+<!-- Living Trust Network Background -->
+<canvas id="bg-canvas"></canvas>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo"><div class="nav-pulse"></div>RIALO</div>
+  <div class="nav-logo">RIALO</div>
   <ul class="nav-links">
     <li><a href="#">Protocol</a></li>
     <li><a href="#">Identity</a></li>
-    <li><a href="#">Builders</a></li>
-    <li><a href="#">Docs</a></li>
+    <li><a href="#">Trust Layer</a></li>
+    <li><a href="#">Developers</a></li>
   </ul>
-  <div class="nav-pill">TrustLayer v1.0</div>
+  <div class="btn-connect-wrap">
+    <button class="btn-connect" id="nav-connect-btn">
+      <span class="btn-glow"></span>
+      Connect Wallet
+    </button>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-tag"><div class="hero-tag-dot"></div>Web3 Trust Infrastructure</div>
+  <canvas id="trust-canvas"></canvas>
 
-  <h1 class="hero-h1">
-    Trust should<br>be <em data-text="visible."><span class="fill">visible.</span></em>
+  <div class="hero-badge">
+    <span>Trust Layer Protocol</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="word-trust">Trust</span> should<br>be visible.
   </h1>
 
-  <p class="hero-sub">
-    Rialo transforms wallets into <strong>transparent digital identities</strong> —<br>
-    visible, verifiable, and built for humans.
-  </p>
+  <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
 
-  <div id="nodeViz"><canvas id="nodeCanvas"></canvas></div>
+  <div class="hero-actions">
+    <div class="btn-connect-wrap">
+      <button class="btn-connect" id="hero-connect-btn">
+        <span class="btn-glow"></span>
+        Connect Wallet
+      </button>
+    </div>
+    <button class="btn-secondary">
+      Explore Protocol
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
 
-  <button class="btn-cta" onclick="beginScan()">
-    <div class="btn-cta-bg"></div>
-    <svg class="btn-cta-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
-      <polygon points="8,1 15,5 15,11 8,15 1,11 1,5"/>
-    </svg>
-    <span class="btn-cta-text">Connect Wallet</span>
-  </button>
-
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-n">94.7K</div><div class="stat-l">Wallets Verified</div></div>
-    <div class="stat"><div class="stat-n">99.8%</div><div class="stat-l">Trust Accuracy</div></div>
-    <div class="stat"><div class="stat-n">12 ms</div><div class="stat-l">Avg Scan Time</div></div>
-    <div class="stat"><div class="stat-n">3.2M</div><div class="stat-l">Txns Analyzed</div></div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
   </div>
 </section>
 
-<!-- SCAN OVERLAY -->
-<div id="scanOv">
-  <canvas id="scanBgCanvas"></canvas>
-  <div class="scan-inner">
-    <p class="scan-label" id="scanLabel">Initializing TrustLayer…</p>
-    <div class="scan-orb">
-      <div class="orb-ring"></div><div class="orb-ring"></div><div class="orb-ring"></div>
-      <div class="orb-scan"></div>
-      <div class="orb-core">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#00c8f0" stroke-width="1.2">
-          <polygon points="11,1 21,6 21,16 11,21 1,16 1,6"/>
-          <circle cx="11" cy="11" r="3" fill="rgba(0,200,240,.3)"/>
-        </svg>
+<!-- SCANNING OVERLAY -->
+<div id="scan-overlay">
+  <div class="scan-container">
+    <div class="scan-ring">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" stroke="rgba(0,212,255,0.12)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="90" stroke="url(#grad)" stroke-width="1.5" stroke-dasharray="40 520" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="70" stroke="rgba(0,212,255,0.06)" stroke-width="1"/>
+        <defs>
+          <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="10" y1="100" x2="190" y2="100">
+            <stop stop-color="#00d4ff"/>
+            <stop offset="1" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="scan-inner" id="scan-icon">⬡</div>
+      <div class="scan-line"></div>
+    </div>
+
+    <div class="scan-text">Identity Analysis</div>
+    <div class="scan-status" id="scan-status">Initializing trust layer...</div>
+    <div class="scan-address" id="scan-address">0x4a8b...f7c2</div>
+
+    <div class="scan-bars">
+      <div class="scan-bar" style="height: 60%; animation-delay: 0s"></div>
+      <div class="scan-bar" style="height: 80%; animation-delay: 0.1s"></div>
+      <div class="scan-bar" style="height: 40%; animation-delay: 0.2s"></div>
+      <div class="scan-bar" style="height: 90%; animation-delay: 0.3s"></div>
+      <div class="scan-bar" style="height: 55%; animation-delay: 0.4s"></div>
+      <div class="scan-bar" style="height: 70%; animation-delay: 0.5s"></div>
+      <div class="scan-bar" style="height: 35%; animation-delay: 0.6s"></div>
+      <div class="scan-bar" style="height: 85%; animation-delay: 0.7s"></div>
+      <div class="scan-bar" style="height: 65%; animation-delay: 0.15s"></div>
+      <div class="scan-bar" style="height: 50%; animation-delay: 0.25s"></div>
+    </div>
+
+    <button class="scan-complete-btn" id="scan-complete-btn" onclick="showDashboard()">
+      View Identity Profile →
+    </button>
+  </div>
+</div>
+
+<!-- IDENTITY DASHBOARD -->
+<div id="dashboard">
+  <div class="dashboard-header reveal">
+    <div class="section-label">Identity Profile</div>
+    <div class="dashboard-title">Your Trust Identity</div>
+    <div style="font-size:15px; color: var(--text-dim); margin-bottom: 8px; font-family: monospace;">0x4a8b3f92e1d5c6b7a8f9e2d4c5b6a7f8e3d2c1b0f7c2</div>
+    <div class="wallet-aura">
+      <div class="aura-dot"></div>
+      <span>Trusted — Cyan Aura Active</span>
+    </div>
+  </div>
+
+  <div class="metrics-grid reveal">
+    <div class="metric-card" style="animation-delay: 0s">
+      <div class="metric-label">Trust Score</div>
+      <div class="metric-value cyan" id="trust-score">0</div>
+      <div class="metric-sub">
+        <span class="metric-badge badge-cyan">Excellent</span>
       </div>
     </div>
-    <div class="scan-bar"><div class="scan-fill" id="scanFill"></div></div>
-    <div class="scan-dots" id="scanDots">
-      <div class="sdot"></div><div class="sdot"></div><div class="sdot"></div>
-      <div class="sdot"></div><div class="sdot"></div><div class="sdot"></div>
-      <div class="sdot"></div><div class="sdot"></div>
+    <div class="metric-card" style="animation-delay: 0.08s">
+      <div class="metric-label">Security Status</div>
+      <div class="metric-value good">Secure</div>
+      <div class="metric-sub">
+        <span class="metric-badge badge-green">No threats</span>
+      </div>
+    </div>
+    <div class="metric-card" style="animation-delay: 0.16s">
+      <div class="metric-label">Builder Reputation</div>
+      <div class="metric-value gold" id="builder-rep">0</div>
+      <div class="metric-sub">
+        <span class="metric-badge badge-gold">Builder</span>
+      </div>
+    </div>
+    <div class="metric-card" style="animation-delay: 0.24s">
+      <div class="metric-label">Governance Activity</div>
+      <div class="metric-value" style="font-size:24px; padding-top:4px;" id="gov-votes">0</div>
+      <div class="metric-sub">
+        <span class="metric-badge badge-blue">Active voter</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wide-grid reveal">
+    <div class="card-full">
+      <div class="card-title">
+        <span>Wallet Activity</span>
+        <span class="metric-badge badge-cyan">Live</span>
+      </div>
+      <div class="activity-bars" id="activity-bars"></div>
+      <div style="display:flex; justify-content:space-between; margin-top: 12px; font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em;">
+        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+      </div>
+    </div>
+    <div class="card-full">
+      <div class="card-title">Multi-chain Presence</div>
+      <div class="chain-list">
+        <div class="chain-pill"><div class="chain-dot" style="background: #6f7cff"></div>Ethereum</div>
+        <div class="chain-pill"><div class="chain-dot" style="background: #8247e5"></div>Polygon</div>
+        <div class="chain-pill"><div class="chain-dot" style="background: #ff6b35"></div>Optimism</div>
+        <div class="chain-pill"><div class="chain-dot" style="background: #1892d4"></div>Arbitrum</div>
+        <div class="chain-pill"><div class="chain-dot" style="background: #29a0b1"></div>Base</div>
+        <div class="chain-pill"><div class="chain-dot" style="background: #0052ff"></div>Coinbase</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wide-grid reveal">
+    <div class="card-full">
+      <div class="card-title">Risk Detection</div>
+      <div style="display:flex; flex-direction:column; gap: 12px; margin-top: 4px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:13px; color:var(--text-dim)">Phishing contract interactions</span>
+          <span class="metric-badge badge-green">0 detected</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:13px; color:var(--text-dim)">Flagged token approvals</span>
+          <span class="metric-badge badge-green">Clean</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding: 10px 0;">
+          <span style="font-size:13px; color:var(--text-dim)">Mixer/tornado interactions</span>
+          <span class="metric-badge badge-green">None</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-full">
+      <div class="card-title">Contribution History</div>
+      <div style="display:flex; flex-direction:column; gap: 10px; margin-top: 4px;">
+        <div style="display:flex; align-items:center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border);">
+          <div style="width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; flex-shrink:0; box-shadow: 0 0 8px var(--cyan)"></div>
+          <span style="font-size:13px; color:var(--text)">Contributed to Uniswap v4 grants</span>
+          <span style="font-size:11px; color:var(--text-dim); margin-left:auto">2024</span>
+        </div>
+        <div style="display:flex; align-items:center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border);">
+          <div style="width: 8px; height: 8px; background: var(--gold); border-radius: 50%; flex-shrink:0; box-shadow: 0 0 8px var(--gold)"></div>
+          <span style="font-size:13px; color:var(--text)">ENS DAO governance delegate</span>
+          <span style="font-size:11px; color:var(--text-dim); margin-left:auto">2024</span>
+        </div>
+        <div style="display:flex; align-items:center; gap: 12px; padding: 8px 0;">
+          <div style="width: 8px; height: 8px; background: #5b9eff; border-radius: 50%; flex-shrink:0; box-shadow: 0 0 8px rgba(91,158,255,0.6)"></div>
+          <span style="font-size:13px; color:var(--text)">Open source smart contract auditor</span>
+          <span style="font-size:11px; color:var(--text-dim); margin-left:auto">2023</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<section id="dash">
-  <div class="dash-wrap">
-
-    <!-- TOP BAR -->
-    <div class="dash-topbar">
-      <div class="wallet-chip">
-        <div class="wallet-label">Active Identity</div>
-        <div class="wallet-addr"><span>0x4a7f</span>…<span>3d92</span></div>
-        <div class="wallet-net"><div class="wdot"></div>Ethereum Mainnet · Last scan: just now</div>
-      </div>
-      <div class="ts-badge">
-        <div class="ts-num">87</div>
-        <div class="ts-info">
-          <div class="ts-title">Trust Score</div>
-          <div class="ts-sub">Top 12% of verified wallets</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROW 1: 3 cards -->
-    <div class="cg3">
-      <div class="gc">
-        <div class="gc-label">Security Status</div>
-        <div class="gc-val g">Secure</div>
-        <div class="info-row"><div class="idot g"></div><div class="itext">No suspicious activity detected</div></div>
-        <div class="info-row"><div class="idot g"></div><div class="itext">Hardware signing enabled</div></div>
-        <div class="info-row"><div class="idot g"></div><div class="itext">0 blacklisted contract interactions</div></div>
-      </div>
-      <div class="gc">
-        <div class="gc-label">Builder Reputation</div>
-        <div class="gc-val c">Elite</div>
-        <div class="info-row"><div class="idot c"></div><div class="itext">14 verified protocol contributions</div></div>
-        <div class="info-row"><div class="idot c"></div><div class="itext">3 audited contracts deployed</div></div>
-        <div class="info-row"><div class="idot c"></div><div class="itext">Active in 5 open source repos</div></div>
-      </div>
-      <div class="gc">
-        <div class="gc-label">Governance Activity</div>
-        <div class="gc-val gold">Active</div>
-        <div class="info-row"><div class="idot gold"></div><div class="itext">32 proposals voted onchain</div></div>
-        <div class="info-row"><div class="idot gold"></div><div class="itext">Top 8% governance participant</div></div>
-        <div class="info-row"><div class="idot gold"></div><div class="itext">Delegate for 3 protocols</div></div>
-      </div>
-    </div>
-
-    <!-- ROW 2: Constellation + Risk -->
-    <div class="cg2">
-      <div id="constWrap">
-        <canvas id="constCanvas"></canvas>
-        <div class="const-legend">
-          <div class="leg-item"><div class="leg-dot" style="background:#00c8f0;box-shadow:0 0 6px #00c8f0"></div>Trusted Wallet</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#00e8a0;box-shadow:0 0 6px #00e8a0"></div>Active Builder</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#f04060;box-shadow:0 0 6px #f04060"></div>Risk Signal</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#e8c060;box-shadow:0 0 6px #e8c060"></div>Governance Actor</div>
-        </div>
-      </div>
-      <div class="gc risk">
-        <div class="gc-label">Risk Detection</div>
-        <div class="gc-val d glitch-txt">⚠ 1 Alert</div>
-        <div class="info-row" style="margin-top:4px"><div class="idot d"></div><div class="itext">Unaudited contract interaction — 18d ago</div></div>
-        <div class="risk-alert">
-          Low-risk flag: Interaction detected with an unverified contract. No asset exposure confirmed. Contract has since been audited.
-        </div>
-        <button class="ghost-btn" onclick="document.getElementById('signMod').classList.add('on')">
-          ⬡ Simulate Sign Request
-        </button>
-      </div>
-    </div>
-
-    <!-- ROW 3: History -->
-    <div class="gc cg-full">
-      <div class="gc-label">Contribution History</div>
-      <div class="hist-row">
-        <span class="hist-tag ht-gov">Governance</span>
-        <span class="hist-hash">0x9f3a…c821</span>
-        <span class="hist-desc">Voted: OP Treasury Allocation Proposal v4</span>
-        <span class="hist-time">2d ago</span>
-      </div>
-      <div class="hist-row">
-        <span class="hist-tag ht-build">Deploy</span>
-        <span class="hist-hash">0x71bb…44fa</span>
-        <span class="hist-desc">Contract deployed: LiquidityRouter.sol — verified</span>
-        <span class="hist-time">5d ago</span>
-      </div>
-      <div class="hist-row">
-        <span class="hist-tag ht-defi">DeFi</span>
-        <span class="hist-hash">0xc290…87de</span>
-        <span class="hist-desc">Provided 12 ETH liquidity to Uniswap v4 pool</span>
-        <span class="hist-time">9d ago</span>
-      </div>
-      <div class="hist-row">
-        <span class="hist-tag ht-gov">Governance</span>
-        <span class="hist-hash">0x4d12…f03c</span>
-        <span class="hist-desc">Delegated 5,000 ARB to Arbitrum Council</span>
-        <span class="hist-time">14d ago</span>
-      </div>
-      <div class="hist-row">
-        <span class="hist-tag ht-audit">Audit</span>
-        <span class="hist-hash">0x88ef…a91b</span>
-        <span class="hist-desc">Security review: StakingVault v2.1 patch</span>
-        <span class="hist-time">21d ago</span>
-      </div>
-    </div>
-
-  </div><!-- /dash-wrap -->
+<!-- CONSTELLATION SECTION -->
+<section id="constellation">
+  <div class="reveal">
+    <div class="section-label" style="justify-content: center;">Identity Galaxy</div>
+    <h2 class="section-title">Identity Constellation</h2>
+    <p class="section-desc">Your wallet as a living node in the global trust network. Every connection, transaction, and contribution forms your unique identity signature.</p>
+  </div>
+  <canvas id="constellation-canvas" class="reveal"></canvas>
 </section>
 
-<!-- SIGN MODAL -->
-<div id="signMod">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title">Signature Request</div>
-      <div class="modal-from">app.aave.com → 0x4a7f…3d92 · Ethereum Mainnet</div>
-    </div>
-    <div class="modal-body">
-      <div class="rialo-notice">
-        <div class="ri-icon">⬡</div>
-        Rialo TrustLayer is translating this permission into plain language. You should understand exactly what you are signing.
-      </div>
-      <div class="perm">
-        <div class="perm-raw">ERC20.approve(spender, amount)</div>
-        <div class="perm-human">This app requests permission to interact with your USDC balance. It may transfer up to 1,000 USDC on your behalf.</div>
-        <div class="perm-badge">🔵</div>
-      </div>
-      <div class="perm">
-        <div class="perm-raw">setApprovalForAll(operator, true)</div>
-        <div class="perm-human">Allows Aave's lending contract to manage your deposited assets — this is standard for DeFi lending protocols.</div>
-        <div class="perm-badge">✅</div>
-      </div>
-      <div class="perm bad">
-        <div class="perm-raw">transferOwnership(0x...)</div>
-        <div class="perm-human">Warning: This grants ownership of a contract to an external address. Verify this is intentional before signing.</div>
-        <div class="perm-badge">⚠️</div>
+<!-- PERMISSION MODAL DEMO -->
+<section id="permission-demo">
+  <div class="reveal" style="text-align:center; margin-bottom: 48px;">
+    <div class="section-label" style="justify-content:center;">Humanized Transparency</div>
+    <h2 class="section-title" style="font-size: 36px;">Plain language.<br>Clear intent.</h2>
+  </div>
+  <div class="permission-modal reveal">
+    <div class="permission-header">
+      <div class="perm-icon">🔐</div>
+      <div>
+        <div class="perm-title">Permission Request</div>
+        <div class="perm-source">app.uniswap.org</div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn-rej" onclick="document.getElementById('signMod').classList.remove('on')">Reject</button>
-      <button class="btn-app" onclick="document.getElementById('signMod').classList.remove('on')">Approve & Sign</button>
+
+    <div class="perm-body">
+      This app is requesting permission to <strong style="color:#fff">verify your wallet identity</strong> and confirm your reputation score. No funds will be accessed or transferred.
+    </div>
+
+    <div class="perm-technical">
+      approve(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D, uint256 max)
+    </div>
+
+    <div class="perm-actions">
+      <button class="perm-deny">Deny</button>
+      <button class="perm-approve">Approve — Verify Identity</button>
     </div>
   </div>
-</div>
+</section>
 
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <div class="section-label">Core Protocol</div>
+    <h2 class="section-title">The trust stack,<br>rebuilt from scratch.</h2>
+  </div>
+
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <div class="feature-icon">◈</div>
+      <div class="feature-title">Onchain Reputation</div>
+      <div class="feature-desc">Every transaction, contribution, and governance vote builds a verifiable reputation that follows your wallet across all chains.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <div class="feature-title">Identity Verification</div>
+      <div class="feature-desc">Transform anonymous wallet addresses into rich, multi-dimensional identities without compromising privacy.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⟳</div>
+      <div class="feature-title">Real-time Risk Detection</div>
+      <div class="feature-desc">Continuous monitoring across all connected chains detects risky interactions before they happen, not after.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◯</div>
+      <div class="feature-title">Wallet Aura System</div>
+      <div class="feature-desc">Visual identity layers that communicate trust levels at a glance — cyan for trusted, gold for builders, blue for governance leaders.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⌘</div>
+      <div class="feature-title">Transparent Permissions</div>
+      <div class="feature-desc">Every contract interaction translated into plain human language, so users understand exactly what they're approving.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">∞</div>
+      <div class="feature-title">Multi-chain Presence</div>
+      <div class="feature-desc">A unified identity layer that aggregates your activity across Ethereum, Polygon, Arbitrum, Base, and every EVM chain.</div>
+    </div>
+  </div>
+</section>
+
+<div class="h-line"></div>
+
+<!-- FOOTER -->
 <footer>
-  <div class="foot-l">© 2025 Rialo Protocol — Trust Infrastructure</div>
-  <div class="foot-r">Trust should be visible.</div>
+  <div class="footer-logo">RIALO TRUSTLAYER</div>
+  <div class="footer-note">© 2025 Rialo Protocol. Built for the open web.</div>
 </footer>
 
 <script>
-/* ─── CURSOR ─── */
-const cur = document.getElementById('cur'), cur2 = document.getElementById('cur2');
-let mx=0,my=0,rx=0,ry=0;
+// Cursor
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
 document.addEventListener('mousemove', e => {
-  mx=e.clientX; my=e.clientY;
-  cur.style.left=mx-3+'px'; cur.style.top=my-3+'px';
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
 });
-(function tick(){ rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
-  cur2.style.left=rx+'px'; cur2.style.top=ry+'px';
-  requestAnimationFrame(tick);})();
 
-/* ─── BG NETWORK CANVAS ─── */
-const bgC=document.getElementById('bgCanvas'), bgX=bgC.getContext('2d');
-let BW,BH,bNodes=[];
-function resizeBG(){BW=bgC.width=window.innerWidth; BH=bgC.height=window.innerHeight;}
-resizeBG(); window.addEventListener('resize',()=>{resizeBG();initBGNodes();});
-function initBGNodes(){
-  bNodes=[];
-  const n=Math.floor((BW*BH)/28000);
-  for(let i=0;i<n;i++) bNodes.push({
-    x:Math.random()*BW, y:Math.random()*BH,
-    vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22,
-    r:Math.random()*1.8+.4, p:Math.random()*Math.PI*2,
-    bright:Math.random()>.75
+function animCursor() {
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+// ——— BACKGROUND CANVAS: Living Trust Network ———
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let W, H;
+
+function resizeBg() {
+  W = bgCanvas.width = window.innerWidth;
+  H = bgCanvas.height = window.innerHeight;
+}
+resizeBg();
+window.addEventListener('resize', resizeBg);
+
+const BG_NODES = [];
+const BG_COUNT = 55;
+
+for (let i = 0; i < BG_COUNT; i++) {
+  BG_NODES.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.25,
+    r: Math.random() * 2.5 + 1,
+    pulse: Math.random() * Math.PI * 2,
+    pulseSpeed: 0.01 + Math.random() * 0.015
   });
 }
-initBGNodes();
-let bFrame=0;
-(function bgLoop(){
-  bgX.clearRect(0,0,BW,BH);
-  bFrame++;
-  /* deep radial */
-  const g=bgX.createRadialGradient(BW*.45,BH*.35,0,BW*.45,BH*.35,BW*.7);
-  g.addColorStop(0,'rgba(8,18,44,.7)'); g.addColorStop(1,'rgba(3,4,10,.95)');
-  bgX.fillStyle=g; bgX.fillRect(0,0,BW,BH);
-  /* move */
-  bNodes.forEach(n=>{
-    n.x+=n.vx; n.y+=n.vy; n.p+=.018;
-    if(n.x<0||n.x>BW)n.vx*=-1; if(n.y<0||n.y>BH)n.vy*=-1;
+
+const PARTICLES = [];
+for (let i = 0; i < 80; i++) {
+  PARTICLES.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    life: Math.random(),
+    lifeSpeed: 0.002 + Math.random() * 0.004
   });
-  /* connections */
-  const DIST=150;
-  for(let i=0;i<bNodes.length;i++) for(let j=i+1;j<bNodes.length;j++){
-    const dx=bNodes[i].x-bNodes[j].x, dy=bNodes[i].y-bNodes[j].y;
-    const d=Math.sqrt(dx*dx+dy*dy);
-    if(d<DIST){
-      const a=(1-d/DIST)*(bNodes[i].bright||bNodes[j].bright?.25:.12);
-      bgX.beginPath(); bgX.moveTo(bNodes[i].x,bNodes[i].y); bgX.lineTo(bNodes[j].x,bNodes[j].y);
-      bgX.strokeStyle=`rgba(0,200,240,${a})`; bgX.lineWidth=.6; bgX.stroke();
-    }
+}
+
+let mouseX = W / 2, mouseY = H / 2;
+document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+function drawBg(t) {
+  bgCtx.clearRect(0, 0, W, H);
+
+  // Grid
+  bgCtx.strokeStyle = 'rgba(0,212,255,0.025)';
+  bgCtx.lineWidth = 0.5;
+  const gridSize = 80;
+  for (let x = 0; x < W; x += gridSize) {
+    bgCtx.beginPath();
+    bgCtx.moveTo(x, 0);
+    bgCtx.lineTo(x, H);
+    bgCtx.stroke();
   }
-  /* nodes */
-  bNodes.forEach(n=>{
-    const p=Math.sin(n.p)*.5+.5;
-    const a=n.bright?.35+p*.45:.08+p*.12;
-    bgX.beginPath(); bgX.arc(n.x,n.y,n.r*(1+p*.25),0,Math.PI*2);
-    bgX.fillStyle=`rgba(0,200,240,${a})`; bgX.fill();
-    if(n.bright){
-      bgX.beginPath(); bgX.arc(n.x,n.y,n.r*4,0,Math.PI*2);
-      bgX.fillStyle=`rgba(0,200,240,${a*.08})`; bgX.fill();
-    }
-  });
-  requestAnimationFrame(bgLoop);
-})();
-
-/* ─── HERO NODE VISUALIZER ─── */
-const nC=document.getElementById('nodeCanvas');
-function initNodeViz(){
-  const W=nC.parentElement.offsetWidth, H=nC.parentElement.offsetHeight;
-  nC.width=W*devicePixelRatio; nC.height=H*devicePixelRatio;
-  const ctx=nC.getContext('2d'); ctx.scale(devicePixelRatio,devicePixelRatio);
-  nC.style.width=W+'px'; nC.style.height=H+'px';
-  const cx=W/2, cy=H/2;
-  /* nodes */
-  const nodes=[];
-  /* center */
-  nodes.push({x:cx,y:cy,r:12,type:'core',p:0,connections:[]});
-  /* rings */
-  [[4,90,0],[6,170,Math.PI/6],[8,250,Math.PI/10]].forEach(([count,dist,off])=>{
-    for(let i=0;i<count;i++){
-      const a=(i/count)*Math.PI*2+off;
-      nodes.push({x:cx+Math.cos(a)*dist, y:cy+Math.sin(a)*dist,
-        r:Math.random()*4+2.5, type:['trust','builder','gov','risk'][Math.floor(Math.random()*3.1)],
-        p:Math.random()*Math.PI*2, vx:0,vy:0, baseX:cx+Math.cos(a)*dist, baseY:cy+Math.sin(a)*dist});
-    }
-  });
-  let hf=0;
-  (function hLoop(){
-    ctx.clearRect(0,0,W,H);
-    hf++;
-    /* connections from center */
-    nodes.slice(1,5).forEach(n=>{
-      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(n.x,n.y);
-      ctx.strokeStyle='rgba(0,200,240,.15)'; ctx.lineWidth=.8; ctx.stroke();
-    });
-    /* connections ring 1 to ring 2 */
-    nodes.slice(1,5).forEach((n,i)=>{
-      const t=nodes[5+i*1.5|0];
-      if(!t)return;
-      ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(t.x,t.y);
-      ctx.strokeStyle='rgba(0,200,240,.07)'; ctx.lineWidth=.5; ctx.stroke();
-    });
-    /* draw each node */
-    nodes.forEach((n,idx)=>{
-      if(idx>0){ n.p+=.015; n.x=n.baseX+Math.sin(n.p*.7)*6; n.y=n.baseY+Math.cos(n.p*.5)*6; }
-      const pulse=Math.sin(n.p)*.5+.5;
-      let col,glow;
-      if(n.type==='core'){ col='rgba(0,200,240,.95)'; glow='rgba(0,200,240,.3)'; }
-      else if(n.type==='trust'){ col=`rgba(0,200,240,${.5+pulse*.4})`; glow='rgba(0,200,240,.2)'; }
-      else if(n.type==='builder'){ col=`rgba(0,232,160,${.45+pulse*.4})`; glow='rgba(0,232,160,.15)'; }
-      else if(n.type==='gov'){ col=`rgba(232,192,96,${.45+pulse*.35})`; glow='rgba(232,192,96,.12)'; }
-      else { col=`rgba(240,64,96,${.4+pulse*.3})`; glow='rgba(240,64,96,.12)'; }
-      /* glow */
-      const gr=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*6);
-      gr.addColorStop(0,glow.replace(')',',')+'.6)').replace(',,',',')); 
-      gr.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*5,0,Math.PI*2);
-      ctx.fillStyle=glow; ctx.fill();
-      /* node */
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle=col; ctx.fill();
-      if(n.type==='core'){
-        /* orbit ring */
-        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*2.2,0,Math.PI*2);
-        ctx.strokeStyle='rgba(0,200,240,.3)'; ctx.lineWidth=1; ctx.stroke();
-        ctx.beginPath(); ctx.arc(n.x,n.y,n.r*3.5,0,Math.PI*2);
-        ctx.strokeStyle='rgba(0,200,240,.1)'; ctx.lineWidth=.6; ctx.stroke();
-      }
-    });
-    requestAnimationFrame(hLoop);
-  })();
-}
-initNodeViz();
-
-/* ─── SCAN SEQUENCE ─── */
-/* Scan overlay has its own animated bg */
-const sBgC=document.getElementById('scanBgCanvas'), sBgX=sBgC.getContext('2d');
-function resizeSBg(){sBgC.width=window.innerWidth; sBgC.height=window.innerHeight;}
-resizeSBg();
-(function scanBgLoop(){
-  if(!document.getElementById('scanOv').classList.contains('on')){ requestAnimationFrame(scanBgLoop); return; }
-  sBgX.clearRect(0,0,sBgC.width,sBgC.height);
-  /* reuse bNodes from bg */
-  bNodes.forEach(n=>{
-    const p=Math.sin(n.p)*.5+.5;
-    const a=n.bright?.2+p*.3:.05+p*.08;
-    sBgX.beginPath(); sBgX.arc(n.x,n.y,n.r,0,Math.PI*2);
-    sBgX.fillStyle=`rgba(0,200,240,${a})`; sBgX.fill();
-  });
-  requestAnimationFrame(scanBgLoop);
-})();
-
-function beginScan(){
-  document.getElementById('hero').style.display='none';
-  const ov=document.getElementById('scanOv');
-  ov.classList.add('on');
-  const labels=['Initializing TrustLayer…','Resolving ENS identity…','Reading onchain history…','Mapping trust connections…','Analyzing governance records…','Calculating builder score…','Generating constellation…','Identity verified.'];
-  const fill=document.getElementById('scanFill'), lbl=document.getElementById('scanLabel');
-  const dots=[...document.querySelectorAll('.sdot')];
-  let prog=0, li=0;
-  const iv=setInterval(()=>{
-    prog+=Math.random()*7+3; if(prog>100)prog=100;
-    fill.style.width=prog+'%';
-    const ni=Math.min(Math.floor(prog/100*labels.length), labels.length-1);
-    if(ni!==li){ li=ni; lbl.textContent=labels[li]; }
-    const dc=Math.floor(prog/100*dots.length);
-    dots.forEach((d,i)=>{ if(i<dc)d.classList.add('lit'); });
-    if(prog>=100){ clearInterval(iv); setTimeout(showDash,900); }
-  },130);
-}
-
-function showDash(){
-  document.getElementById('scanOv').classList.remove('on');
-  const d=document.getElementById('dash'); d.classList.add('on');
-  window.scrollTo(0,0);
-  setTimeout(initConst,200);
-}
-
-/* ─── CONSTELLATION ─── */
-function initConst(){
-  const wrap=document.getElementById('constWrap');
-  const cc=document.getElementById('constCanvas'), cx2=cc.getContext('2d');
-  const W=wrap.clientWidth, H=300;
-  cc.width=W*devicePixelRatio; cc.height=H*devicePixelRatio;
-  cx2.scale(devicePixelRatio,devicePixelRatio);
-  cc.style.width=W+'px'; cc.style.height=H+'px';
-  const CX=W/2, CY=H/2;
-
-  const cNodes=[];
-  /* self */
-  cNodes.push({x:CX,y:CY,r:11,type:'self',p:0,label:'YOU',bx:CX,by:CY});
-  /* tier 1 */
-  [[30,80,'trust'],[85,72,'builder'],[155,78,'trust'],[215,68,'gov'],[270,82,'trust']].forEach(([a,d,t])=>{
-    const rad=a*Math.PI/180;
-    cNodes.push({x:CX+Math.cos(rad)*d, y:CY+Math.sin(rad)*d, r:5+Math.random()*3, type:t, p:Math.random()*Math.PI*2,
-      bx:CX+Math.cos(rad)*d, by:CY+Math.sin(rad)*d, label:''});
-  });
-  /* tier 2 */
-  for(let i=0;i<9;i++){
-    const a=(i/9)*Math.PI*2, d=130+Math.random()*40;
-    const types=['trust','trust','builder','gov','risk'];
-    cNodes.push({x:CX+Math.cos(a)*d, y:CY+Math.sin(a)*d, r:2+Math.random()*2.5,
-      type:types[Math.floor(Math.random()*types.length)], p:Math.random()*Math.PI*2,
-      bx:CX+Math.cos(a)*d, by:CY+Math.sin(a)*d, label:''});
-  }
-  /* outer */
-  for(let i=0;i<14;i++){
-    const a=Math.random()*Math.PI*2, d=180+Math.random()*60;
-    if(CX+Math.cos(a)*d<20||CX+Math.cos(a)*d>W-20)continue;
-    cNodes.push({x:CX+Math.cos(a)*d, y:CY+Math.sin(a)*d, r:1+Math.random()*1.5,
-      type:'dim', p:Math.random()*Math.PI*2, bx:CX+Math.cos(a)*d, by:CY+Math.sin(a)*d, label:''});
+  for (let y = 0; y < H; y += gridSize) {
+    bgCtx.beginPath();
+    bgCtx.moveTo(0, y);
+    bgCtx.lineTo(W, y);
+    bgCtx.stroke();
   }
 
-  let cf2=0;
-  (function cLoop(){
-    cx2.clearRect(0,0,W,H); cf2++;
-    /* connect self to t1 */
-    cNodes.slice(1,6).forEach(n=>{
-      cx2.beginPath(); cx2.moveTo(CX,CY); cx2.lineTo(n.x,n.y);
-      const a=n.type==='risk'?.08:.2;
-      cx2.strokeStyle=`rgba(0,200,240,${a})`; cx2.lineWidth=.7; cx2.stroke();
-    });
-    /* outer connections */
-    cNodes.slice(6).forEach((n,i)=>{
-      const t=cNodes[1+(i%5)];
-      cx2.beginPath(); cx2.moveTo(n.x,n.y); cx2.lineTo(t.x,t.y);
-      cx2.strokeStyle='rgba(0,200,240,.04)'; cx2.lineWidth=.4; cx2.stroke();
-    });
-    /* draw */
-    cNodes.forEach((n,idx)=>{
-      if(idx>0){n.p+=.012; n.x=n.bx+Math.sin(n.p*.8)*5; n.y=n.by+Math.cos(n.p*.6)*5;}
-      const pulse=Math.sin(n.p)*.5+.5;
-      let col;
-      if(n.type==='self')col='rgba(0,200,240,.95)';
-      else if(n.type==='trust')col=`rgba(0,200,240,${.55+pulse*.35})`;
-      else if(n.type==='builder')col=`rgba(0,232,160,${.5+pulse*.35})`;
-      else if(n.type==='gov')col=`rgba(232,192,96,${.5+pulse*.3})`;
-      else if(n.type==='risk')col=`rgba(240,64,96,${.4+pulse*.25})`;
-      else col=`rgba(107,130,168,${.15+pulse*.15})`;
+  // Move nodes
+  BG_NODES.forEach(n => {
+    n.x += n.vx; n.y += n.vy;
+    n.pulse += n.pulseSpeed;
+    if (n.x < -10) n.x = W + 10;
+    if (n.x > W + 10) n.x = -10;
+    if (n.y < -10) n.y = H + 10;
+    if (n.y > H + 10) n.y = -10;
 
-      /* risk glitch */
-      let ox=0,oy=0;
-      if(n.type==='risk'&&Math.random()>.96){ ox=(Math.random()-.5)*6; oy=(Math.random()-.5)*3; }
+    // Mouse attraction (subtle)
+    const dx = mouseX - n.x, dy = mouseY - n.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 200) {
+      n.x += dx * 0.0004;
+      n.y += dy * 0.0004;
+    }
+  });
 
-      /* glow */
-      if(n.type!=='dim'){
-        cx2.beginPath(); cx2.arc(n.x+ox,n.y+oy,n.r*5,0,Math.PI*2);
-        cx2.fillStyle=col.replace(/[\d.]+\)$/,'0.06)'); cx2.fill();
+  // Connections
+  for (let i = 0; i < BG_NODES.length; i++) {
+    for (let j = i + 1; j < BG_NODES.length; j++) {
+      const a = BG_NODES[i], b = BG_NODES[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 140) {
+        const alpha = (1 - dist / 140) * 0.18;
+        bgCtx.beginPath();
+        bgCtx.strokeStyle = `rgba(0,212,255,${alpha})`;
+        bgCtx.lineWidth = 0.5;
+        bgCtx.moveTo(a.x, a.y);
+        bgCtx.lineTo(b.x, b.y);
+        bgCtx.stroke();
       }
-      cx2.beginPath(); cx2.arc(n.x+ox,n.y+oy,n.r,0,Math.PI*2);
-      cx2.fillStyle=col; cx2.fill();
+    }
+  }
 
-      if(n.type==='self'){
-        cx2.beginPath(); cx2.arc(n.x,n.y,n.r*2,0,Math.PI*2);
-        cx2.strokeStyle='rgba(0,200,240,.3)'; cx2.lineWidth=1; cx2.stroke();
-        cx2.fillStyle='rgba(0,200,240,.5)';
-        cx2.font=`9px 'JetBrains Mono', monospace`; cx2.textAlign='center';
-        cx2.fillText('YOU', n.x, n.y+24);
-      }
-    });
-    requestAnimationFrame(cLoop);
-  })();
+  // Nodes
+  BG_NODES.forEach(n => {
+    const pAlpha = (Math.sin(n.pulse) * 0.5 + 0.5) * 0.8 + 0.1;
+    bgCtx.beginPath();
+    bgCtx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(0,212,255,${pAlpha * 0.6})`;
+    bgCtx.fill();
+    // Glow ring
+    bgCtx.beginPath();
+    bgCtx.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(0,212,255,${pAlpha * 0.04})`;
+    bgCtx.fill();
+  });
+
+  // Particles
+  PARTICLES.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    p.life += p.lifeSpeed;
+    if (p.life > 1) { p.life = 0; p.x = Math.random() * W; p.y = Math.random() * H; }
+    const a = Math.sin(p.life * Math.PI) * 0.3;
+    bgCtx.beginPath();
+    bgCtx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(0,180,230,${a})`;
+    bgCtx.fill();
+  });
 }
+
+// ——— HERO TRUST CANVAS ———
+const trustCanvas = document.getElementById('trust-canvas');
+const tCtx = trustCanvas.getContext('2d');
+trustCanvas.width = 700;
+trustCanvas.height = 700;
+
+const T_NODES = [];
+for (let i = 0; i < 28; i++) {
+  const angle = (i / 28) * Math.PI * 2;
+  const r = 80 + Math.random() * 220;
+  T_NODES.push({
+    x: 350 + Math.cos(angle) * r,
+    y: 350 + Math.sin(angle) * r,
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: (Math.random() - 0.5) * 0.35,
+    r: Math.random() * 4 + 2,
+    pulse: Math.random() * Math.PI * 2,
+    type: Math.random() < 0.15 ? 'gold' : 'cyan'
+  });
+}
+// Center node
+T_NODES.push({ x: 350, y: 350, r: 8, vx: 0, vy: 0, pulse: 0, type: 'center', fixed: true });
+
+function drawTrust(t) {
+  tCtx.clearRect(0, 0, 700, 700);
+
+  T_NODES.forEach(n => {
+    if (!n.fixed) {
+      n.x += n.vx; n.y += n.vy;
+      n.pulse += 0.02;
+      const cx = 350, cy = 350;
+      const dx = cx - n.x, dy = cy - n.y;
+      n.vx += dx * 0.00005;
+      n.vy += dy * 0.00005;
+      if (n.x < 60 || n.x > 640) n.vx *= -1;
+      if (n.y < 60 || n.y > 640) n.vy *= -1;
+    }
+  });
+
+  // Connections to center
+  const center = T_NODES[T_NODES.length - 1];
+  for (let i = 0; i < T_NODES.length - 1; i++) {
+    const n = T_NODES[i];
+    const dx = center.x - n.x, dy = center.y - n.y;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    if (dist < 250) {
+      const alpha = (1 - dist/250) * 0.3;
+      const grad = tCtx.createLinearGradient(n.x, n.y, center.x, center.y);
+      grad.addColorStop(0, `rgba(0,212,255,0)`);
+      grad.addColorStop(1, `rgba(0,212,255,${alpha})`);
+      tCtx.beginPath();
+      tCtx.strokeStyle = grad;
+      tCtx.lineWidth = 0.8;
+      tCtx.moveTo(n.x, n.y);
+      tCtx.lineTo(center.x, center.y);
+      tCtx.stroke();
+    }
+    // Node-to-node
+    for (let j = i+1; j < T_NODES.length-1; j++) {
+      const m = T_NODES[j];
+      const dx2 = n.x-m.x, dy2 = n.y-m.y;
+      const d2 = Math.sqrt(dx2*dx2+dy2*dy2);
+      if (d2 < 100) {
+        tCtx.beginPath();
+        tCtx.strokeStyle = `rgba(0,212,255,${(1-d2/100)*0.12})`;
+        tCtx.lineWidth = 0.5;
+        tCtx.moveTo(n.x, n.y);
+        tCtx.lineTo(m.x, m.y);
+        tCtx.stroke();
+      }
+    }
+  }
+
+  // Nodes
+  T_NODES.forEach(n => {
+    if (n.type === 'center') {
+      const ta = t * 0.001;
+      // Outer rings
+      for (let ring = 0; ring < 3; ring++) {
+        tCtx.beginPath();
+        tCtx.arc(n.x, n.y, 20 + ring * 18 + Math.sin(ta + ring) * 4, 0, Math.PI*2);
+        tCtx.strokeStyle = `rgba(0,212,255,${0.15 - ring * 0.04})`;
+        tCtx.lineWidth = 0.8;
+        tCtx.stroke();
+      }
+      tCtx.beginPath();
+      tCtx.arc(n.x, n.y, 10, 0, Math.PI*2);
+      tCtx.fillStyle = 'rgba(0,212,255,0.9)';
+      tCtx.fill();
+      // Center glow
+      const grd = tCtx.createRadialGradient(n.x, n.y, 2, n.x, n.y, 50);
+      grd.addColorStop(0, 'rgba(0,212,255,0.2)');
+      grd.addColorStop(1, 'transparent');
+      tCtx.beginPath();
+      tCtx.arc(n.x, n.y, 50, 0, Math.PI*2);
+      tCtx.fillStyle = grd;
+      tCtx.fill();
+    } else {
+      const pa = (Math.sin(n.pulse) * 0.5 + 0.5);
+      const color = n.type === 'gold' ? `rgba(201,168,76,${0.5 + pa * 0.5})` : `rgba(0,212,255,${0.3 + pa * 0.5})`;
+      tCtx.beginPath();
+      tCtx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      tCtx.fillStyle = color;
+      tCtx.fill();
+    }
+  });
+}
+
+// ——— CONSTELLATION CANVAS ———
+const conCanvas = document.getElementById('constellation-canvas');
+const cCtx = conCanvas.getContext('2d');
+
+function resizeCon() {
+  conCanvas.width = conCanvas.offsetWidth;
+  conCanvas.height = conCanvas.offsetHeight;
+}
+resizeCon();
+window.addEventListener('resize', resizeCon);
+
+const CON_NODES = [];
+const conTypes = ['trusted', 'builder', 'gov', 'risky', 'inactive'];
+for (let i = 0; i < 60; i++) {
+  CON_NODES.push({
+    x: Math.random() * (conCanvas.offsetWidth || 900),
+    y: Math.random() * 500,
+    vx: (Math.random() - 0.5) * 0.2,
+    vy: (Math.random() - 0.5) * 0.2,
+    r: Math.random() * 5 + 2,
+    pulse: Math.random() * Math.PI * 2,
+    type: conTypes[Math.floor(Math.random() * conTypes.length)],
+    glitch: 0
+  });
+}
+// Main wallet node (center)
+CON_NODES.push({
+  x: (conCanvas.offsetWidth || 900) / 2,
+  y: 250,
+  r: 12, vx: 0, vy: 0, pulse: 0,
+  type: 'main', fixed: true
+});
+
+function getNodeColor(type, alpha) {
+  switch(type) {
+    case 'trusted': return `rgba(0,212,255,${alpha})`;
+    case 'builder': return `rgba(201,168,76,${alpha})`;
+    case 'gov': return `rgba(60,130,255,${alpha})`;
+    case 'risky': return `rgba(255,60,60,${alpha})`;
+    case 'inactive': return `rgba(80,100,120,${alpha})`;
+    case 'main': return `rgba(0,212,255,${alpha})`;
+    default: return `rgba(100,120,140,${alpha})`;
+  }
+}
+
+function drawConstellation(t) {
+  if (!cCtx) return;
+  const cW = conCanvas.width, cH = conCanvas.height;
+  cCtx.clearRect(0, 0, cW, cH);
+
+  CON_NODES.forEach(n => {
+    if (!n.fixed) {
+      n.x += n.vx; n.y += n.vy;
+      n.pulse += 0.015;
+      n.glitch = n.type === 'risky' ? Math.random() < 0.003 ? 1 : Math.max(0, n.glitch - 0.05) : 0;
+      if (n.x < 0) n.x = cW; if (n.x > cW) n.x = 0;
+      if (n.y < 0) n.y = cH; if (n.y > cH) n.y = 0;
+    }
+  });
+
+  const main = CON_NODES[CON_NODES.length - 1];
+
+  // Connections
+  CON_NODES.forEach((n, i) => {
+    if (n.type === 'inactive') return;
+    const dx = main.x - n.x, dy = main.y - n.y;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    if (dist < 200 && n !== main) {
+      const alpha = (1 - dist/200) * (n.type === 'trusted' ? 0.4 : 0.2);
+      cCtx.beginPath();
+      cCtx.strokeStyle = getNodeColor(n.type, alpha);
+      cCtx.lineWidth = 0.6;
+      cCtx.moveTo(n.x, n.y);
+      cCtx.lineTo(main.x, main.y);
+      cCtx.stroke();
+    }
+    for (let j = i+1; j < CON_NODES.length-1; j++) {
+      const m = CON_NODES[j];
+      const dx2 = n.x-m.x, dy2 = n.y-m.y;
+      const d2 = Math.sqrt(dx2*dx2+dy2*dy2);
+      if (d2 < 80) {
+        cCtx.beginPath();
+        cCtx.strokeStyle = `rgba(0,212,255,${(1-d2/80)*0.08})`;
+        cCtx.lineWidth = 0.4;
+        cCtx.moveTo(n.x, n.y);
+        cCtx.lineTo(m.x, m.y);
+        cCtx.stroke();
+      }
+    }
+  });
+
+  // Draw nodes
+  CON_NODES.forEach(n => {
+    const pa = Math.sin(n.pulse) * 0.5 + 0.5;
+    if (n.type === 'main') {
+      // Outer glow rings
+      for (let r = 3; r >= 1; r--) {
+        cCtx.beginPath();
+        cCtx.arc(n.x + (n.glitch ? (Math.random()-0.5)*3 : 0), n.y, n.r * (r+1) * 1.5, 0, Math.PI*2);
+        cCtx.fillStyle = `rgba(0,212,255,${0.04 / r})`;
+        cCtx.fill();
+      }
+      cCtx.beginPath();
+      cCtx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      cCtx.fillStyle = 'rgba(0,212,255,0.95)';
+      cCtx.fill();
+      cCtx.beginPath();
+      cCtx.arc(n.x, n.y, n.r + 6 + pa * 4, 0, Math.PI*2);
+      cCtx.strokeStyle = 'rgba(0,212,255,0.3)';
+      cCtx.lineWidth = 1;
+      cCtx.stroke();
+    } else {
+      const alpha = n.type === 'inactive' ? 0.2 : (0.4 + pa * 0.5);
+      const glitchX = n.glitch ? (Math.random()-0.5)*6 : 0;
+      cCtx.beginPath();
+      cCtx.arc(n.x + glitchX, n.y, n.r, 0, Math.PI*2);
+      cCtx.fillStyle = getNodeColor(n.type, alpha);
+      cCtx.fill();
+      if (n.type !== 'inactive' && n.type !== 'risky') {
+        cCtx.beginPath();
+        cCtx.arc(n.x, n.y, n.r + 3 + pa * 3, 0, Math.PI*2);
+        cCtx.fillStyle = getNodeColor(n.type, 0.06);
+        cCtx.fill();
+      }
+    }
+  });
+}
+
+// ——— ACTIVITY BARS ———
+function buildActivityBars() {
+  const container = document.getElementById('activity-bars');
+  if (!container) return;
+  container.innerHTML = '';
+  const vals = [40, 65, 30, 85, 55, 70, 90, 45, 75, 60, 80, 50];
+  vals.forEach((v, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'act-bar';
+    bar.style.height = v + '%';
+    bar.style.animationDelay = (i * 0.05) + 's';
+    container.appendChild(bar);
+  });
+}
+
+// ——— SCAN SEQUENCE ———
+function startScan() {
+  const overlay = document.getElementById('scan-overlay');
+  overlay.classList.add('active');
+  const statusEl = document.getElementById('scan-status');
+  const addrEl = document.getElementById('scan-address');
+  const completeBtn = document.getElementById('scan-complete-btn');
+
+  const steps = [
+    { t: 300, msg: 'Initializing trust layer...' },
+    { t: 900, msg: 'Connecting to network...' },
+    { t: 1600, msg: 'Scanning onchain history...' },
+    { t: 2400, msg: 'Analyzing reputation signals...' },
+    { t: 3200, msg: 'Computing trust score...' },
+    { t: 3900, msg: 'Detecting governance activity...' },
+    { t: 4600, msg: 'Building identity constellation...' },
+    { t: 5200, msg: 'Identity analysis complete ✓' },
+  ];
+
+  steps.forEach(step => {
+    setTimeout(() => { statusEl.textContent = step.msg; }, step.t);
+  });
+
+  setTimeout(() => { addrEl.classList.add('show'); }, 2000);
+  setTimeout(() => { completeBtn.classList.add('show'); }, 5400);
+}
+
+function showDashboard() {
+  document.getElementById('scan-overlay').classList.remove('active');
+  document.getElementById('dashboard').classList.add('show');
+  buildActivityBars();
+
+  // Animate numbers
+  animateNumber('trust-score', 0, 94, 1500);
+  animateNumber('builder-rep', 0, 847, 1800);
+  animateNumber('gov-votes', 0, 23, 1200);
+
+  setTimeout(() => {
+    document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+  }, 200);
+}
+
+function animateNumber(id, from, to, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  function update(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(from + (to - from) * ease);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+document.getElementById('hero-connect-btn').addEventListener('click', startScan);
+document.getElementById('nav-connect-btn').addEventListener('click', startScan);
+
+// Close overlay on bg click (not modal)
+document.getElementById('scan-overlay').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('active');
+});
+
+// ——— SCROLL REVEAL ———
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+reveals.forEach(r => revealObserver.observe(r));
+
+// ——— MAIN LOOP ———
+let lastT = 0;
+function loop(t) {
+  drawBg(t);
+  drawTrust(t);
+  drawConstellation(t);
+
+  // Resize bg canvas nodes on window resize
+  BG_NODES.forEach(n => {
+    if (n.x > window.innerWidth) n.x = window.innerWidth - 10;
+    if (n.y > window.innerHeight) n.y = window.innerHeight - 10;
+  });
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
