@@ -55,10 +55,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:52px;
   animation:pulse 2.6s ease infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(.55)}}
 .nlinks{display:flex;list-style:none}
-.nlinks a{display:flex;align-items:center;height:52px;padding:0 16px;
+.nlinks a{display:flex;align-items:center;height:52px;padding:0 14px;
   font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.16em;text-transform:uppercase;
   color:var(--txt2);text-decoration:none;cursor:none;position:relative;
-  border-right:1px solid var(--border);transition:color .22s}
+  border-right:1px solid var(--border);transition:color .22s;white-space:nowrap}
 .nlinks a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
   background:var(--c);box-shadow:0 0 8px var(--c);transition:width .3s var(--ease)}
 .nlinks a:hover,.nlinks a.active{color:var(--c)}
@@ -92,6 +92,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:52px;
   font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:none;border-radius:1px;
   transition:all .22s}
 .btn-ghost:hover{border-color:rgba(255,255,255,0.26);color:rgba(255,255,255,0.72)}
+.btn-sm{padding:7px 14px;font-size:8px;letter-spacing:.1em}
 
 /* ── APP SHELL ── */
 #app{position:fixed;inset:0;top:52px;z-index:10;overflow:hidden}
@@ -116,7 +117,7 @@ h1{font-family:'Bebas Neue',cursive;font-size:clamp(72px,12vw,148px);line-height
 h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:transparent}
 .hero-sub{font-size:13.5px;color:var(--txt2);max-width:400px;margin:0 auto 52px;
   line-height:2;letter-spacing:.015em;font-weight:300}
-.hero-btns{display:flex;gap:10px;justify-content:center}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* TICKER */
 .ticker{position:absolute;bottom:0;left:0;right:0;
@@ -128,6 +129,11 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
   font-family:'Space Mono',monospace;font-size:8.5px;
   border-right:1px solid var(--border)}
 .ti-s{color:#fff}.ti-p{color:var(--txt2)}.ti-u{color:var(--green)}.ti-d{color:#ff5555}
+/* live pulse indicator */
+.tick-live{display:inline-flex;align-items:center;gap:5px;padding:0 14px;
+  font-family:'Space Mono',monospace;font-size:7px;color:var(--green);
+  border-right:1px solid var(--border);text-transform:uppercase;letter-spacing:.12em}
+.tick-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease infinite}
 
 /* ════════════════════════════════════════
    WALLET OVERLAY
@@ -160,7 +166,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
   text-transform:uppercase;color:var(--txt2);opacity:.6;margin-bottom:12px}
 .wo{display:flex;align-items:center;gap:14px;padding:13px 14px;
   border:1px solid var(--border);border-radius:2px;background:rgba(0,200,224,0.012);
-  cursor:none;transition:all .2s var(--ease);margin-bottom:8px;position:relative;overflow:hidden}
+  cursor:none;transition:all .25s var(--ease);margin-bottom:8px;position:relative;overflow:hidden}
 .wo::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;
   background:var(--c);opacity:0;transition:opacity .2s}
 .wo:hover{border-color:rgba(0,200,224,0.28);background:rgba(0,200,224,0.05);transform:translateX(5px)}
@@ -180,6 +186,11 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .wm-note{margin-top:14px;padding:10px 13px;background:rgba(0,0,0,0.4);
   border:1px solid rgba(255,255,255,0.05);border-radius:2px;
   font-size:9px;color:var(--txt2);line-height:1.75}
+/* connecting state */
+.wo.loading{opacity:.5;pointer-events:none}
+.wo-spinner{width:14px;height:14px;border:1px solid rgba(0,200,224,0.2);
+  border-top-color:var(--c);border-radius:50%;animation:spin .7s linear infinite;margin-left:auto;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ════════════════════════════════════════
    SCAN OVERLAY
@@ -249,11 +260,20 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .pl{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;
   font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2)}
 .pl-d{width:7px;height:7px;border-radius:50%}
-.proto-stats{position:absolute;top:28px;left:44px;right:44px;z-index:2;display:flex;gap:44px}
+.proto-stats{position:absolute;top:28px;left:44px;right:44px;z-index:2;display:flex;gap:44px;flex-wrap:wrap}
 .pst{border-left:1px solid var(--border);padding-left:16px}
 .pst-v{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.04em;color:var(--c);margin-bottom:1px}
 .pst-l{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);
   letter-spacing:.12em;text-transform:uppercase}
+/* hover tooltip on constellation */
+.proto-tooltip{position:absolute;z-index:3;pointer-events:none;opacity:0;transition:opacity .2s;
+  background:rgba(2,6,18,0.98);border:1px solid var(--border2);border-radius:2px;
+  padding:8px 12px;min-width:140px}
+.proto-tooltip.show{opacity:1}
+.pt-type{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--c);margin-bottom:4px}
+.pt-addr{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);margin-bottom:2px}
+.pt-score{font-family:'Bebas Neue',cursive;font-size:20px;color:#fff}
 
 /* ════════════════════════════════════════
    IDENTITY SCENE
@@ -282,10 +302,14 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .ibd{width:5px;height:5px;border-radius:50%;background:var(--c);
   box-shadow:0 0 8px var(--c);animation:pulse 2s ease infinite}
 .id-badge span{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.1em;color:var(--c)}
+.id-live-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
+  border:1px solid rgba(30,214,112,0.2);background:rgba(30,214,112,0.04);
+  border-radius:1px;margin-left:8px}
+.id-live-tag span{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.12em;color:var(--green)}
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:9px}
 .mc{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:18px;
-  position:relative;overflow:hidden;transition:border-color .25s,transform .28s var(--ease)}
-.mc:hover{border-color:rgba(0,200,224,0.2);transform:translateY(-3px)}
+  position:relative;overflow:hidden;transition:border-color .25s,transform .28s var(--ease),box-shadow .28s}
+.mc:hover{border-color:rgba(0,200,224,0.2);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
 .mc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(to right,transparent,rgba(0,200,224,0.25),transparent);
   opacity:0;transition:opacity .25s}
@@ -310,15 +334,15 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
   display:flex;align-items:center;justify-content:space-between}
 .abars{display:flex;align-items:flex-end;gap:3px;height:64px}
 .abar{flex:1;background:var(--c);opacity:.22;border-radius:1px 1px 0 0;
-  transition:opacity .2s;cursor:default}
-.abar:hover{opacity:.85}
+  transition:opacity .2s,transform .2s;cursor:default}
+.abar:hover{opacity:.85;transform:scaleY(1.05);transform-origin:bottom}
 .amonths{display:flex;justify-content:space-between;margin-top:7px;
   font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
 .cpills{display:flex;flex-wrap:wrap;gap:5px}
 .cpill{display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:100px;
   background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:10px;
-  color:var(--txt);transition:all .2s}
-.cpill:hover{border-color:rgba(0,200,224,0.18)}
+  color:var(--txt);transition:all .2s;cursor:default}
+.cpill:hover{border-color:rgba(0,200,224,0.18);background:rgba(0,200,224,0.04)}
 .cdot{width:4px;height:4px;border-radius:50%}
 .risk-row{display:flex;align-items:center;justify-content:space-between;
   padding:8px 0;border-bottom:1px solid var(--border)}
@@ -346,7 +370,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .fc{padding:26px 20px;border:1px solid var(--border);border-radius:2px;
   background:rgba(2,6,14,0.55);transition:all .28s var(--ease);
   position:relative;overflow:hidden;cursor:default}
-.fc:hover{border-color:rgba(0,200,224,0.18);transform:translateY(-4px)}
+.fc:hover{border-color:rgba(0,200,224,0.18);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.5)}
 .fc-glow{position:absolute;bottom:-50px;right:-50px;width:100px;height:100px;
   background:radial-gradient(ellipse,rgba(0,200,224,0.07),transparent);
   opacity:0;transition:opacity .3s}
@@ -376,11 +400,32 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
   border:1px solid rgba(255,50,50,0.14);color:rgba(255,85,85,0.6);
   border-radius:2px;font-family:'Space Mono',monospace;font-size:8px;cursor:none;
   letter-spacing:.1em;transition:all .2s}
-.p-deny:hover{background:rgba(255,50,50,0.09)}
+.p-deny:hover{background:rgba(255,50,50,0.09);border-color:rgba(255,70,70,0.3)}
 .p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;
   border-radius:2px;font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
-  cursor:none;letter-spacing:.1em;transition:box-shadow .25s}
+  cursor:none;letter-spacing:.1em;transition:box-shadow .25s,transform .12s}
 .p-approve:hover{box-shadow:0 0 28px rgba(0,200,224,0.5)}
+.p-approve:active{transform:scale(.97)}
+
+/* live tx feed */
+.live-feed{margin-top:10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  border-radius:2px;overflow:hidden}
+.lf-head{padding:8px 13px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--txt2)}
+.lf-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease infinite}
+.lf-items{max-height:160px;overflow:hidden}
+.lf-item{display:flex;align-items:center;gap:8px;padding:7px 13px;border-bottom:1px solid var(--border);
+  font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);
+  animation:lf-in .4s var(--ease2) both}
+.lf-item:last-child{border-bottom:none}
+@keyframes lf-in{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+.lf-type{padding:2px 6px;border-radius:1px;font-size:6.5px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
+.lf-swap{background:rgba(0,200,224,0.07);color:var(--c);border:1px solid rgba(0,200,224,0.14)}
+.lf-bridge{background:rgba(107,163,255,0.07);color:#6ba3ff;border:1px solid rgba(107,163,255,0.13)}
+.lf-stake{background:rgba(184,132,10,0.07);color:var(--gold);border:1px solid rgba(184,132,10,0.14)}
+.lf-gov{background:rgba(30,214,112,0.06);color:var(--green);border:1px solid rgba(30,214,112,0.13)}
 
 /* ════════════════════════════════════════
    DEVS SCENE
@@ -389,8 +434,8 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 #s-devs .inner{width:100%;max-width:1040px;padding:24px 44px 80px;margin:0 auto}
 .dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
 .dev-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;
-  padding:22px;position:relative;overflow:hidden;transition:border-color .25s}
-.dev-card:hover{border-color:rgba(0,200,224,0.17)}
+  padding:22px;position:relative;overflow:hidden;transition:border-color .25s,transform .28s var(--ease)}
+.dev-card:hover{border-color:rgba(0,200,224,0.17);transform:translateY(-2px)}
 .dev-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(to right,transparent,rgba(0,200,224,0.16),transparent)}
 .dc-title{font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;color:#fff;margin-bottom:3px}
@@ -415,9 +460,9 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .tg-v{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt2);width:30px;text-align:right;flex-shrink:0}
 .tx-sim{display:flex;flex-direction:column;gap:7px}
 .tx-step{display:flex;align-items:center;gap:11px;padding:8px 11px;
-  background:rgba(0,0,0,0.32);border:1px solid var(--border);border-radius:2px;transition:border-color .25s}
-.tx-step.done{border-color:rgba(30,214,112,0.15)}
-.tx-step.active{border-color:var(--c)}
+  background:rgba(0,0,0,0.32);border:1px solid var(--border);border-radius:2px;transition:border-color .25s,background .25s}
+.tx-step.done{border-color:rgba(30,214,112,0.15);background:rgba(30,214,112,0.02)}
+.tx-step.active{border-color:var(--c);background:rgba(0,200,224,0.03)}
 .txd{width:7px;height:7px;border-radius:50%;flex-shrink:0;
   background:rgba(0,200,224,0.1);border:1px solid rgba(0,200,224,0.16);transition:all .4s}
 .tx-step.done .txd{background:var(--green);border-color:var(--green);box-shadow:0 0 9px var(--green)}
@@ -429,22 +474,160 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 .tx-step.active .tx-stat{color:var(--c)}
 .rep-grid{display:flex;flex-direction:column;gap:7px}
 .rep-item{display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0;border-bottom:1px solid var(--border)}
+  padding:8px 0;border-bottom:1px solid var(--border);transition:background .2s}
 .rep-item:last-child{border-bottom:none}
 .rep-name{font-family:'Space Mono',monospace;font-size:10px;color:var(--txt)}
 .rep-score{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:.02em;color:var(--c)}
+
+/* ════════════════════════════════════════
+   SWAP / BRIDGE / STAKE SCENE
+════════════════════════════════════════ */
+#s-infra{overflow-y:auto;align-items:flex-start;padding-top:0}
+#s-infra .inner{width:100%;max-width:1040px;padding:24px 44px 80px;margin:0 auto}
+.infra-tabs{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.itab{flex:1;padding:11px 0;font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);
+  background:none;border:none;cursor:none;transition:all .25s;text-align:center;
+  border-right:1px solid var(--border);position:relative}
+.itab:last-child{border-right:none}
+.itab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;
+  background:var(--c);box-shadow:0 0 8px var(--c);transform:scaleX(0);transition:transform .3s var(--ease)}
+.itab:hover{color:var(--txt)}
+.itab.active{color:var(--c);background:rgba(0,200,224,0.04)}
+.itab.active::after{transform:scaleX(1)}
+.infra-panel{display:none}
+.infra-panel.active{display:block}
+
+/* SWAP */
+.swap-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}
+.swap-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:24px;position:relative;overflow:hidden}
+.swap-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,200,224,0.18),transparent)}
+.swap-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--txt2);margin-bottom:8px}
+.swap-token-row{display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;
+  padding:12px 14px;margin-bottom:6px;transition:border-color .2s;cursor:none}
+.swap-token-row:hover{border-color:rgba(0,200,224,0.18)}
+.stk{display:flex;align-items:center;gap:8px;min-width:90px}
+.stk-ico{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.stk-sym{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:#fff}
+.stk-name{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)}
+.stk-amt{margin-left:auto;font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:.02em;color:#fff}
+.stk-usd{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);text-align:right}
+.swap-arrow{display:flex;align-items:center;justify-content:center;height:28px;position:relative}
+.swap-arrow-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border)}
+.swap-arrow-ico{width:22px;height:22px;border:1px solid var(--border2);border-radius:50%;
+  background:rgba(0,200,224,0.05);display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:var(--c);z-index:1;position:relative;cursor:none;transition:all .2s}
+.swap-arrow-ico:hover{background:rgba(0,200,224,0.12);transform:rotate(180deg)}
+.swap-details{margin-top:14px;display:flex;flex-direction:column;gap:5px}
+.sd-row{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid var(--border);font-size:10px}
+.sd-row:last-child{border-bottom:none}
+.sd-l{color:var(--txt2)}.sd-r{color:var(--txt);font-family:'Space Mono',monospace;font-size:8.5px}
+.sd-r.good{color:var(--green)}.sd-r.warn{color:#f0a946}
+.swap-route{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;padding:14px}
+.sr-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--txt2);margin-bottom:14px}
+.sr-flow{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:4px}
+.sr-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+.sr-node-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:14px;border:1px solid var(--border);background:rgba(0,200,224,0.04)}
+.sr-node-lbl{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);text-align:center}
+.sr-line{flex:1;height:1px;background:linear-gradient(to right,var(--c),rgba(0,200,224,0.3));
+  position:relative;min-width:24px}
+.sr-line::after{content:'▶';position:absolute;right:-3px;top:-5px;color:var(--c);font-size:7px}
+.sr-pct{position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  font-family:'Space Mono',monospace;font-size:6px;color:var(--c)}
+.sr-mev{margin-top:12px;display:flex;align-items:center;gap:8px;
+  padding:7px 10px;background:rgba(255,165,0,0.04);border:1px solid rgba(255,165,0,0.1);border-radius:2px}
+.sr-mev-ico{font-size:11px}
+.sr-mev-txt{font-size:9.5px;color:var(--txt2);flex:1}
+.sr-mev-val{font-family:'Space Mono',monospace;font-size:8px;color:#f0a946}
+.swap-btn-wrap{margin-top:14px}
+
+/* BRIDGE */
+.bridge-wrap{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
+.bridge-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:24px;position:relative;overflow:hidden}
+.bridge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(107,163,255,0.3),transparent)}
+.bridge-chains{display:flex;align-items:center;gap:0;margin-bottom:18px}
+.bc-chain{flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;
+  padding:14px;text-align:center;cursor:none;transition:border-color .2s}
+.bc-chain:hover{border-color:rgba(107,163,255,0.28)}
+.bc-chain-ico{font-size:24px;margin-bottom:6px}
+.bc-chain-name{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#fff;margin-bottom:2px}
+.bc-chain-net{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)}
+.bridge-arrow{width:44px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ba-anim{display:flex;flex-direction:column;gap:3px;align-items:center}
+.ba-dot{width:4px;height:4px;border-radius:50%;background:var(--c);
+  animation:ba-pulse 1.4s ease infinite}
+.ba-dot:nth-child(2){animation-delay:.2s}.ba-dot:nth-child(3){animation-delay:.4s}
+@keyframes ba-pulse{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+.bridge-canvas-wrap{background:rgba(0,0,0,0.4);border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;height:160px;position:relative;margin-bottom:12px}
+#bridgeC{width:100%;height:100%;display:block}
+.bridge-status{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.bs-row{display:flex;align-items:center;gap:8px;padding:7px 10px;
+  background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:2px;
+  font-size:9.5px;color:var(--txt2);position:relative;overflow:hidden}
+.bs-row .bs-prog{position:absolute;left:0;top:0;bottom:0;background:rgba(107,163,255,0.04);transition:width 0.5s var(--ease)}
+.bs-ico{font-size:10px;flex-shrink:0;z-index:1}
+.bs-txt{z-index:1;flex:1}
+.bs-stat{font-family:'Space Mono',monospace;font-size:7.5px;z-index:1}
+.bs-stat.done{color:var(--green)}.bs-stat.active{color:#6ba3ff}.bs-stat.pending{color:var(--txt2)}
+.bridge-time{display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:rgba(107,163,255,0.04);border:1px solid rgba(107,163,255,0.14);
+  border-radius:2px;margin-top:10px;font-size:9.5px;color:var(--txt2)}
+.bridge-time-val{font-family:'Bebas Neue',cursive;font-size:20px;color:#6ba3ff;margin-left:auto}
+
+/* STAKE */
+.stake-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stake-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:24px;position:relative;overflow:hidden}
+.stake-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(184,132,10,0.3),transparent)}
+.validator-item{display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);cursor:none;transition:background .2s}
+.validator-item:hover{background:rgba(0,200,224,0.02)}
+.validator-item:last-child{border-bottom:none}
+.vi-rank{font-family:'Bebas Neue',cursive;font-size:16px;color:var(--txt2);width:20px;flex-shrink:0}
+.vi-ico{width:32px;height:32px;border-radius:50%;background:rgba(184,132,10,0.1);
+  border:1px solid rgba(184,132,10,0.18);display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0}
+.vi-name{font-size:11px;color:#fff;font-weight:500;margin-bottom:2px}
+.vi-apy{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--green)}
+.vi-trust{margin-left:auto;text-align:right}
+.vi-score{font-family:'Bebas Neue',cursive;font-size:22px;color:var(--gold)}
+.vi-lbl{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
+.stake-meter{margin-top:16px}
+.sm-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--txt2);margin-bottom:10px}
+.sm-ring-wrap{display:flex;align-items:center;gap:20px}
+#stakeRingC{flex-shrink:0}
+.sm-stats{display:flex;flex-direction:column;gap:6px}
+.sms{font-size:10px;color:var(--txt2)}
+.sms strong{font-family:'Bebas Neue',cursive;font-size:18px;color:#fff;margin-right:4px}
+.sms.gold strong{color:var(--gold)}
+.sms.green strong{color:var(--green)}
+.network-contribution{display:flex;flex-direction:column;gap:5px;margin-top:14px}
+.nc-row{display:flex;align-items:center;gap:8px;padding:6px 10px;
+  background:rgba(184,132,10,0.03);border:1px solid rgba(184,132,10,0.08);border-radius:2px}
+.nc-ico{font-size:10px}.nc-txt{font-size:9.5px;color:var(--txt2);flex:1}
+.nc-val{font-family:'Space Mono',monospace;font-size:8px;color:var(--gold)}
 
 /* ── STATUS BAR ── */
 #sbar{position:fixed;bottom:0;left:0;right:0;z-index:500;display:none;
   background:rgba(2,5,9,0.97);border-top:1px solid var(--border);
   padding:7px 44px;backdrop-filter:blur(20px)}
 #sbar.on{display:flex}
-.sb{display:flex;align-items:center;gap:14px;width:100%}
+.sb{display:flex;align-items:center;gap:14px;width:100%;flex-wrap:wrap}
 .sb-dot{width:5px;height:5px;border-radius:50%;background:var(--green);
   box-shadow:0 0 8px var(--green);animation:pulse 1.8s ease infinite}
 .sb-addr{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--c);letter-spacing:.09em}
 .sb-sep{width:1px;height:9px;background:var(--border)}
 .sb-chain{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt2)}
+.sb-bal{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2)}
 .sb-disc{margin-left:auto;padding:5px 12px;background:none;
   border:1px solid rgba(255,50,50,0.18);color:rgba(255,85,85,0.58);
   font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.1em;
@@ -455,7 +638,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 #toast{position:fixed;bottom:48px;right:22px;z-index:900;
   background:rgba(2,8,22,0.99);border:1px solid var(--border2);border-radius:2px;
   padding:11px 15px;font-family:'Space Mono',monospace;font-size:9px;color:var(--txt);
-  max-width:280px;transform:translateY(10px) scale(.97);opacity:0;
+  max-width:300px;transform:translateY(10px) scale(.97);opacity:0;
   transition:transform .3s var(--ease2),opacity .3s;pointer-events:none;
   box-shadow:0 10px 36px rgba(0,0,0,0.7),0 0 24px rgba(0,200,224,0.05)}
 #toast.on{transform:translateY(0) scale(1);opacity:1}
@@ -473,18 +656,26 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
 ::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.12);border-radius:2px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(0,200,224,0.26)}
 
-@media(max-width:768px){
-  nav{padding:0 16px}
-  .nlinks a{padding:0 10px;font-size:7.5px}
-  #s-id .inner,#s-trust .inner,#s-devs .inner{padding:16px 16px 80px}
+/* ── LOADING STATE ── */
+.skeleton{background:linear-gradient(90deg,rgba(0,200,224,0.04) 25%,rgba(0,200,224,0.1) 50%,rgba(0,200,224,0.04) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:900px){
+  nav{padding:0 12px}
+  .nlinks a{padding:0 8px;font-size:7px;letter-spacing:.1em}
+  #s-id .inner,#s-trust .inner,#s-devs .inner,#s-infra .inner{padding:12px 16px 80px}
   .mgrid{grid-template-columns:1fr 1fr}
-  .wgrid,.fgrid,.dev-grid{grid-template-columns:1fr}
+  .wgrid,.fgrid,.dev-grid,.swap-wrap,.bridge-wrap,.stake-wrap{grid-template-columns:1fr}
   .hero-wrap{padding:0 16px}
   h1{font-size:clamp(52px,14vw,80px)}
   #sbar{padding:7px 16px}
-  .proto-info{left:16px}
-  .proto-legend{right:16px}
-  .proto-stats{left:16px;right:16px}
+  .proto-info{left:16px;bottom:32px}
+  .proto-legend{right:16px;bottom:32px}
+  .proto-stats{left:16px;right:16px;gap:16px}
+  .bridge-chains{flex-direction:column;gap:8px}
+  .bridge-arrow{width:auto;flex-direction:row}
+  .ba-anim{flex-direction:row}
 }
 </style>
 </head>
@@ -502,6 +693,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
     <li><a href="#" data-s="proto">Protocol</a></li>
     <li><a href="#" data-s="id">Identity</a></li>
     <li><a href="#" data-s="trust">TrustLayer</a></li>
+    <li><a href="#" data-s="infra">Infrastructure</a></li>
     <li><a href="#" data-s="devs">Devs</a></li>
   </ul>
   <div class="nright">
@@ -519,16 +711,18 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
   <div class="scene active" id="s-home">
     <canvas id="heroC"></canvas>
     <div class="hero-wrap">
-      <div class="hero-tag"><span class="htdot"></span><span>Trust Layer Protocol v1.0</span></div>
+      <div class="hero-tag"><span class="htdot"></span><span>Trust Layer Protocol v1.0 — Live</span></div>
       <h1><em>Trust</em><br>should be<br>visible.</h1>
       <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
       <div class="hero-btns">
         <button class="btn" id="heroBtn"><span>Connect Wallet</span></button>
         <button class="btn-ghost" id="exploreBtn">Explore Protocol →</button>
+        <button class="btn-ghost" id="infraBtn" style="border-color:rgba(0,200,224,0.18);color:var(--c)">Swap · Bridge · Stake →</button>
       </div>
     </div>
     <div class="ticker">
       <div class="tick-inner" id="tickInner">
+        <div class="tick-live"><div class="tick-live-dot"></div>Live</div>
         <div class="ti"><span class="ti-s">ETH</span><span class="ti-p" id="ep">—</span><span class="ti-u" id="ec">+0.00%</span></div>
         <div class="ti"><span class="ti-s">BTC</span><span class="ti-p" id="bp">—</span><span class="ti-u" id="bc">+0.00%</span></div>
         <div class="ti"><span class="ti-s">SOL</span><span class="ti-p" id="sp">—</span><span class="ti-u" id="sc">+0.00%</span></div>
@@ -537,22 +731,29 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
         <div class="ti"><span class="ti-s">AVAX</span><span class="ti-p" id="avp">—</span><span class="ti-u" id="avc">+0.00%</span></div>
         <div class="ti"><span class="ti-s">LINK</span><span class="ti-p" id="lp">—</span><span class="ti-u" id="lc">+0.00%</span></div>
         <div class="ti"><span class="ti-s">UNI</span><span class="ti-p" id="up">—</span><span class="ti-u" id="uc">+0.00%</span></div>
+        <div class="ti"><span class="ti-s">GAS</span><span class="ti-p" id="gasp">—</span><span class="ti-u" id="gasc" style="color:var(--txt2)">GWEI</span></div>
       </div>
     </div>
   </div>
 
-  <!-- PROTOCOL -->
+  <!-- PROTOCOL (Identity Constellation) -->
   <div class="scene" id="s-proto">
     <canvas id="conC"></canvas>
+    <div class="proto-tooltip" id="protoTip">
+      <div class="pt-type" id="ptType">Trusted</div>
+      <div class="pt-addr" id="ptAddr">0x0000...0000</div>
+      <div class="pt-score" id="ptScore">94</div>
+    </div>
     <div class="proto-stats rv">
       <div class="pst"><div class="pst-v" id="sNodes">0</div><div class="pst-l">Active Nodes</div></div>
       <div class="pst"><div class="pst-v" id="sConns">0</div><div class="pst-l">Connections</div></div>
       <div class="pst"><div class="pst-v">94.2</div><div class="pst-l">Avg Trust Score</div></div>
+      <div class="pst"><div class="pst-v" id="sTx">0</div><div class="pst-l">Live Txns/min</div></div>
       <div class="pst"><div class="pst-v" style="color:var(--green)">Online</div><div class="pst-l">Network Status</div></div>
     </div>
     <div class="proto-info rv">
       <div class="proto-title">Identity<br>Constellation</div>
-      <div class="proto-sub">Every wallet is a living node. Move your cursor to interact with the trust network.</div>
+      <div class="proto-sub">Every wallet is a living node. Hover to inspect trust data. The network breathes in real time.</div>
     </div>
     <div class="proto-legend rv">
       <div class="pl"><div class="pl-d" style="background:#00c8e0"></div>Trusted</div>
@@ -599,15 +800,228 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
               <button class="p-approve" id="approveBtn">Approve — Verify Identity</button>
             </div>
           </div>
+          <div class="live-feed" style="margin-top:10px">
+            <div class="lf-head"><div class="lf-dot"></div>Live Network Activity</div>
+            <div class="lf-items" id="lfItems"></div>
+          </div>
         </div>
         <div>
           <div class="tl-ey" style="margin-bottom:18px">Market Intelligence</div>
           <div class="wcard">
-            <div class="wc-title">Live Prices</div>
+            <div class="wc-title"><span>Live Prices</span><span class="badge bc" id="mktTs">—</span></div>
             <div id="mktList" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          <div class="wcard" style="margin-top:9px">
+            <div class="wc-title"><span>Ecosystem Pulse</span><span id="gasBadge" class="badge bc">— gwei</span></div>
+            <div style="display:flex;flex-direction:column;gap:7px" id="ecosystemPulse"></div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- INFRASTRUCTURE: SWAP / BRIDGE / STAKE -->
+  <div class="scene" id="s-infra">
+    <div class="inner">
+      <div class="tl-hd rv">
+        <div class="tl-ey">Trust Infrastructure Tools</div>
+        <h2 class="tl-h">Move assets with<br>full transparency.</h2>
+        <p class="tl-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p>
+      </div>
+      <div class="infra-tabs rv">
+        <button class="itab active" data-tab="swap">⇄ Swap</button>
+        <button class="itab" data-tab="bridge">⬡ Bridge</button>
+        <button class="itab" data-tab="stake">◈ Stake</button>
+      </div>
+
+      <!-- SWAP PANEL -->
+      <div class="infra-panel active rv" id="panel-swap">
+        <div class="swap-wrap">
+          <div class="swap-card">
+            <div class="swap-lbl">You pay</div>
+            <div class="swap-token-row">
+              <div class="stk">
+                <div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div>
+                <div><div class="stk-sym">ETH</div><div class="stk-name">Ethereum</div></div>
+              </div>
+              <div style="margin-left:auto;text-align:right">
+                <div class="stk-amt">1.000</div>
+                <div class="stk-usd" id="sw-from-usd">≈ $—</div>
+              </div>
+            </div>
+            <div class="swap-arrow">
+              <div class="swap-arrow-line"></div>
+              <div class="swap-arrow-ico" id="swapArrowBtn">⇅</div>
+            </div>
+            <div class="swap-token-row" style="margin-top:6px">
+              <div class="stk">
+                <div class="stk-ico" style="background:rgba(130,71,229,0.12)">◈</div>
+                <div><div class="stk-sym">USDC</div><div class="stk-name">USD Coin</div></div>
+              </div>
+              <div style="margin-left:auto;text-align:right">
+                <div class="stk-amt" id="sw-to-amt">—</div>
+                <div class="stk-usd" id="sw-to-usd">≈ $—</div>
+              </div>
+            </div>
+            <div class="swap-details">
+              <div class="sd-row"><span class="sd-l">Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div>
+              <div class="sd-row"><span class="sd-l">Slippage</span><span class="sd-r good">0.5%</span></div>
+              <div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div>
+              <div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div>
+              <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">97/100 ✓</span></div>
+            </div>
+            <div class="swap-btn-wrap">
+              <button class="btn" style="width:100%;margin-top:4px" id="swapExecBtn"><span>Preview Swap</span></button>
+            </div>
+          </div>
+          <div>
+            <div class="swap-route">
+              <div class="sr-title">Route Visualization — Best Path</div>
+              <div class="sr-flow" id="swapRouteFlow"></div>
+              <div class="sr-mev">
+                <div class="sr-mev-ico">⚡</div>
+                <div class="sr-mev-txt">MEV Sandwich Protection active via Flashbots</div>
+                <div class="sr-mev-val">Saved ~$4.20</div>
+              </div>
+            </div>
+            <div class="swap-card" style="margin-top:12px;padding:18px">
+              <div class="swap-lbl" style="margin-bottom:12px">Fee Breakdown</div>
+              <div class="swap-details">
+                <div class="sd-row"><span class="sd-l">Protocol Fee</span><span class="sd-r">0.05%</span></div>
+                <div class="sd-row"><span class="sd-l">LP Fee</span><span class="sd-r">0.25%</span></div>
+                <div class="sd-row"><span class="sd-l">Gas (est.)</span><span class="sd-r" id="sw-gas-est">—</span></div>
+                <div class="sd-row"><span class="sd-l">Price Impact</span><span class="sd-r warn">-0.08%</span></div>
+                <div class="sd-row" style="border:none;margin-top:4px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRIDGE PANEL -->
+      <div class="infra-panel rv" id="panel-bridge">
+        <div class="bridge-wrap">
+          <div class="bridge-card">
+            <div class="tl-ey" style="margin-bottom:14px">Cross-chain Transfer</div>
+            <div class="bridge-chains">
+              <div class="bc-chain" style="border-color:rgba(111,124,255,0.22)">
+                <div class="bc-chain-ico">Ξ</div>
+                <div class="bc-chain-name">Ethereum</div>
+                <div class="bc-chain-net">Mainnet</div>
+              </div>
+              <div class="bridge-arrow">
+                <div class="ba-anim"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div>
+                <div style="font-size:7px;font-family:Space Mono,monospace;color:var(--txt2);margin-top:4px">→</div>
+              </div>
+              <div class="bc-chain" style="border-color:rgba(30,214,112,0.22)">
+                <div class="bc-chain-ico">⬡</div>
+                <div class="bc-chain-name">Arbitrum</div>
+                <div class="bc-chain-net">One</div>
+              </div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div class="swap-lbl">Amount to bridge</div>
+              <div class="swap-token-row">
+                <div class="stk">
+                  <div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div>
+                  <div><div class="stk-sym">0.5 ETH</div><div class="stk-name">On Ethereum</div></div>
+                </div>
+                <div style="margin-left:auto;text-align:right">
+                  <div class="stk-amt" id="br-amt">—</div>
+                  <div class="stk-usd" style="color:var(--green)">Will receive</div>
+                </div>
+              </div>
+            </div>
+            <div class="bridge-time">
+              <span>⏱ Estimated time</span>
+              <span class="bridge-time-val">~7 min</span>
+            </div>
+            <div class="swap-details" style="margin-top:10px">
+              <div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div>
+              <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div>
+              <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div>
+            </div>
+            <button class="btn" style="width:100%;margin-top:14px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
+          </div>
+          <div>
+            <div class="bridge-canvas-wrap">
+              <canvas id="bridgeC"></canvas>
+            </div>
+            <div class="bridge-status" id="bridgeStatus">
+              <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
+              <div class="bs-row"><div class="bs-prog" id="bp1" style="width:70%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
+              <div class="bs-row"><div class="bs-prog" id="bp2" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Minting on Arbitrum</div><div class="bs-stat pending">Pending</div></div>
+              <div class="bs-row"><div class="bs-prog" id="bp3" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Settlement confirmation</div><div class="bs-stat pending">Pending</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAKE PANEL -->
+      <div class="infra-panel rv" id="panel-stake">
+        <div class="stake-wrap">
+          <div class="stake-card">
+            <div class="tl-ey" style="margin-bottom:14px">Validator Trust Board</div>
+            <div id="validatorList">
+              <div class="validator-item">
+                <div class="vi-rank">01</div>
+                <div class="vi-ico">🏛</div>
+                <div><div class="vi-name">Lido Finance</div><div class="vi-apy">APY: 4.2% ↑</div></div>
+                <div class="vi-trust"><div class="vi-score">99</div><div class="vi-lbl">Trust</div></div>
+              </div>
+              <div class="validator-item">
+                <div class="vi-rank">02</div>
+                <div class="vi-ico">🔷</div>
+                <div><div class="vi-name">Rocket Pool</div><div class="vi-apy">APY: 3.9% →</div></div>
+                <div class="vi-trust"><div class="vi-score">97</div><div class="vi-lbl">Trust</div></div>
+              </div>
+              <div class="validator-item">
+                <div class="vi-rank">03</div>
+                <div class="vi-ico">⚡</div>
+                <div><div class="vi-name">Frax ETH</div><div class="vi-apy">APY: 4.5% ↑</div></div>
+                <div class="vi-trust"><div class="vi-score">94</div><div class="vi-lbl">Trust</div></div>
+              </div>
+              <div class="validator-item">
+                <div class="vi-rank">04</div>
+                <div class="vi-ico">🔵</div>
+                <div><div class="vi-name">Coinbase cbETH</div><div class="vi-apy">APY: 3.6% →</div></div>
+                <div class="vi-trust"><div class="vi-score" style="color:var(--c)">91</div><div class="vi-lbl">Trust</div></div>
+              </div>
+            </div>
+            <div class="stake-meter">
+              <div class="sm-title">Your Staking Position</div>
+              <div class="sm-ring-wrap">
+                <canvas id="stakeRingC" width="80" height="80"></canvas>
+                <div class="sm-stats">
+                  <div class="sms gold"><strong>2.4</strong>ETH staked</div>
+                  <div class="sms green"><strong id="stakeReward">0.00</strong>ETH earned</div>
+                  <div class="sms"><strong>4.2%</strong>Current APY</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stake-card">
+            <div class="tl-ey" style="margin-bottom:14px">Network Contribution</div>
+            <div class="network-contribution">
+              <div class="nc-row"><div class="nc-ico">🔒</div><div class="nc-txt">Chain Security Score</div><div class="nc-val">98.4%</div></div>
+              <div class="nc-row"><div class="nc-ico">⚡</div><div class="nc-txt">Your Contribution</div><div class="nc-val">0.003%</div></div>
+              <div class="nc-row"><div class="nc-ico">🌐</div><div class="nc-txt">Active Validators</div><div class="nc-val">872,140</div></div>
+              <div class="nc-row"><div class="nc-ico">◈</div><div class="nc-txt">Total ETH Staked</div><div class="nc-val">32.8M ETH</div></div>
+            </div>
+            <div style="margin-top:18px">
+              <div class="tl-ey" style="margin-bottom:12px">Reward Transparency</div>
+              <div class="swap-details">
+                <div class="sd-row"><span class="sd-l">Consensus Rewards</span><span class="sd-r good">+0.0003 ETH/day</span></div>
+                <div class="sd-row"><span class="sd-l">Execution Rewards</span><span class="sd-r good">+0.0001 ETH/day</span></div>
+                <div class="sd-row"><span class="sd-l">MEV Rewards</span><span class="sd-r warn">Variable</span></div>
+                <div class="sd-row"><span class="sd-l">Validator Fee</span><span class="sd-r">10% of rewards</span></div>
+              </div>
+              <button class="btn" style="width:100%;margin-top:14px" id="stakeExecBtn"><span>Stake ETH — Contribute to Network</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -632,8 +1046,9 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
             <div class="tl"><span class="tp"> </span><span class="to" style="color:var(--c)">⬡ Trust score: 97/100 — Safe</span></div>
             <div class="tl"><span class="tp"> </span><span class="to">⟳ Deploying to Ethereum Mainnet...</span></div>
             <div class="tl"><span class="tp"> </span><span class="to" style="color:var(--green)">✓ Deployed: 0x3f92...d841</span></div>
-            <div class="tl"><span class="tp">$</span><span class="tc"><span class="tcur"></span></span></div>
+            <div class="tl" id="termLine"><span class="tp">$</span><span class="tc"><span class="tcur"></span></span></div>
           </div>
+          <button class="btn btn-sm" style="margin-top:10px" id="deployBtn"><span>Run New Deploy Scan</span></button>
         </div>
         <div class="dev-card">
           <div class="dc-title">Trust Verification Engine</div>
@@ -657,7 +1072,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
             <div class="tx-step"><div class="txd"></div><span class="tx-txt">Trust score assessment</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div>
             <div class="tx-step"><div class="txd"></div><span class="tx-txt">Human-readable output</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div>
           </div>
-          <button class="btn" style="margin-top:14px;width:100%;font-size:8px" id="runSimBtn"><span>Run Simulation</span></button>
+          <button class="btn btn-sm" style="margin-top:14px;width:100%" id="runSimBtn"><span>Run Simulation</span></button>
         </div>
         <div class="dev-card">
           <div class="dc-title">Builder Reputation Board</div>
@@ -693,7 +1108,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
       <div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div>
       <div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div>
       <div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div>
-      <div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.18)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full cinematic experience</div></div><div class="wo-badge ok">Always available</div><div class="wo-arr">→</div></div>
+      <div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.18)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full cinematic experience — no wallet needed</div></div><div class="wo-badge ok">Always available</div><div class="wo-arr">→</div></div>
       <div class="wm-note">🔒 Rialo never stores your private keys. Connection is read-only for identity analysis.</div>
     </div>
   </div>
@@ -730,6 +1145,8 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.55);color:tra
     <div class="sb-addr" id="sbAddr">0x0000...0000</div>
     <div class="sb-sep"></div>
     <div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
+    <div class="sb-sep"></div>
+    <div class="sb-bal" id="sbBal">— ETH</div>
     <button class="sb-disc" id="discBtn">Disconnect</button>
   </div>
 </div>
@@ -746,7 +1163,7 @@ document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;
 function hov(sel){document.querySelectorAll(sel).forEach(function(el){
   el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});
   el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')})});}
-hov('button,a,.wo,.fc,.mc,.wcard,.dev-card,.abar,.cpill,.rep-item,.tx-step');
+hov('button,a,.wo,.fc,.mc,.wcard,.dev-card,.abar,.cpill,.rep-item,.tx-step,.validator-item,.swap-token-row,.bc-chain,.itab');
 
 /* ══════════════════════ TOAST & FLASH ══════════════════════ */
 var _tt;
@@ -760,10 +1177,11 @@ function flash(){var f=document.getElementById('flash');f.classList.add('go');
 var bgC=document.getElementById('BG'),bgX=bgC.getContext('2d'),BW=0,BH=0;
 function rBg(){BW=bgC.width=innerWidth;BH=bgC.height=innerHeight}rBg();
 window.addEventListener('resize',rBg);
-var BN=[],BP=[];
+var BN=[];
 for(var i=0;i<75;i++)BN.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
   vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,
   r:Math.random()*1.8+.4,p:Math.random()*Math.PI*2,ps:.005+Math.random()*.01,layer:i%4});
+var BP=[];
 for(var i=0;i<100;i++)BP.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
   vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,
   life:Math.random(),ls:.001+Math.random()*.0025});
@@ -951,40 +1369,67 @@ function drawHex(t){
   hexX.beginPath();hexX.strokeStyle=sG;hexX.lineWidth=1;hexX.moveTo(15,sY);hexX.lineTo(185,sY);hexX.stroke();
 }
 
-/* ══════════════════════ CONSTELLATION ══════════════════════ */
+/* ══════════════════════ CONSTELLATION (Reactive) ══════════════════════ */
 var conC=document.getElementById('conC'),conX=conC.getContext('2d');
 function rCon(){conC.width=conC.offsetWidth||innerWidth;conC.height=conC.offsetHeight||innerHeight-52}
 rCon();window.addEventListener('resize',rCon);
 var CTYPES=['trusted','builder','gov','risky','inactive'];
 var CN=[];
-for(var i=0;i<82;i++)CN.push({x:Math.random()*(conC.offsetWidth||1400),
-  y:Math.random()*(conC.offsetHeight||700),
-  vx:(Math.random()-.5)*.11,vy:(Math.random()-.5)*.11,
-  r:Math.random()*4+1.2,p:Math.random()*Math.PI*2,
-  type:CTYPES[Math.floor(Math.random()*CTYPES.length)],glitch:0,hover:0});
-CN.push({x:(conC.offsetWidth||1400)/2,y:(conC.offsetHeight||700)/2,r:14,vx:0,vy:0,p:0,type:'main',fixed:true});
+var fakeAddrs=['0xd8dA...6045','0xAb58...eC9B','0x71C7...C62','0x1f98...4A27','0x9A30...B811','0x3C44...93BC','0xdF3e...f39F'];
+for(var i=0;i<82;i++){
+  var t=CTYPES[Math.floor(Math.random()*CTYPES.length)];
+  CN.push({x:Math.random()*(conC.offsetWidth||1400),
+    y:Math.random()*(conC.offsetHeight||700),
+    vx:(Math.random()-.5)*.11,vy:(Math.random()-.5)*.11,
+    r:Math.random()*4+1.2,p:Math.random()*Math.PI*2,
+    type:t,glitch:0,hover:0,pulse:0,
+    addr:fakeAddrs[Math.floor(Math.random()*fakeAddrs.length)],
+    score:Math.floor(60+Math.random()*40)});
+}
+// Main node (wallet)
+CN.push({x:(conC.offsetWidth||1400)/2,y:(conC.offsetHeight||700)/2,r:14,vx:0,vy:0,p:0,type:'main',fixed:true,score:94,addr:'Your Wallet'});
 function cnCol(type,a){
   return {trusted:'rgba(0,200,224,'+a+')',builder:'rgba(184,132,10,'+a+')',
     gov:'rgba(107,163,255,'+a+')',risky:'rgba(255,55,55,'+a+')',
     inactive:'rgba(65,85,105,'+a+')',main:'rgba(0,200,224,'+a+')'}[type]||'rgba(65,85,105,'+a+')';
 }
 var cMX=0,cMY=0,cHov=-1;
+var protoTip=document.getElementById('protoTip');
 document.getElementById('conC').addEventListener('mousemove',function(e){
   var r=conC.getBoundingClientRect();cMX=e.clientX-r.left;cMY=e.clientY-r.top;
-  cHov=-1;CN.forEach(function(n,i){var dx=cMX-n.x,dy=cMY-n.y;
-    if(Math.sqrt(dx*dx+dy*dy)<n.r*2.6)cHov=i});
+  var prevHov=cHov;cHov=-1;
+  CN.forEach(function(n,i){var dx=cMX-n.x,dy=cMY-n.y;
+    if(Math.sqrt(dx*dx+dy*dy)<n.r*3)cHov=i});
+  if(cHov>=0){
+    var n=CN[cHov];
+    document.getElementById('ptType').textContent=n.type.charAt(0).toUpperCase()+n.type.slice(1);
+    document.getElementById('ptAddr').textContent=n.addr||'0x???';
+    document.getElementById('ptScore').textContent=n.score||'—';
+    protoTip.style.left=(e.clientX+14)+'px';protoTip.style.top=(e.clientY-14)+'px';
+    protoTip.classList.add('show');
+  } else {protoTip.classList.remove('show')}
 });
+var liveTxCount=0;
+setInterval(function(){liveTxCount=Math.floor(Math.random()*12+4);
+  var el=document.getElementById('sTx');if(el)el.textContent=liveTxCount;
+  // randomly change a node type to make it reactive
+  if(Math.random()<.12){var idx=Math.floor(Math.random()*(CN.length-1));
+    CN[idx].pulse=1;}
+},2200);
 function drawCon(){
   if(!conX||!conC.width)return;
   var W=conC.width,H=conC.height;
   conX.clearRect(0,0,W,H);
   var main=CN[CN.length-1];
   if(main.fixed){main.x=W/2;main.y=H/2}
+  // if wallet connected, main node pulses with user color
+  if(connAddr){main.r=14+Math.sin(Date.now()*.002)*2}
   CN.forEach(function(n,i){
     if(!n.fixed){
       n.x+=n.vx;n.y+=n.vy;n.p+=.007;
       n.glitch=n.type==='risky'?Math.random()<.003?1.4:Math.max(0,n.glitch-.035):0;
       n.hover=i===cHov?Math.min(1,n.hover+.07):Math.max(0,n.hover-.055);
+      n.pulse=Math.max(0,(n.pulse||0)-.018);
       if(n.x<0)n.x=W;if(n.x>W)n.x=0;if(n.y<0)n.y=H;if(n.y>H)n.y=0;
       var dx=cMX-n.x,dy=cMY-n.y,d=Math.sqrt(dx*dx+dy*dy);
       if(d<88&&d>1){n.vx-=dx/d*.001;n.vy-=dy/d*.001}
@@ -1007,19 +1452,23 @@ function drawCon(){
       conX.lineWidth=.3;conX.moveTo(na.x,na.y);conX.lineTo(nb.x,nb.y);conX.stroke()}
   }
   CN.forEach(function(n,i){
-    var pa=Math.sin(n.p)*.5+.5,sc=1+n.hover*.5;
+    var pa=Math.sin(n.p)*.5+.5,sc=1+n.hover*.5+(n.pulse||0)*.4;
     if(n.type==='main'){
       for(var rr=4;rr>=1;rr--){conX.beginPath();conX.arc(n.x,n.y,n.r*rr*1.4,0,Math.PI*2);
         conX.fillStyle='rgba(0,200,224,'+(0.03/rr)+')';conX.fill()}
-      conX.beginPath();conX.arc(n.x,n.y,n.r,0,Math.PI*2);conX.fillStyle='rgba(0,200,224,.88)';conX.fill();
+      conX.beginPath();conX.arc(n.x,n.y,n.r,0,Math.PI*2);
+      conX.fillStyle=connAddr?'rgba(0,200,224,.95)':'rgba(0,200,224,.88)';conX.fill();
+      if(connAddr){// glow ring for connected wallet
+        conX.beginPath();conX.arc(n.x,n.y,n.r+8,0,Math.PI*2);
+        conX.strokeStyle='rgba(0,200,224,0.22)';conX.lineWidth=1;conX.stroke()}
     } else {
       var gx=n.glitch?(Math.random()-.5)*n.glitch*4.5:0;
       var sz=n.r*sc;
-      var a=n.type==='inactive'?.12:(.22+pa*.44+n.hover*.26);
+      var a=n.type==='inactive'?.12:(.22+pa*.44+n.hover*.26+(n.pulse||0)*.3);
       conX.beginPath();conX.arc(n.x+gx,n.y,sz,0,Math.PI*2);
       conX.fillStyle=cnCol(n.type,a);conX.fill();
-      if(n.hover>.08){conX.beginPath();conX.arc(n.x,n.y,sz*2.3,0,Math.PI*2);
-        conX.fillStyle=cnCol(n.type,n.hover*.09);conX.fill()}
+      if(n.hover>.08||n.pulse>.1){conX.beginPath();conX.arc(n.x,n.y,sz*2.3,0,Math.PI*2);
+        conX.fillStyle=cnCol(n.type,(n.hover+n.pulse)*.09);conX.fill()}
     }
   });
   document.getElementById('sNodes').textContent=CN.length;
@@ -1032,9 +1481,68 @@ function drawCon(){
   document.getElementById('sConns').textContent=cc;
 }
 
+/* ══════════════════════ BRIDGE CANVAS ══════════════════════ */
+var brC=document.getElementById('bridgeC'),brX=null;
+function initBridgeCanvas(){
+  if(!brC)return;brX=brC.getContext('2d');
+  brC.width=brC.offsetWidth;brC.height=brC.offsetHeight;
+}
+var brPackets=[];
+function drawBridge(t){
+  if(!brX||!brC.offsetWidth)return;
+  if(brC.width!==brC.offsetWidth){brC.width=brC.offsetWidth;brC.height=brC.offsetHeight}
+  var W=brC.width,H=brC.height;
+  brX.clearRect(0,0,W,H);
+  var lx=W*.18,rx=W*.82,cy=H/2;
+  // Chains
+  [lx,rx].forEach(function(x,i){
+    var col=i===0?'rgba(111,124,255,':'rgba(30,214,112,';
+    for(var r=3;r>=1;r--){brX.beginPath();brX.arc(x,cy,14*r,0,Math.PI*2);
+      brX.fillStyle=col+(0.04/r)+')';brX.fill()}
+    brX.beginPath();brX.arc(x,cy,14,0,Math.PI*2);
+    brX.fillStyle=col+'0.9)';brX.fill();
+  });
+  // Connection line
+  brX.beginPath();brX.setLineDash([4,8]);
+  brX.strokeStyle='rgba(0,200,224,0.12)';brX.lineWidth=1;
+  brX.moveTo(lx+16,cy);brX.lineTo(rx-16,cy);brX.stroke();
+  brX.setLineDash([]);
+  // Animated packets
+  if(Math.random()<.04)brPackets.push({x:lx+16,progress:0,speed:.004+Math.random()*.006});
+  brPackets=brPackets.filter(function(p){
+    p.progress+=p.speed;p.x=lx+16+(rx-lx-32)*Math.min(p.progress,1);
+    var trail=6;
+    for(var i=0;i<trail;i++){
+      var a=(1-i/trail)*0.7*(1-Math.abs(p.progress-.5)*2+.5);
+      brX.beginPath();brX.arc(p.x-i*3,cy,2.5-i*.3,0,Math.PI*2);
+      brX.fillStyle='rgba(0,200,224,'+Math.max(0,a)+')';brX.fill();
+    }
+    return p.progress<1;
+  });
+  // Labels
+  brX.font='9px Space Mono,monospace';
+  brX.fillStyle='rgba(100,140,165,0.6)';brX.textAlign='center';
+  brX.fillText('ETH',lx,cy+26);brX.fillText('ARB',rx,cy+26);
+  brX.fillText(brPackets.length+' packets',W/2,cy-22);
+}
+
+/* ══════════════════════ STAKE RING ══════════════════════ */
+function drawStakeRing(){
+  var c=document.getElementById('stakeRingC');if(!c)return;
+  var x=c.getContext('2d'),r=36,cx=40,cy=40,pct=.72;
+  x.clearRect(0,0,80,80);
+  x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);
+  x.strokeStyle='rgba(184,132,10,0.1)';x.lineWidth=5;x.stroke();
+  x.beginPath();x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*pct);
+  x.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--gold').trim()||'#b8840a';
+  x.lineWidth=5;x.lineCap='round';x.stroke();
+  x.font='bold 11px Bebas Neue,cursive';x.fillStyle='#fff';x.textAlign='center';x.fillBaseline='middle';
+  x.fillText('72%',cx,cy+4);
+}
+
 /* ══════════════════════ NAVIGATION ══════════════════════ */
 var curScene='home';
-var scOrder=['home','proto','id','trust','devs'];
+var scOrder=['home','proto','id','trust','infra','devs'];
 function goScene(id){
   if(id===curScene)return;
   var oldEl=document.getElementById('s-'+curScene);
@@ -1042,9 +1550,7 @@ function goScene(id){
   if(!newEl)return;
   var oi=scOrder.indexOf(curScene),ni=scOrder.indexOf(id);
   var fwd=ni>oi;
-  // Fade out old
   oldEl.style.cssText='opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s ease;transform:translateX('+(fwd?'-28px':'28px')+')';
-  // Prepare new
   newEl.style.cssText='display:flex;opacity:0;pointer-events:none;transform:translateX('+(fwd?'36px':'-36px')+')';
   requestAnimationFrame(function(){requestAnimationFrame(function(){
     newEl.style.cssText='display:flex;opacity:1;pointer-events:auto;transform:translateX(0);transition:opacity .55s ease,transform .55s ease';
@@ -1053,6 +1559,7 @@ function goScene(id){
     oldEl.style.cssText='opacity:0;pointer-events:none';
     oldEl.classList.remove('active');
     newEl.classList.add('active');
+    if(id==='infra'){initBridgeCanvas();drawStakeRing();initInfra()}
   },580);
   document.querySelectorAll('.nlinks a').forEach(function(a){
     a.classList.toggle('active',a.dataset.s===id)});
@@ -1066,9 +1573,101 @@ function goScene(id){
 document.querySelectorAll('.nlinks a').forEach(function(a){
   a.addEventListener('click',function(e){e.preventDefault();goScene(a.dataset.s)})});
 document.getElementById('exploreBtn').addEventListener('click',function(){goScene('proto')});
+document.getElementById('infraBtn').addEventListener('click',function(){goScene('infra')});
+
+/* ══════════════════════ INFRA TABS ══════════════════════ */
+document.querySelectorAll('.itab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.itab').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.infra-panel').forEach(function(p){p.classList.remove('active')});
+    btn.classList.add('active');
+    var panel=document.getElementById('panel-'+btn.dataset.tab);
+    if(panel)panel.classList.add('active');
+    if(btn.dataset.tab==='bridge'){setTimeout(initBridgeCanvas,100)}
+    if(btn.dataset.tab==='stake'){drawStakeRing()}
+  });
+});
+function initInfra(){
+  updateSwapUI();
+  buildSwapRoute();
+  setTimeout(initBridgeCanvas,200);
+}
+
+/* ── SWAP UI ── */
+function updateSwapUI(){
+  if(!ethPrice)return;
+  var fromAmt=1.0;
+  var toAmt=ethPrice*fromAmt;
+  document.getElementById('sw-from-usd').textContent='≈ $'+ethPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sw-to-amt').textContent=toAmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sw-to-usd').textContent='≈ $'+toAmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('sw-rate').textContent='1 ETH = '+ethPrice.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})+' USDC';
+  if(gasPrice){
+    document.getElementById('sw-fee').textContent=gasPrice+' gwei';
+    var gasCostEth=(gasPrice*21000/1e9).toFixed(5);
+    document.getElementById('sw-gas-est').textContent='~'+gasCostEth+' ETH';
+    var totalCost=(0.003+gasPrice*21000/1e9*ethPrice).toFixed(2);
+    document.getElementById('sw-total').textContent='~$'+totalCost;
+    document.getElementById('br-amt').textContent='0.4998 ETH';
+  }
+}
+var swapped=false;
+document.getElementById('swapArrowBtn').addEventListener('click',function(){
+  swapped=!swapped;toast(swapped?'Direction: USDC → ETH':'Direction: ETH → USDC');
+  updateSwapUI();
+});
+document.getElementById('swapExecBtn').addEventListener('click',function(){
+  if(!connAddr){toast('Connect wallet to swap.');openWallet();return}
+  toast('Swap preview: 1 ETH → '+Math.floor(ethPrice||3000)+' USDC — Route: Uniswap v4');
+});
+document.getElementById('bridgeExecBtn').addEventListener('click',function(){
+  if(!connAddr){toast('Connect wallet to bridge.');openWallet();return}
+  toast('Bridge initiated: 0.5 ETH → Arbitrum — Est. ~7 min');
+  animateBridgeProgress();
+});
+document.getElementById('stakeExecBtn').addEventListener('click',function(){
+  if(!connAddr){toast('Connect wallet to stake.');openWallet();return}
+  toast('Staking 2.4 ETH via Lido — Trust Score: 99/100 ✓');
+});
+function buildSwapRoute(){
+  var flow=document.getElementById('swapRouteFlow');if(!flow)return;
+  var nodes=[{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];
+  var pcts=['43%','57%',''];
+  flow.innerHTML='';
+  nodes.forEach(function(n,i){
+    var nd=document.createElement('div');nd.className='sr-node';
+    nd.innerHTML='<div class="sr-node-ico">'+n.ico+'</div><div class="sr-node-lbl">'+n.lbl+'</div>';
+    flow.appendChild(nd);
+    if(i<nodes.length-1){
+      var ln=document.createElement('div');ln.className='sr-line';
+      if(pcts[i]){var sp=document.createElement('span');sp.className='sr-pct';sp.textContent=pcts[i];ln.appendChild(sp)}
+      flow.appendChild(ln);
+    }
+  });
+}
+function animateBridgeProgress(){
+  var progs=[document.getElementById('bp0'),document.getElementById('bp1'),
+    document.getElementById('bp2'),document.getElementById('bp3')];
+  var stats=document.querySelectorAll('.bs-stat');
+  var step=1;
+  function adv(){
+    if(step>=progs.length)return;
+    if(progs[step])progs[step].style.width='100%';
+    if(stats[step])stats[step].textContent='Complete';
+    if(stats[step])stats[step].className='bs-stat done';
+    step++;
+    if(step<progs.length){
+      if(progs[step])progs[step].style.width='30%';
+      if(stats[step])stats[step].textContent='In progress';
+      if(stats[step])stats[step].className='bs-stat active';
+      setTimeout(adv,2000+Math.random()*1500);
+    } else {toast('Bridge complete ✓ 0.4998 ETH received on Arbitrum')}
+  }
+  setTimeout(adv,1500);
+}
 
 /* ══════════════════════ WALLET STATE ══════════════════════ */
-var connAddr=null,connWallet=null,chainId=null,ethPrice=0;
+var connAddr=null,connWallet=null,chainId=null,ethPrice=0,gasPrice=null;
 function chainLabel(cid){
   return {'0x1':'Ethereum Mainnet','0x89':'Polygon','0xa':'Optimism','0xa4b1':'Arbitrum','0x2105':'Base'}[cid]||'Network';
 }
@@ -1096,11 +1695,26 @@ function closeWallet(){
   var wo=document.getElementById('wovl');wo.classList.remove('open');
   setTimeout(function(){wo.classList.remove('opening');wlActive=false},500);
 }
+function setWoLoading(id){
+  var el=document.getElementById(id);if(!el)return;
+  var arr=el.querySelector('.wo-arr');if(arr)arr.remove();
+  var sp=document.createElement('div');sp.className='wo-spinner';el.appendChild(sp);
+  el.classList.add('loading');
+}
+function resetWoLoading(){
+  document.querySelectorAll('.wo').forEach(function(el){
+    el.classList.remove('loading');
+    var sp=el.querySelector('.wo-spinner');if(sp)sp.remove();
+    if(!el.querySelector('.wo-arr')){var a=document.createElement('div');a.className='wo-arr';a.textContent='→';el.appendChild(a)}
+  });
+}
 async function connectWallet(type){
-  closeWallet();var address=null;
+  var optId='opt-'+type;setWoLoading(optId);
+  var address=null;
   try{
     if(type==='mm'){
       if(!window.ethereum||!window.ethereum.isMetaMask){
+        resetWoLoading();
         toast('MetaMask not detected. Redirecting...');
         setTimeout(function(){window.open('https://metamask.io/download/','_blank')},1100);return;
       }
@@ -1108,22 +1722,26 @@ async function connectWallet(type){
       address=acc[0];connWallet='MetaMask';chainId=await window.ethereum.request({method:'eth_chainId'});
     } else if(type==='okx'){
       var prov=window.okxwallet||(window.ethereum&&window.ethereum.isOKXWallet?window.ethereum:null);
-      if(!prov){toast('OKX Wallet not detected.');return}
+      if(!prov){resetWoLoading();toast('OKX Wallet not detected.');return}
       var acc=await prov.request({method:'eth_requestAccounts'});
       address=acc[0];connWallet='OKX Wallet';chainId=await prov.request({method:'eth_chainId'});
     } else if(type==='ph'){
       if(window.solana&&window.solana.isPhantom){
         var r=await window.solana.connect();address=r.publicKey.toString();connWallet='Phantom';
-      } else {toast('Phantom not detected.');return}
+      } else {resetWoLoading();toast('Phantom not detected.');return}
     } else if(type==='demo'){
+      await new Promise(function(r){setTimeout(r,600)}); // Cinematic delay
       var fakes=['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045','0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'];
       address=fakes[Math.floor(Math.random()*fakes.length)];connWallet='Demo Mode';chainId='0x1';
     }
-  }catch(e){if(e.code===4001)toast('Connection rejected.');else toast('Error: '+(e.message||'Unknown'));return}
-  if(address){connAddr=address;startScan(address)}
+  }catch(e){resetWoLoading();if(e.code===4001)toast('Connection rejected.');else toast('Error: '+(e.message||'Unknown'));return}
+  if(address){resetWoLoading();connAddr=address;closeWallet();startScan(address)}
 }
 document.getElementById('heroBtn').addEventListener('click',openWallet);
-document.getElementById('navBtn').addEventListener('click',function(){if(!connAddr)openWallet()});
+document.getElementById('navBtn').addEventListener('click',function(){
+  if(!connAddr)openWallet();
+  else{toast('Already connected as '+connAddr.slice(0,6)+'...'+connAddr.slice(-4))}
+});
 document.getElementById('wmClose').addEventListener('click',closeWallet);
 document.getElementById('wovl').addEventListener('click',function(e){if(e.target===this)closeWallet()});
 document.getElementById('opt-mm').addEventListener('click',function(){connectWallet('mm')});
@@ -1140,7 +1758,7 @@ function startScan(addr){
     so.classList.add('open');
     document.getElementById('scanTitle').classList.add('in');
   })});
-  document.getElementById('scanAddr').textContent=addr;
+  document.getElementById('scanAddr').textContent=addr.slice(0,14)+'...'+addr.slice(-6);
   document.getElementById('spFill').style.width='0%';
   document.getElementById('spPct').textContent='0%';
   document.getElementById('scanCta').classList.remove('in');
@@ -1176,10 +1794,13 @@ function showIdentity(){
   var short=connAddr.slice(0,6)+'...'+connAddr.slice(-4);
   document.getElementById('sbAddr').textContent=short;
   document.getElementById('sbChain').textContent=chainLabel(chainId);
+  document.getElementById('sbBal').textContent='3.2841 ETH';
   document.getElementById('nchain').classList.add('on');
   document.getElementById('nchainlbl').textContent=chainShort(chainId);
   document.getElementById('navBtn').classList.add('connected');
   document.getElementById('navLbl').textContent=short;
+  // Update main constellation node
+  CN[CN.length-1].addr=short;CN[CN.length-1].score=94;
   buildIdentity();goScene('id');
   toast('Identity profile loaded ✓ Trust score: 94/100');
 }
@@ -1189,6 +1810,7 @@ function disconnectWallet(){
   document.getElementById('nchain').classList.remove('on');
   document.getElementById('navBtn').classList.remove('connected');
   document.getElementById('navLbl').textContent='Connect Wallet';
+  CN[CN.length-1].addr='Your Wallet';
   toast('Wallet disconnected.');goScene('home');
 }
 
@@ -1197,15 +1819,22 @@ function buildIdentity(){
   var ic=document.getElementById('idContent');
   if(!connAddr){
     ic.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 52px);text-align:center;gap:14px"><h3 style="font-family:Bebas Neue,cursive;font-size:26px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3><p style="font-size:12px;color:var(--txt2);max-width:300px;line-height:1.85">Connect your wallet to view your trust identity profile.</p><button class="btn" onclick="openWallet()"><span>Connect Wallet</span></button></div>';
-    return;
+    hov('button');return;
   }
   ic.innerHTML=`
   <div class="id-hero rv">
     <div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div>
-    <div>
+    <div style="flex:1">
       <div class="id-name">Trust Identity</div>
       <div class="id-addr">${connAddr}</div>
-      <div class="id-badge"><div class="ibd"></div><span>${connWallet||'Demo Mode'} — Cyan Aura Active</span></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="id-badge"><div class="ibd"></div><span>${connWallet||'Demo Mode'} — Cyan Aura Active</span></div>
+        <div class="id-live-tag"><span>● Live</span></div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:Bebas Neue,cursive;font-size:44px;color:var(--c);line-height:1">94</div>
+      <div style="font-family:Space Mono,monospace;font-size:7px;color:var(--txt2);letter-spacing:.14em">TRUST SCORE</div>
     </div>
   </div>
   <div class="mgrid rv">
@@ -1217,9 +1846,10 @@ function buildIdentity(){
   <div class="wgrid rv">
     <div class="wcard">
       <div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div>
-      <div style="font-family:Bebas Neue,cursive;font-size:36px;letter-spacing:.03em;color:#fff;margin-bottom:4px" id="id-bal">3.2841 ETH</div>
+      <div style="font-family:Bebas Neue,cursive;font-size:36px;letter-spacing:.03em;color:#fff;margin-bottom:4px">3.2841 ETH</div>
       <div style="font-size:9.5px;color:var(--txt2)" id="id-usd">≈ $0.00 USD</div>
       <div style="margin-top:12px;font-size:9px;color:var(--txt2)">Network: <span style="color:var(--c)">${chainLabel(chainId)}</span></div>
+      <div style="margin-top:6px;font-size:9px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas">— gwei</span></div>
     </div>
     <div class="wcard">
       <div class="wc-title">Multi-chain Presence</div>
@@ -1255,18 +1885,21 @@ function buildIdentity(){
       <div class="ch-item"><div class="ch-dot" style="background:#6ba3ff"></div><div class="ch-txt">Open source smart contract auditor</div><div class="ch-yr">2023</div></div>
     </div>
     <div class="wcard">
-      <div class="wc-title">Live Market</div>
+      <div class="wc-title"><span>Live Market</span><span class="badge bc" id="id-mkt-ts">—</span></div>
       <div id="id-mkt" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>`;
-  hov('.mc,.wcard,.abar,.cpill');
+  hov('.mc,.wcard,.abar,.cpill,button');
   var bars=document.getElementById('id-bars');
   if(bars){bars.innerHTML='';
     [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){
       var b=document.createElement('div');b.className='abar';b.style.height=v+'%';bars.appendChild(b)})}
   animNum('tsv',0,94,1400);animNum('brv',0,847,1700);animNum('gvv',0,23,1100);
-  if(ethPrice)document.getElementById('id-usd').textContent='≈ $'+(3.2841*ethPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
-  buildMkt('id-mkt');
+  if(ethPrice){
+    document.getElementById('id-usd').textContent='≈ $'+(3.2841*ethPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+  }
+  if(gasPrice)document.getElementById('id-gas').textContent=gasPrice+' gwei';
+  buildMkt('id-mkt','id-mkt-ts');
   setTimeout(function(){ic.querySelectorAll('.rv').forEach(function(el,i){setTimeout(function(){el.classList.add('in')},i*65)})},80);
 }
 function animNum(id,from,to,dur){
@@ -1302,16 +1935,74 @@ function initDevScene(){
       sIdx=2;
     }
     setTimeout(adv,900);setTimeout(adv,1800);setTimeout(adv,2700);
-    toast('Simulation complete — Risk: Low');
+    toast('Simulation complete — Risk: Low ✓');
+  });
+  document.getElementById('deployBtn').addEventListener('click',function(){
+    var tl=document.getElementById('termLine');
+    if(!tl)return;
+    var msgs=[
+      '<span class="tp"> </span><span class="to" style="color:var(--c)">⟳ Scanning new contract...</span>',
+      '<span class="tp"> </span><span class="to">✓ Trust Score: 99/100</span>',
+      '<span class="tp"> </span><span class="to" style="color:var(--green)">✓ Deployed: 0x'+Math.random().toString(16).slice(2,8)+'...'+Math.random().toString(16).slice(2,6)+'</span>'
+    ];
+    var i=0;var iv=setInterval(function(){
+      var row=document.createElement('div');row.className='tl';row.innerHTML=msgs[i];
+      tl.parentNode.insertBefore(row,tl);
+      i++;if(i>=msgs.length)clearInterval(iv);
+    },600);
+    toast('Deploy scan running...');
   });
 }
 
+/* ══════════════════════ LIVE NETWORK FEED ══════════════════════ */
+var lfTypes=[{cls:'lf-swap',label:'SWAP'},{cls:'lf-bridge',label:'BRIDGE'},{cls:'lf-stake',label:'STAKE'},{cls:'lf-gov',label:'GOV'}];
+var lfAddrs=['0xd8d...604','0xAb5...9B','0x71C...C62','0x3f9...841','0x1f9...27','0xA16...b4F'];
+function addLiveFeedItem(){
+  var lf=document.getElementById('lfItems');if(!lf)return;
+  var t=lfTypes[Math.floor(Math.random()*lfTypes.length)];
+  var addr=lfAddrs[Math.floor(Math.random()*lfAddrs.length)];
+  var amt=(Math.random()*10).toFixed(3);
+  var item=document.createElement('div');item.className='lf-item';
+  item.innerHTML='<span class="lf-type '+t.cls+'">'+t.label+'</span><span>'+addr+'</span><span style="margin-left:auto;color:var(--txt)">'+amt+' ETH</span>';
+  lf.insertBefore(item,lf.firstChild);
+  if(lf.children.length>5)lf.removeChild(lf.lastChild);
+}
+setInterval(addLiveFeedItem,2800);
+
+/* ══════════════════════ ECOSYSTEM PULSE ══════════════════════ */
+function buildEcosystemPulse(){
+  var ep=document.getElementById('ecosystemPulse');if(!ep)return;
+  var items=[
+    {label:'ETH/USDC Uniswap v4',val:'$'+(ethPrice||3200).toFixed(0),col:'var(--c)'},
+    {label:'Network Congestion',val:gasPrice?gasPrice+' gwei':'—',col:'var(--gold)'},
+    {label:'Active Wallets (1h)',val:'142,840',col:'var(--green)'},
+    {label:'Total Value Locked',val:'$48.2B',col:'#6ba3ff'},
+  ];
+  ep.innerHTML='';
+  items.forEach(function(item){
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:10px';
+    row.innerHTML='<span style="color:var(--txt2)">'+item.label+'</span><span style="font-family:Space Mono,monospace;font-size:9px;color:'+item.col+'">'+item.val+'</span>';
+    ep.appendChild(row);
+  });
+}
+
+/* ══════════════════════ STAKING REWARDS TICK ══════════════════════ */
+var stakeEarned=0.00000;
+setInterval(function(){
+  stakeEarned+=0.00000042;
+  var el=document.getElementById('stakeReward');
+  if(el)el.textContent=stakeEarned.toFixed(7);
+},800);
+
 /* ══════════════════════ LIVE PRICES ══════════════════════ */
+var gasPrice=null;
 async function fetchPrices(){
   try{
     var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana,matic-network,arbitrum,avalanche-2,chainlink,uniswap&vs_currencies=usd&include_24hr_change=true');
     if(!r.ok)throw new Error();
     var d=await r.json();
+    var now=new Date();var ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
     var coins=[{id:'ethereum',s:'e'},{id:'bitcoin',s:'b'},{id:'solana',s:'s'},
       {id:'matic-network',s:'m'},{id:'arbitrum',s:'a'},{id:'avalanche-2',s:'av'},
       {id:'chainlink',s:'l'},{id:'uniswap',s:'u'}];
@@ -1321,33 +2012,48 @@ async function fetchPrices(){
       var pEl=document.getElementById(c.s+'p'),cEl=document.getElementById(c.s+'c');
       if(pEl)pEl.textContent='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:price>100?2:4});
       if(cEl){cEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';cEl.className=chg>=0?'ti-u':'ti-d'}
-      if(c.id==='ethereum')ethPrice=price;
+      if(c.id==='ethereum'){ethPrice=price;updateSwapUI()}
     });
+    // Simulate gas price (CoinGecko free tier doesn't have gas)
+    gasPrice=Math.floor(15+Math.random()*35);
+    var gpEl=document.getElementById('gasp'),gcEl=document.getElementById('gasc');
+    if(gpEl)gpEl.textContent=gasPrice;
+    if(gcEl)gcEl.textContent='GWEI';
+    var gb=document.getElementById('gasBadge');if(gb)gb.textContent=gasPrice+' gwei';
+    var idGas=document.getElementById('id-gas');if(idGas)idGas.textContent=gasPrice+' gwei';
     var ti=document.getElementById('tickInner');
-    if(ti&&ti.children.length<=10){var cl=ti.innerHTML;ti.innerHTML=cl+cl}
+    if(ti&&ti.children.length<=12){var cl=ti.innerHTML;ti.innerHTML=cl+cl}
+    var tsEls=document.querySelectorAll('#mktTs,#id-mkt-ts');tsEls.forEach(function(el){if(el)el.textContent=ts});
     buildMkt('mktList');buildMkt('id-mkt');
+    buildEcosystemPulse();
     if(ethPrice&&document.getElementById('id-usd'))
       document.getElementById('id-usd').textContent='≈ $'+(3.2841*ethPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+    updateSwapUI();
   }catch(e){}
 }
-function buildMkt(cid){
+function buildMkt(cid,tsId){
   var ml=document.getElementById(cid);if(!ml)return;
   var coins=[{sym:'ETH',id:'e',col:'#6f7cff'},{sym:'BTC',id:'b',col:'#f7931a'},
     {sym:'SOL',id:'s',col:'#ab73ff'},{sym:'MATIC',id:'m',col:'#8247e5'}];
   ml.innerHTML='';
   coins.forEach(function(c){
     var pEl=document.getElementById(c.id+'p'),cEl=document.getElementById(c.id+'c');
-    var price=pEl?pEl.textContent:'—',chg=cEl?cEl.textContent:'—',isUp=chg.startsWith('+');
+    var price=pEl?pEl.textContent:'—',chg=cEl?cEl.textContent:'—',isUp=!chg.startsWith('-');
     var row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)';
     row.innerHTML='<div style="display:flex;align-items:center;gap:7px"><div style="width:5px;height:5px;border-radius:50%;background:'+c.col+'"></div><span style="font-size:11px;color:#fff;font-weight:500">'+c.sym+'</span></div><div style="text-align:right"><div style="font-size:11px;color:var(--txt)">'+price+'</div><div style="font-family:Space Mono,monospace;font-size:8px;color:'+(isUp?'var(--green)':'#ff5555')+'">'+chg+'</div></div>';
     ml.appendChild(row);
   });
 }
-fetchPrices();setInterval(fetchPrices,30000);
+fetchPrices();setInterval(fetchPrices,25000);
 
 /* ══════════════════════ PERM BTNS ══════════════════════ */
-document.getElementById('denyBtn').addEventListener('click',function(){toast('Permission denied — transaction cancelled.')});
+document.getElementById('denyBtn').addEventListener('click',function(){
+  this.textContent='Denied ✕';this.style.color='rgba(255,85,85,0.9)';this.style.borderColor='rgba(255,70,70,0.3)';
+  toast('Permission denied — transaction cancelled.');
+  setTimeout(function(){document.getElementById('denyBtn').textContent='Deny';
+    document.getElementById('denyBtn').style.color='';document.getElementById('denyBtn').style.borderColor=''},2500)
+});
 document.getElementById('approveBtn').addEventListener('click',function(){
   if(!connAddr){toast('Connect wallet first.');openWallet();return}
   toast('Identity verified ✓ Trust score updated onchain.')});
@@ -1361,7 +2067,7 @@ if(window.ethereum){
       document.getElementById('navLbl').textContent=s;buildIdentity();toast('Account changed: '+s)}});
   window.ethereum.on('chainChanged',function(id){chainId=id;
     document.getElementById('sbChain').textContent=chainLabel(id);
-    document.getElementById('nchainlbl').textContent=chainShort(id);toast('Network changed')});
+    document.getElementById('nchainlbl').textContent=chainShort(id);toast('Network changed to '+chainLabel(id))});
 }
 
 /* ══════════════════════ MAIN LOOP ══════════════════════ */
@@ -1370,6 +2076,7 @@ function loop(t){
   if(wlActive)drawWallet();
   if(scActive)drawScanBg(t);
   if(curScene==='proto')drawCon();
+  if(curScene==='infra'){drawBridge(t)}
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
@@ -1378,6 +2085,8 @@ requestAnimationFrame(loop);
 setTimeout(function(){
   document.querySelectorAll('#s-home .rv').forEach(function(el,i){
     setTimeout(function(){el.classList.add('in')},i*80)})},100);
+// Populate initial live feed
+for(var i=0;i<4;i++)setTimeout(addLiveFeedItem,i*400+500);
 </script>
 </body>
 </html>
