@@ -1,3 +1,5 @@
+html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -508,6 +510,141 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
 /* ECOSYSTEM PULSE WAVE */
 @keyframes ecoWave{0%{transform:scale(1);opacity:0.6}100%{transform:scale(3);opacity:0}}
 .eco-wave{position:fixed;border-radius:50%;pointer-events:none;animation:ecoWave 1.2s ease forwards;z-index:5}
+
+/* ══════════════════════════════════════
+   PATCH v2 — MOBILE OVERFLOW FIX
+══════════════════════════════════════ */
+html { overflow-x: hidden; }
+body { overflow-x: hidden; }
+#app { overflow-x: hidden; }
+.inner { overflow-x: hidden; }
+
+@media(max-width:768px) {
+  .dev-grid { grid-template-columns: 1fr !important; }
+  .mi-grid { grid-template-columns: 1fr !important; }
+  .swap-wrap { grid-template-columns: 1fr !important; }
+  .bridge-wrap { grid-template-columns: 1fr !important; }
+  .stake-wrap { grid-template-columns: 1fr !important; }
+  #trustBottom { grid-template-columns: 1fr !important; }
+  .fgrid { grid-template-columns: 1fr 1fr !important; }
+  .ei-grid { grid-template-columns: 1fr 1fr !important; }
+  .id-live-grid { grid-template-columns: 1fr 1fr !important; }
+  .nlinks a { font-size: 9px; }
+  nav { padding: 0 14px; }
+  h1 { font-size: clamp(42px, 12vw, 80px) !important; }
+  .hero-wrap { padding: 0 16px !important; }
+  .ticker { overflow: hidden; }
+  .perm-card { padding: 14px; }
+  .p-code { font-size: 7px; overflow-x: auto; white-space: nowrap; }
+  .mc-v { font-size: 22px !important; }
+  .pst-v { font-size: 22px !important; }
+  .sd-row { font-size: 9px; }
+  .gas-val { font-size: 36px !important; }
+  .bs-row { flex-wrap: wrap; gap: 4px; }
+  .bs-txt { font-size: 8px; }
+  .inner { padding: 14px 12px 80px !important; }
+  .itab { font-size: 7px !important; padding: 8px 0 !important; }
+  .wgrid { grid-template-columns: 1fr !important; }
+}
+
+@media(max-width:480px) {
+  .fgrid { grid-template-columns: 1fr !important; }
+  .ei-grid { grid-template-columns: 1fr 1fr !important; }
+  .id-live-grid { grid-template-columns: 1fr !important; }
+  .mgrid { grid-template-columns: 1fr 1fr !important; }
+  .proto-stats { gap: 14px; flex-wrap: wrap; }
+  .pst-v { font-size: 20px !important; }
+  #sbar { padding: 5px 10px; }
+  .hero-btns { flex-direction: column; align-items: center; }
+  .btn, .btn-ghost { width: 100%; max-width: 280px; text-align: center; justify-content: center; }
+  .nlogo { font-size: 18px; letter-spacing: .2em; }
+}
+
+/* PATCH: Button Ripple */
+.btn { overflow: hidden; }
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0,200,224,0.35);
+  transform: scale(0);
+  animation: rippleAnim .55s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* PATCH: Button loading state */
+.btn-loading span, .btn-loading .btn-label { opacity: 0 !important; }
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px; height: 14px;
+  border: 1.5px solid rgba(0,200,224,0.25);
+  border-top-color: var(--c);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  margin: auto;
+  z-index: 2;
+}
+.btn-loading.connected::after { border-top-color: var(--green); }
+
+@keyframes btnSuccess {
+  0% { box-shadow: 0 0 0 0 rgba(30,214,112,0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(30,214,112,0); }
+  100% { box-shadow: 0 0 0 0 rgba(30,214,112,0); }
+}
+.btn-success-pulse { animation: btnSuccess .55s ease forwards; }
+
+/* PATCH: Card hover lift */
+.fc, .mc, .wcard, .dev-card, .id-live-card, .gas-panel, .net-panel { will-change: transform; }
+.fc:hover { transform: translateY(-4px) !important; }
+.mc:hover { transform: translateY(-2px) !important; }
+.dev-card:hover { transform: translateY(-3px) !important; box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,200,224,0.06) !important; }
+
+/* PATCH: Scan CTA pulse */
+@keyframes ctaPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(0,200,224,0.4); }
+  50% { box-shadow: 0 0 40px rgba(0,200,224,0.7), 0 0 60px rgba(0,200,224,0.2); }
+}
+.scan-cta.in { animation: fadeUp .45s var(--ease2) both, ctaPulse 1.8s ease 0.5s infinite; }
+
+/* PATCH: Approval button shimmer */
+.p-approve { position: relative; overflow: hidden; }
+@keyframes approveShimmer {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+.p-approve::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 40%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  pointer-events: none;
+}
+.p-approve:hover::after { animation: approveShimmer .65s ease forwards; }
+
+/* PATCH: Wallet option pulse */
+.wo:hover .wo-ico { box-shadow: 0 0 20px rgba(0,200,224,0.2); }
+
+/* PATCH: Number change animation */
+@keyframes numFlip {
+  0% { transform: translateY(-8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.num-change { animation: numFlip .3s ease forwards; }
+
+@media(max-width:700px) {
+  .tick-inner { animation-duration: 35s; }
+  .hero-mkt { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -542,7 +679,6 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
   <!-- HOME -->
   <div class="scene active" id="s-home">
     <canvas id="heroC"></canvas>
-    <!-- Hero Market Strip -->
     <div class="hero-mkt" id="heroMkt">
       <div class="hm-item" id="hm-eth"><span class="hm-sym">ETH</span><span class="hm-price" id="hmp-eth">—</span><span class="hm-chg" id="hmc-eth">—</span><canvas class="hm-spark" id="hms-eth"></canvas></div>
       <div class="hm-item" id="hm-btc"><span class="hm-sym">BTC</span><span class="hm-price" id="hmp-btc">—</span><span class="hm-chg" id="hmc-btc">—</span><canvas class="hm-spark" id="hms-btc"></canvas></div>
@@ -619,7 +755,6 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
         <div class="fc"><div class="fc-glow"></div><div class="f-ico">∞</div><div class="f-title">Multi-chain Presence</div><div class="f-desc">A unified identity layer across Ethereum, Polygon, Arbitrum, Base, Solana, and every major chain.</div></div>
       </div>
 
-      <!-- ECOSYSTEM INTELLIGENCE -->
       <div class="rv" style="margin-bottom:12px">
         <div class="tl-ey" style="margin-bottom:14px">Ecosystem Intelligence</div>
         <div class="eco-intel" id="ecoIntel">
@@ -636,7 +771,6 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
         </div>
       </div>
 
-      <!-- MARKET INTELLIGENCE -->
       <div class="rv" style="margin-bottom:12px">
         <div class="tl-ey" style="margin-bottom:14px">Market Intelligence — Realtime</div>
         <div class="mi-grid">
@@ -668,7 +802,6 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
         </div>
       </div>
 
-      <!-- LIVE ECOSYSTEM FEED -->
       <div class="rv" style="margin-bottom:12px">
         <div class="tl-ey" style="margin-bottom:14px">Live Ecosystem Activity</div>
         <div class="eco-feed">
@@ -686,7 +819,6 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
         </div>
       </div>
 
-      <!-- PERM + GOV -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="rv" id="trustBottom">
         <div>
           <div class="tl-ey" style="margin-bottom:16px">Humanized Transparency</div>
@@ -837,9 +969,9 @@ var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
    LIVING ECOSYSTEM — REACTION ENGINE
    ═══════════════════════════════════ */
 var ecosystemState={
-  marketMood:'neutral',  // bullish | bearish | neutral
-  energyLevel:0,         // 0-100
-  gasPressure:'low',     // low | medium | high | critical
+  marketMood:'neutral',
+  energyLevel:0,
+  gasPressure:'low',
   alertActive:false,
   lastBigMove:null,
   priceChangeHistory:[]
@@ -906,7 +1038,6 @@ function analyzeMarketConditions(coins){
   var mood=gainers>losers*1.5?'bullish':losers>gainers*1.5?'bearish':'neutral';
   var energy=Math.min(avgMove*8,100);
 
-  // ETH specific big move detection
   if(ethPrice&&prevEthPrice){
     var ethChgPct=((ethPrice-prevEthPrice)/prevEthPrice)*100;
     if(Math.abs(ethChgPct)>0.5){
@@ -914,7 +1045,6 @@ function analyzeMarketConditions(coins){
       var type=ethChgPct>0?'bullish':'alert';
       triggerEcoAlert('ETH '+dir+' '+Math.abs(ethChgPct).toFixed(2)+'% in last update — ecosystem reacting',type,3500);
       emitEcoWave(ethChgPct>0?'#1ed670':'#ff4646');
-      // Pulse constellation nodes
       pulseConstellationNodes(ethChgPct>0?'trusted':'risky',Math.abs(ethChgPct)*3);
     }
   }
@@ -922,7 +1052,6 @@ function analyzeMarketConditions(coins){
   updateEcosystemAtmosphere(mood,energy);
   updateEcoIntelCards(coins,mood,energy);
 
-  // Hero tag
   var heroTag=document.getElementById('heroTag');
   var heroTagTxt=document.getElementById('heroTagTxt');
   if(heroTag&&heroTagTxt){
@@ -930,15 +1059,10 @@ function analyzeMarketConditions(coins){
     heroTagTxt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Trust Layer Protocol v1.0 — Live';
   }
 
-  // Status bar market strip
   updateStatusBarMarket(coins);
 }
 
 function updateEcoIntelCards(coins,mood,energy){
-  var topCoin=coins[0]||{};
-  var topChg=topCoin.price_change_percentage_24h||0;
-
-  // Market momentum card
   var mCard=document.getElementById('ei-market');
   var mVal=document.getElementById('ei-mval');
   var mSub=document.getElementById('ei-msub');
@@ -950,7 +1074,6 @@ function updateEcoIntelCards(coins,mood,energy){
     if(mBar)mBar.style.width=energy+'%';
   }
 
-  // Gas card
   var gCard=document.getElementById('ei-gas');
   var gVal=document.getElementById('ei-gval');
   var gSub=document.getElementById('ei-gsub');
@@ -962,8 +1085,6 @@ function updateEcoIntelCards(coins,mood,energy){
     if(gVal)gVal.textContent=gPressure;
     if(gSub)gSub.textContent=gasPrice+' gwei';
     if(gBar)gBar.style.width=Math.min(gasPrice/120*100,100)+'%';
-
-    // Gas pressure on gas panel
     var gasValEl=document.getElementById('gasMain');
     if(gasValEl){
       gasValEl.className='gas-val';
@@ -972,7 +1093,6 @@ function updateEcoIntelCards(coins,mood,energy){
     }
   }
 
-  // Activity
   var aVal=document.getElementById('ei-aval');
   var aSub=document.getElementById('ei-asub');
   var aBar=document.getElementById('ei-abar');
@@ -988,12 +1108,10 @@ function updateStatusBarMarket(coins){
   var top3=coins.slice(0,3);
   el.innerHTML=top3.map(function(c){
     var chg=c.price_change_percentage_24h||0;
-    var cls=chg>=0?'pos':'neg';
     return '<div class="sb-mkt-item"><span style="color:var(--txt2)">'+c.symbol.toUpperCase()+'</span><span style="color:'+(chg>=0?'var(--green)':'#ff5555')+'">'+(chg>=0?'+':'')+chg.toFixed(1)+'%</span></div>';
   }).join('<div class="sb-sep"></div>');
 }
 
-/* ECO WAVE — visual pulse across screen */
 function emitEcoWave(color){
   var wave=document.createElement('div');
   wave.className='eco-wave';
@@ -1002,8 +1120,6 @@ function emitEcoWave(color){
   setTimeout(function(){wave.remove()},1200);
 }
 
-/* Pulse constellation nodes reactively */
-var constellationReactPulse=[];
 function pulseConstellationNodes(type,intensity){
   CN.forEach(function(n){
     if(n.type===type&&Math.random()<0.4){
@@ -1011,7 +1127,6 @@ function pulseConstellationNodes(type,intensity){
       emitNetRing(n.x,n.y);
     }
   });
-  // Also scatter random pulses for energy feel
   for(var i=0;i<Math.floor(intensity);i++){
     setTimeout(function(){
       if(Math.random()<0.6){
@@ -1022,8 +1137,7 @@ function pulseConstellationNodes(type,intensity){
   }
 }
 
-/* ═══ HERO SPARKLINE MINI CHARTS ═══ */
-var heroSparkInst={};
+/* ═══ HERO SPARKLINE ═══ */
 function drawHeroSpark(id,data,up){
   var c=document.getElementById('hms-'+id);
   if(!c||!data||data.length<2)return;
@@ -1091,7 +1205,6 @@ var BPairs=[];
 function buildPairs(){BPairs=[];for(var i=0;i<BN.length;i++)for(var j=i+1;j<BN.length;j++){if(Math.abs(BN[i].layer-BN[j].layer)<=1)BPairs.push([i,j])}}
 buildPairs();
 
-// Ecosystem energy affects BG intensity
 var bgEnergyBoost=0;
 function boostBgEnergy(amount,duration){bgEnergyBoost=amount;setTimeout(function(){bgEnergyBoost=0},duration||2000)}
 
@@ -1201,7 +1314,6 @@ document.getElementById('conC').addEventListener('mouseleave',function(){protoTi
 setInterval(function(){
   document.getElementById('sTx').textContent=Math.floor(Math.random()*14+4);
   if(Math.random()<.14){var idx=Math.floor(Math.random()*(CN.length-1));CN[idx].pulse=1;emitNetRing(CN[idx].x,CN[idx].y)}
-  // Ecosystem energy makes more nodes pulse
   if(ecosystemState.energyLevel>40&&Math.random()<ecosystemState.energyLevel/200){
     var idx2=Math.floor(Math.random()*(CN.length-1));CN[idx2].pulse=0.8;
     emitNetRing(CN[idx2].x,CN[idx2].y)
@@ -1295,7 +1407,6 @@ function updateGasOracle(gwei){
   ['slow','std','fast','rapid'].forEach(function(k,i){var v=[slow,std,fast,rapid][i];var el2=document.getElementById('g'+k.charAt(0).toUpperCase()+k.slice(1));if(el2)el2.textContent=v});
   var congPct=Math.min(gwei/120*100,100);var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=congPct+'%';
   var el3=document.getElementById('gasp');if(el3)el3.textContent=gwei;
-  // Alert for high gas
   if(gwei>80&&ecosystemState.gasPressure!=='critical'){ecosystemState.gasPressure='critical';triggerEcoAlert('⚠ Gas spike: '+gwei+' gwei — chain congestion detected','alert',5000);boostBgEnergy(0.15,3000)}
   else if(gwei<=80){ecosystemState.gasPressure=gwei>40?'high':gwei>20?'medium':'low'}
 }
@@ -1306,7 +1417,6 @@ function updateNetworkActivity(){
   if(el1)el1.textContent=wallets.toLocaleString();if(el2)el2.textContent=tps;
   var tvlEl=document.getElementById('nrTvl');if(tvlEl)tvlEl.textContent='$48.3B';
   var blockEl=document.getElementById('nrBlock');if(blockEl)blockEl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
-  // TPS affects animation speed
   bgEnergyBoost=parseFloat(tps)/200;setTimeout(function(){bgEnergyBoost=0},5000);
 }
 
@@ -1325,7 +1435,6 @@ var ecoItems=[];
 
 function addEcoItem(forceType){
   var typePool=ECO_TYPES.slice(0,-1);
-  // Occasionally inject alert events based on ecosystem state
   if(!forceType&&ecosystemState.marketMood==='bearish'&&Math.random()<0.12)forceType='alert';
   var tf=forceType?ECO_TYPES.find(function(t){return t.k===forceType})||typePool[0]:typePool[Math.floor(Math.random()*typePool.length)];
   var addr=tf.addrs[Math.floor(Math.random()*tf.addrs.length)];
@@ -1335,7 +1444,6 @@ function addEcoItem(forceType){
   var item={type:tf.k,label:tf.label,cls:tf.cls,addr:addr,act:act,amt:amt,ts:ts,anomaly:tf.k==='alert'};
   ecoItems.unshift(item);if(ecoItems.length>40)ecoItems.pop();
   renderEcoFeed();
-  // React visually
   if(Math.random()<.3){var idx=Math.floor(Math.random()*(CN.length-1));if(CN[idx]){CN[idx].pulse=0.8;emitNetRing(CN[idx].x,CN[idx].y)}}
   if(tf.k==='alert'){boostBgEnergy(0.2,2000);emitEcoWave('rgba(255,70,70,0.6)')}
   else if(tf.k==='deploy'){boostBgEnergy(0.12,1500);emitEcoWave('#00c8e0')}
@@ -1468,7 +1576,6 @@ function showIdentity(){
   document.getElementById('nchain').classList.add('on');document.getElementById('nchainlbl').textContent=chainShort(chainId);
   document.getElementById('navBtn').classList.add('connected');document.getElementById('navLbl').textContent=short;
   CN[CN.length-1].addr=short;
-  // Wallet connect — trigger identity constellation reaction
   pulseConstellationNodes('trusted',12);
   boostBgEnergy(0.3,3000);
   emitEcoWave('rgba(0,200,224,0.8)');
@@ -1593,7 +1700,6 @@ async function fetchPrices(){
     var miTs=document.getElementById('miTs');if(miTs)miTs.textContent=ts;
     renderTokenRows();buildMkt('id-mkt','id-mkt-ts');
     updateSwapUI();updateIdLive();
-    // ── THE REACTION ENGINE ──
     analyzeMarketConditions(coins);
     updateHeroMarketStrip(coins);
     updateStatusBarMarket(coins);
@@ -1623,7 +1729,6 @@ for(var i=0;i<8;i++)setTimeout(addEcoItem,i*180+200);
 setInterval(addEcoItem,2200);
 setInterval(function(){if(gasPrice){var drift=Math.floor(gasPrice+(Math.random()-.5)*6);if(drift<1)drift=1;gasPrice=drift;updateGasOracle(gasPrice);updateIdLive();updateEcoIntelCards(allFetchedCoins,ecosystemState.marketMood,ecosystemState.energyLevel)}},6000);
 setInterval(updateNetworkActivity,4200);
-// Random ecosystem events
 setInterval(function(){
   var events=[
     {msg:'Builder surge detected — 23 new contracts deployed in last 5 min','type':'info'},
@@ -1637,8 +1742,356 @@ setInterval(function(){
 setTimeout(function(){document.querySelectorAll('#s-home .rv').forEach(function(el,i){setTimeout(function(){el.classList.add('in')},i*75)})},80);
 renderGov();
 if(innerWidth<700){var tb=document.getElementById('trustBottom');if(tb)tb.style.gridTemplateColumns='1fr'}
-// Initial atmosphere
 setTimeout(function(){updateEcosystemAtmosphere('neutral',15);triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',3500)},1200);
+
+/* ══════════════════════════════════════
+   PATCH v2 — INJECT REALISTIC DEMO DATA
+══════════════════════════════════ 
+  (function injectDemoData() {
+  var DEMO = {
+    eth: { price: 3482.14, chg: +2.34 },
+    btc: { price: 104221, chg: +1.87 },
+    sol: { price: 182.40, chg: +4.12 },
+    matic: { price: 0.892, chg: -0.84 },
+    arb: { price: 1.24, chg: +3.21 },
+    avax: { price: 38.70, chg: -1.22 },
+    link: { price: 18.34, chg: +2.88 },
+    uni: { price: 10.62, chg: +1.45 },
+    gas: 14
+  };
+
+  function fmt(p) {
+    return p > 10000 ? '$' + Math.round(p).toLocaleString() : p > 1 ? '$' + p.toFixed(2) : '$' + p.toFixed(4);
+  }
+  function fmtChg(c) { return (c >= 0 ? '+' : '') + c.toFixed(2) + '%'; }
+
+  function setTickEl(symId, price, chg) {
+    var pEl = document.getElementById(symId + 'p');
+    var cEl = document.getElementById(symId + 'c');
+    if (pEl) pEl.textContent = fmt(price);
+    if (cEl) {
+      cEl.textContent = fmtChg(chg);
+      cEl.className = chg >= 0 ? 'ti-u' : 'ti-d';
+    }
+  }
+
+  function applyDemoData() {
+    setTickEl('e', DEMO.eth.price, DEMO.eth.chg);
+    setTickEl('b', DEMO.btc.price, DEMO.btc.chg);
+    setTickEl('s', DEMO.sol.price, DEMO.sol.chg);
+    setTickEl('m', DEMO.matic.price, DEMO.matic.chg);
+    setTickEl('a', DEMO.arb.price, DEMO.arb.chg);
+    setTickEl('av', DEMO.avax.price, DEMO.avax.chg);
+    setTickEl('l', DEMO.link.price, DEMO.link.chg);
+    setTickEl('u', DEMO.uni.price, DEMO.uni.chg);
+    setTickEl('gas', DEMO.gas, 0);
+    var gasC = document.getElementById('gasc');
+    if (gasC) gasC.textContent = 'GWEI';
+
+    var tokens = [
+      { key: 'eth', data: DEMO.eth },
+      { key: 'btc', data: DEMO.btc },
+      { key: 'sol', data: DEMO.sol }
+    ];
+    tokens.forEach(function(t) {
+      var pEl = document.getElementById('hmp-' + t.key);
+      var cEl = document.getElementById('hmc-' + t.key);
+      var iEl = document.getElementById('hm-' + t.key);
+      if (pEl) pEl.textContent = fmt(t.data.price);
+      if (cEl) {
+        cEl.textContent = fmtChg(t.data.chg);
+        cEl.className = 'hm-chg ' + (t.data.chg >= 0 ? 'up' : 'dn');
+      }
+      if (iEl) iEl.className = 'hm-item ' + (t.data.chg >= 0 ? 'up' : 'dn');
+    });
+
+    var gMain = document.getElementById('gasMain');
+    if (gMain && gMain.textContent === '—') {
+      gMain.textContent = DEMO.gas;
+      var slowEl = document.getElementById('gSlow');
+      var stdEl = document.getElementById('gStd');
+      var fastEl = document.getElementById('gFast');
+      var rapidEl = document.getElementById('gRapid');
+      if (slowEl) slowEl.textContent = DEMO.gas - 5;
+      if (stdEl) stdEl.textContent = DEMO.gas;
+      if (fastEl) fastEl.textContent = DEMO.gas + 8;
+      if (rapidEl) rapidEl.textContent = DEMO.gas + 22;
+      var usd = document.getElementById('gasUsd');
+      if (usd) usd.textContent = '~$' + ((DEMO.gas * 21000 / 1e9) * DEMO.eth.price).toFixed(3) + '/tx';
+      var bar = document.getElementById('gasBarEl');
+      if (bar) bar.style.width = (DEMO.gas / 120 * 100) + '%';
+      var gasp = document.getElementById('gasp');
+      if (gasp) gasp.textContent = DEMO.gas;
+    }
+
+    var nrW = document.getElementById('nrWallets');
+    var nrT = document.getElementById('nrTps');
+    var nrTvl = document.getElementById('nrTvl');
+    var nrB = document.getElementById('nrBlock');
+    if (nrW && nrW.textContent === '—') nrW.textContent = '148,204';
+    if (nrT && nrT.textContent === '—') nrT.textContent = '18.4';
+    if (nrTvl && nrTvl.textContent === '—') nrTvl.textContent = '$48.3B';
+    if (nrB && nrB.textContent === '—') nrB.textContent = '12.1s';
+
+    var TOKEN_CFG_DEMO = [
+      { id: 'ethereum', price: DEMO.eth.price, chg: DEMO.eth.chg, mcap: 418000000000 },
+      { id: 'bitcoin', price: DEMO.btc.price, chg: DEMO.btc.chg, mcap: 2050000000000 },
+      { id: 'solana', price: DEMO.sol.price, chg: DEMO.sol.chg, mcap: 87000000000 },
+      { id: 'matic-network', price: DEMO.matic.price, chg: DEMO.matic.chg, mcap: 8200000000 },
+      { id: 'arbitrum', price: DEMO.arb.price, chg: DEMO.arb.chg, mcap: 3100000000 },
+      { id: 'chainlink', price: DEMO.link.price, chg: DEMO.link.chg, mcap: 10700000000 },
+    ];
+    TOKEN_CFG_DEMO.forEach(function(t) {
+      if (typeof tokenData !== 'undefined' && !tokenData[t.id]) {
+        tokenData[t.id] = { price: t.price, chg: t.chg, mcap: t.mcap };
+      }
+    });
+
+    var swFromUsd = document.getElementById('sw-from-usd');
+    var swToAmt = document.getElementById('sw-to-amt');
+    var swToUsd = document.getElementById('sw-to-usd');
+    var swRate = document.getElementById('sw-rate');
+    var swFee = document.getElementById('sw-fee');
+    var swGasEst = document.getElementById('sw-gas-est');
+    var swTotal = document.getElementById('sw-total');
+    if (swFromUsd && swFromUsd.textContent.indexOf('—') >= 0) {
+      swFromUsd.textContent = '≈ $' + DEMO.eth.price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2});
+      if (swToAmt) swToAmt.textContent = Math.round(DEMO.eth.price).toLocaleString();
+      if (swToUsd) swToUsd.textContent = '≈ $' + DEMO.eth.price.toFixed(2);
+      if (swRate) swRate.textContent = '1 ETH = ' + Math.round(DEMO.eth.price) + ' USDC';
+      if (swFee) swFee.textContent = DEMO.gas + ' gwei';
+      if (swGasEst) swGasEst.textContent = '~$' + ((DEMO.gas * 21000 / 1e9) * DEMO.eth.price).toFixed(3) + ' USD';
+      if (swTotal) swTotal.textContent = '~$' + (DEMO.eth.price * 1.003).toFixed(2);
+    }
+
+    var brAmt = document.getElementById('br-amt');
+    if (brAmt && brAmt.textContent.indexOf('—') >= 0) brAmt.textContent = '~0.4998';
+
+    var eiMval = document.getElementById('ei-mval');
+    var eiMsub = document.getElementById('ei-msub');
+    var eiMbar = document.getElementById('ei-mbar');
+    var eiMcard = document.getElementById('ei-market');
+    if (eiMval && eiMval.textContent === '—') {
+      if (eiMval) eiMval.textContent = 'BULL';
+      if (eiMsub) eiMsub.textContent = '72% momentum';
+      if (eiMbar) eiMbar.style.width = '72%';
+      if (eiMcard) eiMcard.className = 'ei-card bullish';
+    }
+    var eiGval = document.getElementById('ei-gval');
+    var eiGsub = document.getElementById('ei-gsub');
+    var eiGbar = document.getElementById('ei-gbar');
+    var eiGcard = document.getElementById('ei-gas');
+    if (eiGval && eiGval.textContent === '—') {
+      if (eiGval) eiGval.textContent = 'LOW';
+      if (eiGsub) eiGsub.textContent = DEMO.gas + ' gwei';
+      if (eiGbar) eiGbar.style.width = (DEMO.gas / 120 * 100) + '%';
+      if (eiGcard) eiGcard.className = 'ei-card bullish';
+    }
+    var eiAval = document.getElementById('ei-aval');
+    var eiAsub = document.getElementById('ei-asub');
+    var eiAbar = document.getElementById('ei-abar');
+    var eiAcard = document.getElementById('ei-activity');
+    if (eiAval && eiAval.textContent === '—') {
+      if (eiAval) eiAval.textContent = '18';
+      if (eiAsub) eiAsub.textContent = 'txns/sec now';
+      if (eiAbar) eiAbar.style.width = '82%';
+      if (eiAcard) eiAcard.className = 'ei-card active';
+    }
+
+    if (typeof renderTokenRows === 'function') {
+      setTimeout(renderTokenRows, 50);
+    }
+    if (typeof buildMkt === 'function') {
+      setTimeout(function() { buildMkt('id-mkt', 'id-mkt-ts'); }, 100);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', applyDemoData);
+  setTimeout(applyDemoData, 100);
+  setTimeout(applyDemoData, 600);
+  setTimeout(applyDemoData, 1500);
+})();
+
+/* ══ PATCH: RIPPLE EFFECT ON BUTTONS ══ */
+(function addRipple() {
+  function createRipple(e) {
+    var btn = e.currentTarget;
+    var rect = btn.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var x = e.clientX - rect.left - size / 2;
+    var y = e.clientY - rect.top - size / 2;
+    var ripple = document.createElement('span');
+    ripple.className = 'btn-ripple';
+    ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px';
+    btn.querySelectorAll('.btn-ripple').forEach(function(r) { r.remove(); });
+    btn.appendChild(ripple);
+    setTimeout(function() { ripple.remove(); }, 600);
+  }
+
+  function hookButtons() {
+    document.querySelectorAll('.btn').forEach(function(btn) {
+      if (btn._rippleHooked) return;
+      btn._rippleHooked = true;
+      btn.addEventListener('click', createRipple);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', hookButtons);
+  setTimeout(hookButtons, 300);
+  setInterval(hookButtons, 1500);
+})();
+
+/* ══ PATCH: BUTTON LOADING STATE FOR PRIMARY CTAs ══ */
+(function addButtonFeedback() {
+  function withLoading(btn, task, durationMs) {
+    if (btn._loading) return;
+    btn._loading = true;
+    btn.classList.add('btn-loading');
+    var origHTML = btn.innerHTML;
+    setTimeout(function() {
+      btn.classList.remove('btn-loading');
+      btn.classList.add('btn-success-pulse');
+      btn._loading = false;
+      btn.innerHTML = origHTML;
+      setTimeout(function() { btn.classList.remove('btn-success-pulse'); }, 600);
+    }, durationMs || 1200);
+  }
+
+  function hookCTAs() {
+    var swapBtn = document.getElementById('swapExecBtn');
+    if (swapBtn && !swapBtn._feedbackHooked) {
+      swapBtn._feedbackHooked = true;
+      swapBtn.addEventListener('click', function() {
+        if (typeof connAddr !== 'undefined' && connAddr) {
+          withLoading(this, null, 900);
+        }
+      });
+    }
+
+    var bridgeBtn = document.getElementById('bridgeExecBtn');
+    if (bridgeBtn && !bridgeBtn._feedbackHooked) {
+      bridgeBtn._feedbackHooked = true;
+      bridgeBtn.addEventListener('click', function() {
+        if (typeof connAddr !== 'undefined' && connAddr) {
+          withLoading(this, null, 1400);
+        }
+      });
+    }
+
+    var stakeBtn = document.getElementById('stakeExecBtn');
+    if (stakeBtn && !stakeBtn._feedbackHooked) {
+      stakeBtn._feedbackHooked = true;
+      stakeBtn.addEventListener('click', function() {
+        if (typeof connAddr !== 'undefined' && connAddr) {
+          withLoading(this, null, 1100);
+        }
+      });
+    }
+
+    var deployBtn = document.getElementById('deployBtn');
+    if (deployBtn && !deployBtn._feedbackHooked) {
+      deployBtn._feedbackHooked = true;
+      deployBtn.addEventListener('click', function() {
+        withLoading(this, null, 1800);
+      });
+    }
+
+    var simBtn = document.getElementById('runSimBtn');
+    if (simBtn && !simBtn._feedbackHooked) {
+      simBtn._feedbackHooked = true;
+      simBtn.addEventListener('click', function() {
+        withLoading(this, null, 950);
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', hookCTAs);
+  setTimeout(hookCTAs, 500);
+  setInterval(hookCTAs, 2000);
+})();
+
+/* ══ PATCH: WALLET OPTION FEEDBACK ══ */
+(function patchWalletOptions() {
+  function hookWO() {
+    document.querySelectorAll('.wo').forEach(function(wo) {
+      if (wo._clickFX) return;
+      wo._clickFX = true;
+      wo.addEventListener('click', function() {
+        var orig = wo.style.transform;
+        wo.style.transition = 'transform .1s ease';
+        wo.style.transform = 'translateX(8px) scale(0.98)';
+        setTimeout(function() {
+          wo.style.transform = 'translateX(4px)';
+          setTimeout(function() { wo.style.transform = orig; }, 200);
+        }, 80);
+      });
+    });
+  }
+  setTimeout(hookWO, 400);
+  setInterval(hookWO, 2000);
+})();
+
+/* ══ PATCH: NAV BUTTON FEEDBACK ══ */
+(function patchNavBtn() {
+  var navBtn = document.getElementById('navBtn');
+  if (!navBtn) return;
+  navBtn.addEventListener('click', function() {
+    if (typeof connAddr !== 'undefined' && !connAddr) return;
+    navBtn.style.transition = 'transform .12s ease';
+    navBtn.style.transform = 'scale(0.94)';
+    setTimeout(function() { navBtn.style.transform = 'scale(1)'; }, 130);
+  });
+})();
+
+/* ══ PATCH: APPROVE BUTTON CLICK FEEDBACK ══ */
+(function patchApproveBtn() {
+  function hook() {
+    var approveBtn = document.getElementById('approveBtn');
+    if (approveBtn && !approveBtn._flashHooked) {
+      approveBtn._flashHooked = true;
+      approveBtn.addEventListener('click', function() {
+        this.style.background = 'var(--green)';
+        this.style.transition = 'background .3s ease, transform .1s';
+        this.style.transform = 'scale(0.97)';
+        setTimeout(function() {
+          approveBtn.style.transform = 'scale(1)';
+        }, 120);
+      });
+    }
+    var denyBtn = document.getElementById('denyBtn');
+    if (denyBtn && !denyBtn._shakeHooked) {
+      denyBtn._shakeHooked = true;
+      denyBtn.addEventListener('click', function() {
+        var btn = this;
+        btn.style.animation = 'none';
+        btn.style.transform = 'translateX(-4px)';
+        setTimeout(function() { btn.style.transform = 'translateX(4px)'; }, 60);
+        setTimeout(function() { btn.style.transform = 'translateX(-2px)'; }, 120);
+        setTimeout(function() { btn.style.transform = 'translateX(0)'; }, 180);
+      });
+    }
+  }
+  setTimeout(hook, 400);
+  setInterval(hook, 2000);
+})();
+
+/* ══ PATCH: NUMBER TICKER LIVE DRIFT ══ */
+(function addLiveDrift() {
+  setInterval(function() {
+    var nrTEl = document.getElementById('nrTps');
+    if (nrTEl && nrTEl.textContent !== '—') {
+      var base = 16 + Math.random() * 5;
+      nrTEl.textContent = base.toFixed(1);
+      nrTEl.classList.add('num-change');
+      setTimeout(function() { nrTEl.classList.remove('num-change'); }, 300);
+    }
+    var nrWEl = document.getElementById('nrWallets');
+    if (nrWEl && nrWEl.textContent !== '—') {
+      var wBase = 145000 + Math.floor(Math.random() * 8000);
+      nrWEl.textContent = wBase.toLocaleString();
+    }
+  }, 3800);
+})();
 </script>
 </body>
 </html>
