@@ -2,1158 +2,1283 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>RIALO — Living Trust Infrastructure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rialo Devs — Execution Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#020509;--c:#00c8e0;--c2:#00a8bd;--c-dim:rgba(0,200,224,0.10);--c-glow:rgba(0,200,224,0.28);--c-glow2:rgba(0,200,224,0.08);
-  --gold:#c49a2a;--gold-glow:rgba(196,154,42,0.22);--green:#1ed670;--green-glow:rgba(30,214,112,0.2);
-  --red:rgba(255,70,70,0.9);--blue:#6ba3ff;--txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);--txt3:rgba(60,100,130,0.45);
-  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);--border3:rgba(0,200,224,0.32);
-  --glass:rgba(4,10,20,0.80);--glass2:rgba(2,7,16,0.92);--navy:rgba(2,6,18,0.98);
-  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
-  --energy:0;--pulse-scale:1;
-}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
-body{cursor:none}
-@media(hover:none),(pointer:coarse){body{cursor:auto}}
-#CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
-#CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 12px var(--c),0 0 24px rgba(0,200,224,0.2);transition:width .1s,height .1s,opacity .2s}
-#CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
-body.chl #CUR{width:8px;height:8px}body.chl #CUR2{width:46px;height:46px;border-color:rgba(0,200,224,0.45)}
-body.cclick #CUR{width:3px;height:3px}body.cclick #CUR2{width:14px;height:14px}
-@media(hover:none){#CUR,#CUR2{display:none}}
-#atmo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 2s ease;
-  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(0,200,224,0.04) 0%,transparent 70%)}
-#atmo.energized{opacity:1}
-#atmo.alert{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,70,70,0.04) 0%,transparent 70%)}
-#atmo.bullish{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(30,214,112,0.04) 0%,transparent 70%)}
-#BG{position:fixed;inset:0;z-index:0;pointer-events:none}
-.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 90% 90% at 50% 50%,transparent 25%,rgba(2,5,9,0.88) 100%)}
-#ecoAlert{position:fixed;top:var(--nav-h);left:0;right:0;z-index:450;pointer-events:none;display:flex;justify-content:center;padding:0 20px;transform:translateY(-60px);transition:transform .4s var(--ease2)}
-#ecoAlert.show{transform:translateY(8px)}
-.ea-inner{display:flex;align-items:center;gap:10px;padding:8px 16px;border-radius:2px;backdrop-filter:blur(20px);border:1px solid;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;max-width:640px;pointer-events:auto}
-.ea-inner.alert{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.2);color:rgba(255,100,100,0.9)}
-.ea-inner.bullish{background:rgba(30,214,112,0.06);border-color:rgba(30,214,112,0.2);color:var(--green)}
-.ea-inner.info{background:rgba(0,200,224,0.06);border-color:rgba(0,200,224,0.18);color:var(--c)}
-.ea-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;animation:pulse 1s ease infinite}
-.ea-inner.alert .ea-dot{background:rgba(255,100,100,0.9)}
-.ea-inner.bullish .ea-dot{background:var(--green)}
-.ea-inner.info .ea-dot{background:var(--c)}
-#netHealth{position:fixed;top:var(--nav-h);left:0;right:0;z-index:400;height:2px;pointer-events:none}
-.nh-bar{height:100%;width:0%;transition:width 1.8s var(--ease),background .8s ease}
-.nh-bullish{background:linear-gradient(to right,transparent,var(--green),rgba(30,214,112,0.3))}
-.nh-alert{background:linear-gradient(to right,transparent,rgba(255,70,70,0.9),rgba(255,70,70,0.3))}
-.nh-neutral{background:linear-gradient(to right,transparent,var(--c),rgba(0,200,224,0.3))}
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:rgba(2,5,9,0.97);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);transition:border-color .6s}
-nav.energized{border-bottom-color:rgba(0,200,224,0.15)}
-nav.alert{border-bottom-color:rgba(255,70,70,0.15)}
-nav.bullish{border-bottom-color:rgba(30,214,112,0.12)}
-.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.34em;color:#fff;display:flex;align-items:center;gap:10px;cursor:none;user-select:none;flex-shrink:0}
-.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c),0 0 28px rgba(0,200,224,0.28);animation:pulse 2.6s ease infinite;flex-shrink:0;transition:background .5s,box-shadow .5s}
-.npulse.green{background:var(--green);box-shadow:0 0 12px var(--green)}
-.npulse.red{background:rgba(255,70,70,.9);box-shadow:0 0 12px rgba(255,70,70,.9)}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
-.nlinks{display:flex;list-style:none}
-.nlinks a{display:flex;align-items:center;height:var(--nav-h);padding:0 13px;font-size:8px;font-family:'Space Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);text-decoration:none;cursor:none;position:relative;border-right:1px solid var(--border);transition:color .2s;white-space:nowrap}
-.nlinks a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--c);box-shadow:0 0 8px var(--c);transition:width .28s var(--ease)}
-.nlinks a:hover,.nlinks a.active{color:var(--c)}.nlinks a:hover::after,.nlinks a.active::after{width:100%}
-.nlinks li:first-child a{border-left:1px solid var(--border)}
-.nright{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.nchain{display:none;align-items:center;gap:5px;padding:5px 10px;border:1px solid rgba(0,200,224,0.14);border-radius:2px;font-family:'Space Mono',monospace;font-size:7px;color:var(--c);white-space:nowrap}
-.nchain.on{display:flex}.nc-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.8s ease infinite}
-.ham{display:none;flex-direction:column;gap:4.5px;cursor:none;padding:8px;background:none;border:1px solid var(--border);border-radius:2px;margin-left:5px}
-.ham span{width:18px;height:1px;background:var(--txt2);transition:all .25s var(--ease);display:block}
-.ham.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
-.ham.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-.ham.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
-@media(max-width:940px){
-  .nlinks{display:none;position:fixed;top:var(--nav-h);left:0;right:0;background:rgba(2,5,9,0.99);border-bottom:1px solid var(--border);flex-direction:column;z-index:498;backdrop-filter:blur(24px)}
-  .nlinks.mob-open{display:flex}.nlinks a{height:44px;border-right:none;border-bottom:1px solid var(--border);padding:0 20px;font-size:9px}.nlinks li:first-child a{border-left:none}.ham{display:flex}.nchain{display:none!important}
-}
-.btn{position:relative;padding:10px 22px;border:1px solid var(--c);background:transparent;color:var(--c);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;cursor:none;border-radius:1px;overflow:hidden;transition:color .25s,box-shadow .25s,transform .1s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-.btn::before{content:'';position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);z-index:0}
-.btn:hover{color:#000;box-shadow:0 0 28px var(--c-glow),0 0 60px rgba(0,200,224,0.1)}.btn:hover::before{transform:scaleX(1)}.btn:active{transform:scale(.96)}.btn span,.btn-label{position:relative;z-index:1}
-.btn.connected{border-color:var(--green);color:var(--green)}.btn.connected::before{background:var(--green)}.btn.connected:hover{color:#000;box-shadow:0 0 28px rgba(30,214,112,0.36)}
-.btn-ghost{padding:10px 18px;background:none;border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.32);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;cursor:none;border-radius:1px;transition:all .22s;white-space:nowrap}
-.btn-ghost:hover{border-color:rgba(255,255,255,0.26);color:rgba(255,255,255,0.72)}.btn-ghost:active{transform:scale(.96)}.btn-ghost.alt{border-color:rgba(0,200,224,0.18);color:var(--c)}.btn-ghost.alt:hover{border-color:rgba(0,200,224,0.42);color:var(--c)}
-.btn-sm{padding:7px 14px;font-size:7.5px}
-@media(hover:none){.btn,.btn-ghost{cursor:pointer}}
-#app{position:fixed;inset:0;top:var(--nav-h);z-index:10;overflow:hidden}
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none}
-.scene.active{opacity:1;pointer-events:auto}
-#s-home{overflow:hidden}
-#heroC{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;will-change:transform}
-.hero-wrap{position:relative;z-index:2;text-align:center;max-width:720px;padding:0 20px}
-.hero-tag{display:inline-flex;align-items:center;gap:7px;margin-bottom:30px;border:1px solid rgba(0,200,224,0.14);background:rgba(0,200,224,0.035);padding:5px 14px;border-radius:1px;transition:all .6s}
-.hero-tag.bullish{border-color:rgba(30,214,112,0.2);background:rgba(30,214,112,0.04)}
-.hero-tag.alert{border-color:rgba(255,70,70,0.2);background:rgba(255,70,70,0.04)}
-.htdot{width:3px;height:3px;border-radius:50%;background:var(--c);animation:pulse 2s ease infinite}
-.hero-tag span{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c)}
-h1{font-family:'Bebas Neue',cursive;font-size:clamp(58px,10vw,132px);line-height:.86;letter-spacing:.01em;color:#fff;margin-bottom:24px}
-h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:transparent}
-.hero-sub{font-size:13px;color:var(--txt2);max-width:360px;margin:0 auto 40px;line-height:2;letter-spacing:.012em;font-weight:300}
-.hero-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.hero-mkt{position:absolute;top:20px;right:24px;z-index:3;display:flex;flex-direction:column;gap:5px}
-.hm-item{display:flex;align-items:center;gap:8px;padding:5px 10px;background:rgba(2,5,9,0.7);border:1px solid var(--border);border-radius:1px;backdrop-filter:blur(12px);transition:all .5s}
-.hm-item.up{border-color:rgba(30,214,112,0.14)}
-.hm-item.dn{border-color:rgba(255,70,70,0.14)}
-.hm-sym{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;color:var(--txt2);width:36px}
-.hm-price{font-family:'Space Mono',monospace;font-size:9px;color:#fff;transition:color .3s}
-.hm-price.flash-up{color:var(--green)}.hm-price.flash-dn{color:#ff5555}
-.hm-chg{font-family:'Space Mono',monospace;font-size:7px;width:48px;text-align:right}
-.hm-chg.up{color:var(--green)}.hm-chg.dn{color:#ff5555}
-.hm-spark{width:50px;height:18px}
-@media(max-width:700px){.hero-mkt{display:none}}
-.ticker{position:absolute;bottom:0;left:0;right:0;border-top:1px solid var(--border);padding:7px 0;overflow:hidden;background:rgba(2,5,9,0.75);z-index:3;contain:layout style paint;transition:border-color .8s}
-.ticker.bullish{border-top-color:rgba(30,214,112,0.14)}
-.ticker.alert{border-top-color:rgba(255,70,70,0.14)}
-.tick-inner{display:flex;animation:tickroll 55s linear infinite;width:max-content;white-space:nowrap}
-@keyframes tickroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.tick-inner:hover{animation-play-state:paused}
-.ti{display:inline-flex;align-items:center;gap:6px;padding:0 18px;font-family:'Space Mono',monospace;font-size:8px;border-right:1px solid var(--border)}
-.ti-s{color:#fff}.ti-p{color:var(--txt2)}.ti-u{color:var(--green)}.ti-d{color:#ff5555}
-.tick-live{display:inline-flex;align-items:center;gap:5px;padding:0 13px;font-family:'Space Mono',monospace;font-size:7px;color:var(--green);border-right:1px solid var(--border);text-transform:uppercase;letter-spacing:.1em}
-.tl-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease infinite}
-#wovl{position:fixed;inset:0;z-index:800;display:none;background:rgba(2,5,9,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);align-items:center;justify-content:center;transition:background .45s,backdrop-filter .45s,-webkit-backdrop-filter .45s}
-#wovl.show{display:flex}#wovl.open{background:rgba(2,5,9,0.95);backdrop-filter:blur(36px);-webkit-backdrop-filter:blur(36px)}
-.wm{position:relative;z-index:1;width:min(440px,calc(100vw - 32px));background:rgba(3,8,20,0.99);border:1px solid var(--border2);border-radius:3px;overflow:hidden;box-shadow:0 60px 120px rgba(0,0,0,0.95),0 0 80px rgba(0,200,224,0.04);opacity:0;transform:scale(.92) translateY(20px);transition:opacity .4s var(--ease2),transform .4s var(--ease2)}
-#wovl.open .wm{opacity:1;transform:scale(1) translateY(0)}
-.wm-bar{height:1.5px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.wm-head{padding:22px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.wm-title{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:.06em;color:#fff;margin-bottom:3px}
-.wm-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);letter-spacing:.09em}
-.wm-x{width:26px;height:26px;background:none;border:1px solid var(--border);color:var(--txt2);cursor:none;font-size:10px;display:flex;align-items:center;justify-content:center;border-radius:1px;transition:all .18s;flex-shrink:0;line-height:1}
-.wm-x:hover{border-color:rgba(255,70,70,0.36);color:rgba(255,100,100,0.85);background:rgba(255,40,40,0.06)}
-.wm-body{padding:18px 22px 22px}
-.wm-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt2);opacity:.5;margin-bottom:11px}
-.wo{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:2px;background:rgba(0,200,224,0.01);cursor:none;transition:border-color .22s var(--ease),background .22s,transform .22s var(--ease),opacity .22s;margin-bottom:7px;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
-.wo::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--c);opacity:0;transition:opacity .18s}
-.wo:hover{border-color:rgba(0,200,224,0.24);background:rgba(0,200,224,0.04);transform:translateX(4px)}.wo:hover::before{opacity:1}.wo:active{transform:translateX(2px) scale(.99)}.wo.disabled{opacity:.36;pointer-events:none}
-.wo-ico{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;transition:transform .2s}.wo:hover .wo-ico{transform:scale(1.08)}
-.wo-name{font-size:12.5px;font-weight:500;color:#fff;margin-bottom:1px}.wo-desc{font-size:8.5px;color:var(--txt2)}
-.wo-badge{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.07em;text-transform:uppercase;padding:2.5px 6px;border-radius:1px;white-space:nowrap;flex-shrink:0}
-.ok{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.14)}.no{background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.06)}.ok-install{background:rgba(255,165,0,0.06);color:#f0a946;border:1px solid rgba(255,165,0,0.14)}
-.wo-arr{color:var(--c);font-size:11px;opacity:0;transform:translateX(-5px);transition:all .2s var(--ease);margin-left:auto;flex-shrink:0}.wo:hover .wo-arr{opacity:1;transform:translateX(0)}
-.wm-note{margin-top:13px;padding:9px 12px;background:rgba(0,0,0,0.38);border:1px solid rgba(255,255,255,0.04);border-radius:2px;font-size:8.5px;color:var(--txt2);line-height:1.7}
-.wo-spin{width:13px;height:13px;border:1px solid rgba(0,200,224,0.2);border-top-color:var(--c);border-radius:50%;animation:spin .65s linear infinite;margin-left:auto;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-#sovl{position:fixed;inset:0;z-index:700;display:none;background:rgba(2,5,9,0);backdrop-filter:blur(0px);align-items:center;justify-content:center;transition:background .5s,backdrop-filter .5s}
-#sovl.show{display:flex}#sovl.open{background:rgba(2,5,9,0.99);backdrop-filter:blur(42px)}
-.scan-inner{position:relative;z-index:1;text-align:center;width:min(500px,calc(100vw - 32px))}
-.scan-orb{position:relative;width:180px;height:180px;margin:0 auto 40px}
-#hexC{width:180px;height:180px;position:absolute;inset:0}
-.sc-corner{position:absolute;width:12px;height:12px}
-.sc-tl{top:-4px;left:-4px;border-top:1px solid var(--c);border-left:1px solid var(--c)}
-.sc-tr{top:-4px;right:-4px;border-top:1px solid var(--c);border-right:1px solid var(--c)}
-.sc-bl{bottom:-4px;left:-4px;border-bottom:1px solid var(--c);border-left:1px solid var(--c)}
-.sc-br{bottom:-4px;right:-4px;border-bottom:1px solid var(--c);border-right:1px solid var(--c)}
-.scan-title{font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.06em;color:#fff;margin-bottom:5px;opacity:0;transform:translateY(10px);transition:all .5s var(--ease2)}
-.scan-title.in{opacity:1;transform:none}
-.scan-phase{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);margin-bottom:18px;min-height:15px;opacity:.82}
-.scan-addr{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt2);letter-spacing:.06em;margin-bottom:20px;opacity:0;transition:opacity .5s .3s;word-break:break-all;padding:0 20px}.scan-addr.in{opacity:1}
-.scan-nodes{display:flex;justify-content:center;gap:8px;margin-bottom:16px;min-height:26px}
-.sn{width:8px;height:8px;border-radius:50%;background:rgba(0,200,224,0.06);border:1px solid rgba(0,200,224,0.12);transform:scale(.5);opacity:.2;transition:all .45s var(--ease2)}
-.sn.lit{background:var(--c);border-color:var(--c);transform:scale(1);opacity:1;box-shadow:0 0 12px var(--c),0 0 24px rgba(0,200,224,0.2)}.sn.gold{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px var(--gold)}
-.scan-prog{width:220px;margin:0 auto 4px}.sp-bar{height:1px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden;margin-bottom:4px}.sp-fill{height:100%;background:var(--c);width:0%;box-shadow:0 0 8px var(--c);transition:width .5s var(--ease)}
-.sp-pct{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);letter-spacing:.1em;margin-bottom:24px;text-align:center}
-.scan-cta{display:none;padding:12px 28px;background:var(--c);border:none;color:#000;font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:none;border-radius:1px;transition:box-shadow .25s,transform .12s}
-.scan-cta.in{display:inline-block;animation:fadeUp .45s var(--ease2) both}.scan-cta:hover{box-shadow:0 0 36px rgba(0,200,224,0.55)}.scan-cta:active{transform:scale(.96)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-#flash{position:fixed;inset:0;z-index:1000;pointer-events:none;opacity:0;background:rgba(0,200,224,0.025);transition:opacity .1s}
-#flash.go{opacity:1}#flash.green-flash{background:rgba(30,214,112,0.04)}#flash.red-flash{background:rgba(255,70,70,0.04)}
-#s-proto{padding:0}
-#conC{width:100%;height:100%;display:block;position:absolute;inset:0;will-change:transform}
-.proto-info{position:absolute;bottom:52px;left:32px;z-index:2}
-.proto-title{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,50px);letter-spacing:.04em;color:#fff;margin-bottom:6px}
-.proto-sub{font-size:11px;color:var(--txt2);max-width:280px;line-height:1.9}
-.proto-legend{position:absolute;bottom:52px;right:32px;z-index:2;display:flex;flex-direction:column;gap:6px}
-.pl{display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2)}
-.pl-d{width:6px;height:6px;border-radius:50%}
-.proto-stats{position:absolute;top:20px;left:32px;right:32px;z-index:2;display:flex;gap:28px;flex-wrap:wrap}
-.pst{border-left:1px solid var(--border);padding-left:14px}
-.pst-v{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.04em;color:var(--c);margin-bottom:0;transition:color .6s}
-.pst-l{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);letter-spacing:.11em;text-transform:uppercase}
-.proto-tooltip{position:fixed;z-index:3;pointer-events:none;opacity:0;transition:opacity .15s;background:rgba(2,6,18,0.99);border:1px solid var(--border2);border-radius:2px;padding:8px 12px;min-width:140px}
-.proto-tooltip.show{opacity:1}
-.pt-type{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--c);margin-bottom:3px}
-.pt-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt);margin-bottom:2px}
-.pt-score{font-family:'Bebas Neue',cursive;font-size:20px;color:#fff}
-.scene-scroll{overflow-y:auto;overflow-x:hidden;align-items:flex-start;padding-top:0;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(0,200,224,0.1) transparent}
-.scene-scroll::-webkit-scrollbar{width:2px}.scene-scroll::-webkit-scrollbar-track{background:transparent}.scene-scroll::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.10);border-radius:2px}
-.inner{width:100%;max-width:1060px;padding:24px 28px 80px;margin:0 auto}
-@media(max-width:700px){.inner{padding:16px 14px 80px}}
-.id-hero{display:flex;align-items:center;gap:18px;padding:24px;margin-bottom:10px;background:var(--glass);border:1px solid var(--border);border-radius:2px;position:relative;overflow:hidden;flex-wrap:wrap}
-.id-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.aura-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
-.ar{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,200,224,0.24);animation:aura 3s ease infinite}
-.ar:nth-child(2){animation-delay:.9s;inset:-8px}.ar:nth-child(3){animation-delay:1.8s;inset:-16px}
-@keyframes aura{0%{transform:scale(.78);opacity:0}50%{opacity:.44}100%{transform:scale(1.1);opacity:0}}
-.aura-core{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(0,200,224,0.16),rgba(0,200,224,0.04));border:1px solid rgba(0,200,224,0.32);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--c)}
-.id-name{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.04em;color:#fff;margin-bottom:3px}
-.id-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);margin-bottom:8px;word-break:break-all}
-.id-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border:1px solid rgba(0,200,224,0.16);background:rgba(0,200,224,0.04);border-radius:1px}
-.ibd{width:4px;height:4px;border-radius:50%;background:var(--c);animation:pulse 2s ease infinite}
-.id-badge span{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.09em;color:var(--c)}
-.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
-@media(max-width:700px){.mgrid{grid-template-columns:1fr 1fr}}
-.mc{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:16px;position:relative;overflow:hidden;transition:border-color .22s,transform .25s var(--ease),box-shadow .25s;cursor:default}
-.mc:hover{border-color:rgba(0,200,224,0.16);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
-.mc-l{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:7px}
-.mc-v{font-family:'Bebas Neue',cursive;font-size:30px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:5px}
-.mc-v.c{color:var(--c)}.mc-v.gr{color:var(--green)}.mc-v.go{color:var(--gold)}
-.badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
-.bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}.bg2{background:rgba(196,154,42,0.07);color:var(--gold);border:1px solid rgba(196,154,42,0.14)}.bgr{background:rgba(30,214,112,0.05);color:var(--green);border:1px solid rgba(30,214,112,0.12)}.bbl{background:rgba(107,163,255,0.06);color:#6ba3ff;border:1px solid rgba(107,163,255,0.12)}
-.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-@media(max-width:700px){.wgrid{grid-template-columns:1fr}}
-.wcard{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:20px;transition:border-color .22s}
-.wcard:hover{border-color:rgba(0,200,224,0.12)}
-.wc-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-.abars{display:flex;align-items:flex-end;gap:3px;height:60px}
-.abar{flex:1;background:var(--c);opacity:.18;border-radius:1px 1px 0 0;transition:opacity .18s,transform .18s;cursor:default}.abar:hover{opacity:.82;transform:scaleY(1.06);transform-origin:bottom}
-.amonths{display:flex;justify-content:space-between;margin-top:6px;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
-.cpills{display:flex;flex-wrap:wrap;gap:5px}
-.cpill{display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:100px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:9.5px;color:var(--txt);transition:all .18s;cursor:default}.cpill:hover{border-color:rgba(0,200,224,0.16);background:rgba(0,200,224,0.04)}
-.cdot{width:4px;height:4px;border-radius:50%}
-.risk-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:10.5px}.risk-row:last-child{border-bottom:none}.risk-l{color:var(--txt2)}
-.ch-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}.ch-item:last-child{border-bottom:none}
-.ch-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}.ch-txt{font-size:10.5px;color:var(--txt)}.ch-yr{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);margin-left:auto}
-.tl-hd{margin-bottom:32px}
-.tl-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
-.tl-ey::before{content:'';width:12px;height:1px;background:var(--c)}
-.tl-h{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,46px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
-.tl-desc{font-size:11.5px;color:var(--txt2);max-width:440px;line-height:1.9}
-.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-@media(max-width:700px){.fgrid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.fgrid{grid-template-columns:1fr}}
-.fc{padding:22px 18px;border:1px solid var(--border);border-radius:2px;background:rgba(2,6,14,0.5);transition:all .25s var(--ease);position:relative;overflow:hidden;cursor:default}
-.fc:hover{border-color:rgba(0,200,224,0.16);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.55)}
-.fc-glow{position:absolute;bottom:-40px;right:-40px;width:80px;height:80px;background:radial-gradient(ellipse,rgba(0,200,224,0.06),transparent);opacity:0;transition:opacity .25s}.fc:hover .fc-glow{opacity:1}
-.f-ico{width:30px;height:30px;border:1px solid rgba(0,200,224,0.10);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(0,200,224,0.04);margin-bottom:12px}
-.f-title{font-size:12.5px;font-weight:500;color:#fff;margin-bottom:6px}.f-desc{font-size:10.5px;color:var(--txt2);line-height:1.8}
-.mi-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:12px;margin-bottom:12px}
-@media(max-width:900px){.mi-grid{grid-template-columns:1fr}}
-.mi-main{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:0;overflow:hidden;position:relative;transition:border-color .6s,box-shadow .6s}
-.mi-main::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent);transition:opacity .6s}
-.mi-main.bullish{border-color:rgba(30,214,112,0.15);box-shadow:0 0 40px rgba(30,214,112,0.05)}
-.mi-main.alert{border-color:rgba(255,70,70,0.15);box-shadow:0 0 40px rgba(255,70,70,0.05)}
-.mi-head{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.mi-head-l{display:flex;align-items:center;gap:8px}
-.mi-head-title{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2)}
-.mi-live{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid rgba(30,214,112,0.2);background:rgba(30,214,112,0.04);border-radius:1px}
-.mi-live-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.2s ease infinite}
-.mi-live span{font-family:'Space Mono',monospace;font-size:6px;color:var(--green);letter-spacing:.12em;text-transform:uppercase}
-.mi-ts{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
-.token-rows{padding:8px 0}
-.tr-item{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border);cursor:default;transition:background .18s;position:relative;overflow:hidden}
-.tr-item:last-child{border-bottom:none}.tr-item:hover{background:rgba(0,200,224,0.025)}
-.tr-flash-bg{position:absolute;inset:0;opacity:0;transition:opacity .4s;pointer-events:none}
-.tr-flash-bg.up{background:rgba(30,214,112,0.06)}.tr-flash-bg.dn{background:rgba(255,80,80,0.06)}
-.tr-rank{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);width:16px;flex-shrink:0;text-align:right}
-.tr-sym-wrap{display:flex;align-items:center;gap:8px;width:110px;flex-shrink:0}
-.tr-ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.tr-sym{font-size:12px;font-weight:500;color:#fff}.tr-name{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
-.tr-chart{flex:1;height:30px;overflow:hidden}
-.tr-price{font-family:'Space Mono',monospace;font-size:10px;color:var(--txt);text-align:right;width:80px;flex-shrink:0;transition:color .3s}
-.tr-price.flash-up{color:var(--green)}.tr-price.flash-dn{color:#ff5555}
-.tr-chg{font-family:'Space Mono',monospace;font-size:8px;text-align:right;width:58px;flex-shrink:0}
-.tr-chg.up{color:var(--green)}.tr-chg.dn{color:#ff5555}
-.tr-mcap{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);text-align:right;width:54px;flex-shrink:0}
-@media(max-width:600px){.tr-mcap,.tr-chart{display:none}}
-.spark-svg{width:100%;height:30px;display:block}
-.mi-right{display:flex;flex-direction:column;gap:10px}
-.gas-panel{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:18px;position:relative;overflow:hidden;transition:border-color .6s}
-.gas-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
-.gas-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
-.gas-main{display:flex;align-items:baseline;gap:8px;margin-bottom:14px}
-.gas-val{font-family:'Bebas Neue',cursive;font-size:44px;letter-spacing:.02em;color:var(--gold);line-height:1;transition:color .5s}
-.gas-val.high{color:#f87171}.gas-val.low{color:var(--green)}
-.gas-unit{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2)}
-.gas-tiers{display:flex;gap:6px;margin-bottom:12px}
-.gas-tier{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:2px;text-align:center;cursor:default;transition:border-color .18s}.gas-tier:hover{border-color:rgba(0,200,224,0.16)}
-.gt-lbl{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin-bottom:4px}
-.gt-val{font-family:'Bebas Neue',cursive;font-size:16px;color:#fff}
-.gt-val.slow-c{color:#6ba3ff}.gt-val.std-c{color:var(--c)}.gt-val.fast-c{color:var(--green)}.gt-val.rapid-c{color:var(--gold)}
-.gas-bar-wrap{height:3px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden;margin-bottom:4px}
-.gas-bar{height:100%;border-radius:2px;transition:width 1.2s var(--ease)}
-.net-panel{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:18px;flex:1;position:relative;overflow:hidden;transition:border-color .6s}
-.net-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--blue),transparent)}
-.net-rows{display:flex;flex-direction:column;gap:0}
-.net-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}.net-row:last-child{border-bottom:none}
-.nr-ico{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:rgba(107,163,255,0.06);border:1px solid rgba(107,163,255,0.12)}
-.nr-label{font-size:10px;color:var(--txt2);flex:1}.nr-val{font-family:'Bebas Neue',cursive;font-size:16px;color:#fff;transition:color .3s}.nr-val.flash{color:var(--c)}
-.nr-bar-w{width:50px;height:2px;background:rgba(107,163,255,0.08);border-radius:2px;overflow:hidden;flex-shrink:0}.nr-bar{height:100%;background:var(--blue);border-radius:2px;transition:width 1s var(--ease)}
-.gov-panel{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:18px;position:relative;overflow:hidden}
-.gov-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.6),transparent)}
-.eco-intel{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:0;overflow:hidden;position:relative;margin-bottom:12px}
-.eco-intel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.ei-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.ei-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2)}
-.ei-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:12px;gap:8px}
-@media(max-width:700px){.ei-grid{grid-template-columns:1fr 1fr}}
-.ei-card{padding:12px;border:1px solid var(--border);border-radius:2px;background:rgba(0,0,0,0.2);transition:border-color .4s,background .4s;position:relative;overflow:hidden}
-.ei-card.alert{border-color:rgba(255,70,70,0.2);background:rgba(255,70,70,0.03)}
-.ei-card.bullish{border-color:rgba(30,214,112,0.16);background:rgba(30,214,112,0.03)}
-.ei-card.active{border-color:rgba(0,200,224,0.2);background:rgba(0,200,224,0.03)}
-.ei-pulse{position:absolute;top:8px;right:8px;width:5px;height:5px;border-radius:50%;animation:pulse 1.4s ease infinite}
-.ei-card.alert .ei-pulse{background:rgba(255,70,70,0.9);box-shadow:0 0 8px rgba(255,70,70,0.6)}
-.ei-card.bullish .ei-pulse{background:var(--green);box-shadow:0 0 8px var(--green)}
-.ei-card.active .ei-pulse{background:var(--c);box-shadow:0 0 8px var(--c)}
-.ei-lbl{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px}
-.ei-val{font-family:'Bebas Neue',cursive;font-size:22px;color:#fff;line-height:1;margin-bottom:3px;transition:color .4s}
-.ei-card.alert .ei-val{color:rgba(255,100,100,0.9)}.ei-card.bullish .ei-val{color:var(--green)}.ei-card.active .ei-val{color:var(--c)}
-.ei-sub{font-size:8.5px;color:var(--txt2)}
-.ei-bar{height:2px;background:rgba(0,200,224,0.08);border-radius:1px;overflow:hidden;margin-top:7px}
-.ei-bar-fill{height:100%;border-radius:1px;transition:width 1s var(--ease)}
-.ei-card.alert .ei-bar-fill{background:rgba(255,70,70,0.8)}.ei-card.bullish .ei-bar-fill{background:var(--green)}.ei-card.active .ei-bar-fill{background:var(--c)}
-.eco-feed{background:var(--glass2);border:1px solid var(--border);border-radius:2px;overflow:hidden;position:relative}
-.eco-feed::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.eco-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.eco-head-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);flex:1}
-.eco-filter{display:flex;gap:4px}
-.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s}
-.eco-fbtn.active,.eco-fbtn:hover{border-color:rgba(0,200,224,0.22);color:var(--c);background:rgba(0,200,224,0.04)}
-.eco-stream{max-height:280px;overflow:hidden;position:relative}
-.eco-stream::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(2,7,16,0.92),transparent);pointer-events:none;z-index:1}
-.eco-item{display:flex;align-items:center;gap:9px;padding:8px 16px;border-bottom:1px solid var(--border);animation:ecoIn .35s var(--ease2) both;position:relative}
-.eco-item:last-child{border-bottom:none}
-@keyframes ecoIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
-.eco-type{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:1px;flex-shrink:0}
-.et-swap{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}.et-bridge{background:rgba(107,163,255,0.06);color:#6ba3ff;border:1px solid rgba(107,163,255,0.12)}.et-stake{background:rgba(196,154,42,0.06);color:var(--gold);border:1px solid rgba(196,154,42,0.12)}.et-gov{background:rgba(30,214,112,0.05);color:var(--green);border:1px solid rgba(30,214,112,0.12)}.et-deploy{background:rgba(171,115,255,0.06);color:#ab73ff;border:1px solid rgba(171,115,255,0.12)}.et-nft{background:rgba(255,160,80,0.06);color:#ffa050;border:1px solid rgba(255,160,80,0.12)}.et-alert{background:rgba(255,70,70,0.06);color:rgba(255,100,100,0.9);border:1px solid rgba(255,70,70,0.14)}
-.eco-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.eco-val{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt);white-space:nowrap;margin-left:auto}
-.eco-ts{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);opacity:.5;flex-shrink:0;width:38px;text-align:right}
-.eco-item.anomaly{background:rgba(255,70,70,0.03);animation:ecoIn .35s var(--ease2) both,anomalyPulse 2s ease infinite}
-@keyframes anomalyPulse{0%,100%{background:rgba(255,70,70,0.03)}50%{background:rgba(255,70,70,0.07)}}
-.perm-card{background:var(--navy);border:1px solid var(--border2);border-radius:2px;padding:22px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,0.6)}
-.perm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.ph{display:flex;align-items:center;gap:11px;margin-bottom:15px}
-.p-ico{width:38px;height:38px;background:rgba(0,200,224,0.05);border:1px solid var(--border2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.p-title{font-size:12.5px;font-weight:500;color:#fff;margin-bottom:1px}.p-src{font-family:'Space Mono',monospace;font-size:7px;color:var(--c);letter-spacing:.06em;opacity:.7}
-.p-body{font-size:11px;color:var(--txt);line-height:1.85;margin-bottom:13px}
-.p-code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:8px 11px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.42);margin-bottom:14px;overflow-x:auto}
-.p-acts{display:flex;gap:7px}
-.p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:none;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
-.p-deny:hover{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.28)}
-.p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:none;letter-spacing:.09em;transition:box-shadow .22s,transform .1s;text-transform:uppercase}.p-approve:hover{box-shadow:0 0 24px rgba(0,200,224,0.45)}
-.infra-tabs{display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:2px;overflow:hidden}
-.itab{flex:1;padding:10px 0;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt2);background:none;border:none;cursor:none;transition:all .22s;text-align:center;border-right:1px solid var(--border);position:relative}
-.itab:last-child{border-right:none}.itab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--c);transform:scaleX(0);transition:transform .28s var(--ease)}
-.itab:hover{color:var(--txt);background:rgba(0,200,224,0.02)}.itab.active{color:var(--c);background:rgba(0,200,224,0.03)}.itab.active::after{transform:scaleX(1)}.itab:active{transform:scale(.97)}
-.infra-panel{display:none}.infra-panel.active{display:block}
-.swap-wrap{display:grid;grid-template-columns:1fr 1.35fr;gap:12px}
-@media(max-width:700px){.swap-wrap{grid-template-columns:1fr}}
-.swap-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:22px;position:relative;overflow:hidden}
-.swap-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.16),transparent)}
-.swap-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:7px}
-.swap-token-row{display:flex;align-items:center;gap:9px;background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:2px;padding:11px 13px;margin-bottom:5px;transition:border-color .18s;cursor:none}.swap-token-row:hover{border-color:rgba(0,200,224,0.16)}
-.stk{display:flex;align-items:center;gap:7px;min-width:85px}
-.stk-ico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.stk-sym{font-size:12.5px;font-weight:500;color:#fff}.stk-name{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}.stk-amt{margin-left:auto;font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.02em;color:#fff}.stk-usd{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);text-align:right}
-.swap-arrow{display:flex;align-items:center;justify-content:center;height:26px;position:relative}
-.swap-arrow-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border)}
-.swap-arrow-ico{width:20px;height:20px;border:1px solid var(--border2);border-radius:50%;background:rgba(0,200,224,0.05);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--c);z-index:1;position:relative;cursor:none;transition:all .2s}.swap-arrow-ico:hover{background:rgba(0,200,224,0.1);transform:rotate(180deg)}
-.swap-details{margin-top:12px;display:flex;flex-direction:column;gap:4px}
-.sd-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:9.5px}.sd-row:last-child{border-bottom:none}.sd-l{color:var(--txt2)}.sd-r{color:var(--txt);font-family:'Space Mono',monospace;font-size:8px}.sd-r.good{color:var(--green)}.sd-r.warn{color:#f0a946}
-.swap-route{background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:2px;padding:13px}
-.sr-title{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:12px}
-.sr-flow{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px}
-.sr-node{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
-.sr-node-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:1px solid var(--border);background:rgba(0,200,224,0.04)}
-.sr-node-lbl{font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2);text-align:center}
-.sr-line{flex:1;height:1px;background:linear-gradient(to right,var(--c),rgba(0,200,224,0.3));position:relative;min-width:22px}
-.sr-line::after{content:'▶';position:absolute;right:-3px;top:-5px;color:var(--c);font-size:6.5px}
-.sr-pct{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:5.5px;color:var(--c)}
-.sr-mev{margin-top:10px;display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(255,165,0,0.04);border:1px solid rgba(255,165,0,0.09);border-radius:2px}
-.sr-mev-ico{font-size:10px}.sr-mev-txt{font-size:9px;color:var(--txt2);flex:1}.sr-mev-val{font-family:'Space Mono',monospace;font-size:7.5px;color:#f0a946}
-.bridge-wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}
-@media(max-width:700px){.bridge-wrap{grid-template-columns:1fr}}
-.bridge-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:22px;position:relative;overflow:hidden}
-.bridge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(107,163,255,0.28),transparent)}
-.bridge-chains{display:flex;align-items:center;gap:0;margin-bottom:16px}
-.bc-chain{flex:1;background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:2px;padding:13px;text-align:center;cursor:none;transition:border-color .18s}.bc-chain:hover{border-color:rgba(107,163,255,0.26)}
-.bc-chain-ico{font-size:22px;margin-bottom:5px}.bc-chain-name{font-size:11.5px;font-weight:500;color:#fff;margin-bottom:1px}.bc-chain-net{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
-.bridge-arrow{width:40px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px}
-.ba-anim{display:flex;flex-direction:column;gap:3px;align-items:center}
-.ba-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);animation:ba-pulse 1.4s ease infinite}
-.ba-dot:nth-child(2){animation-delay:.2s}.ba-dot:nth-child(3){animation-delay:.4s}
-@keyframes ba-pulse{0%,100%{opacity:.16;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
-.bridge-canvas-wrap{background:rgba(0,0,0,0.38);border:1px solid var(--border);border-radius:2px;overflow:hidden;height:150px;position:relative;margin-bottom:11px}
-#bridgeC{width:100%;height:100%;display:block}
-.bridge-status{display:flex;flex-direction:column;gap:4px}
-.bs-row{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(0,0,0,0.22);border:1px solid var(--border);border-radius:2px;font-size:9px;color:var(--txt2);position:relative;overflow:hidden}
-.bs-prog{position:absolute;left:0;top:0;bottom:0;background:rgba(107,163,255,0.04);transition:width .5s var(--ease)}.bs-ico{font-size:9px;flex-shrink:0;z-index:1}.bs-txt{z-index:1;flex:1}.bs-stat{font-family:'Space Mono',monospace;font-size:7px;z-index:1}
-.bs-stat.done{color:var(--green)}.bs-stat.active{color:#6ba3ff}.bs-stat.pending{color:var(--txt2)}
-.bridge-time{display:flex;align-items:center;gap:7px;padding:9px 13px;background:rgba(107,163,255,0.04);border:1px solid rgba(107,163,255,0.12);border-radius:2px;margin-top:9px;font-size:9px;color:var(--txt2)}.bridge-time-val{font-family:'Bebas Neue',cursive;font-size:18px;color:#6ba3ff;margin-left:auto}
-.stake-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:700px){.stake-wrap{grid-template-columns:1fr}}
-.stake-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:22px;position:relative;overflow:hidden}
-.stake-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.28),transparent)}
-.validator-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:none;transition:background .18s;border-radius:1px}.validator-item:hover{background:rgba(0,200,224,0.025)}.validator-item:last-child{border-bottom:none}
-.vi-rank{font-family:'Bebas Neue',cursive;font-size:14px;color:var(--txt2);width:18px;flex-shrink:0}
-.vi-ico{width:30px;height:30px;border-radius:50%;background:rgba(196,154,42,0.09);border:1px solid rgba(196,154,42,0.16);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.vi-name{font-size:10.5px;color:#fff;font-weight:500;margin-bottom:1.5px}.vi-apy{font-family:'Space Mono',monospace;font-size:7px;color:var(--green)}.vi-trust{margin-left:auto;text-align:right}.vi-score{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--gold)}.vi-lbl{font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
-.stake-meter{margin-top:14px}.sm-title{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:9px}
-.sm-ring-wrap{display:flex;align-items:center;gap:18px}.sm-stats{display:flex;flex-direction:column;gap:5px}
-.sms{font-size:9.5px;color:var(--txt2)}.sms strong{font-family:'Bebas Neue',cursive;font-size:16px;color:#fff;margin-right:3px}.sms.gold strong{color:var(--gold)}.sms.green strong{color:var(--green)}
-.nc-row{display:flex;align-items:center;gap:7px;padding:5px 9px;background:rgba(196,154,42,0.03);border:1px solid rgba(196,154,42,0.07);border-radius:2px;margin-bottom:4px}.nc-ico{font-size:9px}.nc-txt{font-size:9px;color:var(--txt2);flex:1}.nc-val{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--gold)}
-.dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
-@media(max-width:700px){.dev-grid{grid-template-columns:1fr}}
-.dev-card{background:var(--glass);border:1px solid var(--border);border-radius:2px;padding:20px;position:relative;overflow:hidden;transition:border-color .22s,transform .25s var(--ease)}
-.dev-card:hover{border-color:rgba(0,200,224,0.14);transform:translateY(-2px)}
-.dev-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.14),transparent)}
-.dc-title{font-size:13px;font-weight:500;color:#fff;margin-bottom:2px}.dc-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--c);letter-spacing:.06em;margin-bottom:13px;opacity:.65}
-.terminal{background:rgba(0,0,0,0.58);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:12px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt2);line-height:1.9;position:relative;overflow:hidden;contain:layout style}
-.tl-row{display:flex;gap:7px;margin-bottom:1px}.tp{color:var(--c);opacity:.45}.tc{color:var(--txt)}.to{color:rgba(30,214,112,0.7)}
-.tcur{display:inline-block;width:5px;height:1em;background:var(--c);animation:blink .9s step-end infinite;vertical-align:text-bottom}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.t-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.36),transparent);animation:tscan 3.5s linear infinite}
-@keyframes tscan{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:100%;opacity:0}}
-.tg-rows{display:flex;flex-direction:column;gap:8px}.tg-row{display:flex;align-items:center;gap:8px}.tg-l{font-size:9.5px;color:var(--txt2);width:100px;flex-shrink:0}.tg-bw{flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden}.tg-b{height:100%;border-radius:2px;width:0%;transition:width 1.2s var(--ease2)}.tg-v{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);width:28px;text-align:right;flex-shrink:0}
-.tx-sim{display:flex;flex-direction:column;gap:6px}
-.tx-step{display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;transition:all .3s}
-.tx-step.done{border-color:rgba(30,214,112,0.14);background:rgba(30,214,112,0.02)}.tx-step.active{border-color:var(--c);background:rgba(0,200,224,0.03)}
-.txd{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(0,200,224,0.09);border:1px solid rgba(0,200,224,0.15);transition:all .35s}
-.tx-step.done .txd{background:var(--green);border-color:var(--green);box-shadow:0 0 7px var(--green)}.tx-step.active .txd{background:var(--c);border-color:var(--c);box-shadow:0 0 7px var(--c);animation:pulse 1.1s ease infinite}
-.tx-txt{font-size:9.5px;color:var(--txt2);flex:1}.tx-step.done .tx-txt,.tx-step.active .tx-txt{color:var(--txt)}
-.tx-stat{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.07em}.tx-step.done .tx-stat{color:var(--green)}.tx-step.active .tx-stat{color:var(--c)}
-.rep-grid{display:flex;flex-direction:column;gap:0}.rep-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);transition:background .18s;cursor:default}.rep-item:last-child{border-bottom:none}.rep-item:hover{background:rgba(0,200,224,0.02)}
-.rep-name{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--txt)}.rep-score{font-family:'Bebas Neue',cursive;font-size:19px;letter-spacing:.02em;color:var(--c)}
-#sbar{position:fixed;bottom:0;left:0;right:0;z-index:500;display:none;background:rgba(2,5,9,0.98);border-top:1px solid var(--border);padding:7px 28px;backdrop-filter:blur(20px);transition:border-color .6s}
-#sbar.on{display:flex}#sbar.bullish{border-top-color:rgba(30,214,112,0.2)}#sbar.alert-sbar{border-top-color:rgba(255,70,70,0.2)}
-.sb{display:flex;align-items:center;gap:12px;width:100%;flex-wrap:wrap;min-height:26px}
-.sb-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 1.8s ease infinite;flex-shrink:0}
-.sb-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--c);letter-spacing:.08em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
-.sb-sep{width:1px;height:8px;background:var(--border);flex-shrink:0}.sb-chain{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);white-space:nowrap}.sb-bal{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);white-space:nowrap}
-.sb-market{display:flex;align-items:center;gap:8px;margin-left:auto}
-.sb-mkt-item{font-family:'Space Mono',monospace;font-size:7px;display:flex;align-items:center;gap:4px;white-space:nowrap}
-.sb-disc{padding:4px 11px;background:none;border:1px solid rgba(255,50,50,0.16);color:rgba(255,85,85,0.56);font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.09em;text-transform:uppercase;cursor:none;border-radius:1px;transition:all .18s;white-space:nowrap}.sb-disc:hover{background:rgba(255,40,40,0.07);border-color:rgba(255,70,70,0.32)}
-@media(max-width:600px){#sbar{padding:6px 14px}.sb-chain,.sb-bal,.sb-market{display:none}}
-#toast{position:fixed;bottom:52px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid var(--border2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,0.75);word-break:break-word}
-#toast.on{transform:translateY(0) scale(1);opacity:1}.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
-.id-live-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
-@media(max-width:800px){.id-live-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.id-live-grid{grid-template-columns:1fr}}
-.id-live-card{background:var(--glass2);border:1px solid var(--border);border-radius:2px;padding:16px;position:relative;overflow:hidden;transition:border-color .22s,transform .25s var(--ease)}
-.id-live-card:hover{border-color:rgba(0,200,224,0.14);transform:translateY(-1px)}
-.ilc-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:8px}
-.ilc-val{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:4px;transition:color .4s}
-.ilc-sub{font-size:9px;color:var(--txt2)}.ilc-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.6s ease infinite;display:inline-block;margin-right:5px}
-.rv{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}.rv.in{opacity:1;transform:none}
-.mkt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:9.5px}.mkt-row:last-child{border-bottom:none}
-.net-ring{position:absolute;border-radius:50%;border:1px solid var(--c);pointer-events:none;animation:ringPulse .8s ease forwards}
-@keyframes ringPulse{0%{transform:scale(.5);opacity:.7}100%{transform:scale(2.5);opacity:0}}
-@keyframes ecoWave{0%{transform:scale(1);opacity:0.6}100%{transform:scale(3);opacity:0}}
-.eco-wave{position:fixed;border-radius:50%;pointer-events:none;animation:ecoWave 1.2s ease forwards;z-index:5}
-html{overflow-x:hidden}body{overflow-x:hidden}#app{overflow-x:hidden}.inner{overflow-x:hidden}
-@media(max-width:768px){
-  .dev-grid{grid-template-columns:1fr!important}.mi-grid{grid-template-columns:1fr!important}.swap-wrap{grid-template-columns:1fr!important}.bridge-wrap{grid-template-columns:1fr!important}.stake-wrap{grid-template-columns:1fr!important}#trustBottom{grid-template-columns:1fr!important}.fgrid{grid-template-columns:1fr 1fr!important}.ei-grid{grid-template-columns:1fr 1fr!important}.id-live-grid{grid-template-columns:1fr 1fr!important}
-  .nlinks a{font-size:9px}nav{padding:0 14px}h1{font-size:clamp(42px,12vw,80px)!important}.hero-wrap{padding:0 16px!important}.ticker{overflow:hidden}.perm-card{padding:14px}.p-code{font-size:7px;overflow-x:auto;white-space:nowrap}.mc-v{font-size:22px!important}.pst-v{font-size:22px!important}.sd-row{font-size:9px}.gas-val{font-size:36px!important}.bs-row{flex-wrap:wrap;gap:4px}.bs-txt{font-size:8px}.inner{padding:14px 12px 80px!important}.itab{font-size:7px!important;padding:8px 0!important}.wgrid{grid-template-columns:1fr!important}
-}
-@media(max-width:480px){
-  .fgrid{grid-template-columns:1fr!important}.ei-grid{grid-template-columns:1fr 1fr!important}.id-live-grid{grid-template-columns:1fr!important}.mgrid{grid-template-columns:1fr 1fr!important}.proto-stats{gap:14px;flex-wrap:wrap}.pst-v{font-size:20px!important}#sbar{padding:5px 10px}.hero-btns{flex-direction:column;align-items:center}.btn,.btn-ghost{width:100%;max-width:280px;text-align:center;justify-content:center}.nlogo{font-size:18px;letter-spacing:.2em}
-}
-.btn{overflow:hidden}
-.btn-ripple{position:absolute;border-radius:50%;background:rgba(0,200,224,0.35);transform:scale(0);animation:rippleAnim .55s ease-out forwards;pointer-events:none;z-index:10}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
-.btn-loading span,.btn-loading .btn-label{opacity:0!important}
-.btn-loading::after{content:'';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border:1.5px solid rgba(0,200,224,0.25);border-top-color:var(--c);border-radius:50%;animation:spin .6s linear infinite;margin:auto;z-index:2}
-.btn-loading.connected::after{border-top-color:var(--green)}
-@keyframes btnSuccess{0%{box-shadow:0 0 0 0 rgba(30,214,112,0.6)}70%{box-shadow:0 0 0 12px rgba(30,214,112,0)}100%{box-shadow:0 0 0 0 rgba(30,214,112,0)}}
-.btn-success-pulse{animation:btnSuccess .55s ease forwards}
-.fc,.mc,.wcard,.dev-card,.id-live-card,.gas-panel,.net-panel{will-change:transform}
-.fc:hover{transform:translateY(-4px)!important}.mc:hover{transform:translateY(-2px)!important}.dev-card:hover{transform:translateY(-3px)!important;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px rgba(0,200,224,0.06)!important}
-@keyframes ctaPulse{0%,100%{box-shadow:0 0 20px rgba(0,200,224,0.4)}50%{box-shadow:0 0 40px rgba(0,200,224,0.7),0 0 60px rgba(0,200,224,0.2)}}
-.scan-cta.in{animation:fadeUp .45s var(--ease2) both,ctaPulse 1.8s ease 0.5s infinite}
-.p-approve{position:relative;overflow:hidden}
-@keyframes approveShimmer{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(300%) skewX(-15deg)}}
-.p-approve::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.2),transparent);transform:translateX(-100%) skewX(-15deg);pointer-events:none}
-.p-approve:hover::after{animation:approveShimmer .65s ease forwards}
-.wo:hover .wo-ico{box-shadow:0 0 20px rgba(0,200,224,0.2)}
-@keyframes numFlip{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
-.num-change{animation:numFlip .3s ease forwards}
-@media(max-width:700px){.tick-inner{animation-duration:35s}.hero-mkt{display:none!important}}
+/* ═══════════════════════════════════════════
+   DEVS INFRASTRUCTURE EXECUTION LAYER
+   ═══════════════════════════════════════════ */
 
-/* ══ WALLET ACTIVATION SYSTEM (Patch 1) ══ */
-body.wallet-active #atmo{opacity:1;background:radial-gradient(ellipse 90% 70% at 50% 35%,rgba(0,200,224,0.07) 0%,rgba(0,200,224,0.03) 40%,transparent 70%);transition:opacity 2.5s ease,background 2s ease}
-body.wallet-active nav{border-bottom-color:rgba(0,200,224,0.22);box-shadow:0 1px 0 rgba(0,200,224,0.06);transition:border-bottom-color 1.8s ease,box-shadow 1.8s ease}
-body.wallet-active #sbar{border-top-color:rgba(0,200,224,0.18)}
-@keyframes identityCardIn{0%{opacity:0;transform:translateY(28px) scale(0.97);filter:blur(4px)}60%{filter:blur(0px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0px)}}
-@keyframes ecoRingBurst{0%{transform:scale(0.3);opacity:0.9}100%{transform:scale(4);opacity:0}}
-.eco-ring-burst{position:fixed;border-radius:50%;pointer-events:none;animation:ecoRingBurst 1.1s cubic-bezier(.2,1,.36,1) forwards;z-index:6}
-@keyframes navGlowPulse{0%,100%{box-shadow:0 0 0 rgba(0,200,224,0)}50%{box-shadow:0 0 32px rgba(0,200,224,0.12)}}
-body.wallet-active nav{animation:navGlowPulse 3s ease 0.8s forwards}
-@keyframes identityRowIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
-.id-row-reveal{opacity:0;animation:identityRowIn 0.45s cubic-bezier(.22,1,.36,1) both}
-@keyframes trustScoreCount{from{letter-spacing:0.08em}to{letter-spacing:0.03em}}
-@keyframes auraAwaken{0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
-.aura-awaken{animation:auraAwaken 0.9s cubic-bezier(.22,1,.36,1) both}
+:root {
+  --c: #00c8e0;
+  --c2: #00a8bd;
+  --c-dim: rgba(0,200,224,0.10);
+  --c-glow: rgba(0,200,224,0.28);
+  --gold: #c49a2a;
+  --green: #1ed670;
+  --red: rgba(255,70,70,0.9);
+  --txt: rgba(200,220,235,0.92);
+  --txt2: rgba(100,140,165,0.60);
+  --txt3: rgba(60,100,130,0.45);
+  --border: rgba(0,200,224,0.06);
+  --border2: rgba(0,200,224,0.18);
+  --glass: rgba(4,10,20,0.80);
+  --glass2: rgba(2,7,16,0.92);
+  --ease: cubic-bezier(.22,1,.36,1);
+  --ease2: cubic-bezier(.16,1,.3,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.dev-exec-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.dev-exec-main {
+  background: var(--glass2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dev-exec-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--c), transparent);
+  opacity: 0;
+  animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.dev-header {
+  margin-bottom: 20px;
+}
+
+.dev-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.dev-subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  color: var(--c);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ─────────────────────────────────────────
+   DEPLOYMENT EXECUTION FLOW
+   ───────────────────────────────────────── */
+
+.deploy-control {
+  margin-bottom: 20px;
+}
+
+.contract-input-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.contract-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: var(--txt);
+  transition: border-color 0.22s, background 0.22s;
+}
+
+.contract-input:focus {
+  outline: none;
+  border-color: rgba(0, 200, 224, 0.36);
+  background: rgba(0, 200, 224, 0.04);
+}
+
+.contract-input::placeholder {
+  color: var(--txt3);
+}
+
+.deploy-btn {
+  padding: 10px 18px;
+  background: var(--c);
+  border: none;
+  color: #000;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: box-shadow 0.25s, transform 0.1s;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.deploy-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s var(--ease);
+  z-index: 0;
+}
+
+.deploy-btn:hover {
+  box-shadow: 0 0 28px var(--c-glow), 0 0 60px rgba(0, 200, 224, 0.1);
+}
+
+.deploy-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.deploy-btn:active {
+  transform: scale(0.96);
+}
+
+.deploy-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Deployment Execution Steps */
+.exec-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.exec-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  transition: all 0.3s var(--ease2);
+  position: relative;
+  overflow: hidden;
+}
+
+.exec-step::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--c);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.exec-step.pending {
+  border-color: var(--txt3);
+  opacity: 0.5;
+}
+
+.exec-step.active {
+  border-color: rgba(0, 200, 224, 0.36);
+  background: rgba(0, 200, 224, 0.04);
+}
+
+.exec-step.active::before {
+  opacity: 1;
+}
+
+.exec-step.done {
+  border-color: rgba(30, 214, 112, 0.2);
+  background: rgba(30, 214, 112, 0.03);
+}
+
+.step-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.3s var(--ease2);
+  position: relative;
+}
+
+.exec-step.pending .step-indicator {
+  border: 1px solid var(--txt3);
+  color: var(--txt3);
+  background: transparent;
+}
+
+.exec-step.active .step-indicator {
+  border: 1px solid var(--c);
+  color: var(--c);
+  background: rgba(0, 200, 224, 0.08);
+  box-shadow: 0 0 12px rgba(0, 200, 224, 0.3), inset 0 0 8px rgba(0, 200, 224, 0.1);
+}
+
+.exec-step.done .step-indicator {
+  border: 1px solid var(--green);
+  color: #fff;
+  background: var(--green);
+}
+
+.step-spinner {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(0, 200, 224, 0.2);
+  border-top-color: var(--c);
+  border-radius: 50%;
+  animation: spinStep 0.7s linear infinite;
+}
+
+@keyframes spinStep {
+  to { transform: rotate(360deg); }
+}
+
+.step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  color: var(--txt);
+  margin-bottom: 3px;
+  letter-spacing: 0.04em;
+}
+
+.exec-step.pending .step-label {
+  color: var(--txt2);
+}
+
+.step-detail {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  color: var(--txt3);
+  opacity: 0.7;
+}
+
+.step-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: color 0.3s;
+}
+
+.exec-step.pending .step-status {
+  color: var(--txt3);
+}
+
+.exec-step.active .step-status {
+  color: var(--c);
+  animation: pulseText 1.2s ease infinite;
+}
+
+.exec-step.done .step-status {
+  color: var(--green);
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Execution Timeline */
+.exec-timeline {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.timeline-header {
+  font-family: 'Space Mono', monospace;
+  font-size: 6.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--txt2);
+  margin-bottom: 8px;
+}
+
+.timeline-bar {
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 200, 224, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.timeline-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--c), rgba(0, 200, 224, 0.6));
+  border-radius: 2px;
+  width: 0%;
+  box-shadow: 0 0 12px var(--c-glow);
+  transition: width 0.4s var(--ease);
+}
+
+.timeline-stats {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  color: var(--txt2);
+}
+
+/* ─────────────────────────────────────────
+   SMART CONTRACT SCAN
+   ───────────────────────────────────────── */
+
+.dev-exec-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contract-scanner {
+  background: var(--glass2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.contract-scanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(107, 163, 255, 0.36), transparent);
+}
+
+.scanner-header {
+  margin-bottom: 16px;
+}
+
+.scanner-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.scanner-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  color: #6ba3ff;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.scan-input-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scan-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 9px 11px;
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  color: var(--txt);
+  transition: border-color 0.22s;
+}
+
+.scan-input:focus {
+  outline: none;
+  border-color: rgba(107, 163, 255, 0.36);
+}
+
+.scan-btn {
+  padding: 9px 16px;
+  background: rgba(107, 163, 255, 0.08);
+  border: 1px solid rgba(107, 163, 255, 0.2);
+  color: #6ba3ff;
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.22s;
+  white-space: nowrap;
+}
+
+.scan-btn:hover {
+  border-color: rgba(107, 163, 255, 0.42);
+  background: rgba(107, 163, 255, 0.14);
+  box-shadow: 0 0 16px rgba(107, 163, 255, 0.2);
+}
+
+.scan-btn:active {
+  transform: scale(0.96);
+}
+
+/* Scan Visualization */
+.scan-viz {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  margin-bottom: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(107, 163, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#scanVizCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.scan-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.scan-loading.active {
+  opacity: 1;
+}
+
+.scan-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(107, 163, 255, 0.2);
+  border-top-color: #6ba3ff;
+  border-radius: 50%;
+  animation: spinScan 0.8s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes spinScan {
+  to { transform: rotate(360deg); }
+}
+
+.scan-loading-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  color: #6ba3ff;
+  letter-spacing: 0.1em;
+}
+
+/* Scan Results */
+.scan-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.scan-result-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(107, 163, 255, 0.14);
+  border-radius: 2px;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease2);
+}
+
+.scan-result-card.success {
+  border-color: rgba(30, 214, 112, 0.2);
+}
+
+.scan-result-card.warning {
+  border-color: rgba(255, 165, 0, 0.2);
+}
+
+.scan-result-card.danger {
+  border-color: rgba(255, 70, 70, 0.2);
+}
+
+.result-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--txt2);
+  margin-bottom: 4px;
+}
+
+.result-value {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-bottom: 3px;
+  transition: color 0.3s;
+}
+
+.scan-result-card.success .result-value {
+  color: var(--green);
+}
+
+.scan-result-card.warning .result-value {
+  color: #f0a946;
+}
+
+.scan-result-card.danger .result-value {
+  color: var(--red);
+}
+
+.result-bar {
+  width: 100%;
+  height: 2px;
+  background: rgba(107, 163, 255, 0.08);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.result-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  width: 0%;
+  transition: width 0.5s var(--ease);
+}
+
+.scan-result-card.success .result-bar-fill {
+  background: var(--green);
+}
+
+.scan-result-card.warning .result-bar-fill {
+  background: #f0a946;
+}
+
+.scan-result-card.danger .result-bar-fill {
+  background: var(--red);
+}
+
+/* ─────────────────────────────────────────
+   ECOSYSTEM INTEGRATION
+   ───────────────────────────────────────── */
+
+.exec-impact {
+  background: var(--glass2);
+  border: 1px solid rgba(0, 200, 224, 0.12);
+  border-radius: 3px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.impact-header {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--txt2);
+  margin-bottom: 8px;
+}
+
+.impact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.impact-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8.5px;
+  color: var(--txt2);
+  opacity: 0;
+  animation: slideInImpact 0.4s var(--ease2) forwards;
+}
+
+@keyframes slideInImpact {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.impact-dot {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: var(--c);
+  flex-shrink: 0;
+}
+
+.impact-item.active {
+  color: var(--c);
+}
+
+.impact-item.active .impact-dot {
+  animation: pulseDot 1.2s ease infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE ADJUSTMENTS
+   ───────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .dev-exec-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dev-exec-main,
+  .contract-scanner {
+    padding: 16px;
+  }
+
+  .dev-title {
+    font-size: 16px;
+  }
+
+  .scanner-title {
+    font-size: 14px;
+  }
+
+  .scan-results {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>
 </head>
 <body>
-<div id="CUR"></div>
-<div id="CUR2"></div>
-<div id="flash"></div>
-<div id="atmo"></div>
-<canvas id="BG"></canvas>
-<div class="vig"></div>
-<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
-<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Initializing ecosystem intelligence...</span></div></div>
 
-<nav id="mainNav">
-  <div class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</div>
-  <ul class="nlinks" id="navLinks">
-    <li><a href="#" data-s="home" class="active">Home</a></li>
-    <li><a href="#" data-s="proto">Protocol</a></li>
-    <li><a href="#" data-s="id">Identity</a></li>
-    <li><a href="#" data-s="trust">TrustLayer</a></li>
-    <li><a href="#" data-s="infra">Infrastructure</a></li>
-    <li><a href="#" data-s="devs">Devs</a></li>
-  </ul>
-  <div class="nright">
-    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
-    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
-    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
-  </div>
-</nav>
-
-<div id="app">
-  <div class="scene active" id="s-home">
-    <canvas id="heroC"></canvas>
-    <div class="hero-mkt" id="heroMkt">
-      <div class="hm-item" id="hm-eth"><span class="hm-sym">ETH</span><span class="hm-price" id="hmp-eth">—</span><span class="hm-chg" id="hmc-eth">—</span><canvas class="hm-spark" id="hms-eth"></canvas></div>
-      <div class="hm-item" id="hm-btc"><span class="hm-sym">BTC</span><span class="hm-price" id="hmp-btc">—</span><span class="hm-chg" id="hmc-btc">—</span><canvas class="hm-spark" id="hms-btc"></canvas></div>
-      <div class="hm-item" id="hm-sol"><span class="hm-sym">SOL</span><span class="hm-price" id="hmp-sol">—</span><span class="hm-chg" id="hmc-sol">—</span><canvas class="hm-spark" id="hms-sol"></canvas></div>
+<div class="dev-exec-container">
+  
+  <!-- LEFT: Deployment Execution Flow -->
+  <div class="dev-exec-main">
+    <div class="dev-header">
+      <div class="dev-title">Deploy & Execute</div>
+      <div class="dev-subtitle">// execution_orchestration — realtime infrastructure</div>
     </div>
-    <div class="hero-wrap">
-      <div class="hero-tag" id="heroTag"><span class="htdot"></span><span id="heroTagTxt">Trust Layer Protocol v1.0 — Live</span></div>
-      <h1><em>Trust</em><br>should be<br>visible.</h1>
-      <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
-      <div class="hero-btns">
-        <button class="btn" id="heroBtn"><span>Connect Wallet</span></button>
-        <button class="btn-ghost" id="exploreBtn">Explore Protocol →</button>
-        <button class="btn-ghost alt" id="infraBtn">Swap · Bridge · Stake →</button>
+
+    <div class="deploy-control">
+      <div class="contract-input-wrap">
+        <input 
+          type="text" 
+          class="contract-input" 
+          id="contractInput"
+          placeholder="Paste contract address or file hash..."
+        >
+        <button class="deploy-btn" id="deployExecBtn">
+          <span>Execute Deploy</span>
+        </button>
       </div>
     </div>
-    <div class="ticker" id="tickerEl">
-      <div class="tick-inner" id="tickInner">
-        <div class="tick-live"><div class="tl-dot"></div>Live</div>
-        <div class="ti"><span class="ti-s">ETH</span><span class="ti-p" id="ep">—</span><span id="ec" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">BTC</span><span class="ti-p" id="bp">—</span><span id="bc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">SOL</span><span class="ti-p" id="sp">—</span><span id="sc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">MATIC</span><span class="ti-p" id="mp">—</span><span id="mc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">ARB</span><span class="ti-p" id="ap">—</span><span id="ac" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">AVAX</span><span class="ti-p" id="avp">—</span><span id="avc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">LINK</span><span class="ti-p" id="lp">—</span><span id="lc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">UNI</span><span class="ti-p" id="up">—</span><span id="uc" class="ti-u">—</span></div>
-        <div class="ti"><span class="ti-s">GAS</span><span class="ti-p" id="gasp">—</span><span id="gasc" style="color:var(--txt2)">GWEI</span></div>
+
+    <div class="exec-steps" id="execSteps">
+      <div class="exec-step pending" data-step="0">
+        <div class="step-indicator">1</div>
+        <div class="step-content">
+          <div class="step-label">Preparing Deployment</div>
+          <div class="step-detail">Gathering contract metadata and network state</div>
+        </div>
+        <div class="step-status">pending</div>
+      </div>
+
+      <div class="exec-step pending" data-step="1">
+        <div class="step-indicator">2</div>
+        <div class="step-content">
+          <div class="step-label">Verifying Smart Contract</div>
+          <div class="step-detail">Bytecode validation and syntax check</div>
+        </div>
+        <div class="step-status">pending</div>
+      </div>
+
+      <div class="exec-step pending" data-step="2">
+        <div class="step-indicator">3</div>
+        <div class="step-content">
+          <div class="step-label">Security Validation</div>
+          <div class="step-detail">Running trust analysis and vulnerability scan</div>
+        </div>
+        <div class="step-status">pending</div>
+      </div>
+
+      <div class="exec-step pending" data-step="3">
+        <div class="step-indicator">4</div>
+        <div class="step-content">
+          <div class="step-label">Network Confirmation</div>
+          <div class="step-detail">Broadcasting transaction to 12 validator nodes</div>
+        </div>
+        <div class="step-status">pending</div>
+      </div>
+
+      <div class="exec-step pending" data-step="4">
+        <div class="step-indicator">5</div>
+        <div class="step-content">
+          <div class="step-label">Final Execution</div>
+          <div class="step-detail">Contract finalization and ecosystem registration</div>
+        </div>
+        <div class="step-status">pending</div>
+      </div>
+    </div>
+
+    <div class="exec-timeline">
+      <div class="timeline-header">Execution Progress</div>
+      <div class="timeline-bar">
+        <div class="timeline-fill" id="timelineFill" style="width: 0%"></div>
+      </div>
+      <div class="timeline-stats">
+        <span id="timelineTime">0s elapsed</span>
+        <span id="timelinePercent">0%</span>
+      </div>
+    </div>
+
+    <div class="exec-impact" id="execImpact" style="display: none;">
+      <div class="impact-header">Ecosystem Impact</div>
+      <div class="impact-items">
+        <div class="impact-item"><div class="impact-dot"></div><span>Activity feed updated</span></div>
+        <div class="impact-item"><div class="impact-dot"></div><span>Trust constellation activated</span></div>
+        <div class="impact-item"><div class="impact-dot"></div><span>Network energy +28%</span></div>
+        <div class="impact-item"><div class="impact-dot"></div><span>Ecosystem state synchronized</span></div>
       </div>
     </div>
   </div>
 
-  <div class="scene" id="s-proto">
-    <canvas id="conC"></canvas>
-    <div class="proto-tooltip" id="protoTip"><div class="pt-type" id="ptType">Trusted</div><div class="pt-addr" id="ptAddr">0x0000...0000</div><div class="pt-score" id="ptScore">94</div></div>
-    <div class="proto-stats rv">
-      <div class="pst"><div class="pst-v" id="sNodes">82</div><div class="pst-l">Active Nodes</div></div>
-      <div class="pst"><div class="pst-v" id="sConns">0</div><div class="pst-l">Connections</div></div>
-      <div class="pst"><div class="pst-v">94.2</div><div class="pst-l">Avg Trust Score</div></div>
-      <div class="pst"><div class="pst-v" id="sTx">8</div><div class="pst-l">Live Txns/min</div></div>
-      <div class="pst"><div class="pst-v" style="color:var(--green)">Online</div><div class="pst-l">Network Status</div></div>
-    </div>
-    <div class="proto-info rv"><div class="proto-title">Identity<br>Constellation</div><div class="proto-sub">Every wallet is a living node. Hover to inspect trust data. The network breathes in real time.</div></div>
-    <div class="proto-legend rv">
-      <div class="pl"><div class="pl-d" style="background:#00c8e0"></div>Trusted</div>
-      <div class="pl"><div class="pl-d" style="background:#c49a2a"></div>Builder</div>
-      <div class="pl"><div class="pl-d" style="background:#6ba3ff"></div>Governance</div>
-      <div class="pl"><div class="pl-d" style="background:rgba(255,70,70,.85)"></div>Risky</div>
-      <div class="pl"><div class="pl-d" style="background:rgba(65,85,105,.5)"></div>Inactive</div>
-    </div>
-  </div>
-
-  <div class="scene scene-scroll" id="s-id">
-    <div class="inner" id="idContent">
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 90px);text-align:center;gap:14px">
-        <h3 style="font-family:'Bebas Neue',cursive;font-size:24px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3>
-        <p style="font-size:11.5px;color:var(--txt2);max-width:300px;line-height:1.85">Connect your wallet to view your living trust identity profile.</p>
-        <button class="btn" onclick="openWallet()"><span>Connect Wallet</span></button>
+  <!-- RIGHT: Smart Contract Scanner + Impact -->
+  <div class="dev-exec-right">
+    <div class="contract-scanner">
+      <div class="scanner-header">
+        <div class="scanner-title">Contract Analysis</div>
+        <div class="scanner-sub">// security_intelligence — realtime scan</div>
       </div>
-    </div>
-  </div>
 
-  <div class="scene scene-scroll" id="s-trust">
-    <div class="inner">
-      <div class="tl-hd rv"><div class="tl-ey">Core Protocol</div><h2 class="tl-h">The trust stack,<br>rebuilt from scratch.</h2><p class="tl-desc">Rialo layers trust, identity, and transparency directly into Web3 interactions — making every wallet interaction legible, safe, and verifiable.</p></div>
-      <div class="fgrid rv">
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">◈</div><div class="f-title">Onchain Reputation</div><div class="f-desc">Every transaction, contribution, and governance vote builds a verifiable reputation that follows your wallet across all chains.</div></div>
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">⬡</div><div class="f-title">Identity Verification</div><div class="f-desc">Transform anonymous wallet addresses into rich, multi-dimensional identities without compromising privacy.</div></div>
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">⟳</div><div class="f-title">Real-time Risk Detection</div><div class="f-desc">Continuous monitoring across all connected chains detects risky interactions before they happen.</div></div>
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">◯</div><div class="f-title">Wallet Aura System</div><div class="f-desc">Visual identity layers that communicate trust levels at a glance — cyan for trusted, gold for builders.</div></div>
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">⌘</div><div class="f-title">Transparent Permissions</div><div class="f-desc">Every contract interaction translated into plain human language before you sign anything.</div></div>
-        <div class="fc"><div class="fc-glow"></div><div class="f-ico">∞</div><div class="f-title">Multi-chain Presence</div><div class="f-desc">A unified identity layer across Ethereum, Polygon, Arbitrum, Base, Solana, and every major chain.</div></div>
+      <div class="scan-input-wrap">
+        <input 
+          type="text" 
+          class="scan-input" 
+          id="scanInput"
+          placeholder="0x contract address..."
+        >
+        <button class="scan-btn" id="scanBtn">Analyze</button>
       </div>
-      <div class="rv" style="margin-bottom:12px">
-        <div class="tl-ey" style="margin-bottom:14px">Ecosystem Intelligence</div>
-        <div class="eco-intel" id="ecoIntel">
-          <div class="ei-head"><span class="ei-title">Realtime Chain State</span><div class="mi-live" id="ecoIntelLive"><div class="mi-live-dot"></div><span>Scanning</span></div></div>
-          <div class="ei-grid" id="eiGrid">
-            <div class="ei-card active" id="ei-market"><div class="ei-pulse"></div><div class="ei-lbl">Market Momentum</div><div class="ei-val" id="ei-mval">—</div><div class="ei-sub" id="ei-msub">Analyzing...</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-mbar" style="width:0%"></div></div></div>
-            <div class="ei-card" id="ei-gas"><div class="ei-pulse"></div><div class="ei-lbl">Gas Pressure</div><div class="ei-val" id="ei-gval">—</div><div class="ei-sub" id="ei-gsub">— gwei</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-gbar" style="width:0%"></div></div></div>
-            <div class="ei-card" id="ei-activity"><div class="ei-pulse"></div><div class="ei-lbl">Chain Activity</div><div class="ei-val" id="ei-aval">—</div><div class="ei-sub" id="ei-asub">txns/min</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-abar" style="width:0%"></div></div></div>
-            <div class="ei-card" id="ei-health"><div class="ei-pulse"></div><div class="ei-lbl">Network Health</div><div class="ei-val" id="ei-hval">98%</div><div class="ei-sub">All systems normal</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-hbar" style="width:98%"></div></div></div>
-          </div>
+
+      <div class="scan-viz">
+        <canvas id="scanVizCanvas"></canvas>
+        <div class="scan-loading" id="scanLoading">
+          <div class="scan-spinner"></div>
+          <div class="scan-loading-text">Scanning contract...</div>
         </div>
       </div>
-      <div class="rv" style="margin-bottom:12px">
-        <div class="tl-ey" style="margin-bottom:14px">Market Intelligence — Realtime</div>
-        <div class="mi-grid">
-          <div class="mi-main" id="miMain">
-            <div class="mi-head"><div class="mi-head-l"><span class="mi-head-title">Chain Markets</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div><span class="mi-ts" id="miTs">—</span></div>
-            <div class="token-rows" id="tokenRows"><div style="padding:24px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">Connecting to data feeds...</div></div>
-          </div>
-          <div class="mi-right">
-            <div class="gas-panel" id="gasPanel">
-              <div class="gas-title"><span>Gas Oracle</span><div class="mi-live"><div class="mi-live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span style="color:var(--gold)">Polling</span></div></div>
-              <div class="gas-main"><div class="gas-val" id="gasMain">—</div><div class="gas-unit">GWEI<br><span style="font-size:6.5px;opacity:.5" id="gasUsd">~$—</span></div></div>
-              <div class="gas-tiers"><div class="gas-tier"><div class="gt-lbl">Slow</div><div class="gt-val slow-c" id="gSlow">—</div></div><div class="gas-tier"><div class="gt-lbl">Std</div><div class="gt-val std-c" id="gStd">—</div></div><div class="gas-tier"><div class="gt-lbl">Fast</div><div class="gt-val fast-c" id="gFast">—</div></div><div class="gas-tier"><div class="gt-lbl">Rapid</div><div class="gt-val rapid-c" id="gRapid">—</div></div></div>
-              <div class="gas-bar-wrap"><div class="gas-bar" id="gasBarEl" style="background:linear-gradient(to right,var(--c),var(--gold));width:0%"></div></div>
-              <div style="font-family:Space Mono,monospace;font-size:6.5px;color:var(--txt2)">Network congestion index</div>
-            </div>
-            <div class="net-panel" id="netPanel">
-              <div class="wc-title" style="margin-bottom:12px"><span>Network Activity</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
-              <div class="net-rows">
-                <div class="net-row"><div class="nr-ico">⬡</div><div class="nr-label">Active wallets (1h)</div><div class="nr-val" id="nrWallets">—</div><div class="nr-bar-w"><div class="nr-bar" id="nrWBar" style="width:72%"></div></div></div>
-                <div class="net-row"><div class="nr-ico">◈</div><div class="nr-label">TXs per second</div><div class="nr-val" id="nrTps">—</div><div class="nr-bar-w"><div class="nr-bar" id="nrTBar" style="background:var(--green);width:60%"></div></div></div>
-                <div class="net-row"><div class="nr-ico">🔷</div><div class="nr-label">Total Value Locked</div><div class="nr-val" id="nrTvl" style="font-size:13px">—</div><div class="nr-bar-w"><div class="nr-bar" id="nrTvlBar" style="background:var(--gold);width:88%"></div></div></div>
-                <div class="net-row"><div class="nr-ico">⚡</div><div class="nr-label">Block time (avg)</div><div class="nr-val" id="nrBlock">12s</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--blue);width:55%"></div></div></div>
-              </div>
-            </div>
-          </div>
+
+      <div class="scan-results" id="scanResults">
+        <div class="scan-result-card success">
+          <div class="result-label">Trust Score</div>
+          <div class="result-value" id="trustScoreResult">—</div>
+          <div class="result-bar"><div class="result-bar-fill" id="trustScoreBar" style="width: 0%"></div></div>
         </div>
-      </div>
-      <div class="rv" style="margin-bottom:12px">
-        <div class="tl-ey" style="margin-bottom:14px">Live Ecosystem Activity</div>
-        <div class="eco-feed">
-          <div class="eco-head"><span class="eco-head-title">Realtime Feed</span><div class="eco-filter" id="ecoFilter"><button class="eco-fbtn active" data-ft="all">All</button><button class="eco-fbtn" data-ft="swap">Swap</button><button class="eco-fbtn" data-ft="bridge">Bridge</button><button class="eco-fbtn" data-ft="gov">Gov</button><button class="eco-fbtn" data-ft="deploy">Deploy</button></div></div>
-          <div class="eco-stream" id="ecoStream"></div>
+
+        <div class="scan-result-card success">
+          <div class="result-label">Risk Level</div>
+          <div class="result-value" id="riskLevelResult">—</div>
+          <div class="result-bar"><div class="result-bar-fill" id="riskLevelBar" style="width: 0%"></div></div>
         </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="rv" id="trustBottom">
-        <div>
-          <div class="tl-ey" style="margin-bottom:16px">Humanized Transparency</div>
-          <div class="perm-card"><div class="ph"><div class="p-ico">🔐</div><div><div class="p-title">Permission Request</div><div class="p-src">app.uniswap.org</div></div></div><div class="p-body">This app requests permission to <strong style="color:#fff">verify your wallet identity</strong> and confirm your reputation score. No funds will be accessed or transferred.</div><div class="p-code">approve(0x7a250d56...F2488D, uint256 max)</div><div class="p-acts"><button class="p-deny" id="denyBtn">Deny</button><button class="p-approve" id="approveBtn">Approve — Verify Identity</button></div></div>
+
+        <div class="scan-result-card success">
+          <div class="result-label">Permissions</div>
+          <div class="result-value" id="permissionsResult">—</div>
+          <div class="result-bar"><div class="result-bar-fill" id="permissionsBar" style="width: 0%"></div></div>
         </div>
-        <div>
-          <div class="tl-ey" style="margin-bottom:16px">Governance Intelligence</div>
-          <div class="gov-panel"><div class="wc-title" style="margin-bottom:12px"><span>Active Proposals</span><span class="badge bc">Live</span></div><div id="govProposals"></div></div>
+
+        <div class="scan-result-card success">
+          <div class="result-label">Eco Trust</div>
+          <div class="result-value" id="ecoTrustResult">—</div>
+          <div class="result-bar"><div class="result-bar-fill" id="ecoTrustBar" style="width: 0%"></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="scene scene-scroll" id="s-infra">
-    <div class="inner">
-      <div class="tl-hd rv"><div class="tl-ey">Trust Infrastructure Tools</div><h2 class="tl-h">Move assets with<br>full transparency.</h2><p class="tl-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p></div>
-      <div class="infra-tabs rv"><button class="itab active" data-tab="swap">⇄ Swap</button><button class="itab" data-tab="bridge">⬡ Bridge</button><button class="itab" data-tab="stake">◈ Stake</button></div>
-      <div class="infra-panel active rv" id="panel-swap">
-        <div class="swap-wrap">
-          <div class="swap-card">
-            <div class="swap-lbl">You pay</div>
-            <div class="swap-token-row"><div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">ETH</div><div class="stk-name">Ethereum</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt">1.000</div><div class="stk-usd" id="sw-from-usd">≈ $—</div></div></div>
-            <div class="swap-arrow"><div class="swap-arrow-line"></div><div class="swap-arrow-ico" id="swapArrowBtn">⇅</div></div>
-            <div class="swap-token-row" style="margin-top:5px"><div class="stk"><div class="stk-ico" style="background:rgba(130,71,229,0.12)">◈</div><div><div class="stk-sym">USDC</div><div class="stk-name">USD Coin</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt" id="sw-to-amt">—</div><div class="stk-usd" id="sw-to-usd">≈ $—</div></div></div>
-            <div class="swap-details"><div class="sd-row"><span class="sd-l">Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div><div class="sd-row"><span class="sd-l">Slippage</span><span class="sd-r good">0.5%</span></div><div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div><div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div><div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">97/100 ✓</span></div></div>
-            <button class="btn" style="width:100%;margin-top:12px" id="swapExecBtn"><span>Preview Swap</span></button>
-          </div>
-          <div>
-            <div class="swap-route"><div class="sr-title">Route Visualization — Best Path</div><div class="sr-flow" id="swapRouteFlow"></div><div class="sr-mev"><div class="sr-mev-ico">⚡</div><div class="sr-mev-txt">MEV Sandwich Protection via Flashbots</div><div class="sr-mev-val">Saved ~$4.20</div></div></div>
-            <div class="swap-card" style="margin-top:10px;padding:16px"><div class="swap-lbl" style="margin-bottom:10px">Fee Breakdown</div><div class="swap-details"><div class="sd-row"><span class="sd-l">Protocol Fee</span><span class="sd-r">0.05%</span></div><div class="sd-row"><span class="sd-l">LP Fee</span><span class="sd-r">0.25%</span></div><div class="sd-row"><span class="sd-l">Gas (est.)</span><span class="sd-r" id="sw-gas-est">—</span></div><div class="sd-row"><span class="sd-l">Price Impact</span><span class="sd-r warn">-0.08%</span></div><div class="sd-row" style="border:none;margin-top:3px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">—</span></div></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="infra-panel rv" id="panel-bridge">
-        <div class="bridge-wrap">
-          <div class="bridge-card">
-            <div class="tl-ey" style="margin-bottom:12px">Cross-chain Transfer</div>
-            <div class="bridge-chains"><div class="bc-chain" style="border-color:rgba(111,124,255,0.2)"><div class="bc-chain-ico">Ξ</div><div class="bc-chain-name">Ethereum</div><div class="bc-chain-net">Mainnet</div></div><div class="bridge-arrow"><div class="ba-anim"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div></div><div class="bc-chain" style="border-color:rgba(30,214,112,0.2)"><div class="bc-chain-ico">⬡</div><div class="bc-chain-name">Arbitrum</div><div class="bc-chain-net">One</div></div></div>
-            <div style="margin-bottom:13px"><div class="swap-lbl">Amount to bridge</div><div class="swap-token-row"><div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">0.5 ETH</div><div class="stk-name">On Ethereum</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt" id="br-amt">~0.4998</div><div class="stk-usd" style="color:var(--green)">Will receive</div></div></div></div>
-            <div class="bridge-time"><span>⏱ Estimated time</span><span class="bridge-time-val">~7 min</span></div>
-            <div class="swap-details" style="margin-top:9px"><div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div><div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div><div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div></div>
-            <button class="btn" style="width:100%;margin-top:13px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
-          </div>
-          <div>
-            <div class="bridge-canvas-wrap"><canvas id="bridgeC"></canvas></div>
-            <div class="bridge-status" id="bridgeStatus">
-              <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
-              <div class="bs-row"><div class="bs-prog" id="bp1" style="width:65%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
-              <div class="bs-row"><div class="bs-prog" id="bp2" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Minting on Arbitrum</div><div class="bs-stat pending">Pending</div></div>
-              <div class="bs-row"><div class="bs-prog" id="bp3" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Settlement confirmation</div><div class="bs-stat pending">Pending</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="infra-panel rv" id="panel-stake">
-        <div class="stake-wrap">
-          <div class="stake-card">
-            <div class="tl-ey" style="margin-bottom:12px">Validator Trust Board</div>
-            <div id="validatorList">
-              <div class="validator-item"><div class="vi-rank">01</div><div class="vi-ico">🏛</div><div><div class="vi-name">Lido Finance</div><div class="vi-apy">APY: 4.2% ↑</div></div><div class="vi-trust"><div class="vi-score">99</div><div class="vi-lbl">Trust</div></div></div>
-              <div class="validator-item"><div class="vi-rank">02</div><div class="vi-ico">🔷</div><div><div class="vi-name">Rocket Pool</div><div class="vi-apy">APY: 3.9% →</div></div><div class="vi-trust"><div class="vi-score">97</div><div class="vi-lbl">Trust</div></div></div>
-              <div class="validator-item"><div class="vi-rank">03</div><div class="vi-ico">⚡</div><div><div class="vi-name">Frax ETH</div><div class="vi-apy">APY: 4.5% ↑</div></div><div class="vi-trust"><div class="vi-score">94</div><div class="vi-lbl">Trust</div></div></div>
-              <div class="validator-item"><div class="vi-rank">04</div><div class="vi-ico">🔵</div><div><div class="vi-name">Coinbase cbETH</div><div class="vi-apy">APY: 3.6% →</div></div><div class="vi-trust"><div class="vi-score" style="color:var(--c)">91</div><div class="vi-lbl">Trust</div></div></div>
-            </div>
-            <div class="stake-meter"><div class="sm-title">Your Staking Position</div><div class="sm-ring-wrap"><canvas id="stakeRingC" width="76" height="76"></canvas><div class="sm-stats"><div class="sms gold"><strong>2.4</strong>ETH staked</div><div class="sms green"><strong id="stakeReward">0.0000000</strong>ETH earned</div><div class="sms"><strong>4.2%</strong>Current APY</div></div></div></div>
-          </div>
-          <div class="stake-card">
-            <div class="tl-ey" style="margin-bottom:12px">Network Contribution</div>
-            <div class="nc-row"><div class="nc-ico">🔒</div><div class="nc-txt">Chain Security Score</div><div class="nc-val">98.4%</div></div>
-            <div class="nc-row"><div class="nc-ico">⚡</div><div class="nc-txt">Your Contribution</div><div class="nc-val">0.003%</div></div>
-            <div class="nc-row"><div class="nc-ico">🌐</div><div class="nc-txt">Active Validators</div><div class="nc-val">872,140</div></div>
-            <div class="nc-row"><div class="nc-ico">◈</div><div class="nc-txt">Total ETH Staked</div><div class="nc-val">32.8M ETH</div></div>
-            <div style="margin-top:16px"><div class="tl-ey" style="margin-bottom:11px">Reward Transparency</div><div class="swap-details"><div class="sd-row"><span class="sd-l">Consensus Rewards</span><span class="sd-r good">+0.0003 ETH/day</span></div><div class="sd-row"><span class="sd-l">Execution Rewards</span><span class="sd-r good">+0.0001 ETH/day</span></div><div class="sd-row"><span class="sd-l">MEV Rewards</span><span class="sd-r warn">Variable</span></div><div class="sd-row"><span class="sd-l">Validator Fee</span><span class="sd-r">10% of rewards</span></div></div><button class="btn" style="width:100%;margin-top:13px" id="stakeExecBtn"><span>Stake ETH — Contribute to Network</span></button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="scene scene-scroll" id="s-devs">
-    <div class="inner">
-      <div class="tl-hd rv"><div class="tl-ey">Developer Infrastructure</div><h2 class="tl-h">Build on trust.<br>Ship with confidence.</h2><p class="tl-desc">Native APIs, real-time trust verification, and smart contract simulation — built for the next generation of Web3 builders.</p></div>
-      <div class="dev-grid rv">
-        <div class="dev-card"><div class="dc-title">Smart Contract Deployer</div><div class="dc-sub">// realtime trust scan on deploy</div><div class="terminal" id="termBox"><div class="t-scan"></div><div class="tl-row"><span class="tp">$</span><span class="tc">rialo deploy --scan TrustToken.sol</span></div><div class="tl-row"><span class="tp"> </span><span class="to">✓ Compiling contract...</span></div><div class="tl-row"><span class="tp"> </span><span class="to">✓ Running trust analysis...</span></div><div class="tl-row"><span class="tp"> </span><span class="to">✓ Checking reentrancy vectors...</span></div><div class="tl-row"><span class="tp"> </span><span class="to" style="color:var(--c)">⬡ Trust score: 97/100 — Safe</span></div><div class="tl-row"><span class="tp"> </span><span class="to">⟳ Deploying to Ethereum Mainnet...</span></div><div class="tl-row"><span class="tp"> </span><span class="to" style="color:var(--green)">✓ Deployed: 0x3f92...d841</span></div><div class="tl-row" id="termLine"><span class="tp">$</span><span class="tc"><span class="tcur"></span></span></div></div><button class="btn btn-sm" style="margin-top:9px" id="deployBtn"><span>Run New Deploy Scan</span></button></div>
-        <div class="dev-card"><div class="dc-title">Trust Verification Engine</div><div class="dc-sub">// live trust signal breakdown</div><div class="tg-rows" id="trustGauge"><div class="tg-row"><span class="tg-l">Tx history</span><div class="tg-bw"><div class="tg-b" style="background:var(--c)" data-t="92"></div></div><span class="tg-v">92%</span></div><div class="tg-row"><span class="tg-l">DAO participation</span><div class="tg-bw"><div class="tg-b" style="background:var(--c)" data-t="78"></div></div><span class="tg-v">78%</span></div><div class="tg-row"><span class="tg-l">Phishing exposure</span><div class="tg-bw"><div class="tg-b" style="background:var(--green)" data-t="4"></div></div><span class="tg-v">4%</span></div><div class="tg-row"><span class="tg-l">Builder contributions</span><div class="tg-bw"><div class="tg-b" style="background:var(--gold)" data-t="85"></div></div><span class="tg-v">85%</span></div><div class="tg-row"><span class="tg-l">Multi-chain footprint</span><div class="tg-bw"><div class="tg-b" style="background:#6ba3ff" data-t="96"></div></div><span class="tg-v">96%</span></div><div class="tg-row"><span class="tg-l">Rugpull exposure</span><div class="tg-bw"><div class="tg-b" style="background:var(--green)" data-t="0"></div></div><span class="tg-v">0%</span></div></div></div>
-        <div class="dev-card"><div class="dc-title">Transaction Simulator</div><div class="dc-sub">// simulate before signing</div><div class="tx-sim" id="txSim"><div class="tx-step done"><div class="txd"></div><span class="tx-txt">Decode calldata</span><span class="tx-stat">✓ done</span></div><div class="tx-step done"><div class="txd"></div><span class="tx-txt">Simulate state changes</span><span class="tx-stat">✓ done</span></div><div class="tx-step active"><div class="txd"></div><span class="tx-txt">Scan for risk vectors</span><span class="tx-stat">scanning...</span></div><div class="tx-step"><div class="txd"></div><span class="tx-txt">Trust score assessment</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div><div class="tx-step"><div class="txd"></div><span class="tx-txt">Human-readable output</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div></div><button class="btn btn-sm" style="margin-top:12px;width:100%" id="runSimBtn"><span>Run Simulation</span></button></div>
-        <div class="dev-card"><div class="dc-title">Builder Reputation Board</div><div class="dc-sub">// top trusted builders this epoch</div><div class="rep-grid"><div class="rep-item"><span class="rep-name">0xd8dA...6045</span><div style="display:flex;align-items:center;gap:6px"><span class="badge bc">Trusted</span><span class="rep-score">97</span></div></div><div class="rep-item"><span class="rep-name">0xAb58...eC9B</span><div style="display:flex;align-items:center;gap:6px"><span class="badge bg2">Builder</span><span class="rep-score" style="color:var(--gold)">94</span></div></div><div class="rep-item"><span class="rep-name">0x71C7...C62</span><div style="display:flex;align-items:center;gap:6px"><span class="badge bbl">Gov</span><span class="rep-score" style="color:#6ba3ff">91</span></div></div><div class="rep-item"><span class="rep-name">0x1f98...4A27</span><div style="display:flex;align-items:center;gap:6px"><span class="badge bc">Trusted</span><span class="rep-score">88</span></div></div><div class="rep-item"><span class="rep-name">0x000...0Dex</span><div style="display:flex;align-items:center;gap:6px"><span class="badge bg2">Builder</span><span class="rep-score" style="color:var(--gold)">86</span></div></div></div></div>
-      </div>
-    </div>
-  </div>
 </div>
-
-<div id="wovl">
-  <div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div><button class="wm-x" id="wmClose">✕</button></div>
-  <div class="wm-body"><div class="wm-lbl">Available Providers</div>
-    <div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full experience — no wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div>
-    <div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div>
-  </div></div>
-</div>
-
-<div id="sovl">
-  <canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
-  <div class="scan-inner">
-    <div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div>
-    <div class="scan-title" id="scanTitle">Identity Analysis</div>
-    <div class="scan-phase" id="scanPhase">Initializing trust layer...</div>
-    <div class="scan-addr" id="scanAddr"></div>
-    <div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div>
-    <div class="sp-pct" id="spPct">0%</div>
-    <div class="scan-nodes" id="scanNodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div>
-    <button class="scan-cta" id="scanCta">View Identity Profile →</button>
-  </div>
-</div>
-
-<div id="sbar"><div class="sb">
-  <div class="sb-dot"></div>
-  <div class="sb-addr" id="sbAddr">0x0000...0000</div>
-  <div class="sb-sep"></div>
-  <div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
-  <div class="sb-sep"></div>
-  <div class="sb-bal" id="sbBal">— ETH</div>
-  <div class="sb-market" id="sbMarket"></div>
-  <button class="sb-disc" id="discBtn">Disconnect</button>
-</div></div>
-<div id="toast"></div>
 
 <script>
-var connAddr=null,connWallet=null,chainId=null;
-var ethPrice=0,btcPrice=0,solPrice=0,gasPrice=null;
-var prevEthPrice=0,prevBtcPrice=0;
-var curScene='home';
-var scOrder=['home','proto','id','trust','infra','devs'];
-var priceHistory={eth:[],btc:[],sol:[],matic:[],arb:[],link:[],uni:[]};
-var MAX_HIST=24;
-var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-var ecosystemState={marketMood:'neutral',energyLevel:0,gasPressure:'low',alertActive:false,lastBigMove:null,priceChangeHistory:[]};
-var alertTimeout=null;
-function triggerEcoAlert(msg,type,duration){if(alertTimeout)clearTimeout(alertTimeout);var banner=document.getElementById('ecoAlert');var inner=document.getElementById('eaInner');var msgEl=document.getElementById('eaMsg');inner.className='ea-inner '+type;msgEl.textContent=msg;banner.classList.add('show');alertTimeout=setTimeout(function(){banner.classList.remove('show')},duration||4000)}
-function updateEcosystemAtmosphere(mood,energy){var atmo=document.getElementById('atmo');var nav=document.getElementById('mainNav');var npulse=document.getElementById('navPulse');var ticker=document.getElementById('tickerEl');var nhBar=document.getElementById('nhBar');var miMain=document.getElementById('miMain');atmo.className='';nav.className='';npulse.className='npulse';ticker.className='ticker';if(mood==='bullish'){atmo.classList.add('energized','bullish');nav.classList.add('bullish');npulse.classList.add('green');ticker.classList.add('bullish');if(miMain)miMain.classList.add('bullish');if(nhBar){nhBar.className='nh-bar nh-bullish';nhBar.style.width=Math.min(energy,100)+'%'}}else if(mood==='bearish'){atmo.classList.add('energized','alert');nav.classList.add('alert');npulse.classList.add('red');ticker.classList.add('alert');if(miMain)miMain.classList.add('alert');if(nhBar){nhBar.className='nh-bar nh-alert';nhBar.style.width=Math.min(energy,100)+'%'}}else{atmo.classList.add('energized');nav.classList.add('energized');if(nhBar){nhBar.className='nh-bar nh-neutral';nhBar.style.width=Math.min(energy,60)+'%'}}ecosystemState.marketMood=mood;ecosystemState.energyLevel=energy}
-function analyzeMarketConditions(coins){if(!coins||!coins.length)return;var gainers=0,losers=0,totalMove=0;coins.forEach(function(c){var chg=c.price_change_percentage_24h||0;if(chg>0)gainers++;else if(chg<0)losers++;totalMove+=Math.abs(chg)});var avgMove=totalMove/coins.length;var mood=gainers>losers*1.5?'bullish':losers>gainers*1.5?'bearish':'neutral';var energy=Math.min(avgMove*8,100);if(ethPrice&&prevEthPrice){var ethChgPct=((ethPrice-prevEthPrice)/prevEthPrice)*100;if(Math.abs(ethChgPct)>0.5){var dir=ethChgPct>0?'↑':'↓';var type=ethChgPct>0?'bullish':'alert';triggerEcoAlert('ETH '+dir+' '+Math.abs(ethChgPct).toFixed(2)+'% in last update — ecosystem reacting',type,3500);emitEcoWave(ethChgPct>0?'#1ed670':'#ff4646');pulseConstellationNodes(ethChgPct>0?'trusted':'risky',Math.abs(ethChgPct)*3)}}updateEcosystemAtmosphere(mood,energy);updateEcoIntelCards(coins,mood,energy);var heroTag=document.getElementById('heroTag');var heroTagTxt=document.getElementById('heroTagTxt');if(heroTag&&heroTagTxt){heroTag.className='hero-tag '+(mood==='neutral'?'':mood);heroTagTxt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Trust Layer Protocol v1.0 — Live'}updateStatusBarMarket(coins)}
-function updateEcoIntelCards(coins,mood,energy){var mCard=document.getElementById('ei-market');var mVal=document.getElementById('ei-mval');var mSub=document.getElementById('ei-msub');var mBar=document.getElementById('ei-mbar');if(mCard){mCard.className='ei-card '+(mood==='bullish'?'bullish':mood==='bearish'?'alert':'active');if(mVal)mVal.textContent=mood==='bullish'?'BULL':'BEAR';if(mSub)mSub.textContent=(energy.toFixed(0))+'% momentum';if(mBar)mBar.style.width=energy+'%'}var gCard=document.getElementById('ei-gas');var gVal=document.getElementById('ei-gval');var gSub=document.getElementById('ei-gsub');var gBar=document.getElementById('ei-gbar');if(gasPrice&&gCard){var gPressure=gasPrice>80?'CRIT':gasPrice>40?'HIGH':gasPrice>20?'MED':'LOW';var gClass=gasPrice>80?'alert':gasPrice>40?'alert':gasPrice>20?'active':'bullish';gCard.className='ei-card '+gClass;if(gVal)gVal.textContent=gPressure;if(gSub)gSub.textContent=gasPrice+' gwei';if(gBar)gBar.style.width=Math.min(gasPrice/120*100,100)+'%';var gasValEl=document.getElementById('gasMain');if(gasValEl){gasValEl.className='gas-val';if(gasPrice>60)gasValEl.classList.add('high');else if(gasPrice<15)gasValEl.classList.add('low')}}var aVal=document.getElementById('ei-aval');var aSub=document.getElementById('ei-asub');var aBar=document.getElementById('ei-abar');var txRate=Math.floor(Math.random()*14+8);if(aVal)aVal.textContent=txRate;if(aSub)aSub.textContent='txns/sec now';if(aBar)aBar.style.width=(txRate/22*100)+'%'}
-function updateStatusBarMarket(coins){var el=document.getElementById('sbMarket');if(!el||!connAddr)return;var top3=coins.slice(0,3);el.innerHTML=top3.map(function(c){var chg=c.price_change_percentage_24h||0;return'<div class="sb-mkt-item"><span style="color:var(--txt2)">'+c.symbol.toUpperCase()+'</span><span style="color:'+(chg>=0?'var(--green)':'#ff5555')+'">'+(chg>=0?'+':'')+chg.toFixed(1)+'%</span></div>'}).join('<div class="sb-sep"></div>')}
-function emitEcoWave(color){var wave=document.createElement('div');wave.className='eco-wave';wave.style.cssText='width:4px;height:4px;left:50%;top:50%;margin:-2px;background:'+color+';border:1px solid '+color;document.body.appendChild(wave);setTimeout(function(){wave.remove()},1200)}
-function pulseConstellationNodes(type,intensity){CN.forEach(function(n){if(n.type===type&&Math.random()<0.4){n.pulse=Math.min(intensity/10,1.5);emitNetRing(n.x,n.y)}});for(var i=0;i<Math.floor(intensity);i++){setTimeout(function(){if(Math.random()<0.6){var idx=Math.floor(Math.random()*(CN.length-1));if(CN[idx]){CN[idx].pulse=0.6;emitNetRing(CN[idx].x,CN[idx].y)}}},i*120)}}
-function drawHeroSpark(id,data,up){var c=document.getElementById('hms-'+id);if(!c||!data||data.length<2)return;c.width=50;c.height=18;var ctx=c.getContext('2d');ctx.clearRect(0,0,50,18);var min=Math.min.apply(null,data),max=Math.max.apply(null,data),rng=max-min||1;var color=up?'rgba(30,214,112,0.9)':'rgba(255,86,86,0.9)';ctx.beginPath();data.forEach(function(v,i){var x=i/(data.length-1)*48,y=(1-(v-min)/rng)*14+2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.stroke()}
-function updateHeroMarketStrip(coins){var map={ethereum:'eth',bitcoin:'btc',solana:'sol'};coins.forEach(function(c){var key=map[c.id];if(!key)return;var priceEl=document.getElementById('hmp-'+key);var chgEl=document.getElementById('hmc-'+key);var itemEl=document.getElementById('hm-'+key);var chg=c.price_change_percentage_24h||0;var p=c.current_price;var up=chg>=0;if(priceEl){var old=priceEl.textContent;priceEl.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2));if(old!==priceEl.textContent){priceEl.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){priceEl.classList.remove('flash-up','flash-dn')},600)}}if(chgEl){chgEl.textContent=(up?'+':'')+chg.toFixed(2)+'%';chgEl.className='hm-chg '+(up?'up':'dn')}if(itemEl){itemEl.className='hm-item '+(up?'up':'dn')}var histKey={eth:'eth',btc:'btc',sol:'sol'}[key];if(histKey)drawHeroSpark(key,priceHistory[histKey],up)})}
-var C1=document.getElementById('CUR'),C2=document.getElementById('CUR2');
-var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
-if(!isMobile){document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;C1.style.left=mx+'px';C1.style.top=my+'px'});document.addEventListener('mousedown',function(){document.body.classList.add('cclick')});document.addEventListener('mouseup',function(){document.body.classList.remove('cclick')});(function cur(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;C2.style.left=rx+'px';C2.style.top=ry+'px';requestAnimationFrame(cur)})()}
-var _tt;
-function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
-function flash(type){var f=document.getElementById('flash');f.className='';f.classList.add('go');if(type)f.classList.add(type+'-flash');setTimeout(function(){f.className=''},160)}
-var bgC=document.getElementById('BG'),bgX=bgC.getContext('2d');
-var BW=0,BH=0;
-function rBg(){BW=bgC.width=innerWidth;BH=bgC.height=innerHeight}rBg();
-window.addEventListener('resize',rBg);
-var BN=[];var PC=isMobile?45:75;
-for(var i=0;i<PC;i++)BN.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.13,vy:(Math.random()-.5)*.13,r:Math.random()*1.6+.4,p:Math.random()*Math.PI*2,ps:.005+Math.random()*.009,layer:i%3});
-BN.push({x:700,y:350,r:2,vx:0,vy:0,p:0,fixed:true});
-var BMX=innerWidth/2,BMY=innerHeight/2;
-document.addEventListener('mousemove',function(e){BMX=e.clientX;BMY=e.clientY});
-var BPairs=[];
-function buildPairs(){BPairs=[];for(var i=0;i<BN.length;i++)for(var j=i+1;j<BN.length;j++){if(Math.abs(BN[i].layer-BN[j].layer)<=1)BPairs.push([i,j])}}
-buildPairs();
-var bgEnergyBoost=0;
-function boostBgEnergy(amount,duration){bgEnergyBoost=amount;setTimeout(function(){bgEnergyBoost=0},duration||2000)}
-var netRings=[];
-function emitNetRing(x,y,col){netRings.push({x:x||BMX,y:y||BMY,r:0,max:Math.random()*80+40,life:1,col:col||'0,200,224'})}
-setInterval(function(){if(Math.random()<.35)emitNetRing(Math.random()*BW,Math.random()*BH)},2000);
-function drawBg(){var energyFactor=1+ecosystemState.energyLevel/200+bgEnergyBoost;bgX.clearRect(0,0,BW,BH);if(!isMobile){bgX.strokeStyle='rgba(0,200,224,0.012)';bgX.lineWidth=.3;for(var x=0;x<BW;x+=80){bgX.beginPath();bgX.moveTo(x,0);bgX.lineTo(x,BH);bgX.stroke()}for(var y=0;y<BH;y+=80){bgX.beginPath();bgX.moveTo(0,y);bgX.lineTo(BW,y);bgX.stroke()}}var rg=bgX.createRadialGradient(BMX,BMY,0,BMX,BMY,Math.max(BW,BH)*.5);var atmoAlpha=(0.016*energyFactor).toFixed(3);if(ecosystemState.marketMood==='bullish')rg.addColorStop(0,'rgba(30,214,112,'+atmoAlpha+')');else if(ecosystemState.marketMood==='bearish')rg.addColorStop(0,'rgba(255,70,70,'+atmoAlpha+')');else rg.addColorStop(0,'rgba(0,200,224,'+atmoAlpha+')');rg.addColorStop(1,'transparent');bgX.fillStyle=rg;bgX.fillRect(0,0,BW,BH);BN.forEach(function(n){if(!n.fixed){n.x+=n.vx;n.y+=n.vy;n.p+=n.ps;if(n.x<-8)n.x=BW+8;if(n.x>BW+8)n.x=-8;if(n.y<-8)n.y=BH+8;if(n.y>BH+8)n.y=-8}var dx=BMX-n.x,dy=BMY-n.y,d=Math.hypot(dx,dy);if(d<200&&d>1){n.x+=dx/d*.022;n.y+=dy/d*.022}});bgX.lineWidth=.32;BPairs.forEach(function(p){var a=BN[p[0]],b=BN[p[1]];var dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);if(d<110){bgX.beginPath();var lineAlpha=(1-d/110)*.075*energyFactor;bgX.strokeStyle='rgba(0,200,224,'+(lineAlpha>0.15?0.15:lineAlpha)+')';bgX.moveTo(a.x,a.y);bgX.lineTo(b.x,b.y);bgX.stroke()}});BN.forEach(function(n){var a=(Math.sin(n.p)*.5+.5)*.44+.1;var nodeAlpha=(a*.36*energyFactor);bgX.beginPath();bgX.arc(n.x,n.y,n.r,0,Math.PI*2);bgX.fillStyle='rgba(0,200,224,'+(nodeAlpha>0.18?0.18:nodeAlpha)+')';bgX.fill()});netRings=netRings.filter(function(r){r.life-=.02;r.r+=2.2;if(r.life<=0)return false;var ringAlpha=r.life*.09*energyFactor;bgX.beginPath();bgX.arc(r.x,r.y,r.r,0,Math.PI*2);bgX.strokeStyle='rgba('+r.col+','+Math.min(ringAlpha,0.15)+')';bgX.lineWidth=.7;bgX.stroke();return true})}
-var hC=document.getElementById('heroC'),hX=hC.getContext('2d');
-function rH(){hC.width=hC.offsetWidth;hC.height=hC.offsetHeight||innerHeight-54}rH();
-window.addEventListener('resize',rH);
-var HN=[];
-for(var i=0;i<42;i++){var a=(i/42)*Math.PI*2,r=70+Math.random()*200;HN.push({x:0,y:0,ox:Math.cos(a)*r,oy:Math.sin(a)*r,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*2.8+.8,p:Math.random()*Math.PI*2,gold:Math.random()<.1,init:false})}
-HN.push({x:0,y:0,r:10,vx:0,vy:0,p:0,center:true,init:true});
-function drawHero(t){if(!hC.offsetWidth||!hC.offsetHeight)return;hX.clearRect(0,0,hC.width,hC.height);var cx=hC.width/2,cy=hC.height/2;var main=HN[HN.length-1];main.x=cx;main.y=cy;var energyFactor=1+ecosystemState.energyLevel/300;HN.forEach(function(n){if(!n.center){if(!n.init){n.x=cx+n.ox;n.y=cy+n.oy;n.init=true}n.x+=n.vx*energyFactor;n.y+=n.vy*energyFactor;n.p+=.01;n.vx+=(cx-n.x)*.00002;n.vy+=(cy-n.y)*.00002;if(n.x<cx-330)n.vx+=.01;if(n.x>cx+330)n.vx-=.01;if(n.y<cy-250)n.vy+=.01;if(n.y>cy+250)n.vy-=.01}});HN.forEach(function(n){if(n.center)return;var dx=cx-n.x,dy=cy-n.y,d=Math.hypot(dx,dy);if(d<270){var g=hX.createLinearGradient(n.x,n.y,cx,cy);g.addColorStop(0,'rgba(0,200,224,0)');var lineColor=ecosystemState.marketMood==='bullish'?'rgba(30,214,112,.12)':ecosystemState.marketMood==='bearish'?'rgba(255,70,70,.08)':n.gold?'rgba(196,154,42,.12)':'rgba(0,200,224,.10)';g.addColorStop(1,lineColor);hX.beginPath();hX.strokeStyle=g;hX.lineWidth=.5;hX.moveTo(n.x,n.y);hX.lineTo(cx,cy);hX.stroke()}});HN.forEach(function(n){if(n.center){var ta=t*.0004;[14,25,40].forEach(function(r,i){hX.beginPath();hX.arc(cx,cy,r+Math.sin(ta+i*.7)*1.5,0,Math.PI*2);var ringColor=ecosystemState.marketMood==='bullish'?'rgba(30,214,112,':ecosystemState.marketMood==='bearish'?'rgba(255,70,70,':'rgba(0,200,224,';hX.strokeStyle=ringColor+(0.10-i*.024)+')';hX.lineWidth=.7;hX.stroke()});hX.beginPath();hX.arc(cx,cy,9,0,Math.PI*2);var cColor=ecosystemState.marketMood==='bullish'?'rgba(30,214,112,.88)':ecosystemState.marketMood==='bearish'?'rgba(255,100,100,.88)':'rgba(0,200,224,.88)';hX.fillStyle=cColor;hX.fill();}else{var pa=Math.sin(n.p)*.5+.5;hX.beginPath();hX.arc(n.x,n.y,n.r,0,Math.PI*2);hX.fillStyle=n.gold?'rgba(196,154,42,'+(0.26+pa*.48)+')':'rgba(0,200,224,'+(0.13+pa*.48)+')';hX.fill()}})}
-var scC=document.getElementById('sC'),scX=scC.getContext('2d');
-var scActive=false;
-function rSc(){scC.width=scC.offsetWidth||innerWidth;scC.height=scC.offsetHeight||innerHeight}
-var scN=[];
-for(var i=0;i<55;i++)scN.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.9,vy:(Math.random()-.5)*.9,r:Math.random()*1.8+.4,p:Math.random()*Math.PI*2,ps:.013+Math.random()*.02,gold:Math.random()<.14});
-function drawScanBg(t){if(!scActive)return;var W=scC.width,H=scC.height;scX.clearRect(0,0,W,H);var cx=W/2,cy=H/2;for(var k=0;k<3;k++){var rr=((t*.00025+k*.33)%1)*(Math.max(W,H)*.6);var aa=(1-rr/(Math.max(W,H)*.6))*.13;scX.beginPath();scX.arc(cx,cy,rr,0,Math.PI*2);scX.strokeStyle='rgba(0,200,224,'+aa+')';scX.lineWidth=.6;scX.stroke()}scN.forEach(function(n){n.x+=n.vx;n.y+=n.vy;n.p+=n.ps;if(n.x<0)n.x=W;if(n.x>W)n.x=0;if(n.y<0)n.y=H;if(n.y>H)n.y=0;var dx=n.x-cx,dy=n.y-cy,d=Math.hypot(dx,dy);if(d>1){n.vx-=dx/d*.0015;n.vy-=dy/d*.0015}var a=(Math.sin(n.p)*.5+.5)*.44+.12;scX.beginPath();scX.arc(n.x,n.y,n.r,0,Math.PI*2);scX.fillStyle=n.gold?'rgba(196,154,42,'+a*.33+')':'rgba(0,200,224,'+a*.33+')';scX.fill()})}
-var hexC=document.getElementById('hexC'),hexX=hexC.getContext('2d');
-var hexP=[];
-for(var i=0;i<28;i++)hexP.push({a:Math.random()*Math.PI*2,r:54+Math.random()*26,va:.009+Math.random()*.012,size:Math.random()*1.8+.3,life:Math.random()});
-function drawHex(t){hexX.clearRect(0,0,180,180);var cx=90,cy=90;hexX.save();hexX.translate(cx,cy);hexX.rotate(t*.0002);hexX.beginPath();for(var k=0;k<6;k++){var a=k*Math.PI/3-Math.PI/6;k===0?hexX.moveTo(Math.cos(a)*82,Math.sin(a)*82):hexX.lineTo(Math.cos(a)*82,Math.sin(a)*82)}hexX.closePath();hexX.strokeStyle='rgba(0,200,224,0.045)';hexX.lineWidth=1;hexX.stroke();hexX.restore();for(var i=0;i<3;i++){hexX.save();hexX.translate(cx,cy);hexX.rotate(t*.001*(i%2===0?1:-1.2)+i*.5);hexX.beginPath();hexX.arc(0,0,16+i*12,0,Math.PI*2*(0.52+i*.08));hexX.strokeStyle='rgba(0,200,224,'+(0.5-i*.09)+')';hexX.lineWidth=1;hexX.stroke();hexX.restore()}hexP.forEach(function(p){p.a+=p.va;p.life+=.013;if(p.life>1)p.life=0;var x=cx+Math.cos(p.a)*p.r,y=cy+Math.sin(p.a)*p.r;hexX.beginPath();hexX.arc(x,y,p.size,0,Math.PI*2);hexX.fillStyle='rgba(0,200,224,'+Math.sin(p.life*Math.PI)*.68+')';hexX.fill()});hexX.beginPath();hexX.arc(cx,cy,7,0,Math.PI*2);hexX.fillStyle='rgba(0,200,224,.88)';hexX.fill();var g=hexX.createRadialGradient(cx,cy,1,cx,cy,36);g.addColorStop(0,'rgba(0,200,224,0.15)');g.addColorStop(1,'transparent');hexX.beginPath();hexX.arc(cx,cy,36,0,Math.PI*2);hexX.fillStyle=g;hexX.fill();var sY=((t*.00032)%1)*180;var sg=hexX.createLinearGradient(12,sY,168,sY);sg.addColorStop(0,'transparent');sg.addColorStop(.5,'rgba(0,200,224,0.48)');sg.addColorStop(1,'transparent');hexX.beginPath();hexX.strokeStyle=sg;hexX.lineWidth=1;hexX.moveTo(12,sY);hexX.lineTo(168,sY);hexX.stroke()}
-var conC=document.getElementById('conC'),conX=conC.getContext('2d');
-function rCon(){conC.width=conC.offsetWidth||innerWidth;conC.height=conC.offsetHeight||(innerHeight-54)}
-rCon();window.addEventListener('resize',rCon);
-var CTYPES=['trusted','builder','gov','risky','inactive'];
-var fakeAddrs=['0xd8dA...6045','0xAb58...eC9B','0x71C7...C62','0x1f98...4A27','0x9A30...B811','0x3C44...93BC'];
-var CN=[];
-for(var i=0;i<80;i++){var tp=CTYPES[Math.floor(Math.random()*CTYPES.length)];CN.push({x:Math.random()*(innerWidth||1400),y:Math.random()*(innerHeight-54||700),vx:(Math.random()-.5)*.1,vy:(Math.random()-.5)*.1,r:Math.random()*3.5+1.2,p:Math.random()*Math.PI*2,type:tp,hover:0,pulse:0,addr:fakeAddrs[Math.floor(Math.random()*fakeAddrs.length)],score:Math.floor(55+Math.random()*45)})}
-CN.push({x:700,y:350,r:13,vx:0,vy:0,p:0,type:'main',fixed:true,score:94,addr:'Your Wallet'});
-function cnCol(type,a){var m={trusted:'0,200,224',builder:'196,154,42',gov:'107,163,255',risky:'255,70,70',inactive:'65,85,105',main:'0,200,224'};return'rgba('+(m[type]||m.inactive)+','+a+')'}
-var cMX=0,cMY=0,cHov=-1;
-var protoTip=document.getElementById('protoTip');
-document.getElementById('conC').addEventListener('mousemove',function(e){var r=conC.getBoundingClientRect();cMX=e.clientX-r.left;cMY=e.clientY-r.top;cHov=-1;CN.forEach(function(n,i){if(Math.hypot(cMX-n.x,cMY-n.y)<n.r*3)cHov=i});if(cHov>=0){var n=CN[cHov];document.getElementById('ptType').textContent=n.type.charAt(0).toUpperCase()+n.type.slice(1);document.getElementById('ptAddr').textContent=n.addr||'0x???';document.getElementById('ptScore').textContent=n.score||'—';protoTip.style.left=(e.clientX+14)+'px';protoTip.style.top=(e.clientY-14)+'px';protoTip.classList.add('show')}else protoTip.classList.remove('show')});
-document.getElementById('conC').addEventListener('mouseleave',function(){protoTip.classList.remove('show')});
-setInterval(function(){document.getElementById('sTx').textContent=Math.floor(Math.random()*14+4);if(Math.random()<.14){var idx=Math.floor(Math.random()*(CN.length-1));CN[idx].pulse=1;emitNetRing(CN[idx].x,CN[idx].y)}if(ecosystemState.energyLevel>40&&Math.random()<ecosystemState.energyLevel/200){var idx2=Math.floor(Math.random()*(CN.length-1));CN[idx2].pulse=0.8;emitNetRing(CN[idx2].x,CN[idx2].y)}},1800);
-function drawCon(){var W=conC.width,H=conC.height;if(!W||!H)return;conX.clearRect(0,0,W,H);var main=CN[CN.length-1];if(main.fixed){main.x=W/2;main.y=H/2}if(connAddr){main.r=13+Math.sin(Date.now()*.0018)*1.5}var energyMult=1+ecosystemState.energyLevel/400;CN.forEach(function(n,i){if(!n.fixed){n.x+=n.vx*energyMult;n.y+=n.vy*energyMult;n.p+=.006;n.hover=i===cHov?Math.min(1,n.hover+.08):Math.max(0,n.hover-.06);n.pulse=Math.max(0,(n.pulse||0)-.013);if(n.x<0)n.x=W;if(n.x>W)n.x=0;if(n.y<0)n.y=H;if(n.y>H)n.y=0;var dx=cMX-n.x,dy=cMY-n.y,d=Math.hypot(dx,dy);if(d<80&&d>1){n.vx-=dx/d*.0009;n.vy-=dy/d*.0009}}});CN.forEach(function(n){if(n.type==='inactive'||n===main)return;var dx=main.x-n.x,dy=main.y-n.y,d=Math.hypot(dx,dy);if(d<200){var lineAlpha=(1-d/200)*(n.type==='trusted'?.28:.10)*energyMult;conX.beginPath();conX.strokeStyle=cnCol(n.type,Math.min(lineAlpha,0.35));conX.lineWidth=.45;conX.moveTo(n.x,n.y);conX.lineTo(main.x,main.y);conX.stroke()}});for(var i=0;i<CN.length-1;i++)for(var j=i+1;j<CN.length-1;j++){var na=CN[i],nb=CN[j];if(na.type==='inactive'||nb.type==='inactive')continue;var d=Math.hypot(na.x-nb.x,na.y-nb.y);if(d<60){conX.beginPath();conX.strokeStyle='rgba(0,200,224,'+(1-d/60)*.038+')';conX.lineWidth=.28;conX.moveTo(na.x,na.y);conX.lineTo(nb.x,nb.y);conX.stroke()}}CN.forEach(function(n,i){var pa=Math.sin(n.p)*.5+.5;var sc=1+n.hover*.45+(n.pulse||0)*.35;if(n.type==='main'){[3,2,1].forEach(function(k){conX.beginPath();conX.arc(n.x,n.y,n.r*k*1.3,0,Math.PI*2);var glowColor=ecosystemState.marketMood==='bullish'?'rgba(30,214,112,':ecosystemState.marketMood==='bearish'?'rgba(255,70,70,':'rgba(0,200,224,';conX.fillStyle=glowColor+(0.024/k)+')';conX.fill()});conX.beginPath();conX.arc(n.x,n.y,n.r,0,Math.PI*2);var mainColor=ecosystemState.marketMood==='bullish'?'rgba(30,214,112,.9)':ecosystemState.marketMood==='bearish'?'rgba(255,100,100,.9)':'rgba(0,200,224,.9)';conX.fillStyle=mainColor;conX.fill();if(connAddr){conX.beginPath();conX.arc(n.x,n.y,n.r+6,0,Math.PI*2);conX.strokeStyle='rgba(0,200,224,0.2)';conX.lineWidth=1;conX.stroke()}}else{var sz=n.r*sc;var a=n.type==='inactive'?.09:(.18+pa*.42+n.hover*.24+(n.pulse||0)*.28);conX.beginPath();conX.arc(n.x,n.y,sz,0,Math.PI*2);conX.fillStyle=cnCol(n.type,a);conX.fill();if(n.hover>.1||n.pulse>.1){conX.beginPath();conX.arc(n.x,n.y,sz*2.2,0,Math.PI*2);conX.fillStyle=cnCol(n.type,(n.hover+(n.pulse||0))*.07);conX.fill()}}});var cc=0;CN.forEach(function(n){if(n.type!=='inactive'&&n!==main&&Math.hypot(main.x-n.x,main.y-n.y)<200)cc++});document.getElementById('sConns').textContent=cc;var nv=document.getElementById('sNodes');if(nv){var activeCount=80+Math.floor(ecosystemState.energyLevel/4);nv.textContent=activeCount}}
-var brC=document.getElementById('bridgeC'),brX=null,brPkts=[];
-function initBridgeCanvas(){if(!brC)return;brC.width=brC.offsetWidth||300;brC.height=brC.offsetHeight||150;brX=brC.getContext('2d')}
-function drawBridge(t){if(!brX)return;var W=brC.offsetWidth,H=brC.offsetHeight;if(brC.width!==W){brC.width=W;brC.height=H}if(!W||!H)return;brX.clearRect(0,0,W,H);var lx=W*.18,rx=W*.82,cy=H*.5;[[lx,'rgba(111,124,255,'],[rx,'rgba(30,214,112,']].forEach(function(ch){[3,2,1].forEach(function(k){brX.beginPath();brX.arc(ch[0],cy,12*k,0,Math.PI*2);brX.fillStyle=ch[1]+(0.033/k)+')';brX.fill()});brX.beginPath();brX.arc(ch[0],cy,12,0,Math.PI*2);brX.fillStyle=ch[1]+'0.88)';brX.fill()});brX.beginPath();brX.setLineDash([4,7]);brX.strokeStyle='rgba(0,200,224,0.1)';brX.lineWidth=1;brX.moveTo(lx+14,cy);brX.lineTo(rx-14,cy);brX.stroke();brX.setLineDash([]);var spawnRate=0.035+ecosystemState.energyLevel/3000;if(Math.random()<spawnRate)brPkts.push({p:0,sp:.004+Math.random()*.005});brPkts=brPkts.filter(function(pk){pk.p+=pk.sp;var px=lx+14+(rx-lx-28)*Math.min(pk.p,1);for(var i=0;i<5;i++){var a=(1-i/5)*.68;brX.beginPath();brX.arc(px-i*2.5,cy,2.2-i*.3,0,Math.PI*2);brX.fillStyle='rgba(0,200,224,'+Math.max(0,a)+')';brX.fill()}return pk.p<1});brX.font='8px Space Mono,monospace';brX.fillStyle='rgba(100,140,165,0.52)';brX.textAlign='center';brX.fillText('ETH',lx,cy+22);brX.fillText('ARB',rx,cy+22);brX.fillText(brPkts.length+' packets',W/2,cy-18)}
-function drawStakeRing(){var c=document.getElementById('stakeRingC');if(!c)return;var x=c.getContext('2d'),r=32,cx=38,cy=38;x.clearRect(0,0,76,76);x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.strokeStyle='rgba(196,154,42,0.1)';x.lineWidth=5;x.stroke();x.beginPath();x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*.72);x.strokeStyle='#c49a2a';x.lineWidth=5;x.lineCap='round';x.stroke();x.font='bold 10px Bebas Neue,cursive';x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';x.fillText('72%',cx,cy)}
-function buildSparkline(data,color,up){if(!data||data.length<2)return'<svg class="spark-svg"><line x1="0" y1="15" x2="100" y2="15" stroke="rgba(255,255,255,0.06)" stroke-width="1"/></svg>';var w=80,h=28,min=Math.min.apply(null,data),max=Math.max.apply(null,data);var rng=max-min||1;var pts=data.map(function(v,i){return[i/(data.length-1)*w,(1-(v-min)/rng)*(h-4)+2]});var path='M'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1)}).join('L');var fillPath=path+'L'+w+','+h+' L0,'+h+' Z';return'<svg class="spark-svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><defs><linearGradient id="sg'+color.replace('#','')+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+color+'" stop-opacity="0.18"/><stop offset="1" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs><path d="'+fillPath+'" fill="url(#sg'+color.replace('#','')+')" /><path d="'+path+'" stroke="'+color+'" stroke-width="1.2" fill="none"/></svg>'}
-var tokenData={};
-var TOKEN_CFG=[{id:'ethereum',sym:'ETH',name:'Ethereum',ico:'Ξ',col:'#6f7cff',histKey:'eth'},{id:'bitcoin',sym:'BTC',name:'Bitcoin',ico:'₿',col:'#f7931a',histKey:'btc'},{id:'solana',sym:'SOL',name:'Solana',ico:'◎',col:'#ab73ff',histKey:'sol'},{id:'matic-network',sym:'MATIC',name:'Polygon',ico:'⬡',col:'#8247e5',histKey:'matic'},{id:'arbitrum',sym:'ARB',name:'Arbitrum',ico:'⬡',col:'#28a0f0',histKey:'arb'},{id:'chainlink',sym:'LINK',name:'Chainlink',ico:'⬡',col:'#2a5ada',histKey:'link'}];
-function fmtPrice(p){return p>10000?'$'+Math.round(p).toLocaleString():p>1?'$'+p.toFixed(2):'$'+p.toFixed(4)}
-function fmtMcap(p){if(!p)return'—';var t=p;if(t>=1e12)return'$'+(t/1e12).toFixed(1)+'T';if(t>=1e9)return'$'+(t/1e9).toFixed(1)+'B';return'$'+(t/1e6).toFixed(0)+'M'}
-function renderTokenRows(){var el=document.getElementById('tokenRows');if(!el)return;var html='';TOKEN_CFG.forEach(function(cfg,i){var d=tokenData[cfg.id]||{};var p=d.price||0,chg=d.chg||0,mcap=d.mcap||0;var hist=priceHistory[cfg.histKey]||[];var up=chg>=0;html+='<div class="tr-item" id="tr-'+cfg.id+'"><span class="tr-rank">'+(i+1)+'</span><div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div><div class="tr-chart">'+buildSparkline(hist,up?'#1ed670':'#ff5555',up)+'</div><div class="tr-price" id="trp-'+cfg.id+'">'+(p?fmtPrice(p):'—')+'</div><div class="tr-chg '+(up?'up':'dn')+'" id="trc-'+cfg.id+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div><div class="tr-mcap" id="trm-'+cfg.id+'">'+(p?fmtMcap(mcap):'—')+'</div><div class="tr-flash-bg" id="trf-'+cfg.id+'"></div></div>'});el.innerHTML=html}
-function flashTokenRow(id,up){var fb=document.getElementById('trf-'+id);if(!fb)return;fb.className='tr-flash-bg '+(up?'up':'dn');fb.style.opacity='1';setTimeout(function(){fb.style.opacity='0'},500)}
-function animatePrice(id,newPrice,wasPrice){var el=document.getElementById('trp-'+id);if(!el)return;var up=newPrice>=wasPrice;el.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){el.classList.remove('flash-up','flash-dn')},600);el.textContent=fmtPrice(newPrice)}
-function updateGasOracle(gwei){if(!gwei)return;var slow=Math.max(gwei-8,1),std=gwei,fast=gwei+12,rapid=gwei+28;var el=document.getElementById('gasMain');if(el){var old=parseInt(el.textContent)||0;if(old&&Math.abs(old-gwei)>0){el.classList.add('num-change');setTimeout(function(){el.classList.remove('num-change')},400)}el.textContent=gwei;el.className='gas-val';if(gwei>60)el.classList.add('high');else if(gwei<15)el.classList.add('low')}var pEl=document.getElementById('gasUsd');if(pEl&&ethPrice){var costUSD=(gwei*21000/1e9)*ethPrice;pEl.textContent='~$'+costUSD.toFixed(3)+'/transfer'}['slow','std','fast','rapid'].forEach(function(k,i){var v=[slow,std,fast,rapid][i];var el2=document.getElementById('g'+k.charAt(0).toUpperCase()+k.slice(1));if(el2)el2.textContent=v});var congPct=Math.min(gwei/120*100,100);var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=congPct+'%';var el3=document.getElementById('gasp');if(el3)el3.textContent=gwei;if(gwei>80&&ecosystemState.gasPressure!=='critical'){ecosystemState.gasPressure='critical';triggerEcoAlert('⚠ Gas spike: '+gwei+' gwei — chain congestion detected','alert',5000);boostBgEnergy(0.15,3000)}else if(gwei<=80){ecosystemState.gasPressure=gwei>40?'high':gwei>20?'medium':'low'}}
-function updateNetworkActivity(){var wallets=Math.floor(140000+Math.random()*8000);var tps=(Math.random()*8+12).toFixed(1);var el1=document.getElementById('nrWallets'),el2=document.getElementById('nrTps');if(el1)el1.textContent=wallets.toLocaleString();if(el2)el2.textContent=tps;var tvlEl=document.getElementById('nrTvl');if(tvlEl)tvlEl.textContent='$48.3B';var blockEl=document.getElementById('nrBlock');if(blockEl)blockEl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';bgEnergyBoost=parseFloat(tps)/200;setTimeout(function(){bgEnergyBoost=0},5000)}
-var ecoFilter='all';
-var ECO_TYPES=[{k:'swap',label:'SWAP',cls:'et-swap',addrs:['0xd8d...604','0xAb5...9B','0x71C...62'],acts:['ETH→USDC','WBTC→ETH','UNI→DAI','ARB→USDC']},{k:'bridge',label:'BRIDGE',cls:'et-bridge',addrs:['0x3f9...841','0x1f9...27'],acts:['ETH→Arbitrum','MATIC→Ethereum','SOL→Base']},{k:'stake',label:'STAKE',cls:'et-stake',addrs:['0x9A3...811','0xdF3...39F'],acts:['Stake via Lido','Unstake rETH','Delegate vote']},{k:'gov',label:'GOV',cls:'et-gov',addrs:['0x3C4...3BC','0x71C...C62'],acts:['Vote YES: EIP-7702','Vote NO: Prop #42','Delegate to 0xd8d...']},{k:'deploy',label:'DEPLOY',cls:'et-deploy',addrs:['0xA16...b4','0xd8d...604'],acts:['Deploy TrustToken.sol','Deploy UniV4Hook.sol']},{k:'nft',label:'NFT',cls:'et-nft',addrs:['0xAb5...9B','0x1f9...27'],acts:['Mint #4201','Transfer ERC-1155']},{k:'alert',label:'⚠ ALERT',cls:'et-alert',addrs:['0x???...???'],acts:['Suspicious approval detected','Anomalous tx pattern','Flash loan vector found']}];
-var ecoItems=[];
-function addEcoItem(forceType){var typePool=ECO_TYPES.slice(0,-1);if(!forceType&&ecosystemState.marketMood==='bearish'&&Math.random()<0.12)forceType='alert';var tf=forceType?ECO_TYPES.find(function(t){return t.k===forceType})||typePool[0]:typePool[Math.floor(Math.random()*typePool.length)];var addr=tf.addrs[Math.floor(Math.random()*tf.addrs.length)];var act=tf.acts[Math.floor(Math.random()*tf.acts.length)];var amt=(Math.random()*12+0.01).toFixed(3);var now=new Date();var ts=now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');var item={type:tf.k,label:tf.label,cls:tf.cls,addr:addr,act:act,amt:amt,ts:ts,anomaly:tf.k==='alert'};ecoItems.unshift(item);if(ecoItems.length>40)ecoItems.pop();renderEcoFeed();if(Math.random()<.3){var idx=Math.floor(Math.random()*(CN.length-1));if(CN[idx]){CN[idx].pulse=0.8;emitNetRing(CN[idx].x,CN[idx].y)}}if(tf.k==='alert'){boostBgEnergy(0.2,2000);emitEcoWave('rgba(255,70,70,0.6)')}else if(tf.k==='deploy'){boostBgEnergy(0.12,1500);emitEcoWave('#00c8e0')}}
-function renderEcoFeed(){var el=document.getElementById('ecoStream');if(!el)return;var filtered=ecoFilter==='all'?ecoItems:ecoItems.filter(function(it){return it.type===ecoFilter});var html='';filtered.slice(0,12).forEach(function(it){html+='<div class="eco-item'+(it.anomaly?' anomaly':'')+'"><span class="eco-type '+it.cls+'">'+it.label+'</span><span class="eco-addr">'+it.addr+' · '+it.act+'</span><span class="eco-val">'+it.amt+' ETH</span><span class="eco-ts">'+it.ts+'</span></div>'});if(!html)html='<div style="padding:16px;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2);text-align:center">No '+ecoFilter+' activity</div>';el.innerHTML=html}
-document.querySelectorAll('.eco-fbtn').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');ecoFilter=btn.dataset.ft;renderEcoFeed()})});
-var govData=[{title:'EIP-7702: Account Abstraction Upgrade',votes:68,quorum:82,status:'Active',color:'var(--c)'},{title:'Grant: Rialo Trust Oracle V2',votes:91,quorum:65,status:'Passing',color:'var(--green)'},{title:'Protocol Fee Reduction — 0.05%→0.02%',votes:44,quorum:71,status:'Contested',color:'var(--gold)'}];
-function renderGov(){var el=document.getElementById('govProposals');if(!el)return;var html='';govData.forEach(function(g){var pct=Math.min(g.votes/g.quorum*100,100);html+='<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;color:var(--txt);margin-bottom:5px">'+g.title+'</div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+g.color+';border-radius:2px;transition:width 1s"></div></div><span style="font-family:Space Mono,monospace;font-size:6.5px;color:'+g.color+'">'+g.votes+'% · '+g.status+'</span></div></div>'});el.innerHTML=html}
-function goScene(id){if(id===curScene)return;var oldEl=document.getElementById('s-'+curScene),newEl=document.getElementById('s-'+id);if(!newEl)return;var oi=scOrder.indexOf(curScene),ni=scOrder.indexOf(id),fwd=ni>oi;oldEl.classList.remove('active');oldEl.style.opacity='0';oldEl.style.pointerEvents='none';oldEl.style.transform='translateX('+(fwd?'-22px':'22px')+')';oldEl.style.transition='opacity .36s ease,transform .36s ease';newEl.style.display='flex';newEl.style.opacity='0';newEl.style.transform='translateX('+(fwd?'26px':'-26px')+')';newEl.style.transition='none';newEl.style.pointerEvents='none';requestAnimationFrame(function(){requestAnimationFrame(function(){newEl.style.transition='opacity .42s ease,transform .42s ease';newEl.style.opacity='1';newEl.style.transform='translateX(0)';newEl.style.pointerEvents='auto';newEl.classList.add('active')})});setTimeout(function(){oldEl.style.cssText='opacity:0;pointer-events:none';if(id==='infra'){initBridgeCanvas();drawStakeRing();updateSwapUI();buildSwapRoute()}if(id==='devs'){initDevScene()}if(id==='trust'){renderGov();renderTokenRows()}var sc=newEl.querySelector('.inner');if(sc)sc.parentElement.scrollTop=0},440);document.querySelectorAll('.nlinks a').forEach(function(a){a.classList.toggle('active',a.dataset.s===id)});curScene=id;if(id==='proto')rCon();setTimeout(function(){document.querySelectorAll('#s-'+id+' .rv').forEach(function(el,i){setTimeout(function(){el.classList.add('in')},i*60)})},180)}
-document.querySelectorAll('.nlinks a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();document.getElementById('navLinks').classList.remove('mob-open');document.getElementById('hamBtn').classList.remove('open');goScene(a.dataset.s)})});
-document.getElementById('hamBtn').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('navLinks').classList.toggle('mob-open')});
-document.getElementById('exploreBtn').addEventListener('click',function(){goScene('proto')});
-document.getElementById('infraBtn').addEventListener('click',function(){goScene('infra')});
-document.querySelectorAll('.itab').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.itab').forEach(function(b){b.classList.remove('active')});document.querySelectorAll('.infra-panel').forEach(function(p){p.classList.remove('active')});btn.classList.add('active');var panel=document.getElementById('panel-'+btn.dataset.tab);if(panel)panel.classList.add('active');if(btn.dataset.tab==='bridge')setTimeout(function(){initBridgeCanvas();brX=null;initBridgeCanvas()},80);if(btn.dataset.tab==='stake')drawStakeRing();if(btn.dataset.tab==='swap')updateSwapUI()})});
-function fmtNum(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
-function updateSwapUI(){if(!ethPrice)return;document.getElementById('sw-from-usd').textContent='≈ $'+fmtNum(ethPrice,2);document.getElementById('sw-to-amt').textContent=Math.round(ethPrice);document.getElementById('sw-to-usd').textContent='≈ $'+fmtNum(ethPrice,2);document.getElementById('sw-rate').textContent='1 ETH = '+Math.round(ethPrice)+' USDC';if(gasPrice){document.getElementById('sw-fee').textContent=gasPrice+' gwei';var gc=(gasPrice*21000/1e9);document.getElementById('sw-gas-est').textContent='~$'+(gc*ethPrice).toFixed(2)+' USD';document.getElementById('sw-total').textContent='~$'+((0.003+gc)*ethPrice).toFixed(2)}}
-function buildSwapRoute(){var flow=document.getElementById('swapRouteFlow');if(!flow)return;var nodes=[{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];var pcts=['43%','57%'];flow.innerHTML='';nodes.forEach(function(n,i){var nd=document.createElement('div');nd.className='sr-node';nd.innerHTML='<div class="sr-node-ico">'+n.ico+'</div><div class="sr-node-lbl">'+n.lbl+'</div>';flow.appendChild(nd);if(i<nodes.length-1){var ln=document.createElement('div');ln.className='sr-line';ln.style.position='relative';if(pcts[i]){var sp=document.createElement('span');sp.className='sr-pct';sp.textContent=pcts[i];ln.appendChild(sp)}flow.appendChild(ln)}})}
-document.getElementById('swapArrowBtn').addEventListener('click',function(){toast('Direction flipped');flash()});
-document.getElementById('swapExecBtn').addEventListener('click',function(){if(!connAddr){toast('Connect wallet to swap.');openWallet();return}toast('Swap preview: 1 ETH → '+Math.round(ethPrice||3200)+' USDC — Route: Uniswap v4')});
-document.getElementById('bridgeExecBtn').addEventListener('click',function(){if(!connAddr){toast('Connect wallet to bridge.');openWallet();return}toast('Bridge initiated: 0.5 ETH → Arbitrum — Est. ~7 min');animateBridgeProgress()});
-document.getElementById('stakeExecBtn').addEventListener('click',function(){if(!connAddr){toast('Connect wallet to stake.');openWallet();return}toast('Staking 2.4 ETH via Lido — Trust Score: 99/100 ✓')});
-function animateBridgeProgress(){var progs=[document.getElementById('bp0'),document.getElementById('bp1'),document.getElementById('bp2'),document.getElementById('bp3')];var stats=document.querySelectorAll('.bs-stat');var step=1;function adv(){if(step>=progs.length)return;if(progs[step])progs[step].style.width='100%';if(stats[step]){stats[step].textContent='Complete';stats[step].className='bs-stat done'}step++;if(step<progs.length){if(progs[step])progs[step].style.width='30%';if(stats[step]){stats[step].textContent='In progress';stats[step].className='bs-stat active'}setTimeout(adv,1800+Math.random()*1400)}else toast('Bridge complete ✓ 0.4998 ETH received on Arbitrum')}setTimeout(adv,1200)}
-function chainLabel(cid){return{'0x1':'Ethereum Mainnet','0x89':'Polygon','0xa':'Optimism','0xa4b1':'Arbitrum One','0x2105':'Base','0x38':'BNB Chain'}[cid]||'Unknown Network'}
-function chainShort(cid){return{'0x1':'Ethereum','0x89':'Polygon','0xa':'Optimism','0xa4b1':'Arbitrum','0x2105':'Base','0x38':'BNB'}[cid]||'Network'}
-function openWallet(){var wo=document.getElementById('wovl');wo.classList.add('show');requestAnimationFrame(function(){requestAnimationFrame(function(){wo.classList.add('open')})});setTimeout(detectWallets,280)}
-function detectWallets(){var mm=document.getElementById('mm-st'),okx=document.getElementById('okx-st'),ph=document.getElementById('ph-st'),rb=document.getElementById('rabby-st');var hasMM=!!(window.ethereum&&window.ethereum.isMetaMask&&!window.ethereum.isRabby);mm.textContent=hasMM?'Detected':'Install';mm.className='wo-badge '+(hasMM?'ok':'ok-install');var hasRabby=!!(window.ethereum&&window.ethereum.isRabby);rb.textContent=hasRabby?'Detected':'Install';rb.className='wo-badge '+(hasRabby?'ok':'ok-install');var hasOkx=!!(window.okxwallet||(window.ethereum&&window.ethereum.isOKXWallet));okx.textContent=hasOkx?'Detected':'Install';okx.className='wo-badge '+(hasOkx?'ok':'ok-install');var hasPh=!!(window.solana&&window.solana.isPhantom);ph.textContent=hasPh?'Detected':'Install';ph.className='wo-badge '+(hasPh?'ok':'ok-install')}
-function closeWallet(){var wo=document.getElementById('wovl');wo.classList.remove('open');setTimeout(function(){wo.classList.remove('show')},460);resetWoLoading()}
-function setWoLoading(id){var el=document.getElementById(id);if(!el)return;var arr=el.querySelector('.wo-arr');if(arr)arr.style.display='none';var sp=document.createElement('div');sp.className='wo-spin';el.appendChild(sp);document.querySelectorAll('.wo').forEach(function(w){w.classList.add('disabled')});el.classList.remove('disabled')}
-function resetWoLoading(){document.querySelectorAll('.wo').forEach(function(el){el.classList.remove('disabled');var sp=el.querySelector('.wo-spin');if(sp)sp.remove();var arr=el.querySelector('.wo-arr');if(arr)arr.style.display=''})}
-async function connectWallet(type){setWoLoading('opt-'+type);var address=null;try{if(type==='mm'||type==='rabby'){if(!window.ethereum){resetWoLoading();closeWallet();toast('Wallet not detected.');return}var acc=await window.ethereum.request({method:'eth_requestAccounts'});address=acc[0];connWallet=type==='rabby'?'Rabby':'MetaMask';chainId=await window.ethereum.request({method:'eth_chainId'})}else if(type==='okx'){var prov=window.okxwallet||(window.ethereum&&window.ethereum.isOKXWallet?window.ethereum:null);if(!prov){resetWoLoading();closeWallet();toast('OKX Wallet not detected.');return}var acc=await prov.request({method:'eth_requestAccounts'});address=acc[0];connWallet='OKX Wallet';chainId=await prov.request({method:'eth_chainId'})}else if(type==='ph'){if(!(window.solana&&window.solana.isPhantom)){resetWoLoading();closeWallet();toast('Phantom not detected.');return}var r=await window.solana.connect();address=r.publicKey.toString();connWallet='Phantom';chainId='solana'}else if(type==='demo'){await new Promise(function(r){setTimeout(r,750)});var fakes=['0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045','0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B','0x71C7656EC7ab88b098defB751B7401B5f6d8976F'];address=fakes[Math.floor(Math.random()*fakes.length)];connWallet='Demo Mode';chainId='0x1'}}catch(e){resetWoLoading();if(e.code===4001)toast('Rejected.');else toast('Connection failed: '+(e.message||'Unknown'));return}if(address){connAddr=address;resetWoLoading();closeWallet();setTimeout(function(){startScan(address)},200)}}
-['mm','rabby','okx','ph','demo'].forEach(function(type){var el=document.getElementById('opt-'+type);if(!el)return;el.addEventListener('click',function(){connectWallet(type)});el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' ')connectWallet(type)})});
-document.getElementById('heroBtn').addEventListener('click',openWallet);
-document.getElementById('navBtn').addEventListener('click',function(){if(!connAddr)openWallet();else toast('Connected: '+connAddr.slice(0,6)+'...'+connAddr.slice(-4))});
-document.getElementById('wmClose').addEventListener('click',closeWallet);
-document.getElementById('wovl').addEventListener('click',function(e){if(e.target===this)closeWallet()});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeWallet();var so=document.getElementById('sovl');if(so.classList.contains('open')){so.classList.remove('open');setTimeout(function(){so.classList.remove('show');scActive=false},460)}}});
-function startScan(addr){var so=document.getElementById('sovl');scActive=true;rSc();so.classList.add('show');requestAnimationFrame(function(){requestAnimationFrame(function(){so.classList.add('open');document.getElementById('scanTitle').classList.add('in')})});var short=addr.length>20?addr.slice(0,8)+'...'+addr.slice(-6):addr;document.getElementById('scanAddr').textContent=short;document.getElementById('spFill').style.width='0%';document.getElementById('spPct').textContent='0%';document.getElementById('scanCta').classList.remove('in');document.getElementById('scanAddr').classList.remove('in');for(var i=0;i<7;i++){var sn=document.getElementById('sn'+i);if(sn)sn.className='sn'}var steps=[{t:200,msg:'Initializing trust layer...',p:6,node:0},{t:800,msg:'Connecting to Ethereum nodes...',p:18,node:1},{t:1500,msg:'Analyzing onchain identity...',p:34,node:2},{t:2200,msg:'Scanning reputation signals...',p:52,node:3},{t:3000,msg:'Computing trust score...',p:66,node:4,gold:true},{t:3700,msg:'Verifying governance activity...',p:82,node:5},{t:4400,msg:'Building identity constellation...',p:95,node:6},{t:5100,msg:'Identity analysis complete ✓',p:100}];steps.forEach(function(s){setTimeout(function(){document.getElementById('scanPhase').textContent=s.msg;document.getElementById('spFill').style.width=s.p+'%';document.getElementById('spPct').textContent=s.p+'%';if(s.node!==undefined){var sn=document.getElementById('sn'+s.node);if(sn)sn.className='sn lit'+(s.gold?' gold':'');flash()}},s.t)});setTimeout(function(){document.getElementById('scanAddr').classList.add('in')},1500);setTimeout(function(){document.getElementById('scanCta').classList.add('in')},5300);document.getElementById('scanCta').onclick=showIdentity}
+// ═══════════════════════════════════════════
+// DEVS INFRASTRUCTURE EXECUTION ENGINE
+// ═══════════════════════════════════════════
 
-/* ═══════════════════════════════════════════
-   GLOBAL ECOSYSTEM ACTIVATION SYSTEM (Patch 2+3+4)
-   ═══════════════════════════════════════════ */
-function walletActivationSequence(address){
-  flash('green');
-  boostBgEnergy(0.4,800);
-  setTimeout(function(){
-    document.body.classList.add('wallet-active');
-    document.getElementById('atmo').classList.add('energized');
-    updateEcosystemAtmosphere('bullish',55);
-    CN.forEach(function(n,i){setTimeout(function(){n.pulse=0.9+Math.random()*0.4;if(Math.random()<0.55)emitNetRing(n.x,n.y)},i*14)});
-  },200);
-  setTimeout(function(){
-    activateEcosystemPresence();
-    for(var i=0;i<12;i++){(function(idx){setTimeout(function(){var ring=document.createElement('div');var size=8+idx*6;ring.className='eco-ring-burst';ring.style.cssText=['width:'+size+'px','height:'+size+'px','left:'+(window.innerWidth/2-size/2)+'px','top:'+(window.innerHeight/2-size/2)+'px','border:1px solid rgba(0,200,224,'+(0.7-idx*0.05)+')','animation-duration:'+(0.9+idx*0.08)+'s','animation-delay:'+(idx*30)+'ms'].join(';');document.body.appendChild(ring);setTimeout(function(){ring.remove()},1500)},idx*40)})(i)}
-  },600);
-  setTimeout(function(){
-    pulseConstellationNodes('trusted',18);pulseConstellationNodes('builder',12);pulseConstellationNodes('gov',10);
-    for(var k=0;k<5;k++){setTimeout(function(){addEcoItem()},k*140)}
-    triggerEcoAlert('Wallet '+address.slice(0,6)+'…'+address.slice(-4)+' — identity constellation activating','info',4500);
-  },1200);
-  setTimeout(function(){
-    buildIdentity();goScene('id');boostBgEnergy(0.5,4000);
-    emitEcoWave('rgba(0,200,224,0.9)');
-    setTimeout(function(){emitEcoWave('rgba(0,200,224,0.5)')},350);
-    setTimeout(function(){emitEcoWave('rgba(0,200,224,0.3)')},700);
-  },2000);
-  setTimeout(function(){
-    for(var j=0;j<4;j++){setTimeout(function(){addEcoItem()},j*200)}
-    toast('Identity loaded ✓ Trust score: 94/100');
-  },3000);
-  setTimeout(function(){
-    boostBgEnergy(0.15,99999);
-    ecosystemState.energyLevel=Math.max(ecosystemState.energyLevel,40);
-    triggerEcoAlert('Ecosystem synchronized — living infrastructure active','bullish',3500);
-  },4000);
-}
+const EXECUTION_STEPS = [
+  { label: 'Preparing Deployment', time: 800, progress: 20 },
+  { label: 'Verifying Smart Contract', time: 1200, progress: 40 },
+  { label: 'Security Validation', time: 1600, progress: 60 },
+  { label: 'Network Confirmation', time: 1200, progress: 80 },
+  { label: 'Final Execution', time: 800, progress: 100 }
+];
 
-function activateEcosystemPresence(){
-  BN.forEach(function(n){if(!n.fixed){n.vx*=1.6;n.vy*=1.6;setTimeout(function(){n.vx*=0.7;n.vy*=0.7},2200)}});
-  var nav=document.getElementById('mainNav');if(nav)nav.classList.add('energized');
-  var sbar=document.getElementById('sbar');
-  if(sbar){sbar.style.transform='translateY(100%)';sbar.classList.add('on');requestAnimationFrame(function(){requestAnimationFrame(function(){sbar.style.transition='transform 0.7s cubic-bezier(.22,1,.36,1)';sbar.style.transform='translateY(0)'})})}
-  var nchain=document.getElementById('nchain');
-  if(nchain){nchain.style.opacity='0';nchain.classList.add('on');requestAnimationFrame(function(){requestAnimationFrame(function(){nchain.style.transition='opacity 0.8s ease 0.4s';nchain.style.opacity='1'})})}
-}
+let currentStep = -1;
+let executionActive = false;
+let executionStartTime = 0;
 
-function cinematicIdentityReveal(){
-  var rows=document.querySelectorAll('#idContent .rv, #idContent .mc, #idContent .wcard, #idContent .id-live-card');
-  rows.forEach(function(el,i){el.classList.remove('in');el.classList.add('id-row-reveal');el.style.animationDelay=(i*65+80)+'ms'});
-  var auraCore=document.querySelector('#idContent .aura-core');
-  if(auraCore){auraCore.parentElement.classList.add('aura-awaken')}
-  setTimeout(function(){animNum('tsv',0,94,1400);animNum('tsv-big',0,94,1400);animNum('brv',0,847,1800);animNum('gvv',0,23,1200)},300);
-}
+// ─────────────────────────────────────────
+// Deploy Execution Flow
+// ─────────────────────────────────────────
 
-/* showIdentity — replaced with activation sequencer */
-function showIdentity(){
-  var so=document.getElementById('sovl');
-  so.classList.remove('open');
-  setTimeout(function(){so.classList.remove('show');scActive=false},460);
-  var short=connAddr.slice(0,6)+'...'+connAddr.slice(-4);
-  document.getElementById('sbAddr').textContent=connAddr.length>30?short:connAddr;
-  document.getElementById('sbChain').textContent=chainLabel(chainId);
-  document.getElementById('sbBal').textContent='3.2841 ETH';
-  document.getElementById('nchainlbl').textContent=chainShort(chainId);
-  document.getElementById('navBtn').classList.add('connected');
-  document.getElementById('navLbl').textContent=short;
-  CN[CN.length-1].addr=short;
-  walletActivationSequence(connAddr);
-}
-
-function disconnectWallet(){connAddr=null;connWallet=null;chainId=null;document.getElementById('sbar').classList.remove('on');document.getElementById('nchain').classList.remove('on');document.getElementById('navBtn').classList.remove('connected');document.getElementById('navLbl').textContent='Connect Wallet';CN[CN.length-1].addr='Your Wallet';document.body.classList.remove('wallet-active');document.getElementById('idContent').innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 90px);text-align:center;gap:14px"><h3 style="font-family:\'Bebas Neue\',cursive;font-size:24px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3><p style="font-size:11.5px;color:var(--txt2);max-width:300px;line-height:1.85">Connect your wallet to view your living trust identity profile.</p><button class="btn" onclick="openWallet()"><span>Connect Wallet</span></button></div>';toast('Wallet disconnected.');goScene('home')}
-
-if(window.ethereum){window.ethereum.on('accountsChanged',function(accs){if(!accs.length)disconnectWallet();else{connAddr=accs[0];var s=accs[0].slice(0,6)+'...'+accs[0].slice(-4);document.getElementById('sbAddr').textContent=s;document.getElementById('navLbl').textContent=s;buildIdentity();toast('Account changed: '+s)}});window.ethereum.on('chainChanged',function(id){chainId=id;document.getElementById('sbChain').textContent=chainLabel(id);document.getElementById('nchainlbl').textContent=chainShort(id);toast('Network: '+chainLabel(id))})}
-
-function animNum(id,from,to,dur){var el=document.getElementById(id);if(!el)return;var start=null;function step(ts){if(!start)start=ts;var prog=Math.min((ts-start)/dur,1);var ease=1-Math.pow(1-prog,3);el.textContent=Math.floor(from+(to-from)*ease);if(prog<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
-
-var stakeEarned=0;
-setInterval(function(){stakeEarned+=0.00000042;var el=document.getElementById('stakeReward');if(el)el.textContent=stakeEarned.toFixed(7)},900);
-
-var idLiveInterval=null;
-function updateIdLive(){
-  if(!connAddr)return;
-  var gasEl=document.getElementById('id-gas-val');if(gasEl&&gasPrice)gasEl.textContent=gasPrice;
-  var gasUsdEl=document.getElementById('id-gas-usd');if(gasUsdEl&&gasPrice&&ethPrice){var c=(gasPrice*21000/1e9)*ethPrice;gasUsdEl.textContent='~$'+c.toFixed(3)}
-  var usdEl=document.getElementById('id-usd');var usd2El=document.getElementById('id-usd2');var usdVal=ethPrice?(3.2841*ethPrice).toFixed(2):'0.00';if(usdEl)usdEl.textContent='≈ $'+usdVal+' USD';if(usd2El)usd2El.textContent='≈ $'+usdVal+' USD';
-  var tpsEl=document.getElementById('id-tps');if(tpsEl)tpsEl.textContent=(Math.random()*8+12).toFixed(1)+' TPS';
-  var gasEl2=document.getElementById('id-gas-2');if(gasEl2&&gasPrice)gasEl2.textContent=gasPrice+' gwei';
-  var ethBalUsd=document.getElementById('id-eth-bal');if(ethBalUsd)ethBalUsd.textContent='3.2841';
-}
-
-function buildIdentity(){
-  if(!connAddr)return;
-  if(idLiveInterval)clearInterval(idLiveInterval);
-  var ic=document.getElementById('idContent');
-  var usdVal=ethPrice?(3.2841*ethPrice).toFixed(2):'0.00';
-  ic.innerHTML=
-    '<div class="id-hero rv">'+
-      '<div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div>'+
-      '<div style="flex:1;min-width:0">'+
-        '<div class="id-name">Trust Identity</div>'+
-        '<div class="id-addr">'+connAddr+'</div>'+
-        '<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">'+
-          '<div class="id-badge"><div class="ibd"></div><span>'+(connWallet||'Demo Mode')+' — Cyan Aura Active</span></div>'+
-        '</div>'+
-      '</div>'+
-      '<div style="text-align:right;flex-shrink:0">'+
-        '<div style="font-family:\'Bebas Neue\',cursive;font-size:44px;color:var(--c);line-height:1" id="tsv-big">0</div>'+
-        '<div style="font-family:\'Space Mono\',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.13em">TRUST SCORE</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="mgrid rv">'+
-      '<div class="mc"><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc">Excellent</span></div>'+
-      '<div class="mc"><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr">No threats</span></div>'+
-      '<div class="mc"><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2">Builder</span></div>'+
-      '<div class="mc"><div class="mc-l">Gov. Votes</div><div class="mc-v" id="gvv" style="font-size:28px">0</div><span class="badge bbl">Active voter</span></div>'+
-    '</div>'+
-    '<div class="id-live-grid rv">'+
-      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot"></span>ETH Balance</div><div class="ilc-val" id="id-eth-bal">3.2841</div><div class="ilc-sub" id="id-usd">≈ $'+usdVal+' USD</div></div>'+
-      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></span>Gas (live)</div><div class="ilc-val go" id="id-gas-val" style="color:var(--gold)">'+(gasPrice||'—')+'</div><div class="ilc-sub">gwei — <span id="id-gas-usd">~$—</span></div></div>'+
-      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--blue);box-shadow:0 0 6px var(--blue)"></span>Network</div><div class="ilc-val" style="font-size:20px;color:var(--blue)" id="id-chain">'+chainShort(chainId)+'</div><div class="ilc-sub" id="id-tps">— TPS</div></div>'+
-    '</div>'+
-    '<div class="wgrid rv">'+
-      '<div class="wcard">'+
-        '<div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div>'+
-        '<div style="font-family:\'Bebas Neue\',cursive;font-size:32px;letter-spacing:.02em;color:#fff;margin-bottom:3px">3.2841 ETH</div>'+
-        '<div style="font-size:9px;color:var(--txt2)" id="id-usd2">≈ $'+usdVal+' USD</div>'+
-        '<div style="margin-top:10px;font-size:8.5px;color:var(--txt2)">Network: <span style="color:var(--c)">'+chainLabel(chainId)+'</span></div>'+
-        '<div style="margin-top:4px;font-size:8.5px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas-2">'+(gasPrice||'—')+' gwei</span></div>'+
-      '</div>'+
-      '<div class="wcard">'+
-        '<div class="wc-title">Multi-chain Presence</div>'+
-        '<div class="cpills">'+
-          '<div class="cpill"><div class="cdot" style="background:#6f7cff"></div>Ethereum</div>'+
-          '<div class="cpill"><div class="cdot" style="background:#8247e5"></div>Polygon</div>'+
-          '<div class="cpill"><div class="cdot" style="background:#28a0f0"></div>Arbitrum</div>'+
-          '<div class="cpill"><div class="cdot" style="background:#ff0420"></div>Optimism</div>'+
-          '<div class="cpill"><div class="cdot" style="background:#0052ff"></div>Base</div>'+
-          '<div class="cpill"><div class="cdot" style="background:#ab73ff"></div>Solana</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="wgrid rv">'+
-      '<div class="wcard">'+
-        '<div class="wc-title"><span>Activity Heatmap</span><span class="badge bc">12 mo</span></div>'+
-        '<div class="abars" id="actBars"></div>'+
-        '<div class="amonths"><span>Jan</span><span>Mar</span><span>May</span><span>Jul</span><span>Sep</span><span>Nov</span></div>'+
-      '</div>'+
-      '<div class="wcard">'+
-        '<div class="wc-title">Risk Assessment</div>'+
-        '<div class="risk-row"><span class="risk-l">Phishing interactions</span><span style="color:var(--green)">None detected</span></div>'+
-        '<div class="risk-row"><span class="risk-l">Rugpull exposure</span><span style="color:var(--green)">0 instances</span></div>'+
-        '<div class="risk-row"><span class="risk-l">Suspicious approvals</span><span style="color:var(--green)">Clear</span></div>'+
-        '<div class="risk-row"><span class="risk-l">Smart contract risk</span><span style="color:var(--gold)">Low</span></div>'+
-        '<div class="risk-row"><span class="risk-l">Wallet age</span><span style="color:var(--c)">2.4 years</span></div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="wcard rv" style="margin-bottom:8px">'+
-      '<div class="wc-title"><span>Onchain History</span><span class="badge bc">Verified</span></div>'+
-      '<div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">First DAO governance vote — Uniswap</div><span class="ch-yr">2022</span></div>'+
-      '<div class="ch-item"><div class="ch-dot" style="background:var(--gold)"></div><div class="ch-txt">Builder contribution — 14 PRs merged</div><span class="ch-yr">2023</span></div>'+
-      '<div class="ch-item"><div class="ch-dot" style="background:var(--green)"></div><div class="ch-txt">Cross-chain bridge — 6 networks</div><span class="ch-yr">2023</span></div>'+
-      '<div class="ch-item"><div class="ch-dot" style="background:#6ba3ff"></div><div class="ch-txt">Smart contract deployer — 3 contracts</div><span class="ch-yr">2024</span></div>'+
-      '<div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">Rialo Trust Profile — activated</div><span class="ch-yr">2025</span></div>'+
-    '</div>'+
-    '<div class="wcard rv">'+
-      '<div class="wc-title"><span>Market Snapshot</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>'+
-      '<div id="id-mkt"></div>'+
-      '<div style="font-family:\'Space Mono\',monospace;font-size:6px;color:var(--txt2);margin-top:8px;text-align:right" id="id-mkt-ts"></div>'+
-    '</div>';
-
-  /* Build activity bars */
-  var barsEl=document.getElementById('actBars');
-  if(barsEl){var bh=[28,45,62,38,72,55,80,48,66,90,74,85];barsEl.innerHTML=bh.map(function(h){return'<div class="abar" style="height:'+h+'%"></div>'}).join('')}
-
-  /* Build market snapshot */
-  buildMkt('id-mkt','id-mkt-ts');
-
-  idLiveInterval=setInterval(updateIdLive,3500);
-  updateIdLive();
-
-  /* Patch 4: cinematic reveal */
-  setTimeout(cinematicIdentityReveal,120);
-}
-
-function buildMkt(id,tsId){
-  var el=document.getElementById(id);if(!el)return;
-  var coins=[
-    {sym:'ETH',p:ethPrice,hist:'eth'},
-    {sym:'BTC',p:btcPrice,hist:'btc'},
-    {sym:'SOL',p:solPrice,hist:'sol'}
-  ];
-  var html='';
-  coins.forEach(function(c){
-    if(!c.p)return;
-    var hist=priceHistory[c.hist]||[];
-    var chg=hist.length>1?((c.p-hist[0])/hist[0]*100):0;
-    var up=chg>=0;
-    html+='<div class="mkt-row">'+
-      '<span style="font-family:\'Space Mono\',monospace;font-size:9px;color:#fff">'+c.sym+'</span>'+
-      '<span style="font-family:\'Space Mono\',monospace;font-size:9px;color:var(--txt2)">'+fmtPrice(c.p)+'</span>'+
-      '<span style="font-family:\'Space Mono\',monospace;font-size:8px;color:'+(up?'var(--green)':'#ff5555')+'">'+(up?'+':'')+chg.toFixed(2)+'%</span>'+
-    '</div>';
+function initDeployExecution() {
+  const deployBtn = document.getElementById('deployExecBtn');
+  
+  deployBtn.addEventListener('click', async () => {
+    const contractInput = document.getElementById('contractInput');
+    const address = contractInput.value.trim();
+    
+    if (!address) {
+      alert('Please paste a contract address');
+      return;
+    }
+    
+    startExecutionFlow(address);
   });
-  el.innerHTML=html||'<div style="font-size:9px;color:var(--txt2);padding:8px 0">Loading market data...</div>';
-  var tsEl=document.getElementById(tsId);
-  if(tsEl){var n=new Date();tsEl.textContent='Updated '+n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0')}
 }
 
-function initDevScene(){
-  setTimeout(function(){
-    document.querySelectorAll('.tg-b').forEach(function(b){b.style.width=(b.dataset.t||'0')+'%'});
-    runTxSim();
-  },300);
+function startExecutionFlow(address) {
+  if (executionActive) return;
+  
+  executionActive = true;
+  currentStep = -1;
+  executionStartTime = Date.now();
+  
+  // Reset all steps
+  document.querySelectorAll('.exec-step').forEach(step => {
+    step.classList.remove('active', 'done');
+    step.classList.add('pending');
+    const status = step.querySelector('.step-status');
+    if (status) status.textContent = 'pending';
+    const indicator = step.querySelector('.step-indicator');
+    if (indicator && !indicator.querySelector('.step-spinner')) {
+      const spinnerDiv = document.createElement('div');
+      spinnerDiv.className = 'step-spinner';
+      spinnerDiv.style.display = 'none';
+      indicator.appendChild(spinnerDiv);
+    }
+  });
+  
+  document.getElementById('execImpact').style.display = 'none';
+  
+  // Begin step progression
+  progressNextStep();
 }
 
-function runTxSim(){
-  var steps=document.querySelectorAll('.tx-step');var i=0;
-  function next(){if(i>=steps.length)return;steps.forEach(function(s){s.classList.remove('active')});steps[i].classList.add('active');var stat=steps[i].querySelector('.tx-stat');if(stat){stat.textContent='scanning...';stat.style.color='var(--c)'}setTimeout(function(){if(stat){stat.textContent='✓ done';stat.style.color='var(--green)'}steps[i].classList.remove('active');steps[i].classList.add('done');i++;setTimeout(next,600)},900)}
-  steps.forEach(function(s){s.classList.remove('done','active');var st=s.querySelector('.tx-stat');if(st){st.textContent='pending';st.style.color='var(--txt2)'}});
-  setTimeout(next,200);
+function progressNextStep() {
+  currentStep++;
+  
+  if (currentStep >= EXECUTION_STEPS.length) {
+    completeExecution();
+    return;
+  }
+  
+  const stepConfig = EXECUTION_STEPS[currentStep];
+  const stepEl = document.querySelector(`[data-step="${currentStep}"]`);
+  
+  // Transition to active
+  stepEl.classList.remove('pending');
+  stepEl.classList.add('active');
+  
+  const status = stepEl.querySelector('.step-status');
+  const indicator = stepEl.querySelector('.step-indicator');
+  
+  // Show spinner
+  const spinner = indicator.querySelector('.step-spinner');
+  if (spinner) {
+    indicator.textContent = '';
+    indicator.appendChild(spinner);
+    spinner.style.display = 'block';
+  } else {
+    indicator.innerHTML = '<div class="step-spinner"></div>';
+  }
+  
+  status.textContent = 'executing';
+  
+  // Update timeline
+  updateExecutionTimeline(stepConfig.progress);
+  
+  // Complete step after duration
+  setTimeout(() => {
+    completeStep(stepEl, indicator, status);
+  }, stepConfig.time);
 }
 
-document.getElementById('runSimBtn').addEventListener('click',function(){runTxSim();toast('Simulation running...')});
-document.getElementById('deployBtn').addEventListener('click',function(){
-  var tb=document.getElementById('termBox');if(!tb)return;
-  var lines=[
-    {cls:'tc',txt:'rialo deploy --scan NewContract.sol'},
-    {cls:'to',txt:'✓ Compiling...'},
-    {cls:'to',txt:'✓ Trust scan in progress...'},
-    {cls:'to',txt:'⬡ Trust score: 96/100 — Safe',style:'color:var(--c)'},
-    {cls:'to',txt:'✓ Deployed: 0x'+Math.random().toString(16).slice(2,10)+'...',style:'color:var(--green)'}
-  ];
-  var rows=tb.querySelectorAll('.tl-row:not(:last-child)');rows.forEach(function(r){r.remove()});
-  lines.forEach(function(l,i){setTimeout(function(){var row=document.createElement('div');row.className='tl-row';row.innerHTML='<span class="tp">'+( i===0?'$':' ')+'</span><span class="'+l.cls+'"'+(l.style?' style="'+l.style+'"':'')+'>'+l.txt+'</span>';tb.insertBefore(row,tb.lastElementChild)},i*420)});
-  toast('Deploy scan initiated');
-});
+function completeStep(stepEl, indicator, status) {
+  stepEl.classList.remove('active');
+  stepEl.classList.add('done');
+  
+  status.textContent = 'complete';
+  indicator.innerHTML = currentStep + 1;
+  indicator.style.color = 'inherit';
+  
+  // Progress to next step after short delay
+  setTimeout(() => {
+    progressNextStep();
+  }, 400);
+}
 
-document.getElementById('denyBtn').addEventListener('click',function(){toast('Permission denied — transaction cancelled');flash('red')});
-document.getElementById('approveBtn').addEventListener('click',function(){toast('Identity verified ✓ — permission granted');flash('green')});
+function completeExecution() {
+  executionActive = false;
+  
+  // Final updates
+  document.getElementById('timelineFill').style.width = '100%';
+  document.getElementById('timelinePercent').textContent = '100%';
+  
+  // Show ecosystem impact
+  const impactEl = document.getElementById('execImpact');
+  impactEl.style.display = 'block';
+  
+  // Stagger impact items
+  document.querySelectorAll('.impact-item').forEach((item, i) => {
+    item.style.animationDelay = (i * 150) + 'ms';
+    setTimeout(() => {
+      item.classList.add('active');
+    }, 400 + i * 150);
+  });
+  
+  // Trigger global ecosystem updates (if available)
+  if (window.deploymentComplete) {
+    window.deploymentComplete({
+      success: true,
+      address: document.getElementById('contractInput').value,
+      trustScore: Math.floor(85 + Math.random() * 15)
+    });
+  }
+}
 
-var allFetchedCoins=[];
-async function fetchPrices(){try{var ids='ethereum,bitcoin,solana,matic-network,arbitrum,avalanche-2,chainlink,uniswap';var r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h');if(!r.ok)throw new Error('non-200');var coins=await r.json();allFetchedCoins=coins;var now=new Date();var ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');var idMap={ethereum:{tick:'e',hist:'eth'},bitcoin:{tick:'b',hist:'btc'},solana:{tick:'s',hist:'sol'},'matic-network':{tick:'m',hist:'matic'},arbitrum:{tick:'a',hist:'arb'},'avalanche-2':{tick:'av',hist:null},chainlink:{tick:'l',hist:'link'},uniswap:{tick:'u',hist:'uni'}};var newGas=Math.floor(12+Math.random()*48);coins.forEach(function(c){var map=idMap[c.id];if(!map)return;var p=c.current_price,chg=c.price_change_percentage_24h||0,mcap=c.market_cap||0;var prevData=tokenData[c.id]||{};var wasPrice=prevData.price||0;tokenData[c.id]={price:p,chg:chg,mcap:mcap};var t=map.tick;var pEl=document.getElementById(t+'p'),cEl=document.getElementById(t+'c');if(pEl)pEl.textContent='$'+(p>10000?Math.round(p).toLocaleString():p>1?p.toFixed(2):p.toFixed(4));if(cEl){cEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';cEl.className=chg>=0?'ti-u':'ti-d'}if(c.id==='ethereum'){prevEthPrice=ethPrice;ethPrice=p;gasPrice=newGas}if(c.id==='bitcoin'){prevBtcPrice=btcPrice;btcPrice=p}if(c.id==='solana')solPrice=p;if(map.hist){if(!priceHistory[map.hist])priceHistory[map.hist]=[];priceHistory[map.hist].push(p);if(priceHistory[map.hist].length>MAX_HIST)priceHistory[map.hist].shift()}if(wasPrice&&Math.abs(p-wasPrice)/wasPrice>0.0001){animatePrice(c.id,p,wasPrice);flashTokenRow(c.id,p>=wasPrice)}});gasPrice=newGas;var gpEl=document.getElementById('gasp');if(gpEl)gpEl.textContent=gasPrice;updateGasOracle(gasPrice);updateNetworkActivity();var ti=document.getElementById('tickInner');if(ti&&ti.children.length<12){ti.innerHTML+=ti.innerHTML}var miTs=document.getElementById('miTs');if(miTs)miTs.textContent=ts;renderTokenRows();buildMkt('id-mkt','id-mkt-ts');updateSwapUI();updateIdLive();analyzeMarketConditions(coins);updateHeroMarketStrip(coins);updateStatusBarMarket(coins)}catch(e){if(!ethPrice){ethPrice=3242;btcPrice=65000;solPrice=145;gasPrice=22;updateSwapUI();updateGasOracle(22);updateNetworkActivity();renderTokenRows();updateEcosystemAtmosphere('neutral',20)}}}
-function hookCursor(){if(isMobile)return;document.querySelectorAll('button,a,[role=button],.wo,.fc,.mc,.wcard,.dev-card,.abar,.cpill,.rep-item,.validator-item,.swap-token-row,.bc-chain,.itab,.eco-fbtn,.tr-item').forEach(function(el){if(el._ch)return;el._ch=1;el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')})})}
-setInterval(hookCursor,1000);
-var lastFrame=0,TARGET_FPS=isMobile?45:60,FRAME_MS=1000/TARGET_FPS;
-function loop(t){if(t-lastFrame>=FRAME_MS){lastFrame=t;drawBg();drawHero(t);drawHex(t);if(scActive)drawScanBg(t);if(curScene==='proto')drawCon();if(curScene==='infra')drawBridge(t)}requestAnimationFrame(loop)}
-requestAnimationFrame(loop);
-fetchPrices();setInterval(fetchPrices,25000);
-for(var i=0;i<8;i++)setTimeout(addEcoItem,i*180+200);
-setInterval(addEcoItem,2200);
-setInterval(function(){if(gasPrice){var drift=Math.floor(gasPrice+(Math.random()-.5)*6);if(drift<1)drift=1;gasPrice=drift;updateGasOracle(gasPrice);updateIdLive();updateEcoIntelCards(allFetchedCoins,ecosystemState.marketMood,ecosystemState.energyLevel)}},6000);
-setInterval(updateNetworkActivity,4200);
-setInterval(function(){var events=[{msg:'Builder surge detected — 23 new contracts deployed in last 5 min',type:'info'},{msg:'Governance spike: EIP-7702 vote approaching quorum',type:'bullish'},{msg:'MEV activity elevated — sandwich bots detected on Uniswap v4',type:'alert'},{msg:'Cross-chain bridge volume up 312% — institutional flow signal',type:'bullish'},{msg:'Network mempool clearing — gas decreasing',type:'info'}];if(Math.random()<0.25){var ev=events[Math.floor(Math.random()*events.length)];triggerEcoAlert(ev.msg,ev.type,5000)}},38000);
-setTimeout(function(){document.querySelectorAll('#s-home .rv').forEach(function(el,i){setTimeout(function(){el.classList.add('in')},i*75)})},80);
-renderGov();
-if(innerWidth<700){var tb2=document.getElementById('trustBottom');if(tb2)tb2.style.gridTemplateColumns='1fr'}
-setTimeout(function(){updateEcosystemAtmosphere('neutral',15);triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',3500)},1200);
+function updateExecutionTimeline(progress) {
+  const fill = document.getElementById('timelineFill');
+  const elapsed = Math.round((Date.now() - executionStartTime) / 1000);
+  
+  fill.style.width = progress + '%';
+  document.getElementById('timelinePercent').textContent = progress + '%';
+  document.getElementById('timelineTime').textContent = elapsed + 's elapsed';
+}
+
+// Animation loop for timeline
+let lastUpdate = 0;
+function animateTimeline() {
+  if (executionActive) {
+    const now = Date.now();
+    if (now - lastUpdate > 100) {
+      const elapsed = Math.round((now - executionStartTime) / 1000);
+      document.getElementById('timelineTime').textContent = elapsed + 's elapsed';
+      lastUpdate = now;
+    }
+  }
+  requestAnimationFrame(animateTimeline);
+}
+
+// ─────────────────────────────────────────
+// Smart Contract Scan
+// ─────────────────────────────────────────
+
+let scanCanvas = null;
+let scanCtx = null;
+
+function initContractScanner() {
+  scanCanvas = document.getElementById('scanVizCanvas');
+  scanCtx = scanCanvas.getContext('2d');
+  
+  resizeScanCanvas();
+  window.addEventListener('resize', resizeScanCanvas);
+  
+  drawScanBackground();
+  
+  document.getElementById('scanBtn').addEventListener('click', performContractScan);
+}
+
+function resizeScanCanvas() {
+  if (!scanCanvas) return;
+  const rect = scanCanvas.parentElement.getBoundingClientRect();
+  scanCanvas.width = rect.width;
+  scanCanvas.height = rect.height;
+}
+
+function drawScanBackground() {
+  if (!scanCtx) return;
+  const w = scanCanvas.width;
+  const h = scanCanvas.height;
+  
+  scanCtx.clearRect(0, 0, w, h);
+  
+  // Grid pattern
+  scanCtx.strokeStyle = 'rgba(107, 163, 255, 0.05)';
+  scanCtx.lineWidth = 0.5;
+  
+  for (let x = 0; x < w; x += 40) {
+    scanCtx.beginPath();
+    scanCtx.moveTo(x, 0);
+    scanCtx.lineTo(x, h);
+    scanCtx.stroke();
+  }
+  
+  for (let y = 0; y < h; y += 40) {
+    scanCtx.beginPath();
+    scanCtx.moveTo(0, y);
+    scanCtx.lineTo(w, y);
+    scanCtx.stroke();
+  }
+  
+  // Center crosshair
+  const cx = w / 2;
+  const cy = h / 2;
+  
+  scanCtx.strokeStyle = 'rgba(107, 163, 255, 0.1)';
+  scanCtx.lineWidth = 1;
+  
+  scanCtx.beginPath();
+  scanCtx.moveTo(cx - 20, cy);
+  scanCtx.lineTo(cx + 20, cy);
+  scanCtx.stroke();
+  
+  scanCtx.beginPath();
+  scanCtx.moveTo(cx, cy - 20);
+  scanCtx.lineTo(cx, cy + 20);
+  scanCtx.stroke();
+  
+  // Center dot
+  scanCtx.fillStyle = 'rgba(107, 163, 255, 0.3)';
+  scanCtx.beginPath();
+  scanCtx.arc(cx, cy, 3, 0, Math.PI * 2);
+  scanCtx.fill();
+}
+
+function animateScanVisualization() {
+  if (!scanCtx) return;
+  
+  drawScanBackground();
+  
+  const w = scanCanvas.width;
+  const h = scanCanvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const time = Date.now() / 1000;
+  
+  // Radial scan rings
+  for (let i = 0; i < 4; i++) {
+    const radius = (time % 2) * 40 + i * 20;
+    const alpha = Math.max(0, 1 - (time % 2) / 2);
+    
+    scanCtx.strokeStyle = `rgba(107, 163, 255, ${alpha * 0.3})`;
+    scanCtx.lineWidth = 1.5;
+    scanCtx.beginPath();
+    scanCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+    scanCtx.stroke();
+  }
+  
+  // Rotating scan line
+  const angle = (time * 1.5) % (Math.PI * 2);
+  const lineLen = 50;
+  
+  scanCtx.strokeStyle = 'rgba(107, 163, 255, 0.5)';
+  scanCtx.lineWidth = 2;
+  scanCtx.beginPath();
+  scanCtx.moveTo(cx, cy);
+  scanCtx.lineTo(
+    cx + Math.cos(angle) * lineLen,
+    cy + Math.sin(angle) * lineLen
+  );
+  scanCtx.stroke();
+  
+  // Data points
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const dist = 35 + Math.sin(time + i) * 5;
+    const x = cx + Math.cos(angle) * dist;
+    const y = cy + Math.sin(angle) * dist;
+    
+    scanCtx.fillStyle = `rgba(107, 163, 255, ${0.4 + Math.sin(time + i) * 0.3})`;
+    scanCtx.beginPath();
+    scanCtx.arc(x, y, 2, 0, Math.PI * 2);
+    scanCtx.fill();
+  }
+  
+  requestAnimationFrame(animateScanVisualization);
+}
+
+function performContractScan() {
+  const input = document.getElementById('scanInput');
+  const address = input.value.trim();
+  
+  if (!address) {
+    alert('Please enter a contract address');
+    return;
+  }
+  
+  const loading = document.getElementById('scanLoading');
+  loading.classList.add('active');
+  
+  // Reset result cards
+  document.querySelectorAll('.scan-result-card').forEach(card => {
+    card.classList.remove('success', 'warning', 'danger');
+    card.classList.add('success');
+    const value = card.querySelector('.result-value');
+    const bar = card.querySelector('.result-bar-fill');
+    if (value) value.textContent = '—';
+    if (bar) bar.style.width = '0%';
+  });
+  
+  // Start visualization
+  animateScanVisualization();
+  
+  // Simulate scan delay
+  setTimeout(() => {
+    loading.classList.remove('active');
+    displayScanResults(address);
+  }, 2400);
+}
+
+function displayScanResults(address) {
+  // Generate deterministic but varied results
+  const seed = address.charCodeAt(2) + address.charCodeAt(5);
+  
+  const trustScore = 75 + (seed % 25);
+  const riskLevel = 15 + (seed % 30);
+  const permissions = 68 + (seed % 32);
+  const ecoTrust = 82 + (seed % 18);
+  
+  // Update cards with animation
+  animateResultValue('trustScoreResult', trustScore, 100);
+  animateResultBar('trustScoreBar', trustScore);
+  
+  animateResultValue('riskLevelResult', riskLevel, 100);
+  animateResultBar('riskLevelBar', riskLevel);
+  
+  animateResultValue('permissionsResult', permissions, 100);
+  animateResultBar('permissionsBar', permissions);
+  
+  animateResultValue('ecoTrustResult', ecoTrust, 100);
+  animateResultBar('ecoTrustBar', ecoTrust);
+  
+  // Update card classes based on risk
+  const riskCard = document.getElementById('riskLevelResult').closest('.scan-result-card');
+  riskCard.classList.remove('success', 'warning', 'danger');
+  if (riskLevel > 40) {
+    riskCard.classList.add('danger');
+  } else if (riskLevel > 25) {
+    riskCard.classList.add('warning');
+  } else {
+    riskCard.classList.add('success');
+  }
+  
+  // Trigger ecosystem notification
+  if (window.contractScanned) {
+    window.contractScanned({
+      address: address,
+      trustScore: trustScore,
+      riskLevel: riskLevel
+    });
+  }
+}
+
+function animateResultValue(id, target, max) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  
+  let current = 0;
+  const duration = 1000;
+  const start = Date.now();
+  
+  function update() {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    // Easing function
+    const eased = 1 - Math.pow(1 - progress, 3);
+    current = Math.round(target * eased);
+    
+    el.textContent = current;
+    
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    }
+  }
+  
+  update();
+}
+
+function animateResultBar(id, targetPercent) {
+  const bar = document.getElementById(id);
+  if (!bar) return;
+  
+  setTimeout(() => {
+    bar.style.width = targetPercent + '%';
+  }, 100);
+}
+
+// ─────────────────────────────────────────
+// Initialization
+// ─────────────────────────────────────────
+
+function init() {
+  initDeployExecution();
+  initContractScanner();
+  animateTimeline();
+  drawScanBackground();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
+
 </body>
 </html>
