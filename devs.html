@@ -5,55 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>RIALO — Developer Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<!-- FIX #1: tambah shared.css (sebelumnya tidak ada sama sekali) -->
+<link rel="stylesheet" href="shared.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#010308;--c:#00c8e0;--c2:#00a8bd;--c-dim:rgba(0,200,224,0.10);--c-glow:rgba(0,200,224,0.28);
-  --gold:#c49a2a;--green:#1ed670;--red:rgba(255,70,70,0.9);--blue:#6ba3ff;
-  --txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);--txt3:rgba(60,100,130,0.45);
-  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);--border3:rgba(0,200,224,0.32);
-  --glass:rgba(4,10,20,0.80);--glass2:rgba(2,7,16,0.92);
-  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
-}
-html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
-body{cursor:none;overflow-x:hidden}
-@media(hover:none),(pointer:coarse){body{cursor:auto}}
+/* ── DEVS PAGE STYLES ── */
+.devs-page{position:relative;z-index:10;margin-top:var(--nav-h)}
+.devs-inner{width:100%;max-width:1060px;padding:36px 28px 80px;margin:0 auto}
 
-/* ── CURSOR ── */
-#CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
-#CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 16px var(--c),0 0 32px rgba(0,200,224,0.2);transition:width .1s,height .1s}
-#CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
-body.chl #CUR{width:8px;height:8px}body.chl #CUR2{width:46px;height:46px;border-color:rgba(0,200,224,0.45)}
-body.cclick #CUR{width:3px;height:3px}body.cclick #CUR2{width:14px;height:14px}
-@media(hover:none){#CUR,#CUR2{display:none}}
+/* HEADER */
+.sec-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.sec-ey::before{content:'';width:12px;height:1px;background:var(--c)}
+.sec-h{font-family:'Bebas Neue',cursive;font-size:clamp(32px,5vw,52px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
+.sec-desc{font-size:11.5px;color:var(--txt2);max-width:480px;line-height:1.9;margin-bottom:0}
 
-/* ── BG ── */
-#BG{position:fixed;inset:0;z-index:0;pointer-events:none}
-.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 95% 95% at 50% 50%,transparent 15%,rgba(1,3,8,0.4) 50%,rgba(1,3,8,0.92) 100%)}
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
-body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(0,200,224,0.10);background:rgba(1,4,12,0.92);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);box-shadow:0 1px 0 rgba(0,200,224,0.05),0 8px 32px rgba(0,0,0,0.6)}
-.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.38em;color:#fff;display:flex;align-items:center;gap:10px;cursor:none;user-select:none;text-shadow:0 0 30px rgba(0,200,224,0.15)}
-.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c),0 0 28px rgba(0,200,224,0.28);animation:pulse 2.6s ease infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
-.nav-back{display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);text-decoration:none;cursor:none;padding:8px 14px;border:1px solid var(--border);border-radius:2px;transition:all .22s;background:rgba(1,6,18,0.6)}
-.nav-back:hover{color:var(--c);border-color:var(--border2);background:rgba(0,200,224,0.04)}
-.nav-tag{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.12em;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.12);border-radius:1px;background:rgba(0,200,224,0.04)}
-
-/* ── CONTENT ── */
-#app{position:relative;z-index:10;padding-top:var(--nav-h)}
-.inner{width:100%;max-width:1060px;padding:36px 28px 80px;margin:0 auto}
-
-/* ── HEADER ── */
-.tl-hd{margin-bottom:36px}
-.tl-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
-.tl-ey::before{content:'';width:12px;height:1px;background:var(--c)}
-.tl-h{font-family:'Bebas Neue',cursive;font-size:clamp(32px,5vw,52px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
-.tl-desc{font-size:11.5px;color:var(--txt2);max-width:480px;line-height:1.9}
-
-/* ── STAT BAR ── */
+/* STAT BAR */
 .stat-bar{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:2px;overflow:hidden;backdrop-filter:blur(20px)}
 .stat-item{flex:1;padding:14px 18px;border-right:1px solid var(--border);background:rgba(1,6,18,0.72);position:relative;overflow:hidden;transition:background .2s}
 .stat-item:last-child{border-right:none}
@@ -63,7 +28,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .si-val{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:.03em;color:var(--c);line-height:1;margin-bottom:2px}
 .si-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2)}
 
-/* ── DEV GRID ── */
+/* DEV GRID */
 .dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dev-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:22px;position:relative;overflow:hidden;transition:all .35s cubic-bezier(0.22,1,0.36,1);backdrop-filter:blur(24px);box-shadow:0 4px 24px rgba(0,0,0,0.5),0 1px 0 rgba(0,200,224,0.08) inset}
 .dev-card:hover{border-color:rgba(0,200,224,0.22);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px rgba(0,200,224,0.06),0 1px 0 rgba(0,200,224,0.15) inset}
@@ -73,7 +38,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .dc-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--c);letter-spacing:.06em;opacity:.65}
 .dc-badge{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.09em;text-transform:uppercase;padding:3px 7px;border-radius:1px;border:1px solid rgba(0,200,224,0.16);background:rgba(0,200,224,0.06);color:var(--c);white-space:nowrap;flex-shrink:0}
 
-/* ── TERMINAL ── */
+/* TERMINAL */
 .terminal{background:rgba(0,0,0,0.72);border:1px solid rgba(0,200,224,0.08);border-radius:2px;padding:14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt2);line-height:1.9;position:relative;overflow:hidden;contain:layout style;min-height:130px}
 .t-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.36),transparent);animation:tscan 3.5s linear infinite}
 @keyframes tscan{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:100%;opacity:0}}
@@ -83,19 +48,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .term-actions{display:flex;gap:7px;margin-top:10px}
 
-/* ── TRUST GAUGE ── */
+/* TRUST GAUGE */
 .tg-rows{display:flex;flex-direction:column;gap:9px}
 .tg-row{display:flex;align-items:center;gap:8px}
 .tg-l{font-size:9.5px;color:var(--txt2);width:130px;flex-shrink:0}
 .tg-bw{flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden}
-.tg-b{height:100%;border-radius:2px;width:0%;transition:width 1.4s var(--ease2)}
+.tg-b{height:100%;border-radius:2px;width:0%;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
 .tg-v{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);width:32px;text-align:right;flex-shrink:0}
 .gauge-score{text-align:center;margin-bottom:18px;padding:16px;background:rgba(0,200,224,0.03);border:1px solid rgba(0,200,224,0.08);border-radius:2px}
 .gs-num{font-family:'Bebas Neue',cursive;font-size:54px;color:var(--c);line-height:1}
 .gs-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:4px}
 .gs-sub{font-size:9px;color:var(--green)}
 
-/* ── TX SIM ── */
+/* TX SIM */
 .tx-sim{display:flex;flex-direction:column;gap:6px}
 .tx-step{display:flex;align-items:center;gap:10px;padding:9px 11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;transition:all .3s}
 .tx-step.done{border-color:rgba(30,214,112,0.14);background:rgba(30,214,112,0.02)}
@@ -112,9 +77,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .sim-result.ok{border-color:rgba(30,214,112,0.22);background:rgba(30,214,112,0.04);color:var(--green)}
 .sim-result.warn{border-color:rgba(255,165,0,0.22);background:rgba(255,165,0,0.04);color:#f0a946}
 
-/* ── REP BOARD ── */
+/* REP BOARD */
 .rep-grid{display:flex;flex-direction:column;gap:0}
-.rep-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);transition:background .18s;cursor:default;border-radius:1px}
+.rep-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);transition:background .18s, padding-left .18s;cursor:default;border-radius:1px}
 .rep-item:last-child{border-bottom:none}
 .rep-item:hover{background:rgba(0,200,224,0.02);padding-left:5px}
 .rep-rank{font-family:'Bebas Neue',cursive;font-size:16px;color:var(--txt2);width:20px;flex-shrink:0;text-align:center}
@@ -122,24 +87,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .rep-name{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt);flex:1}
 .rep-badges{display:flex;align-items:center;gap:6px}
 .rep-score{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.02em}
-.badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
-.bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}
-.bg2{background:rgba(196,154,42,0.07);color:var(--gold);border:1px solid rgba(196,154,42,0.14)}
-.bbl{background:rgba(107,163,255,0.06);color:#6ba3ff;border:1px solid rgba(107,163,255,0.12)}
-.bgr{background:rgba(30,214,112,0.05);color:var(--green);border:1px solid rgba(30,214,112,0.12)}
 
-/* ── EPOCH CHART ── */
+/* EPOCH CHART */
 .epoch-wrap{margin-bottom:16px;padding:14px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:2px}
 .epoch-bars{display:flex;align-items:flex-end;gap:3px;height:50px;margin-bottom:6px}
 .epoch-bar{flex:1;border-radius:1px 1px 0 0;transition:opacity .18s,transform .18s;cursor:default;min-height:4px}
 .epoch-bar:hover{opacity:1!important;transform:scaleY(1.06);transform-origin:bottom}
 .epoch-lbl{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2);letter-spacing:.08em}
 
-/* ── API DOCS ── */
+/* API DOCS */
 .api-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;overflow:hidden;margin-bottom:10px;backdrop-filter:blur(20px)}
 .api-card::before{content:'';display:block;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.14),transparent)}
 .api-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:none;transition:background .18s}
 .api-head:hover{background:rgba(0,200,224,0.03)}
+@media(hover:none),(pointer:coarse){.api-head{cursor:pointer}}
 .api-method{font-family:'Space Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.08em;padding:3px 7px;border-radius:1px;flex-shrink:0}
 .m-get{background:rgba(30,214,112,0.1);color:var(--green);border:1px solid rgba(30,214,112,0.2)}
 .m-post{background:rgba(0,200,224,0.08);color:var(--c);border:1px solid rgba(0,200,224,0.18)}
@@ -156,38 +117,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 .ap-type{font-family:'Space Mono',monospace;color:var(--gold);font-size:8px;width:50px;flex-shrink:0}
 .ap-desc{color:var(--txt2);flex:1}
 
-/* ── BUTTONS ── */
-.btn{position:relative;padding:10px 22px;border:1px solid var(--c);background:transparent;color:var(--c);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;cursor:none;border-radius:2px;overflow:hidden;transition:color .25s,box-shadow .25s,transform .1s;white-space:nowrap;-webkit-tap-highlight-color:transparent;box-shadow:0 0 20px rgba(0,200,224,0.08)}
-.btn::before{content:'';position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);z-index:0}
-.btn:hover{color:#000;box-shadow:0 0 36px rgba(0,200,224,0.25)}.btn:hover::before{transform:scaleX(1)}.btn:active{transform:scale(.96)}.btn span{position:relative;z-index:1}
+/* BTN SM override scoped to devs */
 .btn-sm{padding:7px 14px;font-size:7.5px}
-.btn-ghost{padding:9px 16px;background:none;border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.32);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;cursor:none;border-radius:2px;transition:all .22s}
-.btn-ghost:hover{border-color:rgba(255,255,255,0.26);color:rgba(255,255,255,0.72)}.btn-ghost:active{transform:scale(.96)}
-.btn-ripple{position:absolute;border-radius:50%;background:rgba(0,200,224,0.35);transform:scale(0);animation:rippleAnim .55s ease-out forwards;pointer-events:none;z-index:10}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
 .btn-loading span{opacity:0!important}
 .btn-loading::after{content:'';position:absolute;inset:0;width:14px;height:14px;border:1.5px solid rgba(0,200,224,0.25);border-top-color:var(--c);border-radius:50%;animation:spin .6s linear infinite;margin:auto;z-index:2}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(hover:none){.btn,.btn-ghost{cursor:pointer}}
 
-/* ── TOAST ── */
-#toast{position:fixed;bottom:24px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px);word-break:break-word}
-#toast.on{transform:translateY(0) scale(1);opacity:1}
-.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
-
-/* ── REVEAL ── */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .65s cubic-bezier(0.22,1,0.36,1),transform .65s cubic-bezier(0.22,1,0.36,1);filter:blur(2px)}
-.rv.in{opacity:1;transform:none;filter:blur(0)}
-
-/* ── FLASH ── */
-#flash{position:fixed;inset:0;z-index:1000;pointer-events:none;opacity:0;background:rgba(0,200,224,0.025);transition:opacity .1s;mix-blend-mode:screen}
-#flash.go{opacity:1}
-
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media(max-width:768px){
-  .dev-grid{grid-template-columns:1fr!important}
-  nav{padding:0 14px}
-  .inner{padding:20px 14px 80px!important}
+  .dev-grid{grid-template-columns:1fr}
+  .devs-inner{padding:20px 14px 80px}
   .stat-bar{flex-wrap:wrap}
   .stat-item{min-width:50%}
 }
@@ -198,28 +137,46 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 </style>
 </head>
 <body>
-<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div>
-<canvas id="BG"></canvas><div class="vig"></div>
 
-<nav>
-  <div class="nlogo"><div class="npulse"></div>RIALO</div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span class="nav-tag">Developer Infrastructure</span>
-    <a href="javascript:void(0)" class="nav-back" onclick="history.back()">← Back to App</a>
+<!-- FIX #1: shared elements yang sebelumnya tidak ada -->
+<div id="CUR"></div>
+<div id="CUR2"></div>
+<div id="flash"></div>
+<div id="atmo"></div>
+<canvas id="BG"></canvas>
+<div class="vig"></div>
+<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
+<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Developer Infrastructure loaded...</span></div></div>
+
+<!-- FIX #2: full shared nav (sebelumnya hanya logo + back button, tanpa links & wallet) -->
+<nav id="mainNav">
+  <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
+  <ul class="nlinks" id="navLinks">
+    <li><a href="index.html" data-s="home">Home</a></li>
+    <li><a href="protocol.html" data-s="proto">Protocol</a></li>
+    <li><a href="identity.html" data-s="id">Identity</a></li>
+    <li><a href="trustlayer.html" data-s="trust">TrustLayer</a></li>
+    <li><a href="infrastructure.html" data-s="infra">Infrastructure</a></li>
+    <li><a href="devs.html" data-s="devs">Devs</a></li>
+  </ul>
+  <div class="nright">
+    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
+    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
-<div id="app">
-  <div class="inner">
+<div class="devs-page">
+  <div class="devs-inner">
 
-    <!-- ── HEADER ── -->
-    <div class="tl-hd rv">
-      <div class="tl-ey">Developer Infrastructure</div>
-      <h1 class="tl-h">Build on trust.<br>Ship with confidence.</h1>
-      <p class="tl-desc">Native APIs, real-time trust verification, and smart contract simulation — built for the next generation of Web3 builders.</p>
+    <!-- HEADER -->
+    <div style="margin-bottom:36px" class="rv">
+      <div class="sec-ey">Developer Infrastructure</div>
+      <h2 class="sec-h">Build on trust.<br>Ship with confidence.</h2>
+      <p class="sec-desc">Native APIs, real-time trust verification, and smart contract simulation — built for the next generation of Web3 builders.</p>
     </div>
 
-    <!-- ── STAT BAR ── -->
+    <!-- STAT BAR -->
     <div class="stat-bar rv">
       <div class="stat-item">
         <div class="si-val" id="st-contracts">1,284</div>
@@ -239,7 +196,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
       </div>
     </div>
 
-    <!-- ── DEV GRID ── -->
+    <!-- DEV GRID -->
     <div class="dev-grid">
 
       <!-- Card 1: Smart Contract Deployer -->
@@ -313,8 +270,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
         </div>
         <div class="sim-result" id="simResult"></div>
         <button class="btn btn-sm" style="margin-top:13px;width:100%" id="runSimBtn"><span>Run Simulation</span></button>
-
-        <!-- Epoch chart below sim -->
         <div style="margin-top:18px">
           <div style="font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Simulation History — Last 12 Epochs</div>
           <div class="epoch-wrap">
@@ -349,17 +304,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
 
     </div><!-- end .dev-grid -->
 
-    <!-- ── API REFERENCE ── -->
+    <!-- API REFERENCE -->
     <div style="margin-top:28px" class="rv">
-      <div class="tl-ey" style="margin-bottom:16px">API Reference</div>
+      <div class="sec-ey" style="margin-bottom:16px">API Reference</div>
 
       <div class="api-card">
-        <div class="api-head" onclick="toggleApi(this)">
+        <div class="api-head" id="api-head-0">
           <span class="api-method m-get">GET</span>
           <span class="api-path">/v1/trust/{address}</span>
           <span class="api-desc">Fetch full trust profile</span>
         </div>
-        <div class="api-body">
+        <div class="api-body" id="api-body-0">
           <div class="api-code">curl https://api.rialo.xyz/v1/trust/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 \
   -H "Authorization: Bearer YOUR_API_KEY"
 
@@ -379,12 +334,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
       </div>
 
       <div class="api-card">
-        <div class="api-head" onclick="toggleApi(this)">
+        <div class="api-head" id="api-head-1">
           <span class="api-method m-post">POST</span>
           <span class="api-path">/v1/simulate</span>
           <span class="api-desc">Simulate a transaction before signing</span>
         </div>
-        <div class="api-body">
+        <div class="api-body" id="api-body-1">
           <div class="api-code">fetch("https://api.rialo.xyz/v1/simulate", {
   method: "POST",
   body: JSON.stringify({
@@ -406,12 +361,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:
       </div>
 
       <div class="api-card">
-        <div class="api-head" onclick="toggleApi(this)">
+        <div class="api-head" id="api-head-2">
           <span class="api-method m-ws">WS</span>
           <span class="api-path">wss://stream.rialo.xyz/v1/live</span>
           <span class="api-desc">Realtime trust event stream</span>
         </div>
-        <div class="api-body">
+        <div class="api-body" id="api-body-2">
           <div class="api-code">const ws = new WebSocket("wss://stream.rialo.xyz/v1/live");
 ws.onmessage = ({ data }) => {
   const event = JSON.parse(data);
@@ -428,67 +383,26 @@ ws.onmessage = ({ data }) => {
 
     </div><!-- end api reference -->
 
-  </div><!-- end .inner -->
-</div><!-- end #app -->
+  </div><!-- end .devs-inner -->
+</div><!-- end .devs-page -->
 
+<!-- FIX #3: shared wallet modal, scan overlay, status bar, toast (sebelumnya tidak ada) -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
+
+<div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
+
+<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
+<!-- FIX #4: load shared.js (sebelumnya tidak ada) -->
+<script src="shared.js"></script>
 <script>
-var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
-// ── CURSOR ──────────────────────────────────────────────
-var C1=document.getElementById('CUR'),C2=document.getElementById('CUR2');
-var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
-if(!isMobile){
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;C1.style.left=mx+'px';C1.style.top=my+'px'});
-  document.addEventListener('mousedown',function(){document.body.classList.add('cclick')});
-  document.addEventListener('mouseup',function(){document.body.classList.remove('cclick')});
-  (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;C2.style.left=rx+'px';C2.style.top=ry+'px';requestAnimationFrame(loop)})();
-}
-function hookCursor(){
-  if(isMobile)return;
-  document.querySelectorAll('button,a,[role=button],.rep-item,.api-head,.epoch-bar').forEach(function(el){if(el._ch)return;el._ch=1;el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')})});
-}
-setInterval(hookCursor,800);
-
-// ── BG CANVAS ───────────────────────────────────────────
-var bgC=document.getElementById('BG'),bgX=bgC.getContext('2d');
-var BW=0,BH=0;
-function rBg(){BW=bgC.width=innerWidth;BH=bgC.height=innerHeight}
-rBg();window.addEventListener('resize',rBg);
-var BN=[];
-for(var i=0;i<(isMobile?40:65);i++)BN.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r:Math.random()*1.5+.4,p:Math.random()*Math.PI*2,ps:.005+Math.random()*.008});
-var BMX=innerWidth/2,BMY=innerHeight/2;
-document.addEventListener('mousemove',function(e){BMX=e.clientX;BMY=e.clientY});
-function drawBg(){
-  bgX.clearRect(0,0,BW,BH);
-  BN.forEach(function(n){n.x+=n.vx;n.y+=n.vy;n.p+=n.ps;if(n.x<-8)n.x=BW+8;if(n.x>BW+8)n.x=-8;if(n.y<-8)n.y=BH+8;if(n.y>BH+8)n.y=-8;var dx=BMX-n.x,dy=BMY-n.y,d=Math.hypot(dx,dy);if(d<180&&d>1){n.x+=dx/d*.018;n.y+=dy/d*.018}});
-  bgX.lineWidth=.3;
-  for(var i=0;i<BN.length;i++)for(var j=i+1;j<BN.length;j++){var a=BN[i],b=BN[j];var d=Math.hypot(a.x-b.x,a.y-b.y);if(d<95){bgX.beginPath();bgX.strokeStyle='rgba(0,200,224,'+(1-d/95)*.065+')';bgX.moveTo(a.x,a.y);bgX.lineTo(b.x,b.y);bgX.stroke()}}
-  BN.forEach(function(n){var a=(Math.sin(n.p)*.5+.5)*.4+.1;bgX.beginPath();bgX.arc(n.x,n.y,n.r,0,Math.PI*2);bgX.fillStyle='rgba(0,200,224,'+Math.min(a*.3,0.16)+')';bgX.fill()});
-}
-(function loop(){drawBg();requestAnimationFrame(loop)})();
-
-// ── TOAST ───────────────────────────────────────────────
-var _tt;
-function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
-function flash(){var f=document.getElementById('flash');f.className='go';setTimeout(function(){f.className=''},160)}
-
-// ── RIPPLE ──────────────────────────────────────────────
-document.querySelectorAll('.btn').forEach(function(btn){
-  btn.addEventListener('click',function(e){
-    var rect=btn.getBoundingClientRect(),sz=Math.max(rect.width,rect.height),x=e.clientX-rect.left-sz/2,y=e.clientY-rect.top-sz/2,rp=document.createElement('span');
-    rp.className='btn-ripple';rp.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+x+'px;top:'+y+'px';
-    btn.querySelectorAll('.btn-ripple').forEach(function(r){r.remove()});btn.appendChild(rp);setTimeout(function(){rp.remove()},600);
-  });
-});
-
-// ── TRUST GAUGE BARS ────────────────────────────────────
+/* ─── TRUST GAUGE BARS ─── */
 setTimeout(function(){
   document.querySelectorAll('.tg-b').forEach(function(b){b.style.width=b.dataset.t+'%'});
 },400);
 
-// ── REFRESH GAUGE ───────────────────────────────────────
+/* ─── REFRESH GAUGE ─── */
 document.getElementById('refreshGaugeBtn').addEventListener('click',function(){
   var btn=this;btn.classList.add('btn-loading');
   var bars=document.querySelectorAll('.tg-b');
@@ -500,11 +414,11 @@ document.getElementById('refreshGaugeBtn').addEventListener('click',function(){
     document.getElementById('gs-total').textContent=Math.min(total,99);
     btn.classList.remove('btn-loading');
     toast('Trust signals refreshed — Score: '+Math.min(total,99)+'/100');
-    flash();
+    triggerFlash();
   },900);
 });
 
-// ── TRANSACTION SIMULATOR ───────────────────────────────
+/* ─── TX SIMULATOR ─── */
 var simIdx=2;
 document.getElementById('runSimBtn').addEventListener('click',function(){
   var btn=this;btn.classList.add('btn-loading');
@@ -512,7 +426,6 @@ document.getElementById('runSimBtn').addEventListener('click',function(){
   document.getElementById('sim-status').style.color='var(--c)';
   var res=document.getElementById('simResult');res.style.display='none';
   var steps=document.querySelectorAll('#txSim .tx-step');
-  // Reset
   steps.forEach(function(s,i){
     s.className='tx-step'+(i<2?' done':'');
     var st=s.querySelector('.tx-stat');
@@ -527,9 +440,8 @@ document.getElementById('runSimBtn').addEventListener('click',function(){
       document.getElementById('sim-status').style.color='var(--green)';
       res.className='sim-result ok';res.style.display='block';
       res.textContent='✓ No risk vectors detected — Trust score 97/100 — Safe to sign. Human output: "Approve Uniswap v4 to spend max USDC"';
-      // bump epoch chart
       addEpochBar(true);
-      toast('Simulation complete — Risk: Low ✓');flash();
+      toast('Simulation complete — Risk: Low ✓');triggerFlash();
       return;
     }
     steps[simIdx].classList.remove('active');steps[simIdx].classList.add('done');steps[simIdx].querySelector('.tx-stat').textContent='✓ done';steps[simIdx].querySelector('.tx-stat').style.color='var(--green)';
@@ -541,22 +453,27 @@ document.getElementById('runSimBtn').addEventListener('click',function(){
   toast('Simulation running...');
 });
 
-// ── EPOCH CHART ─────────────────────────────────────────
+/* ─── EPOCH CHART ─── */
 var epochData=[92,88,95,79,97,84,91,96,87,93,89,97];
 function buildEpochChart(){
   var el=document.getElementById('epochBars');if(!el)return;el.innerHTML='';
   var mn=Math.min.apply(null,epochData),mx=Math.max.apply(null,epochData),rng=mx-mn||1;
   epochData.forEach(function(v,i){
     var b=document.createElement('div');b.className='epoch-bar';
-    var h=30+((v-mn)/rng)*20;var up=v>=88;
+    var h=30+((v-mn)/rng)*20,up=v>=88;
     b.style.cssText='height:'+h+'px;background:'+(up?'rgba(0,200,224,0.55)':'rgba(255,100,100,0.45)')+';opacity:'+(i===epochData.length-1?1:0.48);
-    b.title='Epoch #'+(i+1)+' — Score: '+v;el.appendChild(b);
+    b.title='Epoch #'+(i+1)+' — Score: '+v;
+    el.appendChild(b);
   });
 }
-function addEpochBar(good){epochData.push(good?Math.floor(88+Math.random()*10):Math.floor(60+Math.random()*20));if(epochData.length>12)epochData.shift();buildEpochChart()}
+function addEpochBar(good){
+  epochData.push(good?Math.floor(88+Math.random()*10):Math.floor(60+Math.random()*20));
+  if(epochData.length>12)epochData.shift();
+  buildEpochChart();
+}
 buildEpochChart();
 
-// ── SMART CONTRACT DEPLOYER ──────────────────────────────
+/* ─── CONTRACT DEPLOYER ─── */
 document.getElementById('deployBtn').addEventListener('click',function(){
   var btn=this;btn.classList.add('btn-loading');
   var tl=document.getElementById('termLine');
@@ -575,56 +492,81 @@ document.getElementById('deployBtn').addEventListener('click',function(){
   ];
   var i=0;
   function addLine(){
-    if(i>=msgs.length){btn.classList.remove('btn-loading');document.getElementById('deployer-status').textContent='Ready';document.getElementById('deployer-status').style.color='';toast('Deployed: '+addr);flash();return}
+    if(i>=msgs.length){btn.classList.remove('btn-loading');document.getElementById('deployer-status').textContent='Ready';document.getElementById('deployer-status').style.color='';toast('Deployed: '+addr);triggerFlash();return}
     var row=document.createElement('div');row.className='tl-row';row.innerHTML='<span class="tp"> </span><span class="to" style="color:'+msgs[i].c+'">'+msgs[i].t+'</span>';
     tl.parentNode.insertBefore(row,tl);i++;setTimeout(addLine,480+Math.random()*220);
   }
   addLine();
 });
+
 document.getElementById('clearTermBtn').addEventListener('click',function(){
   var tb=document.getElementById('termBox');
-  var scan=tb.querySelector('.t-scan'),line=document.getElementById('termLine');
-  tb.innerHTML='';tb.appendChild(scan);
-  var r=document.createElement('div');r.className='tl-row';r.innerHTML='<span class="tp">$</span><span class="tc"><span class="tcur"></span></span>';r.id='termLine';tb.appendChild(r);
+  var scan=tb.querySelector('.t-scan');
+  tb.innerHTML='';
+  if(scan)tb.appendChild(scan);
+  var r=document.createElement('div');r.className='tl-row';r.id='termLine';
+  r.innerHTML='<span class="tp">$</span><span class="tc"><span class="tcur"></span></span>';
+  tb.appendChild(r);
   toast('Terminal cleared');
 });
 
-// ── REPUTATION BOARD ────────────────────────────────────
+/* ─── REPUTATION BOARD ─── */
 var repScores=[97,94,91,88,86,83];
 document.getElementById('refreshRepBtn').addEventListener('click',function(){
   var btn=this;btn.disabled=true;
   setTimeout(function(){
     repScores=repScores.map(function(s){return Math.max(70,Math.min(99,s+(Math.random()>.5?1:-1)))});
-    document.querySelectorAll('.rep-score').forEach(function(el,i){el.textContent=repScores[i]||el.textContent});
+    document.querySelectorAll('.rep-score').forEach(function(el,i){if(repScores[i])el.textContent=repScores[i]});
     var badge=document.querySelector('.dc-badge[style*="gold"]');
-    if(badge){var ep=parseInt(badge.textContent.replace('Epoch #',''))+1;badge.textContent='Epoch #'+ep}
-    btn.disabled=false;toast('Leaderboard refreshed — Epoch updated');
+    if(badge){var ep=parseInt(badge.textContent.replace('Epoch #',''))||14;badge.textContent='Epoch #'+(ep+1)}
+    btn.disabled=false;
+    toast('Leaderboard refreshed — Epoch updated');
   },600);
 });
 
-// ── API ACCORDION ───────────────────────────────────────
-function toggleApi(head){
-  var body=head.nextElementSibling;
-  var isOpen=body.classList.contains('open');
-  document.querySelectorAll('.api-body').forEach(function(b){b.classList.remove('open')});
-  if(!isOpen)body.classList.add('open');
-}
-
-// ── SCROLL REVEAL ───────────────────────────────────────
-function revealCheck(){
-  document.querySelectorAll('.rv:not(.in)').forEach(function(el){
-    var rect=el.getBoundingClientRect();
-    if(rect.top<window.innerHeight-60)el.classList.add('in');
+/* ─── API ACCORDION ─── */
+/* FIX #5: event delegation — tidak pakai inline onclick */
+document.querySelectorAll('.api-head').forEach(function(head,i){
+  head.addEventListener('click',function(){
+    var body=document.getElementById('api-body-'+i);
+    if(!body)return;
+    var isOpen=body.classList.contains('open');
+    document.querySelectorAll('.api-body').forEach(function(b){b.classList.remove('open')});
+    if(!isOpen)body.classList.add('open');
   });
-}
-window.addEventListener('scroll',revealCheck,{passive:true});
-setTimeout(function(){revealCheck()},120);
+});
 
-// ── LIVE STAT COUNTER ───────────────────────────────────
+/* ─── LIVE STAT COUNTER ─── */
 setInterval(function(){
-  var c=document.getElementById('st-contracts');if(c){var n=parseInt(c.textContent.replace(',',''));c.textContent=(n+Math.floor(Math.random()*3)).toLocaleString()}
-  var b=document.getElementById('st-builders');if(b){var n2=parseInt(b.textContent);b.textContent=n2+(Math.random()>.7?1:0)}
+  var c=document.getElementById('st-contracts');
+  if(c){var n=parseInt(c.textContent.replace(',',''));c.textContent=(n+Math.floor(Math.random()*3)).toLocaleString()}
+  var b=document.getElementById('st-builders');
+  if(b){var n2=parseInt(b.textContent);b.textContent=(n2+(Math.random()>.7?1:0)).toString()}
 },7000);
+
+/* ─── RENDER LOOP ─── */
+var lastF=0;
+function loop(t){
+  if(t-lastF>=16){lastF=t;drawBg();drawHex(t)}
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ─── BOOT ─── */
+document.addEventListener('DOMContentLoaded',function(){
+  initBgCanvas();
+  initCursor();    /* FIX #6: pakai initCursor() dari shared.js — tidak ada lagi setInterval hookCursor */
+  initHexCanvas();
+  initRipple();
+  initReveal();
+  initNav('devs'); /* FIX #7: initNav('devs') dari shared.js — handle hamburger, session restore, navBtn */
+  bindWalletModal();
+  bindDiscButton();
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+});
 </script>
 </body>
 </html>
