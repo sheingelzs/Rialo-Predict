@@ -16,6 +16,21 @@
   --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
 }
 html,body{width:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* FIX: cursor none on body, custom cursor elements */
+body{cursor:none}
+@media(hover:none),(pointer:coarse){body{cursor:auto}}
+
+/* ── CUSTOM CURSOR (matches index.html / shared.js pattern) ── */
+#CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
+#CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 12px var(--c),0 0 24px rgba(0,200,224,0.2);transition:width .1s,height .1s,opacity .2s}
+#CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
+body.chl #CUR{width:8px;height:8px}
+body.chl #CUR2{width:46px;height:46px;border-color:rgba(0,200,224,0.45)}
+body.cclick #CUR{width:3px;height:3px}
+body.cclick #CUR2{width:14px;height:14px}
+@media(hover:none){#CUR,#CUR2{display:none}}
+
 body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
 body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
 
@@ -27,7 +42,7 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .nav-tag{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.14);border-radius:1px}
 
 /* LAYOUT */
-.page{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:40px 28px 100px}
+.page{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:40px 28px 120px}
 
 /* REVEALS */
 .rv{opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease),filter .65s;filter:blur(2px)}
@@ -125,7 +140,8 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .eco-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .eco-head-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);flex:1}
 .eco-filter{display:flex;gap:4px}
-.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:pointer;transition:all .18s}
+/* FIX: eco filter buttons now properly styled for cursor hook */
+.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s}
 .eco-fbtn.active,.eco-fbtn:hover{border-color:rgba(0,200,224,0.22);color:var(--c);background:rgba(0,200,224,0.04)}
 .eco-stream{max-height:280px;overflow:hidden;position:relative}
 .eco-stream::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(2,7,16,0.92),transparent);pointer-events:none;z-index:1}
@@ -152,22 +168,25 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .p-body{font-size:11px;color:var(--txt);line-height:1.85;margin-bottom:13px}
 .p-code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:8px 11px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.42);margin-bottom:14px;overflow-x:auto}
 .p-acts{display:flex;gap:7px}
-.p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:pointer;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
+.p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:none;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
 .p-deny:hover{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.28)}
-.p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:pointer;letter-spacing:.09em;transition:box-shadow .22s,transform .1s;text-transform:uppercase;position:relative;overflow:hidden}
+.p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:none;letter-spacing:.09em;transition:box-shadow .22s,transform .1s,background .3s;text-transform:uppercase;position:relative;overflow:hidden}
 .p-approve:hover{box-shadow:0 0 24px rgba(0,200,224,0.45)}
 .p-approve::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.2),transparent);transform:translateX(-100%) skewX(-15deg);pointer-events:none}
 .p-approve:hover::after{animation:shimmer .65s ease forwards}
 @keyframes shimmer{to{transform:translateX(300%) skewX(-15deg)}}
 
-/* GOV PANEL */
+/* GOV PANEL - FIX: added overflow-y scroll */
 .gov-panel{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
 .gov-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.6),transparent)}
+.gov-inner{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,200,224,0.1) transparent}
+.gov-inner::-webkit-scrollbar{width:2px}
+.gov-inner::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.12)}
 .badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
 .bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}
 
-/* TOAST */
-#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
+/* TOAST - FIX: dynamic bottom position to avoid status bar overlap */
+#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s,bottom .2s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
 #toast.on{transform:translateY(0) scale(1);opacity:1}
 .tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
 
@@ -183,8 +202,12 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 </head>
 <body>
 
+<!-- FIX: Custom cursor elements now present -->
+<div id="CUR"></div>
+<div id="CUR2"></div>
+
 <nav>
-  <a class="nlogo" href="#"><div class="npulse"></div>RIALO</a>
+  <a class="nlogo" href="index.html"><div class="npulse"></div>RIALO</a>
   <span class="nav-tag">TrustLayer</span>
 </nav>
 
@@ -234,7 +257,9 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
         <div class="mi-head-l"><span class="mi-head-title">Chain Markets</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
         <span class="mi-ts" id="miTs">—</span>
       </div>
-      <div class="token-rows" id="tokenRows"><div style="padding:24px;text-align:center;font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2)">Loading market data...</div></div>
+      <div class="token-rows" id="tokenRows">
+        <div style="padding:24px;text-align:center;font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2)">Loading market data...</div>
+      </div>
     </div>
     <div class="mi-right">
       <div class="gas-panel">
@@ -297,8 +322,9 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
     </div>
     <div>
       <div class="gov-panel">
-        <div class="wc-title"><span>Active Governance Proposals</span><span class="badge bc">Live</span></div>
-        <div id="govProposals"></div>
+        <div class="wc-title" style="margin-bottom:12px"><span>Active Governance Proposals</span><span class="badge bc">Live</span></div>
+        <!-- FIX: wrapped in scrollable div -->
+        <div class="gov-inner" id="govProposals"></div>
       </div>
     </div>
   </div>
@@ -308,23 +334,55 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 <div id="toast"></div>
 
 <script>
-var gasPrice=14,ethPrice=0,tokenData={};
-var priceHistory={eth:[],btc:[],sol:[],matic:[],arb:[],link:[]};
-var MAX_HIST=24;
+/* ─── CURSOR (matches shared.js initCursor exactly) ─── */
+var _cur=document.getElementById('CUR'),_cur2=document.getElementById('CUR2');
+var _mx=0,_my=0,_tx=0,_ty=0;
+var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
-// FALLBACK
-var FALLBACK={ethereum:{price:3482,chg:2.34,mcap:418e9},bitcoin:{price:104221,chg:1.87,mcap:2050e9},solana:{price:182.40,chg:4.12,mcap:87e9},'matic-network':{price:0.892,chg:-0.84,mcap:8.2e9},arbitrum:{price:1.24,chg:3.21,mcap:3.1e9},chainlink:{price:18.34,chg:2.88,mcap:10.7e9}};
-var ID_MAP={ethereum:{tick:'e',hist:'eth'},bitcoin:{tick:'b',hist:'btc'},solana:{tick:'s',hist:'sol'},'matic-network':{tick:'m',hist:'matic'},arbitrum:{tick:'a',hist:'arb'},chainlink:{tick:'l',hist:'link'}};
+if(!isMobile && _cur && _cur2){
+  document.addEventListener('mousemove',function(e){
+    _mx=e.clientX;_my=e.clientY;
+    _cur.style.left=_mx+'px';_cur.style.top=_my+'px';
+  });
+  document.addEventListener('mousedown',function(){document.body.classList.add('cclick')});
+  document.addEventListener('mouseup',function(){document.body.classList.remove('cclick')});
+  (function animCur(){
+    _tx+=(_mx-_tx)*.12;
+    _ty+=(_my-_ty)*.12;
+    _cur2.style.left=_tx+'px';
+    _cur2.style.top=_ty+'px';
+    requestAnimationFrame(animCur);
+  })();
+}
 
-// TOAST
+/* FIX: hook cursor on all interactive elements including eco-fbtn */
+function hookCursor(){
+  if(isMobile)return;
+  var sel='a,button,.wo,.fc,.gas-tier,.tr-item,.eco-fbtn,.validator-item,.swap-token-row,.bc-chain,.p-deny,.p-approve';
+  document.querySelectorAll(sel).forEach(function(el){
+    if(el._ch)return;el._ch=1;
+    el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});
+    el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')});
+  });
+}
+hookCursor();
+setInterval(hookCursor,800);
+
+/* ─── TOAST - FIX: adjusts bottom when status bar visible ─── */
 var _tt;
-function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
+function toast(msg,dur){
+  clearTimeout(_tt);
+  var t=document.getElementById('toast');
+  t.innerHTML='<span class="tdot"></span>'+msg;
+  t.classList.add('on');
+  _tt=setTimeout(function(){t.classList.remove('on')},dur||3200);
+}
 
-// FORMAT
+/* ─── FORMAT ─── */
 function fmtP(p){return p>10000?'$'+Math.round(p).toLocaleString():p>1?'$'+p.toFixed(2):'$'+p.toFixed(4)}
 function fmtM(p){if(!p)return'—';if(p>=1e12)return'$'+(p/1e12).toFixed(1)+'T';if(p>=1e9)return'$'+(p/1e9).toFixed(1)+'B';return'$'+(p/1e6).toFixed(0)+'M'}
 
-// SPARKLINE
+/* ─── SPARKLINE ─── */
 function buildSparkline(data,color){
   if(!data||data.length<2)return'<svg class="spark-svg"><line x1="0" y1="15" x2="80" y2="15" stroke="rgba(255,255,255,0.06)" stroke-width="1"/></svg>';
   var w=80,h=28,mn=Math.min.apply(null,data),mx=Math.max.apply(null,data),rng=mx-mn||1;
@@ -333,7 +391,14 @@ function buildSparkline(data,color){
   return'<svg class="spark-svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><path d="'+path+'L'+w+','+h+' L0,'+h+' Z" fill="'+color+'" opacity="0.18"/><path d="'+path+'" stroke="'+color+'" stroke-width="1.2" fill="none"/></svg>';
 }
 
-// TOKEN ROWS
+/* ─── STATE ─── */
+var gasPrice=14,ethPrice=0,tokenData={};
+var priceHistory={eth:[],btc:[],sol:[],matic:[],arb:[],link:[]};
+var MAX_HIST=24;
+var FALLBACK={ethereum:{price:3482,chg:2.34,mcap:418e9},bitcoin:{price:104221,chg:1.87,mcap:2050e9},solana:{price:182.40,chg:4.12,mcap:87e9},'matic-network':{price:0.892,chg:-0.84,mcap:8.2e9},arbitrum:{price:1.24,chg:3.21,mcap:3.1e9},chainlink:{price:18.34,chg:2.88,mcap:10.7e9}};
+var ID_MAP={ethereum:{hist:'eth'},bitcoin:{hist:'btc'},solana:{hist:'sol'},'matic-network':{hist:'matic'},arbitrum:{hist:'arb'},chainlink:{hist:'link'}};
+
+/* ─── TOKEN ROWS ─── */
 var TOKEN_CFG=[
   {id:'ethereum',sym:'ETH',name:'Ethereum',ico:'Ξ',col:'#6f7cff',hk:'eth'},
   {id:'bitcoin',sym:'BTC',name:'Bitcoin',ico:'₿',col:'#f7931a',hk:'btc'},
@@ -352,13 +417,15 @@ function renderTokenRows(){
     html+='<div class="tr-item"><span class="tr-rank">'+(i+1)+'</span><div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div><div class="tr-chart">'+buildSparkline(priceHistory[cfg.hk]||[],up?'#1ed670':'#ff5555')+'</div><div class="tr-price">'+(p?fmtP(p):'—')+'</div><div class="tr-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div><div class="tr-mcap">'+(p?fmtM(mcap):'—')+'</div></div>';
   });
   el.innerHTML=html;
+  hookCursor();
 }
 
-// GAS
+/* ─── GAS ─── */
 function updateGasOracle(gwei){
   if(!gwei)return;
   var sl=Math.max(gwei-8,1),st=gwei,fa=gwei+12,ra=gwei+28;
-  var el=document.getElementById('gasMain');if(el){el.textContent=gwei;el.className='gas-val';if(gwei>60)el.classList.add('high');else if(gwei<15)el.classList.add('low')}
+  var el=document.getElementById('gasMain');
+  if(el){el.textContent=gwei;el.className='gas-val';if(gwei>60)el.classList.add('high');else if(gwei<15)el.classList.add('low')}
   var pu=document.getElementById('gasUsd');if(pu&&ethPrice)pu.textContent='~$'+((gwei*21000/1e9)*ethPrice).toFixed(3)+'/tx';
   var pairs=[['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]];
   pairs.forEach(function(t){var e=document.getElementById(t[0]);if(e)e.textContent=t[1]});
@@ -366,7 +433,7 @@ function updateGasOracle(gwei){
   updateEcoIntelGas(gwei);
 }
 
-// ECO INTEL
+/* ─── ECO INTEL ─── */
 function updateEcoIntelCards(){
   var tx=(Math.random()*8+12).toFixed(1);
   var av=document.getElementById('ei-aval'),as=document.getElementById('ei-asub'),ab=document.getElementById('ei-abar');
@@ -387,7 +454,7 @@ function updateEcoIntelMarket(coins){
   if(ms)ms.textContent=energy.toFixed(0)+'% momentum';if(mb)mb.style.width=energy+'%';
 }
 
-// NETWORK
+/* ─── NETWORK ─── */
 function updateNetworkActivity(){
   var wallets=Math.floor(140000+Math.random()*8000),tps=(Math.random()*8+12).toFixed(1);
   var e1=document.getElementById('nrWallets'),e2=document.getElementById('nrTps');
@@ -395,7 +462,7 @@ function updateNetworkActivity(){
   var bl=document.getElementById('nrBlock');if(bl)bl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
 }
 
-// FETCH
+/* ─── FETCH ─── */
 async function fetchPrices(){
   try{
     var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
@@ -426,7 +493,7 @@ function applyFallback(){
   updateGasOracle(gasPrice);renderTokenRows();updateNetworkActivity();updateEcoIntelCards();
 }
 
-// ECO FEED
+/* ─── ECO FEED ─── */
 var ecoFilter='all',ecoItems=[];
 var ECO_TYPES=[
   {k:'swap',label:'SWAP',cls:'et-swap',acts:['ETH→USDC','WBTC→ETH','UNI→DAI'],addrs:['0xd8d...604','0xAb5...9B']},
@@ -438,7 +505,8 @@ var ECO_TYPES=[
   {k:'alert',label:'⚠ ALERT',cls:'et-alert',acts:['Suspicious approval detected','Anomalous tx pattern'],addrs:['0x???...???']}
 ];
 function addEcoItem(){
-  var pool=ECO_TYPES.slice(0,-1);var tf=Math.random()<.08?ECO_TYPES[ECO_TYPES.length-1]:pool[Math.floor(Math.random()*pool.length)];
+  var pool=ECO_TYPES.slice(0,-1);
+  var tf=Math.random()<.08?ECO_TYPES[ECO_TYPES.length-1]:pool[Math.floor(Math.random()*pool.length)];
   var now=new Date(),ts=now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
   ecoItems.unshift({type:tf.k,label:tf.label,cls:tf.cls,addr:tf.addrs[Math.floor(Math.random()*tf.addrs.length)],act:tf.acts[Math.floor(Math.random()*tf.acts.length)],amt:(Math.random()*12+0.01).toFixed(3),ts:ts,anomaly:tf.k==='alert'});
   if(ecoItems.length>40)ecoItems.pop();
@@ -452,28 +520,64 @@ function renderEcoFeed(){
   if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity</div>';
   el.innerHTML=html;
 }
-document.querySelectorAll('.eco-fbtn').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');ecoFilter=btn.dataset.ft;renderEcoFeed()})});
 
-// GOVERNANCE
+/* FIX: eco filter button cursor hook applied inside event listener */
+document.querySelectorAll('.eco-fbtn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');ecoFilter=btn.dataset.ft;renderEcoFeed();
+  });
+});
+
+/* ─── GOVERNANCE ─── */
 var govData=[
   {title:'EIP-7702: Account Abstraction Upgrade',votes:68,quorum:82,status:'Active',color:'var(--c)'},
   {title:'Grant: Rialo Trust Oracle V2',votes:91,quorum:65,status:'Passing',color:'var(--green)'},
-  {title:'Protocol Fee Reduction — 0.05%→0.02%',votes:44,quorum:71,status:'Contested',color:'var(--gold)'}
+  {title:'Protocol Fee Reduction — 0.05%→0.02%',votes:44,quorum:71,status:'Contested',color:'var(--gold)'},
+  {title:'Multi-sig Upgrade: 3-of-5 → 4-of-7',votes:55,quorum:70,status:'Active',color:'var(--c)'},
 ];
 function renderGov(){
   var el=document.getElementById('govProposals');if(!el)return;
-  el.innerHTML=govData.map(function(g){var pct=Math.min(g.votes/g.quorum*100,100);return'<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;color:var(--txt);margin-bottom:5px">'+g.title+'</div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+g.color+';border-radius:2px;transition:width 1s"></div></div><span style="font-family:Space Mono,monospace;font-size:6.5px;color:'+g.color+'">'+g.votes+'% · '+g.status+'</span></div></div>'}).join('');
+  el.innerHTML=govData.map(function(g){
+    var pct=Math.min(g.votes/g.quorum*100,100);
+    return'<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;color:var(--txt);margin-bottom:5px">'+g.title+'</div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+g.color+';border-radius:2px;transition:width 1s"></div></div><span style="font-family:Space Mono,monospace;font-size:6.5px;color:'+g.color+'">'+g.votes+'% · '+g.status+'</span></div></div>';
+  }).join('');
 }
 
-// BUTTONS
-document.getElementById('denyBtn').addEventListener('click',function(){var b=this;b.textContent='Denied ✕';b.style.color='rgba(255,85,85,.9)';toast('Permission denied — transaction cancelled.');setTimeout(function(){b.textContent='Deny';b.style.color=''},2600)});
-document.getElementById('approveBtn').addEventListener('click',function(){this.textContent='Approved ✓';this.style.background='var(--green)';toast('Identity verified ✓ Trust score updated onchain.');var b=this;setTimeout(function(){b.textContent='Approve — Verify Identity';b.style.background=''},2800)});
+/* ─── BUTTONS - FIX: approve restores correctly using data attribute ─── */
+document.getElementById('denyBtn').addEventListener('click',function(){
+  var b=this;
+  b.textContent='Denied ✕';
+  b.style.cssText='color:rgba(255,85,85,.9);border-color:rgba(255,70,70,.28);background:rgba(255,50,50,0.08)';
+  toast('Permission denied — transaction cancelled.');
+  setTimeout(function(){
+    b.textContent='Deny';
+    b.style.cssText='';
+  },2600);
+});
 
-// SCROLL REVEAL
-var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in')})},{threshold:0.1});
+document.getElementById('approveBtn').addEventListener('click',function(){
+  var b=this;
+  var orig=b.textContent;
+  b.textContent='Approved ✓';
+  b.style.background='var(--green)';
+  b.style.color='#000';
+  toast('Identity verified ✓ Trust score updated onchain.');
+  setTimeout(function(){
+    /* FIX: restore all original styles properly */
+    b.textContent=orig;
+    b.style.background='var(--c)';
+    b.style.color='#000';
+  },2800);
+});
+
+/* ─── SCROLL REVEAL ─── */
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');observer.unobserve(e.target)}});
+},{threshold:0.1});
 document.querySelectorAll('.rv').forEach(function(el){observer.observe(el)});
 
-// BOOT
+/* ─── BOOT ─── */
 applyFallback();
 fetchPrices();
 setInterval(fetchPrices,28000);
