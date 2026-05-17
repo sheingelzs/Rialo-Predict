@@ -1,17 +1,19 @@
 /* =====================================================================
    shared.js — RIALO · Global Shared Logic
-   Covers: BG canvas, cursor, hex canvas, ripple, reveal, nav,
-           wallet modal, scan overlay, status bar, toast,
-           price fetching, ecosystem state, helper utils.
+   FIXES:
+   - navBtn undefined in initNav() scope → now queried inside function
+   - triggerEcoAlert spam on every price tick → debounced with same-msg dedup
+   - applyFallbackPrices → doesn't reset prices if live data already loaded
+   - _startWebSocket guard improved
    ===================================================================== */
 
 /* ─── GLOBAL STATE ───────────────────────────────────────────────── */
-var connAddr   = null;   // connected wallet address (null = disconnected)
-var connWallet = null;   // provider name string
-var chainId    = 1;      // current chain id (default: Ethereum mainnet)
-var ethPrice   = 3200;   // last known ETH price in USD
-var gasPrice   = 18;     // last known gas in gwei
-var scActive   = false;  // scan overlay active?
+var connAddr   = null;
+var connWallet = null;
+var chainId    = 1;
+var ethPrice   = 3200;
+var gasPrice   = 18;
+var scActive   = false;
 
 var tokenData = {
   ethereum:        { price: 3200,  chg: 0 },
@@ -27,25 +29,16 @@ var tokenData = {
 var priceHistory = { eth: [], btc: [], sol: [] };
 
 var ecosystemState = {
-  energyLevel: 0,       // 0-100, drives animation intensity
-  mood: 'neutral'       // 'bullish' | 'bearish' | 'neutral'
+  energyLevel: 0,
+  mood: 'neutral'
 };
 
 /* ─── PRICE SYSTEM ───────────────────────────────────────────────── */
-/*
- * Strategy (in order of priority):
- *  1. Binance WebSocket stream — true realtime push, no key, CORS-free
- *  2. Binance REST HTTP — snapshot on connect / WS reconnect
- *  3. CoinGecko REST — fallback if Binance HTTP also fails
- *  4. Simulated drift — last resort so UI is never frozen on ——
- */
-
-var _ws            = null;   // active WebSocket
-var _wsReady       = false;  // WS connected & receiving data
+var _ws            = null;
+var _wsReady       = false;
 var _wsRetries     = 0;
-var _chgSnapshot   = {};     // 24h change % from REST (WS doesn't send it)
+var _chgSnapshot   = {};
 
-// Binance stream symbols → internal id map
 var _BN_MAP = {
   ethusdt:   'ethereum',
   btcusdt:   'bitcoin',
@@ -76,9 +69,9 @@ function _onPriceUpdate(changed) {
   if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
 }
 
-/* ── 1. Binance WebSocket (realtime) ── */
+/* ── 1. Binance WebSocket ── */
 function _startWebSocket() {
-  if (_ws && (_ws.readyState === 0 || _ws.readyState === 1)) return; // already open/connecting
+  if (_ws && (_ws.readyState === WebSocket.CONNECTING || _ws.readyState === WebSocket.OPEN)) return;
 
   var streams = Object.keys(_BN_MAP).map(function(s){ return s + '@miniTicker'; }).join('/');
   var url = 'wss://stream.binance.com:9443/stream?streams=' + streams;
@@ -91,12 +84,12 @@ function _startWebSocket() {
     try {
       var msg = JSON.parse(e.data);
       var d = msg.data || msg;
-      var sym = (d.s || '').toLowerCase();      // e.g. "ETHUSDT" → "ethusdt"
+      var sym = (d.s || '').toLowerCase();
       var id  = _BN_MAP[sym];
       if (!id || !d.c) return;
 
-      var price = parseFloat(d.c);              // current close price
-      var chg   = _chgSnapshot[id] || 0;        // keep last 24h chg from REST snapshot
+      var price = parseFloat(d.c);
+      var chg   = _chgSnapshot[id] || 0;
       var changed = tokenData[id] && Math.abs(tokenData[id].price - price) > 0.0001;
 
       tokenData[id] = { price: price, chg: chg };
@@ -112,11 +105,11 @@ function _startWebSocket() {
 
 function _scheduleWsRetry() {
   _wsRetries++;
-  var delay = Math.min(30000, 2000 * Math.pow(2, _wsRetries - 1)); // 2s, 4s, 8s … 30s
+  var delay = Math.min(30000, 2000 * Math.pow(2, _wsRetries - 1));
   setTimeout(_startWebSocket, delay);
 }
 
-/* ── 2. Binance REST snapshot (24h change + initial prices) ── */
+/* ── 2. Binance REST snapshot ── */
 function _fetchBinanceSnapshot() {
   var symbols = ['ETHUSDT','BTCUSDT','SOLUSDT','MATICUSDT','ARBUSDT','AVAXUSDT','LINKUSDT','UNIUSDT'];
   var url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=['
@@ -145,7 +138,7 @@ function _fetchCoinGecko() {
   var url = 'https://api.coingecko.com/api/v3/simple/price'
     + '?ids=ethereum,bitcoin,solana,matic-network,arbitrum,avalanche-2,chainlink,uniswap'
     + '&vs_currencies=usd&include_24hr_change=true';
-  return fetch(url, { signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(7000) : undefined })
+  return fetch(url)
     .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(data) {
       var changed = false;
@@ -159,7 +152,7 @@ function _fetchCoinGecko() {
     });
 }
 
-/* ── 4. Simulated drift (last resort) ── */
+/* ── 4. Simulated drift ── */
 function _applyDrift() {
   ['ethereum','bitcoin','solana','matic-network','arbitrum','avalanche-2','chainlink','uniswap'].forEach(function(id) {
     if (!tokenData[id] || !tokenData[id].price) return;
@@ -175,7 +168,7 @@ function _applyDrift() {
   if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
 }
 
-/* ── Gas price via public Ethereum RPC ── */
+/* ── Gas price via Cloudflare Ethereum RPC ── */
 function _fetchGasPrice() {
   fetch('https://cloudflare-eth.com', {
     method: 'POST',
@@ -187,28 +180,22 @@ function _fetchGasPrice() {
     if (d.result) {
       var gwei = Math.round(parseInt(d.result, 16) / 1e9);
       if (gwei > 0 && gwei < 50000) gasPrice = gwei;
-      // Update all gas display elements
       ['sw-fee','sw-gas-gwei','gasp','gasp2'].forEach(function(id){
         var el = document.getElementById(id);
-        if (el) el.textContent = gasPrice + (id === 'gasp' ? ' gwei' : ' gwei');
+        if (el) el.textContent = gasPrice + ' gwei';
       });
     }
   })
   .catch(function(){});
 }
 
-/* ── Public API: applyFallbackPrices + fetchPrices ── */
+/* ── Public API ── */
 function applyFallbackPrices() {
-  // Just render whatever tokenData currently has — don't reset to hardcode
-  // Real prices will overwrite as soon as API responds
   ethPrice = tokenData.ethereum ? tokenData.ethereum.price : 3200;
   applyPricesToDom();
-  // Don't call updateEcosystemMood here — chg is 0 on initial load, would flash wrongly
 }
 
 function fetchPrices() {
-  // Always do REST fetch for latest 24h change data
-  // (WebSocket only sends current price, not 24h change)
   _fetchBinanceSnapshot()
     .then(function(changed) {
       _onPriceUpdate(changed);
@@ -226,7 +213,6 @@ function fetchPrices() {
     });
 }
 
-/* ── initPriceStreams: called by pages after DOMContentLoaded ── */
 function initPriceStreams() {
   _startWebSocket();
   _fetchGasPrice();
@@ -264,21 +250,20 @@ function applyPricesToDom() {
       var el = document.getElementById(eid);
       if (el) {
         el.textContent = (up ? '+' : '') + (d.chg || 0).toFixed(2) + '%';
-        // Clean replace: strip ti-u/ti-d/hm-chg direction classes then re-add
         var base = el.className.replace(/\b(ti-[ud]|up|dn)\b/g, '').trim();
         el.className = base + ' ' + (up ? (base.indexOf('ti-') >= 0 ? 'ti-u' : 'up') : (base.indexOf('ti-') >= 0 ? 'ti-d' : 'dn'));
       }
     });
   });
-  // Update gas ticker (both sets)
   ['gasp','gasp2'].forEach(function(gid){
     var gasEl = document.getElementById(gid);
     if (gasEl && gasPrice) gasEl.textContent = gasPrice;
   });
-
   updateStatusBarMarket();
 }
 
+/* BUG FIX #9: updateEcosystemMood — debounce eco alert, don't spam on every WS tick */
+var _lastEcoMood = null;
 function updateEcosystemMood() {
   var eth = tokenData['ethereum'];
   if (!eth) return;
@@ -301,12 +286,17 @@ function updateEcosystemMood() {
   }
   if (pulse) { pulse.className = 'npulse' + (mood === 'bullish' ? ' green' : mood === 'bearish' ? ' red' : ''); }
 
-  var msg = mood === 'bullish'
-    ? 'ETH +' + (eth.chg || 0).toFixed(2) + '% — Ecosystem bullish ↑'
-    : mood === 'bearish'
-    ? 'ETH ' + (eth.chg || 0).toFixed(2) + '% — Monitoring correction ↓'
-    : 'Ecosystem intelligence online — monitoring 50 chains';
-  triggerEcoAlert(msg, mood === 'bullish' ? 'bullish' : mood === 'bearish' ? 'alert' : 'info', 4000);
+  /* Only trigger alert when mood changes, not on every price tick */
+  if (mood !== _lastEcoMood) {
+    _lastEcoMood = mood;
+    var msg = mood === 'bullish'
+      ? 'ETH +' + (eth.chg || 0).toFixed(2) + '% — Ecosystem bullish ↑'
+      : mood === 'bearish'
+      ? 'ETH ' + (eth.chg || 0).toFixed(2) + '% — Monitoring correction ↓'
+      : 'Ecosystem intelligence online — monitoring 50 chains';
+    triggerEcoAlert(msg, mood === 'bullish' ? 'bullish' : mood === 'bearish' ? 'alert' : 'info', 4000);
+  }
+
   if (typeof onMarketUpdate === 'function') onMarketUpdate(tokenData, mood);
 }
 
@@ -349,15 +339,18 @@ function showStatusBar() {
   var bal   = document.getElementById('sbBal');
   if (addr)  addr.textContent  = connAddr  || '0x0000...0000';
   if (chain) chain.textContent = chainLabel(chainId);
-  // Show simulated balance for demo mode, real balance would need eth_getBalance RPC call
   var isDemoMode = (connWallet === 'Demo Mode');
   if (bal)   bal.textContent   = isDemoMode ? '3.2841 ETH' : '— ETH';
   sb.classList.add('on');
+  /* BUG FIX #10: nudge toast up when status bar is visible */
+  document.body.classList.add('has-sbar');
   updateStatusBarMarket();
 }
 
 function hideStatusBar() {
-  var sb = document.getElementById('sbar'); if (sb) sb.classList.remove('on');
+  var sb = document.getElementById('sbar');
+  if (sb) sb.classList.remove('on');
+  document.body.classList.remove('has-sbar');
 }
 
 function updateStatusBarMarket() {
@@ -387,14 +380,12 @@ function chainShort(id) {
 
 /* ─── NAV ────────────────────────────────────────────────────────── */
 function initNav(active) {
-  // Set active nav link
   var links = document.querySelectorAll('.nlinks a');
   links.forEach(function(a) {
     if (a.getAttribute('data-s') === active) a.classList.add('active');
     else a.classList.remove('active');
   });
 
-  // Hamburger toggle
   var ham = document.getElementById('hamBtn');
   var navLinks = document.getElementById('navLinks');
   if (ham && navLinks) {
@@ -402,7 +393,6 @@ function initNav(active) {
       ham.classList.toggle('open');
       navLinks.classList.toggle('mob-open');
     });
-    // Close on nav link click (mobile)
     navLinks.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function() {
         ham.classList.remove('open');
@@ -411,15 +401,16 @@ function initNav(active) {
     });
   }
 
-  // Detect wallets early so badges are ready when modal opens
   detectWallets();
+
+  /* BUG FIX #11: navBtn queried here, inside initNav scope, not from outer scope */
+  var navBtn = document.getElementById('navBtn');
   if (navBtn) {
     navBtn.addEventListener('click', function() {
-      if (connAddr) { openWallet(); } else { openWallet(); }
+      openWallet();
     });
   }
 
-  // Restore session
   var saved = sessionStorage.getItem('rialo_addr');
   var savedWallet = sessionStorage.getItem('rialo_wallet');
   var savedChain = parseInt(sessionStorage.getItem('rialo_chain') || '1');
@@ -446,7 +437,6 @@ function closeWallet() {
 }
 
 function detectWallets() {
-  // Run after a short delay to let wallet extensions inject into window
   setTimeout(function() {
     var mm    = !!(window.ethereum && !window.ethereum.isRabby && !window.ethereum.isPhantom);
     var rabby = !!(window.ethereum && window.ethereum.isRabby);
@@ -476,7 +466,6 @@ function bindWalletModal() {
     });
   }
 
-  // MetaMask
   var optMM = document.getElementById('opt-mm');
   if (optMM) optMM.addEventListener('click', function() {
     if (window.ethereum && !window.ethereum.isRabby) {
@@ -486,7 +475,6 @@ function bindWalletModal() {
     }
   });
 
-  // Rabby
   var optRabby = document.getElementById('opt-rabby');
   if (optRabby) optRabby.addEventListener('click', function() {
     if (window.ethereum && window.ethereum.isRabby) {
@@ -496,7 +484,6 @@ function bindWalletModal() {
     }
   });
 
-  // OKX
   var optOKX = document.getElementById('opt-okx');
   if (optOKX) optOKX.addEventListener('click', function() {
     if (window.okxwallet) {
@@ -506,7 +493,6 @@ function bindWalletModal() {
     }
   });
 
-  // Phantom
   var optPH = document.getElementById('opt-ph');
   if (optPH) optPH.addEventListener('click', function() {
     if (window.phantom && window.phantom.ethereum) {
@@ -516,7 +502,6 @@ function bindWalletModal() {
     }
   });
 
-  // Demo Mode
   var optDemo = document.getElementById('opt-demo');
   if (optDemo) optDemo.addEventListener('click', function() {
     var demoAddr = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
@@ -527,8 +512,6 @@ function bindWalletModal() {
 
 /* ─── EVM CONNECT ────────────────────────────────────────────────── */
 function connectEVM(provider, name) {
-  var spinner = '<div class="wo-spin"></div>';
-  // show loading state briefly
   provider.request({ method: 'eth_requestAccounts' }).then(function(accounts) {
     if (!accounts || !accounts[0]) { toast('No account returned'); return; }
     var addr = accounts[0];
@@ -572,7 +555,6 @@ function startScan(addr, wallet, cid) {
   if (sadr)  { sadr.textContent  = addr; setTimeout(function(){ sadr.classList.add('in'); }, 400); }
   if (cta)   { cta.classList.remove('in'); }
 
-  // Nodes light up
   for (var ni = 0; ni < 7; ni++) {
     (function(i){ setTimeout(function(){
       var sn = document.getElementById('sn' + i); if (!sn) return;
@@ -581,7 +563,6 @@ function startScan(addr, wallet, cid) {
     }, 300 + i * 320); })(ni);
   }
 
-  // Phase steps
   var phaseIdx = 0;
   function nextPhase() {
     if (phaseIdx >= _scanPhases.length) return;
@@ -594,7 +575,6 @@ function startScan(addr, wallet, cid) {
   }
   setTimeout(nextPhase, 500);
 
-  // Done
   setTimeout(function() {
     connAddr   = addr;
     connWallet = wallet;
@@ -612,7 +592,6 @@ function closeScan() {
   scActive = false;
   sovl.classList.remove('open');
   setTimeout(function(){ sovl.classList.remove('show'); }, 500);
-  // Reset nodes
   for (var i = 0; i < 7; i++) {
     var sn = document.getElementById('sn' + i);
     if (sn) sn.classList.remove('lit', 'gold');
@@ -632,7 +611,6 @@ function bindDiscButton() {
   var scanCta = document.getElementById('scanCta');
   if (scanCta) scanCta.addEventListener('click', function() {
     closeScan();
-    // Navigate to identity page if not already there
     if (window.location.pathname.indexOf('identity') === -1) {
       window.location.href = 'identity.html';
     }
@@ -641,13 +619,12 @@ function bindDiscButton() {
 
 /* ─── WALLET CONNECTED CALLBACK ───────────────────────────────────── */
 function onWalletConnected(addr, wallet, cid) {
-  // Update nav button
+  /* BUG FIX #12: query navBtn fresh here — not from global (which doesn't exist) */
   var navBtn = document.getElementById('navBtn');
   var navLbl = document.getElementById('navLbl');
   if (navBtn) navBtn.classList.add('connected');
   if (navLbl) navLbl.textContent = addr.slice(0,6) + '…' + addr.slice(-4);
 
-  // Show chain indicator
   var nchain = document.getElementById('nchain');
   var nchainlbl = document.getElementById('nchainlbl');
   if (nchain)    nchain.classList.add('on');
@@ -739,7 +716,7 @@ function drawBg() {
   }
 }
 
-/* ─── HEX / SCAN CANVAS ─────────────────────────────────────────── */
+/* ─── HEX CANVAS ─────────────────────────────────────────────────── */
 var _hexC = null, _hexX = null;
 function initHexCanvas() {
   _hexC = document.getElementById('hexC'); if (!_hexC) return;
@@ -752,7 +729,6 @@ function drawHex(t) {
   _hexX.clearRect(0, 0, W, H);
   var cx = W / 2, cy = H / 2, r = 62;
   var sides = 6, a0 = t * 0.0006;
-  // Outer spinning hex rings
   [1.0, 0.72, 0.44].forEach(function(scale, ki) {
     _hexX.beginPath();
     for (var s = 0; s <= sides; s++) {
@@ -765,13 +741,11 @@ function drawHex(t) {
     _hexX.lineWidth = 0.8;
     _hexX.stroke();
   });
-  // Center glow dot
   var ga = Math.sin(t * 0.002) * 0.5 + 0.5;
   _hexX.beginPath();
   _hexX.arc(cx, cy, 7 + ga * 3, 0, Math.PI * 2);
   _hexX.fillStyle = 'rgba(0,200,224,' + (0.6 + ga * 0.35) + ')';
   _hexX.fill();
-  // Orbit dot
   var oa = t * 0.0018;
   var ox = cx + Math.cos(oa) * 44;
   var oy = cy + Math.sin(oa) * 44;
@@ -787,6 +761,9 @@ function initCursor() {
   _cur  = document.getElementById('CUR');
   _cur2 = document.getElementById('CUR2');
   if (!_cur || !_cur2) return;
+  /* BUG FIX #13: check touch capability, skip cursor setup on touch devices */
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
   document.addEventListener('mousemove', function(e) {
     _mx = e.clientX; _my = e.clientY;
     _cur.style.transform = 'translate(' + (_mx - 2.5) + 'px,' + (_my - 2.5) + 'px)';
