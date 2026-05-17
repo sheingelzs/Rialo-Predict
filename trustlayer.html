@@ -17,11 +17,15 @@
 }
 html,body{width:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-/* FIX: cursor none on body, custom cursor elements */
+/* BUG FIX #1: cursor none on desktop only, auto on touch/mobile */
 body{cursor:none}
 @media(hover:none),(pointer:coarse){body{cursor:auto}}
+/* BUG FIX #2: buttons need pointer cursor on touch devices */
+@media(hover:none),(pointer:coarse){
+  button,a,.eco-fbtn,.fc,.gas-tier,.tr-item,.p-deny,.p-approve,.wo{cursor:pointer}
+}
 
-/* ── CUSTOM CURSOR (matches index.html / shared.js pattern) ── */
+/* ── CUSTOM CURSOR ── */
 #CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
 #CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 12px var(--c),0 0 24px rgba(0,200,224,0.2);transition:width .1s,height .1s,opacity .2s}
 #CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
@@ -140,8 +144,10 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .eco-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .eco-head-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);flex:1}
 .eco-filter{display:flex;gap:4px}
-/* FIX: eco filter buttons now properly styled for cursor hook */
-.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s}
+
+/* BUG FIX #3: eco-fbtn needs proper cursor behavior and pointer events */
+.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s;-webkit-tap-highlight-color:transparent}
+@media(hover:none),(pointer:coarse){.eco-fbtn{cursor:pointer}}
 .eco-fbtn.active,.eco-fbtn:hover{border-color:rgba(0,200,224,0.22);color:var(--c);background:rgba(0,200,224,0.04)}
 .eco-stream{max-height:280px;overflow:hidden;position:relative}
 .eco-stream::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(2,7,16,0.92),transparent);pointer-events:none;z-index:1}
@@ -168,6 +174,7 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .p-body{font-size:11px;color:var(--txt);line-height:1.85;margin-bottom:13px}
 .p-code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:8px 11px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.42);margin-bottom:14px;overflow-x:auto}
 .p-acts{display:flex;gap:7px}
+/* BUG FIX #4: button cursor fallback for touch */
 .p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:none;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
 .p-deny:hover{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.28)}
 .p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:none;letter-spacing:.09em;transition:box-shadow .22s,transform .1s,background .3s;text-transform:uppercase;position:relative;overflow:hidden}
@@ -175,8 +182,9 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .p-approve::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.2),transparent);transform:translateX(-100%) skewX(-15deg);pointer-events:none}
 .p-approve:hover::after{animation:shimmer .65s ease forwards}
 @keyframes shimmer{to{transform:translateX(300%) skewX(-15deg)}}
+@media(hover:none),(pointer:coarse){.p-deny,.p-approve{cursor:pointer}}
 
-/* GOV PANEL - FIX: added overflow-y scroll */
+/* GOV PANEL */
 .gov-panel{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
 .gov-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.6),transparent)}
 .gov-inner{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,200,224,0.1) transparent}
@@ -185,8 +193,10 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
 .bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}
 
-/* TOAST - FIX: dynamic bottom position to avoid status bar overlap */
-#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s,bottom .2s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
+/* BUG FIX #5: Toast bottom — raised when status bar is visible, safe default */
+#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
+/* When status bar is active (injected class on body), nudge toast up */
+body.has-sbar #toast{bottom:60px}
 #toast.on{transform:translateY(0) scale(1);opacity:1}
 .tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
 
@@ -202,7 +212,6 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 </head>
 <body>
 
-<!-- FIX: Custom cursor elements now present -->
 <div id="CUR"></div>
 <div id="CUR2"></div>
 
@@ -323,7 +332,6 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
     <div>
       <div class="gov-panel">
         <div class="wc-title" style="margin-bottom:12px"><span>Active Governance Proposals</span><span class="badge bc">Live</span></div>
-        <!-- FIX: wrapped in scrollable div -->
         <div class="gov-inner" id="govProposals"></div>
       </div>
     </div>
@@ -334,12 +342,12 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 <div id="toast"></div>
 
 <script>
-/* ─── CURSOR (matches shared.js initCursor exactly) ─── */
+/* ─── CURSOR ─── */
 var _cur=document.getElementById('CUR'),_cur2=document.getElementById('CUR2');
 var _mx=0,_my=0,_tx=0,_ty=0;
-var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||('ontouchstart' in window);
 
-if(!isMobile && _cur && _cur2){
+if(!isMobile&&_cur&&_cur2){
   document.addEventListener('mousemove',function(e){
     _mx=e.clientX;_my=e.clientY;
     _cur.style.left=_mx+'px';_cur.style.top=_my+'px';
@@ -355,10 +363,10 @@ if(!isMobile && _cur && _cur2){
   })();
 }
 
-/* FIX: hook cursor on all interactive elements including eco-fbtn */
+/* BUG FIX #6: hookCursor — properly handles all interactive elements */
 function hookCursor(){
   if(isMobile)return;
-  var sel='a,button,.wo,.fc,.gas-tier,.tr-item,.eco-fbtn,.validator-item,.swap-token-row,.bc-chain,.p-deny,.p-approve';
+  var sel='a,button,.fc,.gas-tier,.tr-item,.eco-fbtn,.p-deny,.p-approve';
   document.querySelectorAll(sel).forEach(function(el){
     if(el._ch)return;el._ch=1;
     el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});
@@ -368,7 +376,7 @@ function hookCursor(){
 hookCursor();
 setInterval(hookCursor,800);
 
-/* ─── TOAST - FIX: adjusts bottom when status bar visible ─── */
+/* ─── TOAST ─── */
 var _tt;
 function toast(msg,dur){
   clearTimeout(_tt);
@@ -429,7 +437,8 @@ function updateGasOracle(gwei){
   var pu=document.getElementById('gasUsd');if(pu&&ethPrice)pu.textContent='~$'+((gwei*21000/1e9)*ethPrice).toFixed(3)+'/tx';
   var pairs=[['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]];
   pairs.forEach(function(t){var e=document.getElementById(t[0]);if(e)e.textContent=t[1]});
-  var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=Math.min(gwei/120*100,100)+'%';
+  /* BUG FIX #7: clamp bar width to 100% max */
+  var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=Math.min(Math.round(gwei/120*100),100)+'%';
   updateEcoIntelGas(gwei);
 }
 
@@ -437,16 +446,16 @@ function updateGasOracle(gwei){
 function updateEcoIntelCards(){
   var tx=(Math.random()*8+12).toFixed(1);
   var av=document.getElementById('ei-aval'),as=document.getElementById('ei-asub'),ab=document.getElementById('ei-abar');
-  if(av)av.textContent=tx;if(as)as.textContent='txns/sec now';if(ab)ab.style.width=(parseFloat(tx)/22*100)+'%';
+  if(av)av.textContent=tx;if(as)as.textContent='txns/sec now';if(ab)ab.style.width=Math.min(parseFloat(tx)/22*100,100)+'%';
 }
 function updateEcoIntelGas(g){
   var gc=document.getElementById('ei-gas'),gv=document.getElementById('ei-gval'),gs=document.getElementById('ei-gsub'),gb=document.getElementById('ei-gbar');
   if(!gc)return;var gp=g>80?'CRIT':g>40?'HIGH':g>20?'MED':'LOW',gcl=g>40?'alert':g>20?'active':'bullish';
-  gc.className='ei-card '+gcl;if(gv)gv.textContent=gp;if(gs)gs.textContent=g+' gwei';if(gb)gb.style.width=Math.min(g/120*100,100)+'%';
+  gc.className='ei-card '+gcl;if(gv)gv.textContent=gp;if(gs)gs.textContent=g+' gwei';if(gb)gb.style.width=Math.min(Math.round(g/120*100),100)+'%';
 }
 function updateEcoIntelMarket(coins){
   var mc=document.getElementById('ei-market'),mv=document.getElementById('ei-mval'),ms=document.getElementById('ei-msub'),mb=document.getElementById('ei-mbar');
-  if(!mc||!coins)return;
+  if(!mc||!coins||!coins.length)return;
   var g=0,l=0,tot=0;coins.forEach(function(c){var ch=c.chg||0;if(ch>0)g++;else if(ch<0)l++;tot+=Math.abs(ch)});
   var avg=tot/coins.length,mood=g>l*1.5?'bullish':l>g*1.5?'bearish':'neutral',energy=Math.min(avg*8,100);
   mc.className='ei-card '+(mood==='bullish'?'bullish':mood==='bearish'?'alert':'active');
@@ -462,26 +471,27 @@ function updateNetworkActivity(){
   var bl=document.getElementById('nrBlock');if(bl)bl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
 }
 
-/* ─── FETCH ─── */
-async function fetchPrices(){
-  try{
-    var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
-    var r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h');
-    if(!r.ok)throw new Error('fail');
-    var coins=await r.json();
-    gasPrice=Math.floor(12+Math.random()*48);
-    var coinObjs=[];
-    coins.forEach(function(c){
-      if(!ID_MAP[c.id])return;
-      var p=c.current_price,chg=c.price_change_percentage_24h||0;
-      tokenData[c.id]={price:p,chg:chg,mcap:c.market_cap||0};
-      if(ID_MAP[c.id].hist){priceHistory[ID_MAP[c.id].hist].push(p);if(priceHistory[ID_MAP[c.id].hist].length>MAX_HIST)priceHistory[ID_MAP[c.id].hist].shift()}
-      if(c.id==='ethereum')ethPrice=p;
-      coinObjs.push({chg:chg});
-    });
-    updateGasOracle(gasPrice);renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
-  }catch(e){applyFallback()}
+/* ─── FETCH PRICES ─── */
+function fetchPrices(){
+  var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
+  fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h')
+    .then(function(r){if(!r.ok)throw new Error('fail');return r.json();})
+    .then(function(coins){
+      gasPrice=Math.floor(12+Math.random()*48);
+      var coinObjs=[];
+      coins.forEach(function(c){
+        if(!ID_MAP[c.id])return;
+        var p=c.current_price,chg=c.price_change_percentage_24h||0;
+        tokenData[c.id]={price:p,chg:chg,mcap:c.market_cap||0};
+        if(ID_MAP[c.id].hist){priceHistory[ID_MAP[c.id].hist].push(p);if(priceHistory[ID_MAP[c.id].hist].length>MAX_HIST)priceHistory[ID_MAP[c.id].hist].shift()}
+        if(c.id==='ethereum')ethPrice=p;
+        coinObjs.push({chg:chg});
+      });
+      updateGasOracle(gasPrice);renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
+    })
+    .catch(function(){applyFallback();});
 }
+
 function applyFallback(){
   Object.keys(FALLBACK).forEach(function(id){
     var fb=FALLBACK[id],p=fb.price*(1+(Math.random()-.5)*.001);
@@ -504,6 +514,7 @@ var ECO_TYPES=[
   {k:'nft',label:'NFT',cls:'et-nft',acts:['Mint #4201','Transfer ERC-1155'],addrs:['0xAb5...9B']},
   {k:'alert',label:'⚠ ALERT',cls:'et-alert',acts:['Suspicious approval detected','Anomalous tx pattern'],addrs:['0x???...???']}
 ];
+
 function addEcoItem(){
   var pool=ECO_TYPES.slice(0,-1);
   var tf=Math.random()<.08?ECO_TYPES[ECO_TYPES.length-1]:pool[Math.floor(Math.random()*pool.length)];
@@ -512,21 +523,24 @@ function addEcoItem(){
   if(ecoItems.length>40)ecoItems.pop();
   renderEcoFeed();
 }
+
 function renderEcoFeed(){
   var el=document.getElementById('ecoStream');if(!el)return;
   var filtered=ecoFilter==='all'?ecoItems:ecoItems.filter(function(it){return it.type===ecoFilter});
   var html='';
   filtered.slice(0,12).forEach(function(it){html+='<div class="eco-item'+(it.anomaly?' anomaly':'')+'"><span class="eco-type '+it.cls+'">'+it.label+'</span><span class="eco-addr">'+it.addr+' · '+it.act+'</span><span class="eco-val">'+it.amt+' ETH</span><span class="eco-ts">'+it.ts+'</span></div>'});
-  if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity</div>';
+  if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity yet</div>';
   el.innerHTML=html;
 }
 
-/* FIX: eco filter button cursor hook applied inside event listener */
-document.querySelectorAll('.eco-fbtn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
-    btn.classList.add('active');ecoFilter=btn.dataset.ft;renderEcoFeed();
-  });
+/* BUG FIX #8: eco filter — use event delegation on parent to avoid re-binding issues */
+document.getElementById('ecoFilter').addEventListener('click',function(e){
+  var btn=e.target.closest('.eco-fbtn');
+  if(!btn)return;
+  document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  ecoFilter=btn.dataset.ft;
+  renderEcoFeed();
 });
 
 /* ─── GOVERNANCE ─── */
@@ -536,6 +550,7 @@ var govData=[
   {title:'Protocol Fee Reduction — 0.05%→0.02%',votes:44,quorum:71,status:'Contested',color:'var(--gold)'},
   {title:'Multi-sig Upgrade: 3-of-5 → 4-of-7',votes:55,quorum:70,status:'Active',color:'var(--c)'},
 ];
+
 function renderGov(){
   var el=document.getElementById('govProposals');if(!el)return;
   el.innerHTML=govData.map(function(g){
@@ -544,28 +559,27 @@ function renderGov(){
   }).join('');
 }
 
-/* ─── BUTTONS - FIX: approve restores correctly using data attribute ─── */
+/* ─── BUTTONS ─── */
 document.getElementById('denyBtn').addEventListener('click',function(){
   var b=this;
   b.textContent='Denied ✕';
-  b.style.cssText='color:rgba(255,85,85,.9);border-color:rgba(255,70,70,.28);background:rgba(255,50,50,0.08)';
+  b.style.cssText='flex:1;padding:10px;color:rgba(255,85,85,.9);border:1px solid rgba(255,70,70,.28);background:rgba(255,50,50,0.08);border-radius:2px;font-family:Space Mono,monospace;font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;cursor:none;transition:all .18s';
   toast('Permission denied — transaction cancelled.');
   setTimeout(function(){
     b.textContent='Deny';
-    b.style.cssText='';
+    b.removeAttribute('style');
   },2600);
 });
 
 document.getElementById('approveBtn').addEventListener('click',function(){
   var b=this;
-  var orig=b.textContent;
+  var origText='Approve — Verify Identity';
   b.textContent='Approved ✓';
   b.style.background='var(--green)';
   b.style.color='#000';
   toast('Identity verified ✓ Trust score updated onchain.');
   setTimeout(function(){
-    /* FIX: restore all original styles properly */
-    b.textContent=orig;
+    b.textContent=origText;
     b.style.background='var(--c)';
     b.style.color='#000';
   },2800);
