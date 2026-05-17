@@ -232,7 +232,10 @@ document.addEventListener('DOMContentLoaded',function(){
   initBgCanvas();initCursor();initHexCanvas();initRipple();
   initNav('home');bindWalletModal();bindDiscButton();
   document.getElementById('heroBtn').addEventListener('click',openWallet);
-  applyFallbackPrices();fetchPrices();setInterval(fetchPrices,25000);
+  applyFallbackPrices();
+  initPriceStreams();          // start WebSocket + gas polling
+  fetchPrices();               // immediate REST snapshot
+  setInterval(fetchPrices, 30000); // refresh 24h change every 30s
   setTimeout(function(){triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',3500)},1200);
 });
 </script>
