@@ -374,23 +374,25 @@ function animateBridgeProgress(){
   setTimeout(adv,1200);
 }
 
-// FETCH ETH PRICE — tries CoinGecko, falls back to Binance
-async function fetchEthPrice(){
-  try{
-    var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-    if(!r.ok)throw new Error('CoinGecko '+r.status);
-    var d=await r.json();
-    if(d.ethereum&&d.ethereum.usd){ethPrice=d.ethereum.usd;gasPrice=Math.floor(12+Math.random()*48);updateSwapUI();return;}
-    throw new Error('bad data');
-  }catch(e){
-    // Fallback: Binance public API
-    try{
-      var r2=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
-      if(!r2.ok)throw new Error();
-      var d2=await r2.json();
-      if(d2.price){ethPrice=parseFloat(d2.price);gasPrice=Math.floor(12+Math.random()*48);updateSwapUI()}
-    }catch(e2){updateSwapUI();}
-  }
+// FETCH ETH PRICE — Binance first, CoinGecko fallback
+function fetchEthPrice(){
+  fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT')
+    .then(function(r){ if(!r.ok)throw new Error(r.status); return r.json(); })
+    .then(function(d){
+      if(d.lastPrice){ ethPrice=parseFloat(d.lastPrice); gasPrice=Math.floor(12+Math.random()*48); updateSwapUI(); }
+    })
+    .catch(function(){
+      // Fallback to CoinGecko
+      fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+        .then(function(r){ return r.json(); })
+        .then(function(d){ if(d.ethereum&&d.ethereum.usd){ ethPrice=d.ethereum.usd; gasPrice=Math.floor(12+Math.random()*48); updateSwapUI(); } })
+        .catch(function(){ updateSwapUI(); });
+    });
+  // Gas price from Cloudflare public Ethereum RPC
+  fetch('https://cloudflare-eth.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d.result){var gwei=Math.round(parseInt(d.result,16)/1e9);if(gwei>0&&gwei<50000){gasPrice=gwei;updateSwapUI();}} })
+    .catch(function(){});
 }
 
 // SCROLL REVEAL
