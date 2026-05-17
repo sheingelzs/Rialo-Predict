@@ -27,71 +27,32 @@ var ecosystemState = {
   mood: 'neutral'       // 'bullish' | 'bearish' | 'neutral'
 };
 
-/* ─── PRICE FETCH ────────────────────────────────────────────────── */
-var PRICE_IDS = 'ethereum,bitcoin,solana,matic-network';
-var _priceRetryCount = 0;
+/* ─── PRICE SYSTEM ───────────────────────────────────────────────── */
+/*
+ * Strategy (in order of priority):
+ *  1. Binance WebSocket stream — true realtime push, no key, CORS-free
+ *  2. Binance REST HTTP — snapshot on connect / WS reconnect
+ *  3. CoinGecko REST — fallback if Binance HTTP also fails
+ *  4. Simulated drift — last resort so UI is never frozen on ——
+ */
 
-function applyFallbackPrices() {
-  // Use realistic fallback prices with simulated small changes
-  ethPrice = tokenData.ethereum.price;
-  gasPrice = tokenData.ethereum.price ? 18 : 18;
-  applyPricesToDom();
-  updateEcosystemMood();
-}
+var _ws            = null;   // active WebSocket
+var _wsReady       = false;  // WS connected & receiving data
+var _wsRetries     = 0;
+var _chgSnapshot   = {};     // 24h change % from REST (WS doesn't send it)
 
-// Fetch from Binance public API (no key needed, no CORS issues)
-function _fetchFromBinance() {
-  var symbols = [
-    { symbol: 'ETHUSDT', id: 'ethereum' },
-    { symbol: 'BTCUSDT', id: 'bitcoin' },
-    { symbol: 'SOLUSDT', id: 'solana' },
-    { symbol: 'MATICUSDT', id: 'matic-network' }
-  ];
-  var promises = symbols.map(function(s) {
-    return fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=' + s.symbol)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        return { id: s.id, price: parseFloat(d.lastPrice), chg: parseFloat(d.priceChangePercent) };
-      });
-  });
-  return Promise.all(promises).then(function(results) {
-    var changed = false;
-    results.forEach(function(item) {
-      if (!item || !item.price) return;
-      if (tokenData[item.id] && tokenData[item.id].price !== item.price) changed = true;
-      tokenData[item.id] = { price: item.price, chg: item.chg };
-      if (item.id === 'ethereum') { ethPrice = item.price; gasPrice = Math.floor(12 + Math.random() * 38); }
-    });
-    return changed;
-  });
-}
+// Binance stream symbols → internal id map
+var _BN_MAP = {
+  ethusdt:  'ethereum',
+  btcusdt:  'bitcoin',
+  solusdt:  'solana',
+  maticusdt:'matic-network'
+};
 
-// Fetch from CoinGecko (primary)
-function _fetchFromCoinGecko() {
-  var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + PRICE_IDS
-    + '&vs_currencies=usd&include_24hr_change=true';
-  return fetch(url, { signal: AbortSignal.timeout ? AbortSignal.timeout(6000) : undefined })
-    .then(function(r) {
-      if (!r.ok) throw new Error('CoinGecko ' + r.status);
-      return r.json();
-    })
-    .then(function(d) {
-      var changed = false;
-      Object.keys(d).forEach(function(id) {
-        var p = d[id].usd, c = d[id].usd_24h_change || 0;
-        if (tokenData[id]) {
-          if (tokenData[id].price !== p) changed = true;
-          tokenData[id] = { price: p, chg: c };
-        }
-        if (id === 'ethereum') { ethPrice = p; gasPrice = Math.floor(12 + Math.random() * 38); }
-      });
-      return changed;
-    });
-}
-
+/* ── Shared helpers ── */
 function _pushPriceHistory() {
+  var map = { eth:'ethereum', btc:'bitcoin', sol:'solana' };
   ['eth','btc','sol'].forEach(function(k) {
-    var map = { eth:'ethereum', btc:'bitcoin', sol:'solana' };
     var v = tokenData[map[k]];
     if (!priceHistory[k]) priceHistory[k] = [];
     priceHistory[k].push(v ? v.price : 0);
@@ -99,42 +60,182 @@ function _pushPriceHistory() {
   });
 }
 
-function _onPriceFetchSuccess(changed) {
+function _onPriceUpdate(changed) {
   _pushPriceHistory();
   applyPricesToDom();
   updateEcosystemMood();
   if (changed) triggerFlash(null);
   if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
-  _priceRetryCount = 0;
 }
 
-// Called by pages — tries CoinGecko first, falls back to Binance
+/* ── 1. Binance WebSocket (realtime) ── */
+function _startWebSocket() {
+  if (_ws && (_ws.readyState === 0 || _ws.readyState === 1)) return; // already open/connecting
+
+  var streams = Object.keys(_BN_MAP).map(function(s){ return s + '@miniTicker'; }).join('/');
+  var url = 'wss://stream.binance.com:9443/stream?streams=' + streams;
+
+  try { _ws = new WebSocket(url); } catch(e) { _scheduleWsRetry(); return; }
+
+  _ws.onopen = function() { _wsReady = true; _wsRetries = 0; };
+
+  _ws.onmessage = function(e) {
+    try {
+      var msg = JSON.parse(e.data);
+      var d = msg.data || msg;
+      var sym = (d.s || '').toLowerCase();      // e.g. "ETHUSDT" → "ethusdt"
+      var id  = _BN_MAP[sym];
+      if (!id || !d.c) return;
+
+      var price = parseFloat(d.c);              // current close price
+      var chg   = _chgSnapshot[id] || 0;        // keep last 24h chg from REST snapshot
+      var changed = tokenData[id] && Math.abs(tokenData[id].price - price) > 0.0001;
+
+      tokenData[id] = { price: price, chg: chg };
+      if (id === 'ethereum') ethPrice = price;
+
+      _onPriceUpdate(!!changed);
+    } catch(err) {}
+  };
+
+  _ws.onerror = function() { _wsReady = false; };
+  _ws.onclose = function() { _wsReady = false; _scheduleWsRetry(); };
+}
+
+function _scheduleWsRetry() {
+  _wsRetries++;
+  var delay = Math.min(30000, 2000 * Math.pow(2, _wsRetries - 1)); // 2s, 4s, 8s … 30s
+  setTimeout(_startWebSocket, delay);
+}
+
+/* ── 2. Binance REST snapshot (24h change + initial prices) ── */
+function _fetchBinanceSnapshot() {
+  var symbols = ['ETHUSDT','BTCUSDT','SOLUSDT','MATICUSDT'];
+  var url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=['
+    + symbols.map(function(s){ return '%22' + s + '%22'; }).join(',') + ']';
+
+  return fetch(url)
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(arr) {
+      var changed = false;
+      arr.forEach(function(d) {
+        var id = _BN_MAP[(d.symbol || '').toLowerCase()];
+        if (!id) return;
+        var price = parseFloat(d.lastPrice);
+        var chg   = parseFloat(d.priceChangePercent);
+        _chgSnapshot[id] = chg;
+        if (tokenData[id] && tokenData[id].price !== price) changed = true;
+        tokenData[id] = { price: price, chg: chg };
+        if (id === 'ethereum') { ethPrice = price; gasPrice = Math.floor(12 + Math.random()*38); }
+      });
+      return changed;
+    });
+}
+
+/* ── 3. CoinGecko REST fallback ── */
+function _fetchCoinGecko() {
+  var url = 'https://api.coingecko.com/api/v3/simple/price'
+    + '?ids=ethereum,bitcoin,solana,matic-network'
+    + '&vs_currencies=usd&include_24hr_change=true';
+  return fetch(url, { signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(7000) : undefined })
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(data) {
+      var changed = false;
+      Object.keys(data).forEach(function(id) {
+        var p = data[id].usd, c = data[id].usd_24h_change || 0;
+        if (tokenData[id] && tokenData[id].price !== p) changed = true;
+        tokenData[id] = { price: p, chg: c };
+        if (id === 'ethereum') { ethPrice = p; gasPrice = Math.floor(12 + Math.random()*38); }
+      });
+      return changed;
+    });
+}
+
+/* ── 4. Simulated drift (last resort) ── */
+function _applyDrift() {
+  ['ethereum','bitcoin','solana','matic-network'].forEach(function(id) {
+    if (!tokenData[id] || !tokenData[id].price) return;
+    var drift = (Math.random() - 0.499) * 0.003;
+    tokenData[id] = {
+      price: tokenData[id].price * (1 + drift),
+      chg:   +(tokenData[id].chg + (Math.random()-0.5)*0.04).toFixed(3)
+    };
+  });
+  if (tokenData.ethereum) ethPrice = tokenData.ethereum.price;
+  _pushPriceHistory();
+  applyPricesToDom();
+  if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
+}
+
+/* ── Gas price via public Ethereum RPC ── */
+function _fetchGasPrice() {
+  fetch('https://cloudflare-eth.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ jsonrpc:'2.0', method:'eth_gasPrice', params:[], id:1 })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.result) {
+      var gwei = Math.round(parseInt(d.result, 16) / 1e9);
+      if (gwei > 0 && gwei < 50000) gasPrice = gwei;
+      // Update gas display elements if present
+      ['sw-fee','sw-gas-gwei'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.textContent = gasPrice + ' gwei';
+      });
+    }
+  })
+  .catch(function(){});
+}
+
+/* ── Public API: applyFallbackPrices + fetchPrices ── */
+function applyFallbackPrices() {
+  ethPrice = tokenData.ethereum.price || 3200;
+  gasPrice = 18;
+  applyPricesToDom();
+  updateEcosystemMood();
+}
+
 function fetchPrices() {
-  _fetchFromCoinGecko()
-    .then(function(changed) { _onPriceFetchSuccess(changed); })
+  // If WebSocket is live and sending data, REST poll is just for 24h change refresh
+  if (_wsReady) {
+    _fetchBinanceSnapshot()
+      .then(function(changed) { _onPriceUpdate(changed); })
+      .catch(function(){});
+    return;
+  }
+
+  // Try Binance REST first (fast, CORS-free, no key)
+  _fetchBinanceSnapshot()
+    .then(function(changed) {
+      _onPriceUpdate(changed);
+      // Start WS after first successful REST so we have baseline data
+      _startWebSocket();
+    })
     .catch(function() {
-      // CoinGecko failed (rate limit / CORS / network) — try Binance
-      _fetchFromBinance()
-        .then(function(changed) { _onPriceFetchSuccess(changed); })
+      // Binance failed — try CoinGecko
+      _fetchCoinGecko()
+        .then(function(changed) {
+          _onPriceUpdate(changed);
+          _startWebSocket(); // still try WS
+        })
         .catch(function() {
-          // Both failed — simulate small price movement on existing data so UI doesn't look dead
-          _priceRetryCount++;
-          ['ethereum','bitcoin','solana','matic-network'].forEach(function(id) {
-            if (tokenData[id] && tokenData[id].price) {
-              var drift = (Math.random() - 0.499) * 0.004;
-              tokenData[id] = {
-                price: tokenData[id].price * (1 + drift),
-                chg:   tokenData[id].chg   + (Math.random() - 0.5) * 0.05
-              };
-            }
-          });
-          if (tokenData.ethereum) ethPrice = tokenData.ethereum.price;
-          _pushPriceHistory();
-          applyPricesToDom();
-          if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
+          // Both APIs failed — apply drift so UI isn't frozen
+          _applyDrift();
         });
     });
 }
+
+/* ── Kick off WebSocket + gas polling immediately ── */
+(function _initPriceStreams() {
+  // Small delay so page DOM is ready
+  setTimeout(function() {
+    _startWebSocket();
+    _fetchGasPrice();
+    setInterval(_fetchGasPrice, 15000); // refresh gas every 15s
+  }, 800);
+})();
 
 var ID_MAP = {
   ethereum: { p:['ep','hmp-eth'], c:['ec','hmc-eth'] },
