@@ -7,59 +7,211 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-/* HOME SPECIFIC */
 body{overflow:hidden}
 #app{position:fixed;inset:0;top:var(--nav-h);z-index:10;overflow:hidden}
-#heroC{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;will-change:transform}
-#app::before{content:'';position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 60% at 50% 35%,rgba(0,200,224,0.06) 0%,transparent 60%);pointer-events:none}
-.hero-wrap{position:relative;z-index:2;text-align:center;max-width:720px;padding:0 20px;display:flex;flex-direction:column;align-items:center;animation:ecoAwaken 1.4s cubic-bezier(0.22,1,0.36,1) 0.3s both}
-@keyframes ecoAwaken{0%{opacity:0;transform:translateY(12px) scale(0.99);filter:blur(3px)}60%{filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
-#app{display:flex;align-items:center;justify-content:center}
-.hero-tag{display:inline-flex;align-items:center;gap:7px;margin-bottom:30px;border:1px solid rgba(0,200,224,0.14);background:rgba(0,200,224,0.035);padding:5px 14px;border-radius:1px;transition:all .6s}
-.hero-tag.bullish{border-color:rgba(30,214,112,0.2);background:rgba(30,214,112,0.04)}.hero-tag.alert{border-color:rgba(255,70,70,0.2);background:rgba(255,70,70,0.04)}
-.htdot{width:3px;height:3px;border-radius:50%;background:var(--c);animation:pulse 2s ease infinite}
-.hero-tag span{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c)}
-h1{font-family:'Bebas Neue',cursive;font-size:clamp(58px,10vw,132px);line-height:.86;letter-spacing:.01em;color:#fff;margin-bottom:24px}
-h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:transparent}
-.hero-sub{font-size:13px;color:var(--txt2);max-width:360px;margin:0 auto 40px;line-height:2;letter-spacing:.012em;font-weight:300;text-align:center}
-.hero-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-/* Market strip top-right */
-.hero-mkt{position:fixed;top:calc(var(--nav-h) + 20px);right:24px;z-index:3;display:flex;flex-direction:column;gap:5px}
-.hm-item{display:flex;align-items:center;gap:8px;padding:5px 10px;background:rgba(1,6,18,0.78);border:1px solid rgba(0,200,224,0.10);border-radius:2px;backdrop-filter:blur(20px);transition:all .3s ease}
-.hm-item:hover{border-color:rgba(0,200,224,0.2);transform:translateX(-2px)}
-.hm-item.up{border-color:rgba(30,214,112,0.15)}.hm-item.dn{border-color:rgba(255,70,70,0.15)}
-.hm-sym{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;color:var(--txt2);width:36px}
-.hm-price{font-family:'Space Mono',monospace;font-size:9px;color:#fff;transition:color .3s}
-.hm-price.flash-up{color:var(--green)}.hm-price.flash-dn{color:#ff5555}
-.hm-chg{font-family:'Space Mono',monospace;font-size:7px;width:48px;text-align:right}
-.hm-chg.up{color:var(--green)}.hm-chg.dn{color:#ff5555}
-.hm-spark{width:50px;height:18px}
-/* Ticker */
-.ticker{position:fixed;bottom:0;left:0;right:0;border-top:1px solid rgba(0,200,224,0.08);padding:0;overflow:hidden;background:rgba(1,4,12,0.92);backdrop-filter:blur(24px);z-index:12;transition:border-color .8s;height:30px;display:flex;align-items:center}
-.ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;pointer-events:none}
-.ticker::before{left:0;background:linear-gradient(to right,rgba(1,4,12,0.95),transparent)}
-.ticker::after{right:0;background:linear-gradient(to left,rgba(1,4,12,0.95),transparent)}
-.ticker.bullish{border-top-color:rgba(30,214,112,0.18)}.ticker.alert{border-top-color:rgba(255,70,70,0.18)}
-.tick-inner{display:flex;animation:tickroll 60s linear infinite;width:max-content;white-space:nowrap;align-items:center}
+
+/* ── GRADIENT MESH BACKGROUND ── */
+#meshBg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%,rgba(0,180,255,0.055) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 70%,rgba(120,80,255,0.04) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 40% at 60% 20%,rgba(0,212,232,0.04) 0%,transparent 50%),
+    radial-gradient(ellipse 70% 40% at 50% 90%,rgba(0,100,180,0.03) 0%,transparent 60%);
+  animation:meshShift 12s ease-in-out infinite alternate;
+}
+@keyframes meshShift{
+  0%{background-position:0% 0%,100% 100%,50% 0%,50% 100%}
+  100%{background-position:10% 15%,85% 80%,60% 10%,40% 90%}
+}
+
+/* ── PROTOCOL LINES ── */
+#protoLines{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.proto-line{
+  position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,212,232,0.08),rgba(0,212,232,0.04),transparent);
+  animation:lineSweep var(--dur,8s) linear var(--delay,0s) infinite;
+}
+@keyframes lineSweep{0%{transform:translateY(-100vh)}100%{transform:translateY(100vh)}}
+
+/* ── 3D ORB ── */
+.hero-orb-wrap{
+  position:absolute;right:12%;top:50%;transform:translateY(-50%);
+  z-index:2;pointer-events:none;
+  animation:orbFloat 6s ease-in-out infinite;
+}
+@keyframes orbFloat{0%,100%{transform:translateY(-50%) translateX(0)}50%{transform:translateY(calc(-50% - 18px)) translateX(6px)}}
+.hero-orb{
+  position:relative;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(0,230,255,0.18),rgba(0,100,200,0.06) 45%,rgba(80,0,200,0.04) 80%,transparent);
+  border:1px solid rgba(0,212,232,0.18);
+  box-shadow:
+    0 0 80px rgba(0,212,232,0.12),
+    0 0 160px rgba(0,212,232,0.05),
+    inset 0 0 60px rgba(0,212,232,0.05);
+  animation:orbPulse 4s ease-in-out infinite alternate;
+}
+@keyframes orbPulse{0%{box-shadow:0 0 80px rgba(0,212,232,0.12),0 0 160px rgba(0,212,232,0.05),inset 0 0 60px rgba(0,212,232,0.05)}100%{box-shadow:0 0 120px rgba(0,212,232,0.2),0 0 240px rgba(0,212,232,0.08),inset 0 0 80px rgba(0,212,232,0.08)}}
+.orb-ring{
+  position:absolute;border-radius:50%;border:1px solid;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.orb-ring:nth-child(1){width:330px;height:330px;border-color:rgba(0,212,232,0.09);animation:orbRing 8s linear infinite}
+.orb-ring:nth-child(2){width:400px;height:400px;border-color:rgba(0,212,232,0.05);animation:orbRing 14s linear infinite reverse}
+.orb-ring:nth-child(3){width:480px;height:480px;border-color:rgba(120,80,255,0.04);animation:orbRing 20s linear infinite}
+@keyframes orbRing{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.orb-dot{
+  position:absolute;width:6px;height:6px;border-radius:50%;background:var(--c);
+  box-shadow:0 0 14px var(--c);
+  top:50%;left:50%;margin:-3px;
+}
+.orb-dot:nth-child(4){animation:orbitA 6s linear infinite}
+.orb-dot:nth-child(5){animation:orbitB 9s linear infinite;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.orb-dot:nth-child(6){animation:orbitC 13s linear infinite;width:4px;height:4px;margin:-2px;background:rgba(180,100,255,0.9);box-shadow:0 0 10px rgba(180,100,255,0.8)}
+@keyframes orbitA{to{transform:rotate(360deg) translateX(140px) rotate(-360deg)}}
+@keyframes orbitB{to{transform:rotate(-360deg) translateX(185px) rotate(360deg)}}
+@keyframes orbitC{to{transform:rotate(360deg) translateX(230px) rotate(-360deg)}}
+.orb-core{
+  position:absolute;width:90px;height:90px;border-radius:50%;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 40% 40%,rgba(0,230,255,0.35),rgba(0,150,200,0.15),transparent);
+  border:1px solid rgba(0,212,232,0.4);
+  box-shadow:0 0 40px rgba(0,212,232,0.3),inset 0 0 20px rgba(0,212,232,0.15);
+  animation:coreBreath 3s ease-in-out infinite alternate;
+}
+@keyframes coreBreath{0%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(1.06)}}
+
+/* ── HERO CONTENT ── */
+.hero-wrap{
+  position:relative;z-index:3;
+  max-width:620px;padding:0 0 0 8%;
+  display:flex;flex-direction:column;align-items:flex-start;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) 0.4s both;
+  height:100%;justify-content:center;
+}
+@keyframes heroAwaken{0%{opacity:0;transform:translateX(-24px);filter:blur(6px)}100%{opacity:1;transform:none;filter:blur(0)}}
+
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:36px;
+  border:1px solid rgba(0,212,232,0.18);background:rgba(0,212,232,0.04);
+  padding:6px 16px;border-radius:2px;
+  backdrop-filter:blur(12px);
+  transition:all .4s var(--ease);
+}
+.hero-tag.bullish{border-color:rgba(0,232,122,0.24);background:rgba(0,232,122,0.05)}
+.hero-tag.alert{border-color:rgba(255,60,60,0.24);background:rgba(255,60,60,0.05)}
+.htdot{width:4px;height:4px;border-radius:50%;background:var(--c);animation:pulse 2.2s ease infinite}
+.hero-tag span{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--txt2);margin-bottom:16px;display:flex;align-items:center;gap:10px;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) .5s both;
+}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:linear-gradient(to right,transparent,var(--c))}
+
+h1{
+  font-family:'Bebas Neue',cursive;
+  font-size:clamp(72px,10.5vw,148px);
+  line-height:.82;letter-spacing:.01em;color:#fff;
+  margin-bottom:28px;
+  text-shadow:0 0 80px rgba(0,212,232,0.08);
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) .6s both;
+}
+h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,212,232,0.55);color:transparent}
+h1 strong{
+  font-style:normal;color:transparent;
+  background:linear-gradient(135deg,rgba(0,220,255,0.95),rgba(0,180,220,0.7),rgba(120,80,255,0.8));
+  -webkit-background-clip:text;background-clip:text;
+}
+
+.hero-sub{
+  font-size:15px;color:var(--txt2);max-width:380px;
+  margin:0 0 48px;line-height:1.9;letter-spacing:.01em;font-weight:300;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) .7s both;
+}
+
+.hero-btns{
+  display:flex;gap:10px;flex-wrap:wrap;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) .85s both;
+}
+.hero-btns .btn{padding:13px 28px;font-size:8.5px}
+.hero-btns .btn-ghost{padding:13px 22px;font-size:8.5px}
+
+/* ── SCROLL HINT ── */
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;
+  opacity:0;animation:fadeUp 1s ease 2s both;
+}
+@keyframes fadeUp{to{opacity:.5}}
+.hero-scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--c),transparent);animation:scrollLine 2s ease infinite}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.hero-scroll span{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2)}
+
+/* ── MARKET STRIP ── */
+.hero-mkt{
+  position:fixed;top:calc(var(--nav-h) + 20px);right:26px;z-index:11;
+  display:flex;flex-direction:column;gap:6px;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) 1.2s both;
+}
+.hm-item{
+  display:flex;align-items:center;gap:9px;padding:6px 12px;
+  background:rgba(0,4,14,0.82);
+  border:1px solid rgba(0,212,232,0.10);
+  border-radius:2px;backdrop-filter:blur(24px);
+  transition:all .32s var(--ease);
+}
+.hm-item:hover{border-color:rgba(0,212,232,0.22);transform:translateX(-3px)}
+.hm-item.up{border-color:rgba(0,232,122,0.15)}.hm-item.dn{border-color:rgba(255,60,60,0.15)}
+.hm-sym{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.12em;color:var(--txt2);width:38px}
+.hm-price{font-family:'Space Mono',monospace;font-size:9.5px;color:#fff;transition:color .3s}
+.hm-price.flash-up{color:var(--green)}.hm-price.flash-dn{color:#ff4444}
+.hm-chg{font-family:'Space Mono',monospace;font-size:7px;width:50px;text-align:right}
+.hm-chg.up{color:var(--green)}.hm-chg.dn{color:#ff4444}
+.hm-spark{width:54px;height:20px}
+
+/* ── TICKER ── */
+.ticker{
+  position:fixed;bottom:0;left:0;right:0;border-top:1px solid rgba(0,212,232,0.09);
+  overflow:hidden;background:rgba(0,3,10,0.94);backdrop-filter:blur(28px);
+  z-index:12;height:30px;display:flex;align-items:center;
+  transition:border-color .8s;
+}
+.ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.ticker::before{left:0;background:linear-gradient(to right,rgba(0,3,10,0.96),transparent)}
+.ticker::after{right:0;background:linear-gradient(to left,rgba(0,3,10,0.96),transparent)}
+.ticker.bullish{border-top-color:rgba(0,232,122,0.18)}.ticker.alert{border-top-color:rgba(255,60,60,0.18)}
+.tick-inner{display:flex;animation:tickroll 65s linear infinite;width:max-content;white-space:nowrap;align-items:center}
 @keyframes tickroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .tick-inner:hover{animation-play-state:paused}
-.ti{display:inline-flex;align-items:center;gap:5px;padding:0 16px;font-family:'Space Mono',monospace;font-size:7.5px;border-right:1px solid rgba(0,200,224,0.06);height:30px;transition:background .2s}
-.ti:hover{background:rgba(0,200,224,0.04)}
-.ti-s{color:rgba(200,220,235,0.9);font-weight:700;letter-spacing:.05em}
-.ti-p{color:rgba(200,220,235,0.75);min-width:52px;text-align:right}
-.ti-chg{font-size:6.5px;min-width:44px;text-align:right}
-.ti-u{color:#1ed670}.ti-d{color:#ff5555}
-.tick-live{display:inline-flex;align-items:center;gap:5px;padding:0 14px;font-family:'Space Mono',monospace;font-size:6.5px;color:var(--green);border-right:1px solid rgba(0,200,224,0.06);text-transform:uppercase;letter-spacing:.12em;height:30px}
-.tl-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.2s ease infinite}
-.ti-gas{display:inline-flex;align-items:center;gap:5px;padding:0 16px;font-family:'Space Mono',monospace;font-size:7.5px;border-right:1px solid rgba(0,200,224,0.06);height:30px;color:var(--txt2)}
-.ti-gas-ico{font-size:8px}.ti-gas-val{color:#f0a946}
-@media(max-width:700px){.hero-mkt{display:none}}
-@media(max-width:480px){.hero-btns{flex-direction:column;align-items:center}.btn,.btn-ghost{width:100%;max-width:280px;text-align:center;justify-content:center}}
+.ti{display:inline-flex;align-items:center;gap:5px;padding:0 17px;font-family:'Space Mono',monospace;font-size:7.5px;border-right:1px solid rgba(0,212,232,0.06);height:30px;transition:background .2s}
+.ti:hover{background:rgba(0,212,232,0.04)}
+.ti-s{color:rgba(200,220,235,0.9);font-weight:700;letter-spacing:.06em}
+.ti-p{color:rgba(200,220,235,0.78);min-width:54px;text-align:right}
+.ti-chg{font-size:6.5px;min-width:46px;text-align:right}
+.ti-u{color:#00e87a}.ti-d{color:#ff4444}
+.tick-live{display:inline-flex;align-items:center;gap:5px;padding:0 15px;font-family:'Space Mono',monospace;font-size:6.5px;color:var(--green);border-right:1px solid rgba(0,212,232,0.06);text-transform:uppercase;letter-spacing:.13em;height:30px}
+.tl-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 1.2s ease infinite}
+.ti-gas{display:inline-flex;align-items:center;gap:5px;padding:0 17px;font-family:'Space Mono',monospace;font-size:7.5px;border-right:1px solid rgba(0,212,232,0.06);height:30px;color:var(--txt2)}
+.ti-gas-val{color:#f0a946}
+
+/* ── STATS BAR ── */
+.hero-stats{
+  display:flex;gap:36px;margin-top:52px;
+  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) 1s both;
+}
+.hs-item{display:flex;flex-direction:column;gap:3px;border-left:1px solid rgba(0,212,232,0.15);padding-left:16px}
+.hs-val{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.03em;color:#fff;line-height:1}
+.hs-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2)}
+
+@media(max-width:900px){.hero-orb-wrap{display:none}.hero-wrap{padding:0 24px;align-items:center;text-align:center}.hero-eyebrow::before{display:none}h1{font-size:clamp(64px,14vw,100px)}.hero-stats{justify-content:center}}
+@media(max-width:700px){.hero-mkt{display:none}.hero-btns{flex-direction:column;align-items:stretch}.hero-btns .btn,.hero-btns .btn-ghost{text-align:center;justify-content:center}}
 </style>
 </head>
 <body>
 
-<!-- NAV + OVERLAYS -->
+<!-- shared -->
 <div id="CUR"></div><div id="CUR2"></div><div id="flash"></div><div id="atmo"></div>
 <canvas id="BG"></canvas><div class="vig"></div>
 <div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
@@ -82,30 +234,60 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
   </div>
 </nav>
 
-<!-- HOME CONTENT -->
 <div id="app">
   <canvas id="heroC"></canvas>
+  <div id="meshBg"></div>
+  <div id="protoLines"></div>
+
+  <!-- Market strip -->
   <div class="hero-mkt" id="heroMkt">
     <div class="hm-item" id="hm-eth"><span class="hm-sym">ETH</span><span class="hm-price" id="hmp-eth">—</span><span class="hm-chg" id="hmc-eth">—</span><canvas class="hm-spark" id="hms-eth"></canvas></div>
     <div class="hm-item" id="hm-btc"><span class="hm-sym">BTC</span><span class="hm-price" id="hmp-btc">—</span><span class="hm-chg" id="hmc-btc">—</span><canvas class="hm-spark" id="hms-btc"></canvas></div>
     <div class="hm-item" id="hm-sol"><span class="hm-sym">SOL</span><span class="hm-price" id="hmp-sol">—</span><span class="hm-chg" id="hmc-sol">—</span><canvas class="hm-spark" id="hms-sol"></canvas></div>
   </div>
-  <div class="hero-wrap">
-    <div class="hero-tag" id="heroTag"><span class="htdot"></span><span id="heroTagTxt">Trust Layer Protocol v1.0 — Live</span></div>
-    <h1><em>Trust</em><br>should be<br>visible.</h1>
-    <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
-    <div class="hero-btns">
-      <button class="btn" id="heroBtn"><span>Connect Wallet</span></button>
-      <a href="protocol.html" class="btn-ghost">Explore Protocol →</a>
-      <a href="infrastructure.html" class="btn-ghost alt">Swap · Bridge · Stake →</a>
+
+  <!-- 3D Orb -->
+  <div class="hero-orb-wrap">
+    <div class="hero-orb">
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-ring"></div>
+      <div class="orb-dot"></div>
+      <div class="orb-dot"></div>
+      <div class="orb-dot"></div>
+      <div class="orb-core"></div>
     </div>
+  </div>
+
+  <!-- Hero content -->
+  <div style="position:relative;z-index:3;height:100%;display:flex;align-items:center">
+    <div class="hero-wrap">
+      <div class="hero-eyebrow">Trust Layer Protocol v1.0</div>
+      <div class="hero-tag" id="heroTag"><span class="htdot"></span><span id="heroTagTxt">Live on Ethereum Mainnet</span></div>
+      <h1><strong>Trust</strong><br><em>should be</em><br>visible.</h1>
+      <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
+      <div class="hero-btns">
+        <button class="btn" id="heroBtn"><span>Enter the Trust Layer →</span></button>
+        <a href="protocol.html" class="btn-ghost">Explore Protocol</a>
+        <a href="infrastructure.html" class="btn-ghost alt">Swap · Bridge · Stake</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hs-item"><div class="hs-val" id="hsStat1">50+</div><div class="hs-lbl">Chains monitored</div></div>
+        <div class="hs-item"><div class="hs-val" id="hsStat2">872K</div><div class="hs-lbl">Active identities</div></div>
+        <div class="hs-item"><div class="hs-val" style="color:var(--green)">99.97%</div><div class="hs-lbl">Uptime</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
   </div>
 </div>
 
 <!-- TICKER -->
 <div class="ticker" id="tickerEl">
   <div class="tick-inner" id="tickInner">
-    <!-- Set A -->
     <div class="tick-live"><div class="tl-dot"></div>Live</div>
     <div class="ti"><span class="ti-s">ETH</span><span class="ti-p" id="ep">—</span><span id="ec" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">BTC</span><span class="ti-p" id="bp">—</span><span id="bc" class="ti-chg ti-u">—</span></div>
@@ -115,8 +297,8 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
     <div class="ti"><span class="ti-s">AVAX</span><span class="ti-p" id="avp">—</span><span id="avc" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">LINK</span><span class="ti-p" id="lp">—</span><span id="lc" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">UNI</span><span class="ti-p" id="up">—</span><span id="uc" class="ti-chg ti-u">—</span></div>
-    <div class="ti-gas"><span class="ti-gas-ico">⛽</span><span class="ti-s">GAS</span><span class="ti-p" id="gasp">—</span><span style="color:var(--txt2);font-size:6.5px">GWEI</span></div>
-    <!-- Set B (duplicate for seamless loop) -->
+    <div class="ti-gas"><span class="ti-s" style="margin-right:3px">⛽</span><span class="ti-p" id="gasp">—</span><span style="color:var(--txt2);font-size:6.5px;margin-left:2px">GWEI</span></div>
+    <!-- set B duplicate -->
     <div class="tick-live"><div class="tl-dot"></div>Live</div>
     <div class="ti"><span class="ti-s">ETH</span><span class="ti-p" id="ep2">—</span><span id="ec2" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">BTC</span><span class="ti-p" id="bp2">—</span><span id="bc2" class="ti-chg ti-u">—</span></div>
@@ -126,117 +308,141 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
     <div class="ti"><span class="ti-s">AVAX</span><span class="ti-p" id="avp2">—</span><span id="avc2" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">LINK</span><span class="ti-p" id="lp2">—</span><span id="lc2" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">UNI</span><span class="ti-p" id="up2">—</span><span id="uc2" class="ti-chg ti-u">—</span></div>
-    <div class="ti-gas"><span class="ti-gas-ico">⛽</span><span class="ti-s">GAS</span><span class="ti-p" id="gasp2">—</span><span style="color:var(--txt2);font-size:6.5px">GWEI</span></div>
+    <div class="ti-gas"><span class="ti-s" style="margin-right:3px">⛽</span><span class="ti-p" id="gasp2">—</span><span style="color:var(--txt2);font-size:6.5px;margin-left:2px">GWEI</span></div>
   </div>
 </div>
 
-<!-- WALLET MODAL -->
-<div id="wovl">
-  <div class="wm"><div class="wm-bar"></div>
-  <div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div><button class="wm-x" id="wmClose">✕</button></div>
-  <div class="wm-body"><div class="wm-lbl">Available Providers</div>
-    <div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div>
-    <div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full experience — no wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div>
-    <div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div>
-  </div></div>
-</div>
-<!-- SCAN OVERLAY -->
-<div id="sovl">
-  <canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
-  <div class="scan-inner">
-    <div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div>
-    <div class="scan-title" id="scanTitle">Identity Analysis</div>
-    <div class="scan-phase" id="scanPhase">Initializing trust layer...</div>
-    <div class="scan-addr" id="scanAddr"></div>
-    <div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div>
-    <div class="sp-pct" id="spPct">0%</div>
-    <div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div>
-    <button class="scan-cta" id="scanCta">View Identity Profile →</button>
-  </div>
-</div>
-<div id="sbar"><div class="sb">
-  <div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div>
-  <div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
-  <div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div>
-  <div class="sb-market" id="sbMarket"></div>
-  <button class="sb-disc" id="discBtn">Disconnect</button>
-</div></div>
+<!-- wallet / scan / status -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full experience — no wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div></div></div></div>
+<div id="sovl"><canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
+<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
 <script src="shared.js"></script>
 <script>
-// ═══ HERO CANVAS ═══════════════════════════════════════
-var hC=document.getElementById('heroC'),hX=hC.getContext('2d');
-function rH(){hC.width=hC.offsetWidth||innerWidth;hC.height=hC.offsetHeight||(innerHeight-54)}
-rH();window.addEventListener('resize',rH);
-var HN=[];
-for(var i=0;i<42;i++){var a=(i/42)*Math.PI*2,r2=70+Math.random()*200;HN.push({x:0,y:0,ox:Math.cos(a)*r2,oy:Math.sin(a)*r2,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*2.8+.8,p:Math.random()*Math.PI*2,gold:Math.random()<.1,init:false})}
-HN.push({x:0,y:0,r:10,vx:0,vy:0,p:0,center:true,init:true});
-function drawHero(t){
-  if(!hC.offsetWidth||!hC.offsetHeight)return;
-  hX.clearRect(0,0,hC.width,hC.height);
-  var cx=hC.width/2,cy=hC.height/2,ef=1+ecosystemState.energyLevel/300;
-  var main=HN[HN.length-1];main.x=cx;main.y=cy;
-  HN.forEach(function(n){if(!n.center){if(!n.init){n.x=cx+n.ox;n.y=cy+n.oy;n.init=true}n.x+=n.vx*ef;n.y+=n.vy*ef;n.p+=.01;n.vx+=(cx-n.x)*.00002;n.vy+=(cy-n.y)*.00002;if(n.x<cx-330)n.vx+=.01;if(n.x>cx+330)n.vx-=.01;if(n.y<cy-250)n.vy+=.01;if(n.y>cy+250)n.vy-=.01}});
-  HN.forEach(function(n){if(n.center)return;var dx=cx-n.x,dy=cy-n.y,d=Math.hypot(dx,dy);if(d<270){var g=hX.createLinearGradient(n.x,n.y,cx,cy);g.addColorStop(0,'rgba(0,200,224,0)');g.addColorStop(1,n.gold?'rgba(196,154,42,.12)':'rgba(0,200,224,.10)');hX.beginPath();hX.strokeStyle=g;hX.lineWidth=.5;hX.moveTo(n.x,n.y);hX.lineTo(cx,cy);hX.stroke()}});
-  HN.forEach(function(n){if(n.center){var ta=t*.0004;[14,25,40].forEach(function(r,i){hX.beginPath();hX.arc(cx,cy,r+Math.sin(ta+i*.7)*1.5,0,Math.PI*2);hX.strokeStyle='rgba(0,200,224,'+(0.10-i*.024)+')';hX.lineWidth=.7;hX.stroke()});hX.beginPath();hX.arc(cx,cy,9,0,Math.PI*2);hX.fillStyle='rgba(0,200,224,.88)';hX.fill();}else{var pa=Math.sin(n.p)*.5+.5;hX.beginPath();hX.arc(n.x,n.y,n.r,0,Math.PI*2);hX.fillStyle=n.gold?'rgba(196,154,42,'+(0.26+pa*.48)+')':'rgba(0,200,224,'+(0.13+pa*.48)+')';hX.fill()}});
+/* ── PROTO LINES ── */
+(function(){
+  var wrap = document.getElementById('protoLines');
+  if (!wrap) return;
+  for (var i = 0; i < 5; i++) {
+    var line = document.createElement('div');
+    line.className = 'proto-line';
+    var dur = (8 + Math.random() * 12).toFixed(1) + 's';
+    var delay = (-Math.random() * 20).toFixed(1) + 's';
+    line.style.cssText = '--dur:' + dur + ';--delay:' + delay;
+    wrap.appendChild(line);
+  }
+})();
+
+/* ── HERO CANVAS ── */
+var hC = document.getElementById('heroC'), hX = hC.getContext('2d');
+function rH(){ hC.width = hC.offsetWidth || innerWidth; hC.height = hC.offsetHeight || (innerHeight - 58); }
+rH(); window.addEventListener('resize', rH);
+var HN = [];
+for (var i = 0; i < 44; i++) {
+  var a = (i/44)*Math.PI*2, r2 = 80 + Math.random()*220;
+  HN.push({ x:0, y:0, ox:Math.cos(a)*r2, oy:Math.sin(a)*r2, vx:(Math.random()-.5)*.16, vy:(Math.random()-.5)*.16, r:Math.random()*2.6+.8, p:Math.random()*Math.PI*2, gold:Math.random()<.09, init:false });
+}
+HN.push({ x:0, y:0, r:11, vx:0, vy:0, p:0, center:true, init:true });
+function drawHero(t) {
+  if (!hC.offsetWidth || !hC.offsetHeight) return;
+  hX.clearRect(0, 0, hC.width, hC.height);
+  var cx = hC.width/2, cy = hC.height/2, ef = 1 + ecosystemState.energyLevel/300;
+  var main = HN[HN.length-1]; main.x = cx; main.y = cy;
+  HN.forEach(function(n){
+    if (!n.center){
+      if (!n.init){ n.x = cx+n.ox; n.y = cy+n.oy; n.init = true; }
+      n.x += n.vx*ef; n.y += n.vy*ef; n.p += .009;
+      n.vx += (cx-n.x)*.000018; n.vy += (cy-n.y)*.000018;
+      if(n.x<cx-350)n.vx+=.009; if(n.x>cx+350)n.vx-=.009;
+      if(n.y<cy-280)n.vy+=.009; if(n.y>cy+280)n.vy-=.009;
+    }
+  });
+  HN.forEach(function(n){
+    if(n.center) return;
+    var dx=cx-n.x, dy=cy-n.y, d=Math.hypot(dx,dy);
+    if (d<290){
+      var g=hX.createLinearGradient(n.x,n.y,cx,cy);
+      g.addColorStop(0,'rgba(0,212,232,0)');
+      g.addColorStop(1,n.gold?'rgba(212,168,50,.11)':'rgba(0,212,232,.09)');
+      hX.beginPath(); hX.strokeStyle=g; hX.lineWidth=.5;
+      hX.moveTo(n.x,n.y); hX.lineTo(cx,cy); hX.stroke();
+    }
+  });
+  HN.forEach(function(n){
+    if(n.center){
+      var ta=t*.0004;
+      [16,28,44].forEach(function(r,i){
+        hX.beginPath(); hX.arc(cx,cy,r+Math.sin(ta+i*.7)*1.8,0,Math.PI*2);
+        hX.strokeStyle='rgba(0,212,232,'+(0.11-i*.026)+')'; hX.lineWidth=.8; hX.stroke();
+      });
+      hX.beginPath(); hX.arc(cx,cy,10,0,Math.PI*2);
+      hX.fillStyle='rgba(0,212,232,.92)';
+      hX.shadowBlur=24; hX.shadowColor='rgba(0,212,232,0.7)';
+      hX.fill(); hX.shadowBlur=0;
+    } else {
+      var pa=Math.sin(n.p)*.5+.5;
+      hX.beginPath(); hX.arc(n.x,n.y,n.r,0,Math.PI*2);
+      hX.fillStyle = n.gold ? 'rgba(212,168,50,'+(0.22+pa*.5)+')' : 'rgba(0,212,232,'+(0.12+pa*.46)+')';
+      hX.fill();
+    }
+  });
 }
 
-// Hero market sparklines
-function drawHeroSpark(id,data,up){
-  var c=document.getElementById('hms-'+id);if(!c||!data||data.length<2)return;
-  c.width=50;c.height=18;var ctx=c.getContext('2d');ctx.clearRect(0,0,50,18);
-  var mn=Math.min.apply(null,data),mx=Math.max.apply(null,data),rng=mx-mn||1;
-  ctx.beginPath();data.forEach(function(v,i){var x=i/(data.length-1)*48,y=(1-(v-mn)/rng)*14+2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
-  ctx.strokeStyle=up?'rgba(30,214,112,0.9)':'rgba(255,86,86,0.9)';ctx.lineWidth=1.2;ctx.stroke();
+/* ── HERO SPARKLINES ── */
+function drawHeroSpark(id, data, up){
+  var c = document.getElementById('hms-'+id); if(!c||!data||data.length<2) return;
+  c.width=54; c.height=20; var ctx=c.getContext('2d'); ctx.clearRect(0,0,54,20);
+  var mn=Math.min.apply(null,data), mx=Math.max.apply(null,data), rng=mx-mn||1;
+  ctx.beginPath();
+  data.forEach(function(v,i){ var x=i/(data.length-1)*52, y=(1-(v-mn)/rng)*15+2; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.strokeStyle = up ? 'rgba(0,232,122,0.9)' : 'rgba(255,68,68,0.9)';
+  ctx.lineWidth=1.3; ctx.stroke();
 }
 function updateHeroStrip(){
   var map={ethereum:'eth',bitcoin:'btc',solana:'sol'};
   Object.keys(map).forEach(function(id){
-    var key=map[id],d=tokenData[id];if(!d)return;
-    var pe=document.getElementById('hmp-'+key),ce=document.getElementById('hmc-'+key),ie=document.getElementById('hm-'+key);
-    var ch=d.chg||0,p=d.price,up=ch>=0;
-    if(pe){var old=pe.textContent;pe.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2));if(old!==pe.textContent){pe.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){pe.classList.remove('flash-up','flash-dn')},600)}}
-    if(ce){ce.textContent=(up?'+':'')+ch.toFixed(2)+'%';ce.className='hm-chg '+(up?'up':'dn')}
-    if(ie)ie.className='hm-item '+(up?'up':'dn');
-    drawHeroSpark(key,priceHistory[key]||[],up);
+    var key=map[id], d=tokenData[id]; if(!d) return;
+    var pe=document.getElementById('hmp-'+key), ce=document.getElementById('hmc-'+key), ie=document.getElementById('hm-'+key);
+    var ch=d.chg||0, p=d.price, up=ch>=0;
+    if(pe){ var old=pe.textContent; pe.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2)); if(old!==pe.textContent){pe.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){pe.classList.remove('flash-up','flash-dn')},600)}}
+    if(ce){ ce.textContent=(up?'+':'')+ch.toFixed(2)+'%'; ce.className='hm-chg '+(up?'up':'dn'); }
+    if(ie) ie.className='hm-item '+(up?'up':'dn');
+    drawHeroSpark(key, priceHistory[key]||[], up);
   });
 }
-
-// Ticker update
-function updateTicker(){
-  var ti=document.getElementById('tickInner');if(!ti)return;
-  // Already handled by applyPricesToDom via ID_MAP tick IDs
+function onPricesUpdated(data){ updateHeroStrip(); }
+function onMarketUpdate(coins, mood){
+  var ht=document.getElementById('heroTag'), htt=document.getElementById('heroTagTxt'), tick=document.getElementById('tickerEl');
+  if(ht&&htt){ ht.className='hero-tag '+(mood==='neutral'?'':mood); htt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Live on Ethereum Mainnet'; }
+  if(tick){ tick.className='ticker'; if(mood==='bullish')tick.classList.add('bullish'); else if(mood==='bearish')tick.classList.add('alert'); }
 }
 
-function onPricesUpdated(data){updateHeroStrip()}
-function onMarketUpdate(coins,mood){
-  var ht=document.getElementById('heroTag'),htt=document.getElementById('heroTagTxt'),tick=document.getElementById('tickerEl');
-  if(ht&&htt){ht.className='hero-tag '+(mood==='neutral'?'':mood);htt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Trust Layer Protocol v1.0 — Live'}
-  if(tick){tick.className='ticker';if(mood==='bullish')tick.classList.add('bullish');else if(mood==='bearish')tick.classList.add('alert')}
-}
-
-// MAIN LOOP
+/* ── RENDER LOOP ── */
 var lastF=0;
 function loop(t){
-  if(t-lastF>=16){lastF=t;drawBg();drawHero(t);drawHex(t);if(scActive){var scC2=document.getElementById('sC'),scX2=scC2?scC2.getContext('2d'):null;if(scX2){scC2.width=scC2.offsetWidth||innerWidth;scC2.height=scC2.offsetHeight||innerHeight;/* simple scan bg */var W=scC2.width,H=scC2.height;scX2.clearRect(0,0,W,H);var cx=W/2,cy=H/2;for(var k=0;k<3;k++){var rr=((t*.00025+k*.33)%1)*(Math.max(W,H)*.6);scX2.beginPath();scX2.arc(cx,cy,rr,0,Math.PI*2);scX2.strokeStyle='rgba(0,200,224,'+(1-rr/(Math.max(W,H)*.6))*.13+')';scX2.lineWidth=.6;scX2.stroke()}}}}
+  if(t-lastF>=16){ lastF=t; drawBg(); drawHero(t); drawHex(t); }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
-// BOOT
-document.addEventListener('DOMContentLoaded',function(){
-  initBgCanvas();initCursor();initHexCanvas();initRipple();
-  initNav('home');bindWalletModal();bindDiscButton();
-  document.getElementById('heroBtn').addEventListener('click',openWallet);
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', function(){
+  initLoader();
+  initBgCanvas();
+  initGridPattern();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initNav('home');
+  bindWalletModal();
+  bindDiscButton();
   applyFallbackPrices();
-  initPriceStreams();          // start WebSocket + gas polling
-  fetchPrices();               // immediate REST snapshot
-  setInterval(fetchPrices, 30000); // refresh 24h change every 30s
-  setTimeout(function(){triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',3500)},1200);
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+  document.getElementById('heroBtn').addEventListener('click', openWallet);
+  setTimeout(function(){ triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',4000); }, 1500);
 });
 </script>
 </body>
