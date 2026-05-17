@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RIALO — Developer Infrastructure</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#010308;--c:#00c8e0;--c2:#00a8bd;--c-dim:rgba(0,200,224,0.10);--c-glow:rgba(0,200,224,0.28);
+  --gold:#c49a2a;--green:#1ed670;--red:rgba(255,70,70,0.9);--blue:#6ba3ff;
+  --txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);--txt3:rgba(60,100,130,0.45);
+  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);--border3:rgba(0,200,224,0.32);
+  --glass:rgba(4,10,20,0.80);--glass2:rgba(2,7,16,0.92);
+  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
+}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+body{cursor:none;overflow-x:hidden}
+@media(hover:none),(pointer:coarse){body{cursor:auto}}
+
+/* ── CURSOR ── */
+#CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
+#CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 16px var(--c),0 0 32px rgba(0,200,224,0.2);transition:width .1s,height .1s}
+#CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
+body.chl #CUR{width:8px;height:8px}body.chl #CUR2{width:46px;height:46px;border-color:rgba(0,200,224,0.45)}
+body.cclick #CUR{width:3px;height:3px}body.cclick #CUR2{width:14px;height:14px}
+@media(hover:none){#CUR,#CUR2{display:none}}
+
+/* ── BG ── */
+#BG{position:fixed;inset:0;z-index:0;pointer-events:none}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 95% 95% at 50% 50%,transparent 15%,rgba(1,3,8,0.4) 50%,rgba(1,3,8,0.92) 100%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(0,200,224,0.10);background:rgba(1,4,12,0.92);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);box-shadow:0 1px 0 rgba(0,200,224,0.05),0 8px 32px rgba(0,0,0,0.6)}
+.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.38em;color:#fff;display:flex;align-items:center;gap:10px;cursor:none;user-select:none;text-shadow:0 0 30px rgba(0,200,224,0.15)}
+.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c),0 0 28px rgba(0,200,224,0.28);animation:pulse 2.6s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
+.nav-back{display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);text-decoration:none;cursor:none;padding:8px 14px;border:1px solid var(--border);border-radius:2px;transition:all .22s;background:rgba(1,6,18,0.6)}
+.nav-back:hover{color:var(--c);border-color:var(--border2);background:rgba(0,200,224,0.04)}
+.nav-tag{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.12em;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.12);border-radius:1px;background:rgba(0,200,224,0.04)}
+
+/* ── CONTENT ── */
+#app{position:relative;z-index:10;padding-top:var(--nav-h)}
+.inner{width:100%;max-width:1060px;padding:36px 28px 80px;margin:0 auto}
+
+/* ── HEADER ── */
+.tl-hd{margin-bottom:36px}
+.tl-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.tl-ey::before{content:'';width:12px;height:1px;background:var(--c)}
+.tl-h{font-family:'Bebas Neue',cursive;font-size:clamp(32px,5vw,52px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
+.tl-desc{font-size:11.5px;color:var(--txt2);max-width:480px;line-height:1.9}
+
+/* ── STAT BAR ── */
+.stat-bar{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:2px;overflow:hidden;backdrop-filter:blur(20px)}
+.stat-item{flex:1;padding:14px 18px;border-right:1px solid var(--border);background:rgba(1,6,18,0.72);position:relative;overflow:hidden;transition:background .2s}
+.stat-item:last-child{border-right:none}
+.stat-item:hover{background:rgba(0,200,224,0.04)}
+.stat-item::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent);opacity:0;transition:opacity .3s}
+.stat-item:hover::before{opacity:1}
+.si-val{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:.03em;color:var(--c);line-height:1;margin-bottom:2px}
+.si-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2)}
+
+/* ── DEV GRID ── */
+.dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dev-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:22px;position:relative;overflow:hidden;transition:all .35s cubic-bezier(0.22,1,0.36,1);backdrop-filter:blur(24px);box-shadow:0 4px 24px rgba(0,0,0,0.5),0 1px 0 rgba(0,200,224,0.08) inset}
+.dev-card:hover{border-color:rgba(0,200,224,0.22);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px rgba(0,200,224,0.06),0 1px 0 rgba(0,200,224,0.15) inset}
+.dev-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.14),transparent)}
+.dc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px}
+.dc-title{font-size:13.5px;font-weight:500;color:#fff;margin-bottom:3px}
+.dc-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--c);letter-spacing:.06em;opacity:.65}
+.dc-badge{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.09em;text-transform:uppercase;padding:3px 7px;border-radius:1px;border:1px solid rgba(0,200,224,0.16);background:rgba(0,200,224,0.06);color:var(--c);white-space:nowrap;flex-shrink:0}
+
+/* ── TERMINAL ── */
+.terminal{background:rgba(0,0,0,0.72);border:1px solid rgba(0,200,224,0.08);border-radius:2px;padding:14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt2);line-height:1.9;position:relative;overflow:hidden;contain:layout style;min-height:130px}
+.t-scan{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.36),transparent);animation:tscan 3.5s linear infinite}
+@keyframes tscan{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:100%;opacity:0}}
+.tl-row{display:flex;gap:7px;margin-bottom:1px}
+.tp{color:var(--c);opacity:.45}.tc{color:var(--txt)}.to{color:rgba(30,214,112,0.7)}
+.tcur{display:inline-block;width:5px;height:1em;background:var(--c);animation:blink .9s step-end infinite;vertical-align:text-bottom}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.term-actions{display:flex;gap:7px;margin-top:10px}
+
+/* ── TRUST GAUGE ── */
+.tg-rows{display:flex;flex-direction:column;gap:9px}
+.tg-row{display:flex;align-items:center;gap:8px}
+.tg-l{font-size:9.5px;color:var(--txt2);width:130px;flex-shrink:0}
+.tg-bw{flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden}
+.tg-b{height:100%;border-radius:2px;width:0%;transition:width 1.4s var(--ease2)}
+.tg-v{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);width:32px;text-align:right;flex-shrink:0}
+.gauge-score{text-align:center;margin-bottom:18px;padding:16px;background:rgba(0,200,224,0.03);border:1px solid rgba(0,200,224,0.08);border-radius:2px}
+.gs-num{font-family:'Bebas Neue',cursive;font-size:54px;color:var(--c);line-height:1}
+.gs-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:4px}
+.gs-sub{font-size:9px;color:var(--green)}
+
+/* ── TX SIM ── */
+.tx-sim{display:flex;flex-direction:column;gap:6px}
+.tx-step{display:flex;align-items:center;gap:10px;padding:9px 11px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:2px;transition:all .3s}
+.tx-step.done{border-color:rgba(30,214,112,0.14);background:rgba(30,214,112,0.02)}
+.tx-step.active{border-color:var(--c);background:rgba(0,200,224,0.03)}
+.txd{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(0,200,224,0.09);border:1px solid rgba(0,200,224,0.15);transition:all .35s}
+.tx-step.done .txd{background:var(--green);border-color:var(--green);box-shadow:0 0 7px var(--green)}
+.tx-step.active .txd{background:var(--c);border-color:var(--c);box-shadow:0 0 7px var(--c);animation:pulse 1.1s ease infinite}
+.tx-txt{font-size:9.5px;color:var(--txt2);flex:1}
+.tx-step.done .tx-txt,.tx-step.active .tx-txt{color:var(--txt)}
+.tx-stat{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.07em}
+.tx-step.done .tx-stat{color:var(--green)}
+.tx-step.active .tx-stat{color:var(--c)}
+.sim-result{margin-top:12px;padding:10px 14px;border-radius:2px;border:1px solid;font-size:9.5px;line-height:1.7;display:none}
+.sim-result.ok{border-color:rgba(30,214,112,0.22);background:rgba(30,214,112,0.04);color:var(--green)}
+.sim-result.warn{border-color:rgba(255,165,0,0.22);background:rgba(255,165,0,0.04);color:#f0a946}
+
+/* ── REP BOARD ── */
+.rep-grid{display:flex;flex-direction:column;gap:0}
+.rep-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);transition:background .18s;cursor:default;border-radius:1px}
+.rep-item:last-child{border-bottom:none}
+.rep-item:hover{background:rgba(0,200,224,0.02);padding-left:5px}
+.rep-rank{font-family:'Bebas Neue',cursive;font-size:16px;color:var(--txt2);width:20px;flex-shrink:0;text-align:center}
+.rep-aura{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.rep-name{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt);flex:1}
+.rep-badges{display:flex;align-items:center;gap:6px}
+.rep-score{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.02em}
+.badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
+.bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}
+.bg2{background:rgba(196,154,42,0.07);color:var(--gold);border:1px solid rgba(196,154,42,0.14)}
+.bbl{background:rgba(107,163,255,0.06);color:#6ba3ff;border:1px solid rgba(107,163,255,0.12)}
+.bgr{background:rgba(30,214,112,0.05);color:var(--green);border:1px solid rgba(30,214,112,0.12)}
+
+/* ── EPOCH CHART ── */
+.epoch-wrap{margin-bottom:16px;padding:14px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:2px}
+.epoch-bars{display:flex;align-items:flex-end;gap:3px;height:50px;margin-bottom:6px}
+.epoch-bar{flex:1;border-radius:1px 1px 0 0;transition:opacity .18s,transform .18s;cursor:default;min-height:4px}
+.epoch-bar:hover{opacity:1!important;transform:scaleY(1.06);transform-origin:bottom}
+.epoch-lbl{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2);letter-spacing:.08em}
+
+/* ── API DOCS ── */
+.api-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;overflow:hidden;margin-bottom:10px;backdrop-filter:blur(20px)}
+.api-card::before{content:'';display:block;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.14),transparent)}
+.api-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:none;transition:background .18s}
+.api-head:hover{background:rgba(0,200,224,0.03)}
+.api-method{font-family:'Space Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.08em;padding:3px 7px;border-radius:1px;flex-shrink:0}
+.m-get{background:rgba(30,214,112,0.1);color:var(--green);border:1px solid rgba(30,214,112,0.2)}
+.m-post{background:rgba(0,200,224,0.08);color:var(--c);border:1px solid rgba(0,200,224,0.18)}
+.m-ws{background:rgba(107,163,255,0.08);color:#6ba3ff;border:1px solid rgba(107,163,255,0.18)}
+.api-path{font-family:'Space Mono',monospace;font-size:9px;color:#fff;flex:1}
+.api-desc{font-size:9px;color:var(--txt2);flex-shrink:0}
+.api-body{padding:12px 16px;display:none}
+.api-body.open{display:block}
+.api-code{background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:10px 13px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.6);overflow-x:auto;white-space:pre;line-height:1.8}
+.api-params{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.ap-row{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:9px}
+.ap-row:last-child{border-bottom:none}
+.ap-name{font-family:'Space Mono',monospace;color:var(--c);width:110px;flex-shrink:0}
+.ap-type{font-family:'Space Mono',monospace;color:var(--gold);font-size:8px;width:50px;flex-shrink:0}
+.ap-desc{color:var(--txt2);flex:1}
+
+/* ── BUTTONS ── */
+.btn{position:relative;padding:10px 22px;border:1px solid var(--c);background:transparent;color:var(--c);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;cursor:none;border-radius:2px;overflow:hidden;transition:color .25s,box-shadow .25s,transform .1s;white-space:nowrap;-webkit-tap-highlight-color:transparent;box-shadow:0 0 20px rgba(0,200,224,0.08)}
+.btn::before{content:'';position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);z-index:0}
+.btn:hover{color:#000;box-shadow:0 0 36px rgba(0,200,224,0.25)}.btn:hover::before{transform:scaleX(1)}.btn:active{transform:scale(.96)}.btn span{position:relative;z-index:1}
+.btn-sm{padding:7px 14px;font-size:7.5px}
+.btn-ghost{padding:9px 16px;background:none;border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.32);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;cursor:none;border-radius:2px;transition:all .22s}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.26);color:rgba(255,255,255,0.72)}.btn-ghost:active{transform:scale(.96)}
+.btn-ripple{position:absolute;border-radius:50%;background:rgba(0,200,224,0.35);transform:scale(0);animation:rippleAnim .55s ease-out forwards;pointer-events:none;z-index:10}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+.btn-loading span{opacity:0!important}
+.btn-loading::after{content:'';position:absolute;inset:0;width:14px;height:14px;border:1.5px solid rgba(0,200,224,0.25);border-top-color:var(--c);border-radius:50%;animation:spin .6s linear infinite;margin:auto;z-index:2}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(hover:none){.btn,.btn-ghost{cursor:pointer}}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px);word-break:break-word}
+#toast.on{transform:translateY(0) scale(1);opacity:1}
+.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
+
+/* ── REVEAL ── */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .65s cubic-bezier(0.22,1,0.36,1),transform .65s cubic-bezier(0.22,1,0.36,1);filter:blur(2px)}
+.rv.in{opacity:1;transform:none;filter:blur(0)}
+
+/* ── FLASH ── */
+#flash{position:fixed;inset:0;z-index:1000;pointer-events:none;opacity:0;background:rgba(0,200,224,0.025);transition:opacity .1s;mix-blend-mode:screen}
+#flash.go{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .dev-grid{grid-template-columns:1fr!important}
+  nav{padding:0 14px}
+  .inner{padding:20px 14px 80px!important}
+  .stat-bar{flex-wrap:wrap}
+  .stat-item{min-width:50%}
+}
+@media(max-width:480px){
+  .api-desc{display:none}
+  .stat-item{min-width:100%}
+}
+</style>
+</head>
+<body>
+<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div>
+<canvas id="BG"></canvas><div class="vig"></div>
+
+<nav>
+  <div class="nlogo"><div class="npulse"></div>RIALO</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="nav-tag">Developer Infrastructure</span>
+    <a href="javascript:void(0)" class="nav-back" onclick="history.back()">← Back to App</a>
+  </div>
+</nav>
+
+<div id="app">
+  <div class="inner">
+
+    <!-- ── HEADER ── -->
+    <div class="tl-hd rv">
+      <div class="tl-ey">Developer Infrastructure</div>
+      <h1 class="tl-h">Build on trust.<br>Ship with confidence.</h1>
+      <p class="tl-desc">Native APIs, real-time trust verification, and smart contract simulation — built for the next generation of Web3 builders.</p>
+    </div>
+
+    <!-- ── STAT BAR ── -->
+    <div class="stat-bar rv">
+      <div class="stat-item">
+        <div class="si-val" id="st-contracts">1,284</div>
+        <div class="si-lbl">Contracts Scanned</div>
+      </div>
+      <div class="stat-item">
+        <div class="si-val" id="st-apis">3</div>
+        <div class="si-lbl">API Endpoints Live</div>
+      </div>
+      <div class="stat-item">
+        <div class="si-val" id="st-builders">872</div>
+        <div class="si-lbl">Active Builders</div>
+      </div>
+      <div class="stat-item">
+        <div class="si-val" style="color:var(--green)" id="st-uptime">99.97%</div>
+        <div class="si-lbl">API Uptime</div>
+      </div>
+    </div>
+
+    <!-- ── DEV GRID ── -->
+    <div class="dev-grid">
+
+      <!-- Card 1: Smart Contract Deployer -->
+      <div class="dev-card rv">
+        <div class="dc-header">
+          <div>
+            <div class="dc-title">Smart Contract Deployer</div>
+            <div class="dc-sub">// realtime trust scan on deploy</div>
+          </div>
+          <div class="dc-badge" id="deployer-status">Ready</div>
+        </div>
+        <div class="terminal" id="termBox">
+          <div class="t-scan"></div>
+          <div class="tl-row"><span class="tp">$</span><span class="tc">rialo deploy --scan TrustToken.sol</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to">✓ Compiling contract...</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to">✓ Running trust analysis...</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to">✓ Checking reentrancy vectors...</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to" style="color:var(--c)">⬡ Trust score: 97/100 — Safe</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to">⟳ Deploying to Ethereum Mainnet...</span></div>
+          <div class="tl-row"><span class="tp"> </span><span class="to" style="color:var(--green)">✓ Deployed: 0x3f92...d841</span></div>
+          <div class="tl-row" id="termLine"><span class="tp">$</span><span class="tc"><span class="tcur"></span></span></div>
+        </div>
+        <div class="term-actions">
+          <button class="btn btn-sm" id="deployBtn"><span>Run New Deploy Scan</span></button>
+          <button class="btn-ghost" id="clearTermBtn" style="padding:7px 12px;font-size:7px">Clear</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Trust Verification Engine -->
+      <div class="dev-card rv">
+        <div class="dc-header">
+          <div>
+            <div class="dc-title">Trust Verification Engine</div>
+            <div class="dc-sub">// live trust signal breakdown</div>
+          </div>
+          <div class="dc-badge" style="color:var(--green);border-color:rgba(30,214,112,0.2);background:rgba(30,214,112,0.05)">Live</div>
+        </div>
+        <div class="gauge-score">
+          <div class="gs-lbl">Composite Trust Score</div>
+          <div class="gs-num" id="gs-total">94</div>
+          <div class="gs-sub">✓ Excellent — Top 6% of wallets</div>
+        </div>
+        <div class="tg-rows" id="trustGauge">
+          <div class="tg-row"><span class="tg-l">Tx history depth</span><div class="tg-bw"><div class="tg-b" style="background:var(--c)" data-t="92"></div></div><span class="tg-v">92%</span></div>
+          <div class="tg-row"><span class="tg-l">DAO participation</span><div class="tg-bw"><div class="tg-b" style="background:var(--c)" data-t="78"></div></div><span class="tg-v">78%</span></div>
+          <div class="tg-row"><span class="tg-l">Phishing exposure</span><div class="tg-bw"><div class="tg-b" style="background:var(--green)" data-t="4"></div></div><span class="tg-v">4%</span></div>
+          <div class="tg-row"><span class="tg-l">Builder contributions</span><div class="tg-bw"><div class="tg-b" style="background:var(--gold)" data-t="85"></div></div><span class="tg-v">85%</span></div>
+          <div class="tg-row"><span class="tg-l">Multi-chain footprint</span><div class="tg-bw"><div class="tg-b" style="background:#6ba3ff" data-t="96"></div></div><span class="tg-v">96%</span></div>
+          <div class="tg-row"><span class="tg-l">Rugpull exposure</span><div class="tg-bw"><div class="tg-b" style="background:var(--green)" data-t="0"></div></div><span class="tg-v">0%</span></div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:7px">
+          <button class="btn btn-sm" id="refreshGaugeBtn" style="flex:1"><span>Refresh Analysis</span></button>
+        </div>
+      </div>
+
+      <!-- Card 3: Transaction Simulator -->
+      <div class="dev-card rv">
+        <div class="dc-header">
+          <div>
+            <div class="dc-title">Transaction Simulator</div>
+            <div class="dc-sub">// simulate before signing</div>
+          </div>
+          <div class="dc-badge" id="sim-status">Idle</div>
+        </div>
+        <div class="tx-sim" id="txSim">
+          <div class="tx-step done"><div class="txd"></div><span class="tx-txt">Decode calldata</span><span class="tx-stat">✓ done</span></div>
+          <div class="tx-step done"><div class="txd"></div><span class="tx-txt">Simulate state changes</span><span class="tx-stat">✓ done</span></div>
+          <div class="tx-step active"><div class="txd"></div><span class="tx-txt">Scan for risk vectors</span><span class="tx-stat">scanning...</span></div>
+          <div class="tx-step"><div class="txd"></div><span class="tx-txt">Trust score assessment</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div>
+          <div class="tx-step"><div class="txd"></div><span class="tx-txt">Human-readable output</span><span class="tx-stat" style="color:var(--txt2)">pending</span></div>
+        </div>
+        <div class="sim-result" id="simResult"></div>
+        <button class="btn btn-sm" style="margin-top:13px;width:100%" id="runSimBtn"><span>Run Simulation</span></button>
+
+        <!-- Epoch chart below sim -->
+        <div style="margin-top:18px">
+          <div style="font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px">Simulation History — Last 12 Epochs</div>
+          <div class="epoch-wrap">
+            <div class="epoch-bars" id="epochBars"></div>
+            <div class="epoch-lbl"><span>E1</span><span>E4</span><span>E8</span><span>E12</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Builder Reputation Board -->
+      <div class="dev-card rv">
+        <div class="dc-header">
+          <div>
+            <div class="dc-title">Builder Reputation Board</div>
+            <div class="dc-sub">// top trusted builders this epoch</div>
+          </div>
+          <div class="dc-badge" style="color:var(--gold);border-color:rgba(196,154,42,0.2);background:rgba(196,154,42,0.05)">Epoch #14</div>
+        </div>
+        <div class="rep-grid" id="repGrid">
+          <div class="rep-item"><span class="rep-rank">01</span><div class="rep-aura" style="background:#00c8e0;box-shadow:0 0 6px #00c8e0"></div><span class="rep-name">0xd8dA...6045</span><div class="rep-badges"><span class="badge bc">Trusted</span><span class="rep-score" style="color:var(--c)">97</span></div></div>
+          <div class="rep-item"><span class="rep-rank">02</span><div class="rep-aura" style="background:#c49a2a;box-shadow:0 0 6px #c49a2a"></div><span class="rep-name">0xAb58...eC9B</span><div class="rep-badges"><span class="badge bg2">Builder</span><span class="rep-score" style="color:var(--gold)">94</span></div></div>
+          <div class="rep-item"><span class="rep-rank">03</span><div class="rep-aura" style="background:#6ba3ff;box-shadow:0 0 6px #6ba3ff"></div><span class="rep-name">0x71C7...C62</span><div class="rep-badges"><span class="badge bbl">Gov</span><span class="rep-score" style="color:#6ba3ff">91</span></div></div>
+          <div class="rep-item"><span class="rep-rank">04</span><div class="rep-aura" style="background:#00c8e0;box-shadow:0 0 6px #00c8e0"></div><span class="rep-name">0x1f98...4A27</span><div class="rep-badges"><span class="badge bc">Trusted</span><span class="rep-score" style="color:var(--c)">88</span></div></div>
+          <div class="rep-item"><span class="rep-rank">05</span><div class="rep-aura" style="background:#c49a2a;box-shadow:0 0 6px #c49a2a"></div><span class="rep-name">0x000...0Dex</span><div class="rep-badges"><span class="badge bg2">Builder</span><span class="rep-score" style="color:var(--gold)">86</span></div></div>
+          <div class="rep-item"><span class="rep-rank">06</span><div class="rep-aura" style="background:#1ed670;box-shadow:0 0 6px #1ed670"></div><span class="rep-name">0x9A30...B811</span><div class="rep-badges"><span class="badge bgr">Verified</span><span class="rep-score" style="color:var(--green)">83</span></div></div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)">Updated every epoch (~6.4 min)</span>
+          <button class="btn-ghost btn-sm" id="refreshRepBtn" style="padding:5px 12px;font-size:7px">Refresh</button>
+        </div>
+      </div>
+
+    </div><!-- end .dev-grid -->
+
+    <!-- ── API REFERENCE ── -->
+    <div style="margin-top:28px" class="rv">
+      <div class="tl-ey" style="margin-bottom:16px">API Reference</div>
+
+      <div class="api-card">
+        <div class="api-head" onclick="toggleApi(this)">
+          <span class="api-method m-get">GET</span>
+          <span class="api-path">/v1/trust/{address}</span>
+          <span class="api-desc">Fetch full trust profile</span>
+        </div>
+        <div class="api-body">
+          <div class="api-code">curl https://api.rialo.xyz/v1/trust/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+// Response
+{
+  "address": "0xd8dA...6045",
+  "trust_score": 97,
+  "aura": "cyan",
+  "tier": "trusted",
+  "signals": { ... }
+}</div>
+          <div class="api-params">
+            <div class="ap-row"><span class="ap-name">address</span><span class="ap-type">string</span><span class="ap-desc">EVM wallet address (0x…) or ENS name</span></div>
+            <div class="ap-row"><span class="ap-name">include</span><span class="ap-type">string?</span><span class="ap-desc">Comma-separated: signals, history, chains</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-card">
+        <div class="api-head" onclick="toggleApi(this)">
+          <span class="api-method m-post">POST</span>
+          <span class="api-path">/v1/simulate</span>
+          <span class="api-desc">Simulate a transaction before signing</span>
+        </div>
+        <div class="api-body">
+          <div class="api-code">fetch("https://api.rialo.xyz/v1/simulate", {
+  method: "POST",
+  body: JSON.stringify({
+    from: "0xd8dA...6045",
+    to: "0x7a25...8D",
+    data: "0x095ea7b3...",
+    value: "0"
+  })
+})
+
+// Response: { risk: "low", humanReadable: "...", score: 97 }</div>
+          <div class="api-params">
+            <div class="ap-row"><span class="ap-name">from</span><span class="ap-type">address</span><span class="ap-desc">Sender wallet address</span></div>
+            <div class="ap-row"><span class="ap-name">to</span><span class="ap-type">address</span><span class="ap-desc">Target contract or wallet</span></div>
+            <div class="ap-row"><span class="ap-name">data</span><span class="ap-type">hex</span><span class="ap-desc">Encoded calldata (ABI-encoded)</span></div>
+            <div class="ap-row"><span class="ap-name">value</span><span class="ap-type">string?</span><span class="ap-desc">ETH value in wei (default "0")</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-card">
+        <div class="api-head" onclick="toggleApi(this)">
+          <span class="api-method m-ws">WS</span>
+          <span class="api-path">wss://stream.rialo.xyz/v1/live</span>
+          <span class="api-desc">Realtime trust event stream</span>
+        </div>
+        <div class="api-body">
+          <div class="api-code">const ws = new WebSocket("wss://stream.rialo.xyz/v1/live");
+ws.onmessage = ({ data }) => {
+  const event = JSON.parse(data);
+  // { type: "trust_change", address, delta, newScore }
+  // { type: "anomaly", address, severity, details }
+  // { type: "deploy", contract, trustScore }
+};</div>
+          <div class="api-params">
+            <div class="ap-row"><span class="ap-name">filter</span><span class="ap-type">string?</span><span class="ap-desc">Event types: trust_change, anomaly, deploy, gov</span></div>
+            <div class="ap-row"><span class="ap-name">chains</span><span class="ap-type">string?</span><span class="ap-desc">Comma-separated chain IDs (default: all)</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end api reference -->
+
+  </div><!-- end .inner -->
+</div><!-- end #app -->
+
+<div id="toast"></div>
+
+<script>
+var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+// ── CURSOR ──────────────────────────────────────────────
+var C1=document.getElementById('CUR'),C2=document.getElementById('CUR2');
+var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+if(!isMobile){
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;C1.style.left=mx+'px';C1.style.top=my+'px'});
+  document.addEventListener('mousedown',function(){document.body.classList.add('cclick')});
+  document.addEventListener('mouseup',function(){document.body.classList.remove('cclick')});
+  (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;C2.style.left=rx+'px';C2.style.top=ry+'px';requestAnimationFrame(loop)})();
+}
+function hookCursor(){
+  if(isMobile)return;
+  document.querySelectorAll('button,a,[role=button],.rep-item,.api-head,.epoch-bar').forEach(function(el){if(el._ch)return;el._ch=1;el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')})});
+}
+setInterval(hookCursor,800);
+
+// ── BG CANVAS ───────────────────────────────────────────
+var bgC=document.getElementById('BG'),bgX=bgC.getContext('2d');
+var BW=0,BH=0;
+function rBg(){BW=bgC.width=innerWidth;BH=bgC.height=innerHeight}
+rBg();window.addEventListener('resize',rBg);
+var BN=[];
+for(var i=0;i<(isMobile?40:65);i++)BN.push({x:Math.random()*2000,y:Math.random()*1000,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r:Math.random()*1.5+.4,p:Math.random()*Math.PI*2,ps:.005+Math.random()*.008});
+var BMX=innerWidth/2,BMY=innerHeight/2;
+document.addEventListener('mousemove',function(e){BMX=e.clientX;BMY=e.clientY});
+function drawBg(){
+  bgX.clearRect(0,0,BW,BH);
+  BN.forEach(function(n){n.x+=n.vx;n.y+=n.vy;n.p+=n.ps;if(n.x<-8)n.x=BW+8;if(n.x>BW+8)n.x=-8;if(n.y<-8)n.y=BH+8;if(n.y>BH+8)n.y=-8;var dx=BMX-n.x,dy=BMY-n.y,d=Math.hypot(dx,dy);if(d<180&&d>1){n.x+=dx/d*.018;n.y+=dy/d*.018}});
+  bgX.lineWidth=.3;
+  for(var i=0;i<BN.length;i++)for(var j=i+1;j<BN.length;j++){var a=BN[i],b=BN[j];var d=Math.hypot(a.x-b.x,a.y-b.y);if(d<95){bgX.beginPath();bgX.strokeStyle='rgba(0,200,224,'+(1-d/95)*.065+')';bgX.moveTo(a.x,a.y);bgX.lineTo(b.x,b.y);bgX.stroke()}}
+  BN.forEach(function(n){var a=(Math.sin(n.p)*.5+.5)*.4+.1;bgX.beginPath();bgX.arc(n.x,n.y,n.r,0,Math.PI*2);bgX.fillStyle='rgba(0,200,224,'+Math.min(a*.3,0.16)+')';bgX.fill()});
+}
+(function loop(){drawBg();requestAnimationFrame(loop)})();
+
+// ── TOAST ───────────────────────────────────────────────
+var _tt;
+function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
+function flash(){var f=document.getElementById('flash');f.className='go';setTimeout(function(){f.className=''},160)}
+
+// ── RIPPLE ──────────────────────────────────────────────
+document.querySelectorAll('.btn').forEach(function(btn){
+  btn.addEventListener('click',function(e){
+    var rect=btn.getBoundingClientRect(),sz=Math.max(rect.width,rect.height),x=e.clientX-rect.left-sz/2,y=e.clientY-rect.top-sz/2,rp=document.createElement('span');
+    rp.className='btn-ripple';rp.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+x+'px;top:'+y+'px';
+    btn.querySelectorAll('.btn-ripple').forEach(function(r){r.remove()});btn.appendChild(rp);setTimeout(function(){rp.remove()},600);
+  });
+});
+
+// ── TRUST GAUGE BARS ────────────────────────────────────
+setTimeout(function(){
+  document.querySelectorAll('.tg-b').forEach(function(b){b.style.width=b.dataset.t+'%'});
+},400);
+
+// ── REFRESH GAUGE ───────────────────────────────────────
+document.getElementById('refreshGaugeBtn').addEventListener('click',function(){
+  var btn=this;btn.classList.add('btn-loading');
+  var bars=document.querySelectorAll('.tg-b');
+  bars.forEach(function(b){b.style.width='0%'});
+  setTimeout(function(){
+    var newVals=[Math.floor(88+Math.random()*8),Math.floor(72+Math.random()*14),Math.floor(Math.random()*8),Math.floor(80+Math.random()*12),Math.floor(92+Math.random()*6),0];
+    bars.forEach(function(b,i){setTimeout(function(){b.style.width=newVals[i]+'%';b.closest('.tg-row').querySelector('.tg-v').textContent=newVals[i]+'%'},i*100)});
+    var total=Math.round((newVals[0]*.3+newVals[1]*.15+((100-newVals[2])*.1)+newVals[3]*.2+newVals[4]*.25));
+    document.getElementById('gs-total').textContent=Math.min(total,99);
+    btn.classList.remove('btn-loading');
+    toast('Trust signals refreshed — Score: '+Math.min(total,99)+'/100');
+    flash();
+  },900);
+});
+
+// ── TRANSACTION SIMULATOR ───────────────────────────────
+var simIdx=2;
+document.getElementById('runSimBtn').addEventListener('click',function(){
+  var btn=this;btn.classList.add('btn-loading');
+  document.getElementById('sim-status').textContent='Running';
+  document.getElementById('sim-status').style.color='var(--c)';
+  var res=document.getElementById('simResult');res.style.display='none';
+  var steps=document.querySelectorAll('#txSim .tx-step');
+  // Reset
+  steps.forEach(function(s,i){
+    s.className='tx-step'+(i<2?' done':'');
+    var st=s.querySelector('.tx-stat');
+    if(st){st.textContent=i<2?'✓ done':'pending';st.style.color=i<2?'var(--green)':'var(--txt2)'}
+  });
+  steps[2].classList.add('active');steps[2].querySelector('.tx-stat').textContent='scanning...';steps[2].querySelector('.tx-stat').style.color='var(--c)';
+  simIdx=2;
+  function adv(){
+    if(simIdx>=steps.length){
+      btn.classList.remove('btn-loading');
+      document.getElementById('sim-status').textContent='Complete';
+      document.getElementById('sim-status').style.color='var(--green)';
+      res.className='sim-result ok';res.style.display='block';
+      res.textContent='✓ No risk vectors detected — Trust score 97/100 — Safe to sign. Human output: "Approve Uniswap v4 to spend max USDC"';
+      // bump epoch chart
+      addEpochBar(true);
+      toast('Simulation complete — Risk: Low ✓');flash();
+      return;
+    }
+    steps[simIdx].classList.remove('active');steps[simIdx].classList.add('done');steps[simIdx].querySelector('.tx-stat').textContent='✓ done';steps[simIdx].querySelector('.tx-stat').style.color='var(--green)';
+    simIdx++;
+    if(simIdx<steps.length){steps[simIdx].classList.add('active');steps[simIdx].querySelector('.tx-stat').textContent='processing...';steps[simIdx].querySelector('.tx-stat').style.color='var(--c)';setTimeout(adv,700+Math.random()*400)}
+    else setTimeout(adv,400);
+  }
+  setTimeout(function(){btn.classList.remove('btn-loading');adv()},700);
+  toast('Simulation running...');
+});
+
+// ── EPOCH CHART ─────────────────────────────────────────
+var epochData=[92,88,95,79,97,84,91,96,87,93,89,97];
+function buildEpochChart(){
+  var el=document.getElementById('epochBars');if(!el)return;el.innerHTML='';
+  var mn=Math.min.apply(null,epochData),mx=Math.max.apply(null,epochData),rng=mx-mn||1;
+  epochData.forEach(function(v,i){
+    var b=document.createElement('div');b.className='epoch-bar';
+    var h=30+((v-mn)/rng)*20;var up=v>=88;
+    b.style.cssText='height:'+h+'px;background:'+(up?'rgba(0,200,224,0.55)':'rgba(255,100,100,0.45)')+';opacity:'+(i===epochData.length-1?1:0.48);
+    b.title='Epoch #'+(i+1)+' — Score: '+v;el.appendChild(b);
+  });
+}
+function addEpochBar(good){epochData.push(good?Math.floor(88+Math.random()*10):Math.floor(60+Math.random()*20));if(epochData.length>12)epochData.shift();buildEpochChart()}
+buildEpochChart();
+
+// ── SMART CONTRACT DEPLOYER ──────────────────────────────
+document.getElementById('deployBtn').addEventListener('click',function(){
+  var btn=this;btn.classList.add('btn-loading');
+  var tl=document.getElementById('termLine');
+  document.getElementById('deployer-status').textContent='Scanning...';
+  document.getElementById('deployer-status').style.color='var(--c)';
+  var hash=Math.random().toString(16).slice(2,8).toUpperCase();
+  var addr='0x'+Array.from({length:8},function(){return Math.floor(Math.random()*16).toString(16)}).join('')+'...'+hash.slice(-4);
+  var msgs=[
+    {c:'',t:'$ rialo deploy --scan Contract_'+hash+'.sol'},
+    {c:'rgba(30,214,112,.7)',t:'✓ Compiling...'},
+    {c:'rgba(30,214,112,.7)',t:'✓ Running trust analysis...'},
+    {c:'',t:'✓ Reentrancy: safe   ✓ Overflow: safe'},
+    {c:'var(--c)',t:'⬡ Trust Score: '+(93+Math.floor(Math.random()*7))+'/100 — Excellent'},
+    {c:'rgba(30,214,112,.7)',t:'⟳ Deploying to Ethereum Mainnet...'},
+    {c:'rgba(30,214,112,.9)',t:'✓ Deployed: '+addr}
+  ];
+  var i=0;
+  function addLine(){
+    if(i>=msgs.length){btn.classList.remove('btn-loading');document.getElementById('deployer-status').textContent='Ready';document.getElementById('deployer-status').style.color='';toast('Deployed: '+addr);flash();return}
+    var row=document.createElement('div');row.className='tl-row';row.innerHTML='<span class="tp"> </span><span class="to" style="color:'+msgs[i].c+'">'+msgs[i].t+'</span>';
+    tl.parentNode.insertBefore(row,tl);i++;setTimeout(addLine,480+Math.random()*220);
+  }
+  addLine();
+});
+document.getElementById('clearTermBtn').addEventListener('click',function(){
+  var tb=document.getElementById('termBox');
+  var scan=tb.querySelector('.t-scan'),line=document.getElementById('termLine');
+  tb.innerHTML='';tb.appendChild(scan);
+  var r=document.createElement('div');r.className='tl-row';r.innerHTML='<span class="tp">$</span><span class="tc"><span class="tcur"></span></span>';r.id='termLine';tb.appendChild(r);
+  toast('Terminal cleared');
+});
+
+// ── REPUTATION BOARD ────────────────────────────────────
+var repScores=[97,94,91,88,86,83];
+document.getElementById('refreshRepBtn').addEventListener('click',function(){
+  var btn=this;btn.disabled=true;
+  setTimeout(function(){
+    repScores=repScores.map(function(s){return Math.max(70,Math.min(99,s+(Math.random()>.5?1:-1)))});
+    document.querySelectorAll('.rep-score').forEach(function(el,i){el.textContent=repScores[i]||el.textContent});
+    var badge=document.querySelector('.dc-badge[style*="gold"]');
+    if(badge){var ep=parseInt(badge.textContent.replace('Epoch #',''))+1;badge.textContent='Epoch #'+ep}
+    btn.disabled=false;toast('Leaderboard refreshed — Epoch updated');
+  },600);
+});
+
+// ── API ACCORDION ───────────────────────────────────────
+function toggleApi(head){
+  var body=head.nextElementSibling;
+  var isOpen=body.classList.contains('open');
+  document.querySelectorAll('.api-body').forEach(function(b){b.classList.remove('open')});
+  if(!isOpen)body.classList.add('open');
+}
+
+// ── SCROLL REVEAL ───────────────────────────────────────
+function revealCheck(){
+  document.querySelectorAll('.rv:not(.in)').forEach(function(el){
+    var rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight-60)el.classList.add('in');
+  });
+}
+window.addEventListener('scroll',revealCheck,{passive:true});
+setTimeout(function(){revealCheck()},120);
+
+// ── LIVE STAT COUNTER ───────────────────────────────────
+setInterval(function(){
+  var c=document.getElementById('st-contracts');if(c){var n=parseInt(c.textContent.replace(',',''));c.textContent=(n+Math.floor(Math.random()*3)).toLocaleString()}
+  var b=document.getElementById('st-builders');if(b){var n2=parseInt(b.textContent);b.textContent=n2+(Math.random()>.7?1:0)}
+},7000);
+</script>
+</body>
+</html>
