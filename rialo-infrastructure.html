@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIALO — Infrastructure</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#010308;--c:#00c8e0;--c2:#00a8bd;--gold:#c49a2a;--green:#1ed670;--blue:#6ba3ff;
+  --txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);
+  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);
+  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
+}
+html,body{width:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(0,200,224,0.10);background:rgba(1,4,12,0.92);backdrop-filter:blur(40px);box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.38em;color:#fff;display:flex;align-items:center;gap:10px;user-select:none;text-decoration:none;text-shadow:0 0 30px rgba(0,200,224,0.15)}
+.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);animation:pulse 2.6s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
+.nav-tag{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.14);border-radius:1px}
+
+/* PAGE */
+.page{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:40px 28px 100px}
+
+/* REVEALS */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease),filter .65s;filter:blur(2px)}
+.rv.in{opacity:1;transform:none;filter:blur(0)}
+
+/* HEADER */
+.sec-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.sec-ey::before{content:'';width:12px;height:1px;background:var(--c)}
+.sec-h{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,46px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
+.sec-desc{font-size:11.5px;color:var(--txt2);max-width:440px;line-height:1.9;margin-bottom:36px}
+
+/* TABS */
+.infra-tabs{display:flex;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.itab{flex:1;padding:10px 0;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--txt2);background:rgba(1,6,18,0.6);border:none;border-right:1px solid rgba(0,200,224,0.08);cursor:pointer;transition:all .25s;text-align:center;position:relative}
+.itab:last-child{border-right:none}
+.itab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--c);transform:scaleX(0);transition:transform .28s var(--ease)}
+.itab:hover{color:var(--txt);background:rgba(0,200,224,0.05)}.itab.active{color:var(--c);background:rgba(0,200,224,0.08)}.itab.active::after{transform:scaleX(1)}
+.infra-panel{display:none}.infra-panel.active{display:block}
+
+/* SWAP */
+.swap-wrap{display:grid;grid-template-columns:1fr 1.35fr;gap:12px}
+.swap-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.09);border-radius:2px;padding:22px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
+.swap-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,200,224,0.16),transparent)}
+.swap-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:7px}
+.swap-token-row{display:flex;align-items:center;gap:9px;background:rgba(1,6,18,0.6);border:1px solid rgba(0,200,224,0.08);border-radius:2px;padding:11px 13px;margin-bottom:5px;transition:all .22s;cursor:default;backdrop-filter:blur(12px)}.swap-token-row:hover{border-color:rgba(0,200,224,0.18);background:rgba(0,200,224,0.04)}
+.stk{display:flex;align-items:center;gap:7px;min-width:85px}
+.stk-ico{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.stk-sym{font-size:12.5px;font-weight:500;color:#fff}.stk-name{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
+.stk-amt{margin-left:auto;font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.02em;color:#fff}
+.stk-usd{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);text-align:right}
+.swap-arrow{display:flex;align-items:center;justify-content:center;height:26px;position:relative}
+.swap-arrow-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border)}
+.swap-arrow-ico{width:20px;height:20px;border:1px solid var(--border2);border-radius:50%;background:rgba(0,200,224,0.05);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--c);z-index:1;position:relative;cursor:pointer;transition:all .2s}.swap-arrow-ico:hover{background:rgba(0,200,224,0.1);transform:rotate(180deg)}
+.swap-details{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.sd-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);font-size:9.5px}.sd-row:last-child{border-bottom:none}
+.sd-l{color:var(--txt2)}.sd-r{color:var(--txt);font-family:'Space Mono',monospace;font-size:8px}.sd-r.good{color:var(--green)}.sd-r.warn{color:#f0a946}
+.swap-route{background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:2px;padding:13px;margin-bottom:10px}
+.sr-title{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:12px}
+.sr-flow{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px}
+.sr-node{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.sr-node-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;border:1px solid var(--border);background:rgba(0,200,224,0.04)}
+.sr-node-lbl{font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2);text-align:center}
+.sr-line{flex:1;height:1px;background:linear-gradient(to right,var(--c),rgba(0,200,224,0.3));position:relative;min-width:22px}
+.sr-line::after{content:'▶';position:absolute;right:-3px;top:-5px;color:var(--c);font-size:6.5px}
+.sr-pct{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:5.5px;color:var(--c)}
+.sr-mev{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(255,165,0,0.04);border:1px solid rgba(255,165,0,0.09);border-radius:2px;margin-top:10px}
+.sr-mev-ico{font-size:10px}.sr-mev-txt{font-size:9px;color:var(--txt2);flex:1}.sr-mev-val{font-family:'Space Mono',monospace;font-size:7.5px;color:#f0a946}
+
+/* BRIDGE */
+.bridge-wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}
+.bridge-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.09);border-radius:2px;padding:22px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
+.bridge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(107,163,255,0.28),transparent)}
+.bridge-chains{display:flex;align-items:center;gap:0;margin-bottom:16px}
+.bc-chain{flex:1;background:rgba(1,6,18,0.65);border:1px solid rgba(0,200,224,0.09);border-radius:2px;padding:13px;text-align:center;cursor:default;transition:all .25s;backdrop-filter:blur(16px)}.bc-chain:hover{border-color:rgba(0,200,224,0.22);background:rgba(0,200,224,0.04)}
+.bc-chain-ico{font-size:22px;margin-bottom:5px}.bc-chain-name{font-size:11.5px;font-weight:500;color:#fff;margin-bottom:1px}.bc-chain-net{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
+.bridge-arrow{width:40px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ba-anim{display:flex;flex-direction:column;gap:3px;align-items:center}
+.ba-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);animation:ba-pulse 1.4s ease infinite}
+.ba-dot:nth-child(2){animation-delay:.2s}.ba-dot:nth-child(3){animation-delay:.4s}
+@keyframes ba-pulse{0%,100%{opacity:.16;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
+.bridge-canvas-wrap{background:rgba(0,0,0,0.38);border:1px solid var(--border);border-radius:2px;overflow:hidden;height:150px;position:relative;margin-bottom:11px}
+#bridgeC{width:100%;height:100%;display:block}
+.bridge-status{display:flex;flex-direction:column;gap:4px}
+.bs-row{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(1,6,18,0.6);border:1px solid rgba(0,200,224,0.08);border-radius:2px;font-size:9px;color:var(--txt2);position:relative;overflow:hidden;backdrop-filter:blur(12px)}
+.bs-prog{position:absolute;left:0;top:0;bottom:0;background:rgba(107,163,255,0.04);transition:width .5s var(--ease)}.bs-ico{font-size:9px;flex-shrink:0;z-index:1}.bs-txt{z-index:1;flex:1}
+.bs-stat{font-family:'Space Mono',monospace;font-size:7px;z-index:1}.bs-stat.done{color:var(--green)}.bs-stat.active{color:#6ba3ff}.bs-stat.pending{color:var(--txt2)}
+.bridge-time{display:flex;align-items:center;gap:7px;padding:9px 13px;background:rgba(107,163,255,0.04);border:1px solid rgba(107,163,255,0.12);border-radius:2px;margin-top:9px;font-size:9px;color:var(--txt2)}
+.bridge-time-val{font-family:'Bebas Neue',cursive;font-size:18px;color:#6ba3ff;margin-left:auto}
+
+/* STAKE */
+.stake-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stake-card{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.09);border-radius:2px;padding:22px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
+.stake-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.28),transparent)}
+.validator-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:default;transition:all .18s}.validator-item:hover{background:rgba(0,200,224,0.03);padding-left:4px}.validator-item:last-child{border-bottom:none}
+.vi-rank{font-family:'Bebas Neue',cursive;font-size:14px;color:var(--txt2);width:18px;flex-shrink:0}
+.vi-ico{width:30px;height:30px;border-radius:50%;background:rgba(196,154,42,0.09);border:1px solid rgba(196,154,42,0.16);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.vi-name{font-size:10.5px;color:#fff;font-weight:500;margin-bottom:1.5px}.vi-apy{font-family:'Space Mono',monospace;font-size:7px;color:var(--green)}
+.vi-trust{margin-left:auto;text-align:right}.vi-score{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--gold)}.vi-lbl{font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
+.stake-meter{margin-top:14px}.sm-title{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:9px}
+.sm-ring-wrap{display:flex;align-items:center;gap:18px}
+.sm-stats{display:flex;flex-direction:column;gap:5px}
+.sms{font-size:9.5px;color:var(--txt2)}.sms strong{font-family:'Bebas Neue',cursive;font-size:16px;color:#fff;margin-right:3px}.sms.gold strong{color:var(--gold)}.sms.green strong{color:var(--green)}
+.nc-row{display:flex;align-items:center;gap:7px;padding:5px 9px;background:rgba(196,154,42,0.03);border:1px solid rgba(196,154,42,0.07);border-radius:2px;margin-bottom:4px}
+.nc-ico{font-size:9px}.nc-txt{font-size:9px;color:var(--txt2);flex:1}.nc-val{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--gold)}
+
+/* SHARED */
+.tl-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.tl-ey::before{content:'';width:12px;height:1px;background:var(--c)}
+.wc-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.btn{position:relative;padding:10px 22px;border:1px solid var(--c);background:transparent;color:var(--c);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;border-radius:2px;overflow:hidden;transition:color .25s,box-shadow .25s;white-space:nowrap;box-shadow:0 0 20px rgba(0,200,224,0.08)}
+.btn::before{content:'';position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);z-index:0}
+.btn:hover{color:#000;box-shadow:0 0 36px rgba(0,200,224,0.25)}.btn:hover::before{transform:scaleX(1)}.btn span{position:relative;z-index:1}
+.mi-live{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid rgba(30,214,112,0.2);background:rgba(30,214,112,0.04);border-radius:1px}
+.mi-live-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.2s ease infinite}
+.mi-live span{font-family:'Space Mono',monospace;font-size:6px;color:var(--green);letter-spacing:.12em;text-transform:uppercase}
+
+/* TOAST */
+#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
+#toast.on{transform:translateY(0) scale(1);opacity:1}
+.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
+
+/* RESPONSIVE */
+@media(max-width:768px){.swap-wrap,.bridge-wrap,.stake-wrap{grid-template-columns:1fr}.page{padding:24px 16px 80px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nlogo" href="#"><div class="npulse"></div>RIALO</a>
+  <span class="nav-tag">Infrastructure</span>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div style="margin-bottom:40px" class="rv">
+    <div class="sec-ey">Trust Infrastructure Tools</div>
+    <h2 class="sec-h">Move assets with<br>full transparency.</h2>
+    <p class="sec-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="infra-tabs rv">
+    <button class="itab active" data-tab="swap">⇄ Swap</button>
+    <button class="itab" data-tab="bridge">⬡ Bridge</button>
+    <button class="itab" data-tab="stake">◈ Stake</button>
+  </div>
+
+  <!-- SWAP PANEL -->
+  <div class="infra-panel active rv" id="panel-swap">
+    <div class="swap-wrap">
+      <div class="swap-card">
+        <div class="swap-lbl">You pay</div>
+        <div class="swap-token-row">
+          <div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">ETH</div><div class="stk-name">Ethereum</div></div></div>
+          <div style="margin-left:auto;text-align:right"><div class="stk-amt">1.000</div><div class="stk-usd" id="sw-from-usd">≈ $—</div></div>
+        </div>
+        <div class="swap-arrow"><div class="swap-arrow-line"></div><div class="swap-arrow-ico" id="swapArrowBtn">⇅</div></div>
+        <div class="swap-token-row" style="margin-top:5px">
+          <div class="stk"><div class="stk-ico" style="background:rgba(130,71,229,0.12)">◈</div><div><div class="stk-sym">USDC</div><div class="stk-name">USD Coin</div></div></div>
+          <div style="margin-left:auto;text-align:right"><div class="stk-amt" id="sw-to-amt">—</div><div class="stk-usd" id="sw-to-usd">≈ $—</div></div>
+        </div>
+        <div class="swap-details">
+          <div class="sd-row"><span class="sd-l">Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div>
+          <div class="sd-row"><span class="sd-l">Slippage</span><span class="sd-r good">0.5%</span></div>
+          <div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div>
+          <div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div>
+          <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">97/100 ✓</span></div>
+        </div>
+        <button class="btn" style="width:100%;margin-top:12px" id="swapExecBtn"><span>Preview Swap</span></button>
+      </div>
+      <div>
+        <div class="swap-route">
+          <div class="sr-title">Route Visualization — Best Path</div>
+          <div class="sr-flow" id="swapRouteFlow"></div>
+          <div class="sr-mev"><div class="sr-mev-ico">⚡</div><div class="sr-mev-txt">MEV Sandwich Protection via Flashbots</div><div class="sr-mev-val">Saved ~$4.20</div></div>
+        </div>
+        <div class="swap-card" style="padding:16px">
+          <div class="swap-lbl" style="margin-bottom:10px">Fee Breakdown</div>
+          <div class="swap-details">
+            <div class="sd-row"><span class="sd-l">Protocol Fee</span><span class="sd-r">0.05%</span></div>
+            <div class="sd-row"><span class="sd-l">LP Fee</span><span class="sd-r">0.25%</span></div>
+            <div class="sd-row"><span class="sd-l">Gas (est.)</span><span class="sd-r" id="sw-gas-est">—</span></div>
+            <div class="sd-row"><span class="sd-l">Price Impact</span><span class="sd-r warn">-0.08%</span></div>
+            <div class="sd-row" style="border:none;margin-top:3px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRIDGE PANEL -->
+  <div class="infra-panel rv" id="panel-bridge">
+    <div class="bridge-wrap">
+      <div class="bridge-card">
+        <div class="tl-ey" style="margin-bottom:12px">Cross-chain Transfer</div>
+        <div class="bridge-chains">
+          <div class="bc-chain" style="border-color:rgba(111,124,255,0.2)"><div class="bc-chain-ico">Ξ</div><div class="bc-chain-name">Ethereum</div><div class="bc-chain-net">Mainnet</div></div>
+          <div class="bridge-arrow"><div class="ba-anim"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div></div>
+          <div class="bc-chain" style="border-color:rgba(30,214,112,0.2)"><div class="bc-chain-ico">⬡</div><div class="bc-chain-name">Arbitrum</div><div class="bc-chain-net">One</div></div>
+        </div>
+        <div style="margin-bottom:13px">
+          <div class="swap-lbl">Amount to bridge</div>
+          <div class="swap-token-row"><div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">0.5 ETH</div><div class="stk-name">On Ethereum</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt">~0.4998</div><div class="stk-usd" style="color:var(--green)">Will receive</div></div></div>
+        </div>
+        <div class="bridge-time"><span>⏱ Estimated time</span><span class="bridge-time-val">~7 min</span></div>
+        <div class="swap-details" style="margin-top:9px">
+          <div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div>
+          <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div>
+          <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div>
+        </div>
+        <button class="btn" style="width:100%;margin-top:13px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
+      </div>
+      <div>
+        <div class="bridge-canvas-wrap"><canvas id="bridgeC"></canvas></div>
+        <div class="bridge-status" id="bridgeStatus">
+          <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
+          <div class="bs-row"><div class="bs-prog" id="bp1" style="width:65%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
+          <div class="bs-row"><div class="bs-prog" id="bp2" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Minting on Arbitrum</div><div class="bs-stat pending">Pending</div></div>
+          <div class="bs-row"><div class="bs-prog" id="bp3" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Settlement confirmation</div><div class="bs-stat pending">Pending</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAKE PANEL -->
+  <div class="infra-panel rv" id="panel-stake">
+    <div class="stake-wrap">
+      <div class="stake-card">
+        <div class="tl-ey" style="margin-bottom:12px">Validator Trust Board</div>
+        <div id="validatorList">
+          <div class="validator-item"><div class="vi-rank">01</div><div class="vi-ico">🏛</div><div><div class="vi-name">Lido Finance</div><div class="vi-apy">APY: 4.2% ↑</div></div><div class="vi-trust"><div class="vi-score">99</div><div class="vi-lbl">Trust</div></div></div>
+          <div class="validator-item"><div class="vi-rank">02</div><div class="vi-ico">🔷</div><div><div class="vi-name">Rocket Pool</div><div class="vi-apy">APY: 3.9% →</div></div><div class="vi-trust"><div class="vi-score">97</div><div class="vi-lbl">Trust</div></div></div>
+          <div class="validator-item"><div class="vi-rank">03</div><div class="vi-ico">⚡</div><div><div class="vi-name">Frax ETH</div><div class="vi-apy">APY: 4.5% ↑</div></div><div class="vi-trust"><div class="vi-score">94</div><div class="vi-lbl">Trust</div></div></div>
+          <div class="validator-item"><div class="vi-rank">04</div><div class="vi-ico">🔵</div><div><div class="vi-name">Coinbase cbETH</div><div class="vi-apy">APY: 3.6% →</div></div><div class="vi-trust"><div class="vi-score" style="color:var(--c)">91</div><div class="vi-lbl">Trust</div></div></div>
+        </div>
+        <div class="stake-meter">
+          <div class="sm-title">Your Staking Position</div>
+          <div class="sm-ring-wrap">
+            <canvas id="stakeRingC" width="76" height="76"></canvas>
+            <div class="sm-stats">
+              <div class="sms gold"><strong>2.4</strong>ETH staked</div>
+              <div class="sms green"><strong id="stakeReward">0.0000000</strong>ETH earned</div>
+              <div class="sms"><strong>4.2%</strong>Current APY</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stake-card">
+        <div class="tl-ey" style="margin-bottom:12px">Network Contribution</div>
+        <div class="nc-row"><div class="nc-ico">🔒</div><div class="nc-txt">Chain Security Score</div><div class="nc-val">98.4%</div></div>
+        <div class="nc-row"><div class="nc-ico">⚡</div><div class="nc-txt">Your Contribution</div><div class="nc-val">0.003%</div></div>
+        <div class="nc-row"><div class="nc-ico">🌐</div><div class="nc-txt">Active Validators</div><div class="nc-val">872,140</div></div>
+        <div class="nc-row"><div class="nc-ico">◈</div><div class="nc-txt">Total ETH Staked</div><div class="nc-val">32.8M ETH</div></div>
+        <div style="margin-top:16px">
+          <div class="tl-ey" style="margin-bottom:11px">Reward Transparency</div>
+          <div class="swap-details">
+            <div class="sd-row"><span class="sd-l">Consensus Rewards</span><span class="sd-r good">+0.0003 ETH/day</span></div>
+            <div class="sd-row"><span class="sd-l">Execution Rewards</span><span class="sd-r good">+0.0001 ETH/day</span></div>
+            <div class="sd-row"><span class="sd-l">MEV Rewards</span><span class="sd-r warn">Variable</span></div>
+            <div class="sd-row"><span class="sd-l">Validator Fee</span><span class="sd-r">10% of rewards</span></div>
+          </div>
+          <button class="btn" style="width:100%;margin-top:13px" id="stakeExecBtn"><span>Stake ETH — Contribute to Network</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+var gasPrice=14,ethPrice=3482,bridgeInProgress=false,stakeEarned=0;
+var ease='cubic-bezier(.22,1,.36,1)';
+
+// TOAST
+var _tt;
+function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
+
+// TABS
+document.querySelectorAll('.itab').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.itab').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.infra-panel').forEach(function(p){p.classList.remove('active')});
+    btn.classList.add('active');
+    var panel=document.getElementById('panel-'+btn.dataset.tab);
+    if(panel)panel.classList.add('active');
+    if(btn.dataset.tab==='bridge'){initBridgeCanvas();resetBridgeStatus()}
+    if(btn.dataset.tab==='stake')drawStakeRing();
+    if(btn.dataset.tab==='swap')updateSwapUI();
+  });
+});
+
+// SWAP UI
+function updateSwapUI(){
+  if(!ethPrice)return;
+  var sf=document.getElementById('sw-from-usd'),sta=document.getElementById('sw-to-amt'),stu=document.getElementById('sw-to-usd'),sr=document.getElementById('sw-rate'),sfe=document.getElementById('sw-fee'),sge=document.getElementById('sw-gas-est'),stot=document.getElementById('sw-total');
+  if(sf)sf.textContent='≈ $'+ethPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(sta)sta.textContent=Math.round(ethPrice).toLocaleString();
+  if(stu)stu.textContent='≈ $'+ethPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(sr)sr.textContent='1 ETH = '+Math.round(ethPrice)+' USDC';
+  if(gasPrice){if(sfe)sfe.textContent=gasPrice+' gwei';var gc=gasPrice*21000/1e9;if(sge)sge.textContent='~$'+(gc*ethPrice).toFixed(2)+' USD';if(stot)stot.textContent='~$'+((0.003+gc)*ethPrice).toFixed(2)}
+}
+
+// SWAP ROUTE
+function buildSwapRoute(){
+  var flow=document.getElementById('swapRouteFlow');if(!flow)return;
+  var nodes=[{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];
+  flow.innerHTML='';
+  nodes.forEach(function(n,i){
+    var nd=document.createElement('div');nd.className='sr-node';nd.innerHTML='<div class="sr-node-ico">'+n.ico+'</div><div class="sr-node-lbl">'+n.lbl+'</div>';flow.appendChild(nd);
+    if(i<nodes.length-1){var ln=document.createElement('div');ln.className='sr-line';ln.style.position='relative';if(i<2){var sp=document.createElement('span');sp.className='sr-pct';sp.textContent=i===0?'43%':'57%';ln.appendChild(sp)}flow.appendChild(ln)}
+  });
+}
+
+// BRIDGE CANVAS
+var brC=document.getElementById('bridgeC'),brX=null,brPkts=[];
+function initBridgeCanvas(){
+  if(!brC)return;brC.width=brC.offsetWidth||300;brC.height=brC.offsetHeight||150;brX=brC.getContext('2d');
+}
+function resetBridgeStatus(){
+  var ids=['bp0','bp1','bp2','bp3'],ws=['100%','65%','0%','0%'],stats=['Complete','In progress','Pending','Pending'],cls=['done','active','pending','pending'];
+  ids.forEach(function(id,i){var el=document.getElementById(id);if(el)el.style.width=ws[i]});
+  document.querySelectorAll('.bs-stat').forEach(function(el,i){if(i<4){el.textContent=stats[i];el.className='bs-stat '+cls[i]}});
+  bridgeInProgress=false;
+}
+function drawBridge(t){
+  if(!brX)return;var W=brC.offsetWidth,H=brC.offsetHeight;
+  if(brC.width!==W||brC.height!==H){brC.width=W;brC.height=H}if(!W||!H)return;
+  brX.clearRect(0,0,W,H);var lx=W*.18,rx=W*.82,cy=H*.5;
+  [[lx,'rgba(111,124,255,'],[rx,'rgba(30,214,112,']].forEach(function(ch){[3,2,1].forEach(function(k){brX.beginPath();brX.arc(ch[0],cy,12*k,0,Math.PI*2);brX.fillStyle=ch[1]+(0.033/k)+')';brX.fill()});brX.beginPath();brX.arc(ch[0],cy,12,0,Math.PI*2);brX.fillStyle=ch[1]+'0.88)';brX.fill()});
+  brX.beginPath();brX.setLineDash([4,7]);brX.strokeStyle='rgba(0,200,224,0.1)';brX.lineWidth=1;brX.moveTo(lx+14,cy);brX.lineTo(rx-14,cy);brX.stroke();brX.setLineDash([]);
+  if(Math.random()<0.035)brPkts.push({p:0,sp:.004+Math.random()*.005});
+  brPkts=brPkts.filter(function(pk){pk.p+=pk.sp;var px=lx+14+(rx-lx-28)*Math.min(pk.p,1);for(var i=0;i<5;i++){brX.beginPath();brX.arc(px-i*2.5,cy,2.2-i*.3,0,Math.PI*2);brX.fillStyle='rgba(0,200,224,'+Math.max(0,(1-i/5)*.68)+')';brX.fill()}return pk.p<1});
+  brX.font='8px Space Mono,monospace';brX.fillStyle='rgba(100,140,165,0.52)';brX.textAlign='center';brX.fillText('ETH',lx,cy+22);brX.fillText('ARB',rx,cy+22);brX.fillText(brPkts.length+' packets',W/2,cy-18);
+}
+
+// STAKE RING
+function drawStakeRing(){
+  var c=document.getElementById('stakeRingC');if(!c)return;var x=c.getContext('2d'),r=32,cx=38,cy=38;
+  x.clearRect(0,0,76,76);x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.strokeStyle='rgba(196,154,42,0.1)';x.lineWidth=5;x.stroke();
+  x.beginPath();x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*.72);x.strokeStyle='#c49a2a';x.lineWidth=5;x.lineCap='round';x.stroke();
+  x.font='bold 10px Bebas Neue,cursive';x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';x.fillText('72%',cx,cy);
+}
+
+// BUTTONS
+document.getElementById('swapArrowBtn').addEventListener('click',function(){toast('Direction flipped ⇅')});
+document.getElementById('swapExecBtn').addEventListener('click',function(){toast('Swap preview: 1 ETH → '+Math.round(ethPrice)+' USDC — Route: Uniswap v4')});
+document.getElementById('bridgeExecBtn').addEventListener('click',function(){
+  if(bridgeInProgress){toast('Bridge already in progress...');return}
+  bridgeInProgress=true;toast('Bridge initiated: 0.5 ETH → Arbitrum — Est. ~7 min');animateBridgeProgress();
+});
+document.getElementById('stakeExecBtn').addEventListener('click',function(){toast('Staking 2.4 ETH via Lido — Trust Score: 99/100 ✓')});
+
+function animateBridgeProgress(){
+  var progs=['bp0','bp1','bp2','bp3'],step=1;
+  function adv(){
+    if(step>=progs.length)return;
+    var pe=document.getElementById(progs[step]);if(pe)pe.style.width='100%';
+    var stats=document.querySelectorAll('.bs-stat');if(stats[step]){stats[step].textContent='Complete';stats[step].className='bs-stat done'}
+    step++;
+    if(step<progs.length){var pe2=document.getElementById(progs[step]);if(pe2)pe2.style.width='30%';if(stats[step]){stats[step].textContent='In progress';stats[step].className='bs-stat active'}setTimeout(adv,1800+Math.random()*1400)}
+    else{toast('Bridge complete ✓ 0.4998 ETH received on Arbitrum');bridgeInProgress=false}
+  }
+  setTimeout(adv,1200);
+}
+
+// FETCH ETH PRICE
+async function fetchEthPrice(){
+  try{
+    var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    if(!r.ok)throw new Error();
+    var d=await r.json();
+    if(d.ethereum&&d.ethereum.usd){ethPrice=d.ethereum.usd;gasPrice=Math.floor(12+Math.random()*48);updateSwapUI()}
+  }catch(e){updateSwapUI()}
+}
+
+// SCROLL REVEAL
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in')})},{threshold:0.1});
+document.querySelectorAll('.rv').forEach(function(el){observer.observe(el)});
+
+// STAKING REWARD TICK
+setInterval(function(){stakeEarned+=0.00000042;var el=document.getElementById('stakeReward');if(el)el.textContent=stakeEarned.toFixed(7)},900);
+
+// MAIN LOOP
+var lastF=0;
+function loop(t){
+  if(t-lastF>=16){lastF=t;var activePanel=document.querySelector('.infra-panel.active');if(activePanel&&activePanel.id==='panel-bridge')drawBridge(t)}
+  requestAnimationFrame(loop);
+}
+
+// BOOT
+fetchEthPrice();
+setInterval(fetchEthPrice,30000);
+updateSwapUI();
+buildSwapRoute();
+initBridgeCanvas();
+drawStakeRing();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
