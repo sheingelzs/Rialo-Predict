@@ -122,6 +122,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
     <div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div>
   </div></div>
 </div>
+
 <!-- SCAN OVERLAY -->
 <div id="sovl">
   <canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
@@ -136,6 +137,7 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
     <button class="scan-cta" id="scanCta">View Identity Profile →</button>
   </div>
 </div>
+
 <div id="sbar"><div class="sb">
   <div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div>
   <div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
@@ -148,71 +150,261 @@ h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,200,224,0.48);color:tra
 <script src="shared.js"></script>
 <script>
 // ═══ HERO CANVAS ═══════════════════════════════════════
-var hC=document.getElementById('heroC'),hX=hC.getContext('2d');
-function rH(){hC.width=hC.offsetWidth||innerWidth;hC.height=hC.offsetHeight||(innerHeight-54)}
-rH();window.addEventListener('resize',rH);
-var HN=[];
-for(var i=0;i<42;i++){var a=(i/42)*Math.PI*2,r2=70+Math.random()*200;HN.push({x:0,y:0,ox:Math.cos(a)*r2,oy:Math.sin(a)*r2,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*2.8+.8,p:Math.random()*Math.PI*2,gold:Math.random()<.1,init:false})}
-HN.push({x:0,y:0,r:10,vx:0,vy:0,p:0,center:true,init:true});
-function drawHero(t){
-  if(!hC.offsetWidth||!hC.offsetHeight)return;
-  hX.clearRect(0,0,hC.width,hC.height);
-  var cx=hC.width/2,cy=hC.height/2,ef=1+ecosystemState.energyLevel/300;
-  var main=HN[HN.length-1];main.x=cx;main.y=cy;
-  HN.forEach(function(n){if(!n.center){if(!n.init){n.x=cx+n.ox;n.y=cy+n.oy;n.init=true}n.x+=n.vx*ef;n.y+=n.vy*ef;n.p+=.01;n.vx+=(cx-n.x)*.00002;n.vy+=(cy-n.y)*.00002;if(n.x<cx-330)n.vx+=.01;if(n.x>cx+330)n.vx-=.01;if(n.y<cy-250)n.vy+=.01;if(n.y>cy+250)n.vy-=.01}});
-  HN.forEach(function(n){if(n.center)return;var dx=cx-n.x,dy=cy-n.y,d=Math.hypot(dx,dy);if(d<270){var g=hX.createLinearGradient(n.x,n.y,cx,cy);g.addColorStop(0,'rgba(0,200,224,0)');g.addColorStop(1,n.gold?'rgba(196,154,42,.12)':'rgba(0,200,224,.10)');hX.beginPath();hX.strokeStyle=g;hX.lineWidth=.5;hX.moveTo(n.x,n.y);hX.lineTo(cx,cy);hX.stroke()}});
-  HN.forEach(function(n){if(n.center){var ta=t*.0004;[14,25,40].forEach(function(r,i){hX.beginPath();hX.arc(cx,cy,r+Math.sin(ta+i*.7)*1.5,0,Math.PI*2);hX.strokeStyle='rgba(0,200,224,'+(0.10-i*.024)+')';hX.lineWidth=.7;hX.stroke()});hX.beginPath();hX.arc(cx,cy,9,0,Math.PI*2);hX.fillStyle='rgba(0,200,224,.88)';hX.fill();}else{var pa=Math.sin(n.p)*.5+.5;hX.beginPath();hX.arc(n.x,n.y,n.r,0,Math.PI*2);hX.fillStyle=n.gold?'rgba(196,154,42,'+(0.26+pa*.48)+')':'rgba(0,200,224,'+(0.13+pa*.48)+')';hX.fill()}});
-}
+var hC = document.getElementById('heroC'), hX = hC.getContext('2d');
 
-// Hero market sparklines
-function drawHeroSpark(id,data,up){
-  var c=document.getElementById('hms-'+id);if(!c||!data||data.length<2)return;
-  c.width=50;c.height=18;var ctx=c.getContext('2d');ctx.clearRect(0,0,50,18);
-  var mn=Math.min.apply(null,data),mx=Math.max.apply(null,data),rng=mx-mn||1;
-  ctx.beginPath();data.forEach(function(v,i){var x=i/(data.length-1)*48,y=(1-(v-mn)/rng)*14+2;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
-  ctx.strokeStyle=up?'rgba(30,214,112,0.9)':'rgba(255,86,86,0.9)';ctx.lineWidth=1.2;ctx.stroke();
+// FIX 1: Pakai requestAnimationFrame agar width tidak 0 di mobile saat pertama load
+function rH() {
+  requestAnimationFrame(function() {
+    hC.width = hC.offsetWidth || innerWidth;
+    hC.height = hC.offsetHeight || (innerHeight - 54);
+  });
 }
-function updateHeroStrip(){
-  var map={ethereum:'eth',bitcoin:'btc',solana:'sol'};
-  Object.keys(map).forEach(function(id){
-    var key=map[id],d=tokenData[id];if(!d)return;
-    var pe=document.getElementById('hmp-'+key),ce=document.getElementById('hmc-'+key),ie=document.getElementById('hm-'+key);
-    var ch=d.chg||0,p=d.price,up=ch>=0;
-    if(pe){var old=pe.textContent;pe.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2));if(old!==pe.textContent){pe.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){pe.classList.remove('flash-up','flash-dn')},600)}}
-    if(ce){ce.textContent=(up?'+':'')+ch.toFixed(2)+'%';ce.className='hm-chg '+(up?'up':'dn')}
-    if(ie)ie.className='hm-item '+(up?'up':'dn');
-    drawHeroSpark(key,priceHistory[key]||[],up);
+rH();
+window.addEventListener('resize', rH);
+
+var HN = [];
+for (var i = 0; i < 42; i++) {
+  var a = (i / 42) * Math.PI * 2, r2 = 70 + Math.random() * 200;
+  HN.push({x:0,y:0,ox:Math.cos(a)*r2,oy:Math.sin(a)*r2,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:Math.random()*2.8+.8,p:Math.random()*Math.PI*2,gold:Math.random()<.1,init:false});
+}
+HN.push({x:0,y:0,r:10,vx:0,vy:0,p:0,center:true,init:true});
+
+function drawHero(t) {
+  if (!hC.offsetWidth || !hC.offsetHeight) return;
+  hX.clearRect(0, 0, hC.width, hC.height);
+  var cx = hC.width / 2, cy = hC.height / 2, ef = 1 + ecosystemState.energyLevel / 300;
+  var main = HN[HN.length - 1]; main.x = cx; main.y = cy;
+  HN.forEach(function(n) {
+    if (!n.center) {
+      if (!n.init) { n.x = cx + n.ox; n.y = cy + n.oy; n.init = true; }
+      n.x += n.vx * ef; n.y += n.vy * ef; n.p += .01;
+      n.vx += (cx - n.x) * .00002; n.vy += (cy - n.y) * .00002;
+      if (n.x < cx - 330) n.vx += .01; if (n.x > cx + 330) n.vx -= .01;
+      if (n.y < cy - 250) n.vy += .01; if (n.y > cy + 250) n.vy -= .01;
+    }
+  });
+  HN.forEach(function(n) {
+    if (n.center) return;
+    var dx = cx - n.x, dy = cy - n.y, d = Math.hypot(dx, dy);
+    if (d < 270) {
+      var g = hX.createLinearGradient(n.x, n.y, cx, cy);
+      g.addColorStop(0, 'rgba(0,200,224,0)');
+      g.addColorStop(1, n.gold ? 'rgba(196,154,42,.12)' : 'rgba(0,200,224,.10)');
+      hX.beginPath(); hX.strokeStyle = g; hX.lineWidth = .5;
+      hX.moveTo(n.x, n.y); hX.lineTo(cx, cy); hX.stroke();
+    }
+  });
+  HN.forEach(function(n) {
+    if (n.center) {
+      var ta = t * .0004;
+      [14, 25, 40].forEach(function(r, i) {
+        hX.beginPath(); hX.arc(cx, cy, r + Math.sin(ta + i * .7) * 1.5, 0, Math.PI * 2);
+        hX.strokeStyle = 'rgba(0,200,224,' + (0.10 - i * .024) + ')'; hX.lineWidth = .7; hX.stroke();
+      });
+      hX.beginPath(); hX.arc(cx, cy, 9, 0, Math.PI * 2);
+      hX.fillStyle = 'rgba(0,200,224,.88)'; hX.fill();
+    } else {
+      var pa = Math.sin(n.p) * .5 + .5;
+      hX.beginPath(); hX.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      hX.fillStyle = n.gold ? 'rgba(196,154,42,' + (0.26 + pa * .48) + ')' : 'rgba(0,200,224,' + (0.13 + pa * .48) + ')';
+      hX.fill();
+    }
   });
 }
 
-// Ticker update
-function updateTicker(){
-  var ti=document.getElementById('tickInner');if(!ti)return;
-  // Already handled by applyPricesToDom via ID_MAP tick IDs
+// ═══ HERO MARKET SPARKLINES ════════════════════════════
+function drawHeroSpark(id, data, up) {
+  var c = document.getElementById('hms-' + id);
+  if (!c || !data || data.length < 2) return;
+  c.width = 50; c.height = 18;
+  var ctx = c.getContext('2d'); ctx.clearRect(0, 0, 50, 18);
+  var mn = Math.min.apply(null, data), mx = Math.max.apply(null, data), rng = mx - mn || 1;
+  ctx.beginPath();
+  data.forEach(function(v, i) {
+    var x = i / (data.length - 1) * 48, y = (1 - (v - mn) / rng) * 14 + 2;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = up ? 'rgba(30,214,112,0.9)' : 'rgba(255,86,86,0.9)';
+  ctx.lineWidth = 1.2; ctx.stroke();
 }
 
-function onPricesUpdated(data){updateHeroStrip()}
-function onMarketUpdate(coins,mood){
-  var ht=document.getElementById('heroTag'),htt=document.getElementById('heroTagTxt'),tick=document.getElementById('tickerEl');
-  if(ht&&htt){ht.className='hero-tag '+(mood==='neutral'?'':mood);htt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Trust Layer Protocol v1.0 — Live'}
-  if(tick){tick.className='ticker';if(mood==='bullish')tick.classList.add('bullish');else if(mood==='bearish')tick.classList.add('alert')}
+function updateHeroStrip() {
+  var map = {ethereum:'eth', bitcoin:'btc', solana:'sol'};
+  Object.keys(map).forEach(function(id) {
+    var key = map[id], d = tokenData[id]; if (!d) return;
+    var pe = document.getElementById('hmp-' + key),
+        ce = document.getElementById('hmc-' + key),
+        ie = document.getElementById('hm-' + key);
+    var ch = d.chg || 0, p = d.price, up = ch >= 0;
+    if (pe) {
+      var old = pe.textContent;
+      pe.textContent = '$' + (p > 1000 ? Math.round(p).toLocaleString() : p.toFixed(2));
+      if (old !== pe.textContent) {
+        pe.classList.add(up ? 'flash-up' : 'flash-dn');
+        setTimeout(function() { pe.classList.remove('flash-up', 'flash-dn'); }, 600);
+      }
+    }
+    if (ce) { ce.textContent = (up ? '+' : '') + ch.toFixed(2) + '%'; ce.className = 'hm-chg ' + (up ? 'up' : 'dn'); }
+    if (ie) ie.className = 'hm-item ' + (up ? 'up' : 'dn');
+    drawHeroSpark(key, priceHistory[key] || [], up);
+  });
 }
 
-// MAIN LOOP
-var lastF=0;
-function loop(t){
-  if(t-lastF>=16){lastF=t;drawBg();drawHero(t);drawHex(t);if(scActive){var scC2=document.getElementById('sC'),scX2=scC2?scC2.getContext('2d'):null;if(scX2){scC2.width=scC2.offsetWidth||innerWidth;scC2.height=scC2.offsetHeight||innerHeight;/* simple scan bg */var W=scC2.width,H=scC2.height;scX2.clearRect(0,0,W,H);var cx=W/2,cy=H/2;for(var k=0;k<3;k++){var rr=((t*.00025+k*.33)%1)*(Math.max(W,H)*.6);scX2.beginPath();scX2.arc(cx,cy,rr,0,Math.PI*2);scX2.strokeStyle='rgba(0,200,224,'+(1-rr/(Math.max(W,H)*.6))*.13+')';scX2.lineWidth=.6;scX2.stroke()}}}}
+// FIX 2: updateTicker() sekarang benar-benar mengisi semua elemen ticker
+// ID_MAP di shared.js punya tick key (ep,bp,sp,mp,ap,avp,lp,up) — kita tulis langsung di sini
+var TICKER_MAP = {
+  ethereum:        { p:'ep',  c:'ec'  },
+  bitcoin:         { p:'bp',  c:'bc'  },
+  solana:          { p:'sp',  c:'sc'  },
+  'matic-network': { p:'mp',  c:'mc'  },
+  arbitrum:        { p:'ap',  c:'ac'  },
+  'avalanche-2':   { p:'avp', c:'avc' },
+  chainlink:       { p:'lp',  c:'lc'  },
+  uniswap:         { p:'up',  c:'uc'  }
+};
+function updateTicker() {
+  Object.keys(TICKER_MAP).forEach(function(id) {
+    var m = TICKER_MAP[id], d = tokenData[id]; if (!d) return;
+    var pe = document.getElementById(m.p), ce = document.getElementById(m.c);
+    var p = d.price, ch = d.chg || 0, up = ch >= 0;
+    if (pe) pe.textContent = '$' + (p > 1000 ? Math.round(p).toLocaleString() : p > 1 ? p.toFixed(2) : p.toFixed(4));
+    if (ce) { ce.textContent = (up ? '+' : '') + ch.toFixed(2) + '%'; ce.className = up ? 'ti-u' : 'ti-d'; }
+  });
+  // Gas di ticker
+  var gp = document.getElementById('gasp');
+  if (gp && gasPrice) gp.textContent = gasPrice;
+
+  // FIX 3: Duplikat ticker agar animasi scroll mulus (butuh 2x konten)
+  var ti = document.getElementById('tickInner');
+  if (ti && ti.dataset.duped !== '1') {
+    ti.innerHTML += ti.innerHTML;
+    ti.dataset.duped = '1';
+  }
+}
+
+// ═══ CALLBACKS DARI shared.js ═══════════════════════════
+// FIX 4: onPricesUpdated dipanggil oleh shared.js setelah fetch/fallback selesai
+function onPricesUpdated() {
+  updateHeroStrip();
+  updateTicker();
+}
+
+// FIX 5: onMarketUpdate dipanggil oleh shared.js setelah analyzeMarketConditions
+function onMarketUpdate(coins, mood) {
+  var ht = document.getElementById('heroTag'),
+      htt = document.getElementById('heroTagTxt'),
+      tick = document.getElementById('tickerEl');
+  if (ht && htt) {
+    ht.className = 'hero-tag ' + (mood === 'neutral' ? '' : mood);
+    htt.textContent = mood === 'bullish'
+      ? 'Markets bullish — ecosystem energized'
+      : mood === 'bearish'
+      ? 'Market correction — monitoring anomalies'
+      : 'Trust Layer Protocol v1.0 — Live';
+  }
+  if (tick) {
+    tick.className = 'ticker';
+    if (mood === 'bullish') tick.classList.add('bullish');
+    else if (mood === 'bearish') tick.classList.add('alert');
+  }
+  // Update status bar market pills
+  updateStatusBarMarket();
+}
+
+// FIX 6: Status bar market — diupdate setelah harga masuk
+function updateStatusBarMarket() {
+  var el = document.getElementById('sbMarket');
+  if (!el || !connAddr) return;
+  var coins = ['ethereum','bitcoin','solana'];
+  el.innerHTML = coins.map(function(id) {
+    var d = tokenData[id]; if (!d) return '';
+    var ch = d.chg || 0, up = ch >= 0;
+    return '<div class="sb-mkt-item"><span style="color:var(--txt2)">'
+      + id.slice(0,3).toUpperCase() + '</span>'
+      + '<span style="color:' + (up ? 'var(--green)' : '#ff5555') + '">'
+      + (up ? '+' : '') + ch.toFixed(1) + '%</span></div>';
+  }).join('<div class="sb-sep"></div>');
+}
+
+// ═══ MAIN LOOP ══════════════════════════════════════════
+var lastF = 0;
+function loop(t) {
+  if (t - lastF >= 16) {
+    lastF = t;
+    drawBg();
+    drawHero(t);
+    drawHex(t);
+    // Scan overlay background
+    if (scActive) {
+      var scC2 = document.getElementById('sC'), scX2 = scC2 ? scC2.getContext('2d') : null;
+      if (scX2) {
+        scC2.width = scC2.offsetWidth || innerWidth;
+        scC2.height = scC2.offsetHeight || innerHeight;
+        var W = scC2.width, H = scC2.height;
+        scX2.clearRect(0, 0, W, H);
+        var cx = W / 2, cy = H / 2;
+        for (var k = 0; k < 3; k++) {
+          var rr = ((t * .00025 + k * .33) % 1) * (Math.max(W, H) * .6);
+          scX2.beginPath();
+          scX2.arc(cx, cy, rr, 0, Math.PI * 2);
+          scX2.strokeStyle = 'rgba(0,200,224,' + (1 - rr / (Math.max(W, H) * .6)) * .13 + ')';
+          scX2.lineWidth = .6; scX2.stroke();
+        }
+      }
+    }
+  }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
-// BOOT
-document.addEventListener('DOMContentLoaded',function(){
-  initBgCanvas();initCursor();initHexCanvas();initRipple();
-  initNav('home');bindWalletModal();bindDiscButton();
-  document.getElementById('heroBtn').addEventListener('click',openWallet);
-  applyFallbackPrices();fetchPrices();setInterval(fetchPrices,25000);
-  setTimeout(function(){triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',3500)},1200);
+// ═══ BOOT ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  initBgCanvas();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initNav('home');
+  bindWalletModal();
+  bindDiscButton();
+
+  document.getElementById('heroBtn').addEventListener('click', openWallet);
+
+  // FIX 7: Fallback dulu agar UI tidak blank, lalu coba fetch asli
+  // shared.js akan memanggil onPricesUpdated() setelah keduanya selesai
+  applyFallbackPrices();
+  fetchPrices();
+  setInterval(fetchPrices, 25000);
+
+  // FIX 8: Gas drift juga update ticker
+  setInterval(function() {
+    var drift = Math.max(1, gasPrice + Math.round((Math.random() - .5) * 6));
+    gasPrice = drift;
+    if (typeof updateGasOracle === 'function') updateGasOracle(drift);
+    var gp = document.getElementById('gasp');
+    if (gp) gp.textContent = drift;
+  }, 6000);
+
+  setTimeout(function() {
+    triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains', 'info', 3500);
+  }, 1200);
+
+  // FIX 9: Scan overlay bisa ditutup dengan tap/klik di luar (mobile friendly)
+  var sovl = document.getElementById('sovl');
+  if (sovl) {
+    sovl.addEventListener('click', function(e) {
+      if (e.target === sovl) {
+        sovl.classList.remove('open');
+        setTimeout(function() { sovl.classList.remove('show'); scActive = false; }, 460);
+      }
+    });
+    // Touch support untuk mobile
+    sovl.addEventListener('touchstart', function(e) {
+      if (e.target === sovl) {
+        sovl.classList.remove('open');
+        setTimeout(function() { sovl.classList.remove('show'); scActive = false; }, 460);
+      }
+    }, { passive: true });
+  }
 });
 </script>
 </body>
