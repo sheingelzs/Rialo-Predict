@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>RIALO — TrustLayer</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
@@ -162,7 +162,6 @@
 <div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
 <div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Loading TrustLayer...</span></div></div>
 
-<!-- FIX: Full shared nav (was logo-only before — no navigation links) -->
 <nav id="mainNav">
   <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
   <ul class="nlinks" id="navLinks">
@@ -183,14 +182,12 @@
 <div class="tl-page">
   <div class="tl-inner">
 
-    <!-- HEADER -->
     <div style="margin-bottom:40px" class="rv">
       <div class="sec-ey">Core Protocol</div>
       <h2 class="sec-h">The trust stack,<br>rebuilt from scratch.</h2>
       <p class="sec-desc">Rialo layers trust, identity, and transparency directly into Web3 interactions — making every wallet interaction legible, safe, and verifiable.</p>
     </div>
 
-    <!-- FEATURE GRID -->
     <div class="fgrid rv">
       <div class="fc"><div class="fc-glow"></div><div class="f-ico">◈</div><div class="f-title">Onchain Reputation</div><div class="f-desc">Every transaction, contribution, and governance vote builds a verifiable reputation that follows your wallet across all chains.</div></div>
       <div class="fc"><div class="fc-glow"></div><div class="f-ico">⬡</div><div class="f-title">Identity Verification</div><div class="f-desc">Transform anonymous wallet addresses into rich, multi-dimensional identities without compromising privacy.</div></div>
@@ -200,7 +197,6 @@
       <div class="fc"><div class="fc-glow"></div><div class="f-ico">∞</div><div class="f-title">Multi-chain Presence</div><div class="f-desc">A unified identity layer across Ethereum, Polygon, Arbitrum, Base, Solana, and every major chain.</div></div>
     </div>
 
-    <!-- ECO INTEL -->
     <div class="rv" style="margin-bottom:6px">
       <div class="sec-ey" style="margin-bottom:14px">Ecosystem Intelligence</div>
     </div>
@@ -217,7 +213,6 @@
       </div>
     </div>
 
-    <!-- MARKET INTEL -->
     <div class="rv" style="margin-bottom:6px">
       <div class="sec-ey" style="margin-bottom:14px">Market Intelligence — Realtime</div>
     </div>
@@ -233,7 +228,7 @@
       </div>
       <div class="mi-right">
         <div class="gas-panel">
-          <div class="gas-title"><span>Gas Oracle</span><div class="mi-live"><div class="mi-live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span style="color:var(--gold)">Polling</span></div></div>
+          <div class="gas-title"><span>Gas Oracle</span><div class="mi-live"><div class="mi-live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span style="color:var(--gold)">Live</span></div></div>
           <div class="gas-main"><div class="gas-val" id="gasMain">—</div><div class="gas-unit">GWEI<br><span style="font-size:6.5px;opacity:.5" id="gasUsd">~$—</span></div></div>
           <div class="gas-tiers">
             <div class="gas-tier"><div class="gt-lbl">Slow</div><div class="gt-val slow-c" id="gSlow">—</div></div>
@@ -256,14 +251,12 @@
       </div>
     </div>
 
-    <!-- ECO FEED -->
     <div class="rv" style="margin-bottom:6px">
       <div class="sec-ey" style="margin-bottom:14px">Live Ecosystem Activity</div>
     </div>
     <div class="eco-feed rv">
       <div class="eco-head">
         <span class="eco-head-title">Realtime Feed</span>
-        <!-- FIX: event delegation on parent avoids stale button references -->
         <div class="eco-filter" id="ecoFilter">
           <button class="eco-fbtn active" data-ft="all">All</button>
           <button class="eco-fbtn" data-ft="swap">Swap</button>
@@ -275,7 +268,6 @@
       <div class="eco-stream" id="ecoStream"></div>
     </div>
 
-    <!-- BOTTOM: PERM + GOV -->
     <div class="rv" style="margin-bottom:6px">
       <div class="sec-ey" style="margin-bottom:16px">Humanized Transparency & Governance</div>
     </div>
@@ -302,7 +294,6 @@
   </div>
 </div>
 
-<!-- FIX: Full shared wallet/scan/status overlays (were completely absent before) -->
 <div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
 
 <div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
@@ -312,8 +303,13 @@
 
 <script src="shared.js"></script>
 <script>
-/* ─── LOCAL STATE ─── */
-var gasPrice = 14, localEthPrice = 0;
+/* ─── LOCAL STATE ───────────────────────────────────────────────────
+   FIX: removed "var gasPrice = 14" — gasPrice is a global from shared.js.
+   Redeclaring it with var created a local shadow that never received
+   shared.js updates (_fetchGasPrice writes to the global, not the local).
+   Now we just read/write the shared global directly.
+   ─────────────────────────────────────────────────────────────────── */
+var localEthPrice = 0;
 var tokenDataLocal = {};
 var priceHistoryLocal = { eth:[], btc:[], sol:[], matic:[], arb:[], link:[] };
 var MAX_HIST = 24;
@@ -361,8 +357,13 @@ function renderTokenRows(){
   el.innerHTML=html;
 }
 
-/* ─── GAS ─── */
-function updateGasOracle(gwei){
+/* ─── GAS ORACLE UI ───────────────────────────────────────────────
+   FIX: updateGasOracle() now reads from shared.js "gasPrice" global.
+   Called on page load AND via onGasDrift() callback from shared.js
+   _fetchGasPrice() (every 15s).
+   ─────────────────────────────────────────────────────────────────── */
+function updateGasOracle(){
+  var gwei = gasPrice; /* shared global */
   if(!gwei)return;
   var sl=Math.max(gwei-8,1),st=gwei,fa=gwei+12,ra=gwei+28;
   var el=document.getElementById('gasMain');
@@ -372,6 +373,9 @@ function updateGasOracle(gwei){
   var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=Math.min(Math.round(gwei/120*100),100)+'%';
   updateEcoIntelGas(gwei);
 }
+
+/* Called by shared.js _fetchGasPrice every 15s */
+function onGasDrift(){ updateGasOracle(); }
 
 /* ─── ECO INTEL ─── */
 function updateEcoIntelCards(){
@@ -400,13 +404,12 @@ function updateNetworkActivity(){
   var bl=document.getElementById('nrBlock');if(bl)bl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
 }
 
-/* ─── FETCH PRICES (local to this page) ─── */
+/* ─── FETCH LOCAL PRICES (CoinGecko for mcap data not in Binance) ─── */
 function fetchLocalPrices(){
   var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
   fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h')
     .then(function(r){if(!r.ok)throw new Error('fail');return r.json();})
     .then(function(coins){
-      gasPrice=Math.floor(12+Math.random()*48);
       var coinObjs=[];
       coins.forEach(function(c){
         if(!TL_ID_MAP[c.id])return;
@@ -416,10 +419,12 @@ function fetchLocalPrices(){
         if(c.id==='ethereum')localEthPrice=p;
         coinObjs.push({chg:chg});
       });
-      updateGasOracle(gasPrice);renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
+      renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
+      updateGasOracle(); /* refresh gas USD with fresh eth price */
     })
     .catch(applyLocalFallback);
 }
+
 function applyLocalFallback(){
   Object.keys(FALLBACK).forEach(function(id){
     var fb=FALLBACK[id],p=fb.price*(1+(Math.random()-.5)*.001);
@@ -427,8 +432,21 @@ function applyLocalFallback(){
     if(TL_ID_MAP[id]&&TL_ID_MAP[id].hist){priceHistoryLocal[TL_ID_MAP[id].hist].push(p);if(priceHistoryLocal[TL_ID_MAP[id].hist].length>MAX_HIST)priceHistoryLocal[TL_ID_MAP[id].hist].shift()}
     if(id==='ethereum')localEthPrice=p;
   });
-  gasPrice=Math.floor(12+Math.random()*18);
-  updateGasOracle(gasPrice);renderTokenRows();updateNetworkActivity();updateEcoIntelCards();
+  renderTokenRows();updateNetworkActivity();updateEcoIntelCards();updateGasOracle();
+}
+
+/* Called by shared.js when Binance/CoinGecko prices update */
+function onPricesUpdated(data){
+  if(data&&data.ethereum){localEthPrice=data.ethereum.price}
+  /* Merge into local for sparkline/mcap (use local mcap, live price) */
+  Object.keys(TL_ID_MAP).forEach(function(id){
+    if(data[id]&&tokenDataLocal[id]){
+      tokenDataLocal[id].price=data[id].price;
+      tokenDataLocal[id].chg=data[id].chg;
+    }
+  });
+  renderTokenRows();
+  updateGasOracle();
 }
 
 /* ─── ECO FEED ─── */
@@ -458,7 +476,6 @@ function renderEcoFeed(){
   if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity yet</div>';
   el.innerHTML=html;
 }
-/* FIX: event delegation on parent — avoids re-binding on re-render */
 document.getElementById('ecoFilter').addEventListener('click',function(e){
   var btn=e.target.closest('.eco-fbtn');if(!btn)return;
   document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
@@ -493,7 +510,7 @@ document.getElementById('approveBtn').addEventListener('click',function(){
   setTimeout(function(){b.textContent=origText;b.style.background='var(--c)';b.style.color='#000'},2800);
 });
 
-/* ─── RENDER LOOP (bg + hex) ─── */
+/* ─── RENDER LOOP ─── */
 var lastF=0;
 function loop(t){
   if(t-lastF>=16){lastF=t;drawBg();drawHex(t)}
@@ -512,8 +529,8 @@ document.addEventListener('DOMContentLoaded',function(){
   bindWalletModal();
   bindDiscButton();
   applyFallbackPrices();
-  initPriceStreams();
-  fetchPrices();
+  initPriceStreams();   /* starts WebSocket + gas polling (every 15s) */
+  fetchPrices();        /* immediate REST snapshot */
   setInterval(fetchPrices, 30000);
 
   applyLocalFallback();
@@ -523,7 +540,6 @@ document.addEventListener('DOMContentLoaded',function(){
   for(var i=0;i<8;i++)setTimeout(addEcoItem,i*160+200);
   setInterval(addEcoItem,2200);
   renderGov();
-  setInterval(function(){gasPrice=Math.max(1,gasPrice+Math.round((Math.random()-.5)*6));updateGasOracle(gasPrice)},6000);
   setInterval(updateNetworkActivity,4200);
   setInterval(updateEcoIntelCards,4000);
 });
