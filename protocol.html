@@ -126,7 +126,10 @@ requestAnimationFrame(loop);
 document.addEventListener('DOMContentLoaded',function(){
   initBgCanvas();initCursor();initHexCanvas();initRipple();initReveal();
   initNav('proto');bindWalletModal();bindDiscButton();
-  applyFallbackPrices();fetchPrices();setInterval(fetchPrices,25000);
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices,30000);
 });
 </script>
 </body>
