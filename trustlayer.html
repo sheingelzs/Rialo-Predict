@@ -5,60 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RIALO — TrustLayer</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#010308;--c:#00c8e0;--c2:#00a8bd;--c-dim:rgba(0,200,224,0.10);--c-glow:rgba(0,200,224,0.28);
-  --gold:#c49a2a;--green:#1ed670;--red:rgba(255,70,70,0.9);--blue:#6ba3ff;
-  --txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);--txt3:rgba(60,100,130,0.45);
-  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);--border3:rgba(0,200,224,0.32);
-  --glass:rgba(4,10,20,0.80);--glass2:rgba(2,7,16,0.92);
-  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
-}
-html,body{width:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* ── TRUSTLAYER PAGE STYLES ── */
+.tl-page{position:relative;z-index:10;margin-top:var(--nav-h);overflow-x:hidden}
+.tl-inner{max-width:1060px;margin:0 auto;padding:40px 28px 120px}
 
-/* BUG FIX #1: cursor none on desktop only, auto on touch/mobile */
-body{cursor:none}
-@media(hover:none),(pointer:coarse){body{cursor:auto}}
-/* BUG FIX #2: buttons need pointer cursor on touch devices */
-@media(hover:none),(pointer:coarse){
-  button,a,.eco-fbtn,.fc,.gas-tier,.tr-item,.p-deny,.p-approve,.wo{cursor:pointer}
-}
-
-/* ── CUSTOM CURSOR ── */
-#CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
-#CUR{width:5px;height:5px;background:var(--c);box-shadow:0 0 12px var(--c),0 0 24px rgba(0,200,224,0.2);transition:width .1s,height .1s,opacity .2s}
-#CUR2{width:22px;height:22px;border:1px solid rgba(0,200,224,0.20);transition:width .22s var(--ease),height .22s var(--ease),border-color .22s}
-body.chl #CUR{width:8px;height:8px}
-body.chl #CUR2{width:46px;height:46px;border-color:rgba(0,200,224,0.45)}
-body.cclick #CUR{width:3px;height:3px}
-body.cclick #CUR2{width:14px;height:14px}
-@media(hover:none){#CUR,#CUR2{display:none}}
-
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
-body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
-
-/* NAV */
-nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(0,200,224,0.10);background:rgba(1,4,12,0.92);backdrop-filter:blur(40px);box-shadow:0 8px 32px rgba(0,0,0,0.6)}
-.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.38em;color:#fff;display:flex;align-items:center;gap:10px;user-select:none;text-decoration:none;text-shadow:0 0 30px rgba(0,200,224,0.15)}
-.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);animation:pulse 2.6s ease infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
-.nav-tag{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.14);border-radius:1px}
-
-/* LAYOUT */
-.page{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:40px 28px 120px}
-
-/* REVEALS */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease),filter .65s;filter:blur(2px)}
-.rv.in{opacity:1;transform:none;filter:blur(0)}
-
-/* SECTION HEADER */
-.sec-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
-.sec-ey::before{content:'';width:12px;height:1px;background:var(--c)}
-.sec-h{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,46px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
-.sec-desc{font-size:11.5px;color:var(--txt2);max-width:440px;line-height:1.9;margin-bottom:36px}
-
-/* FEATURE GRID */
+/* Feature grid */
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
 .fc{padding:22px 18px;border:1px solid rgba(0,200,224,0.10);border-radius:2px;background:rgba(1,6,18,0.72);transition:all .35s var(--ease);position:relative;overflow:hidden;cursor:default;backdrop-filter:blur(24px);box-shadow:0 4px 24px rgba(0,0,0,0.5),0 1px 0 rgba(0,200,224,0.08) inset}
 .fc:hover{border-color:rgba(0,200,224,0.22);transform:translateY(-4px);box-shadow:0 8px 48px rgba(0,0,0,0.6),0 0 40px rgba(0,200,224,0.06),0 1px 0 rgba(0,200,224,0.15) inset}
@@ -66,14 +19,11 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .f-ico{width:30px;height:30px;border:1px solid rgba(0,200,224,0.14);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px;background:rgba(0,200,224,0.06);margin-bottom:12px}
 .f-title{font-size:12.5px;font-weight:500;color:#fff;margin-bottom:6px}.f-desc{font-size:10.5px;color:var(--txt2);line-height:1.8}
 
-/* ECO INTEL */
+/* Eco Intel */
 .eco-intel{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:0;overflow:hidden;position:relative;margin-bottom:28px;backdrop-filter:blur(20px)}
 .eco-intel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
 .ei-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .ei-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2)}
-.mi-live{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid rgba(30,214,112,0.2);background:rgba(30,214,112,0.04);border-radius:1px}
-.mi-live-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.2s ease infinite}
-.mi-live span{font-family:'Space Mono',monospace;font-size:6px;color:var(--green);letter-spacing:.12em;text-transform:uppercase}
 .ei-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:12px;gap:8px}
 .ei-card{padding:12px;border:1px solid rgba(0,200,224,0.08);border-radius:2px;background:rgba(1,6,18,0.68);position:relative;overflow:hidden;backdrop-filter:blur(16px);transition:all .3s ease}
 .ei-card.alert{border-color:rgba(255,70,70,0.2);background:rgba(255,70,70,0.03);box-shadow:0 0 24px rgba(255,70,70,0.06)}
@@ -89,7 +39,7 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .ei-bar-fill{height:100%;border-radius:1px;transition:width 1s var(--ease)}
 .ei-card.alert .ei-bar-fill{background:rgba(255,70,70,0.8)}.ei-card.bullish .ei-bar-fill{background:var(--green)}.ei-card.active .ei-bar-fill{background:var(--c)}
 
-/* MARKET INTEL */
+/* Market Intel */
 .mi-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:12px;margin-bottom:28px}
 .mi-main{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;overflow:hidden;position:relative;backdrop-filter:blur(24px)}
 .mi-main::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
@@ -113,7 +63,7 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .spark-svg{width:100%;height:30px;display:block}
 .mi-right{display:flex;flex-direction:column;gap:10px}
 
-/* GAS */
+/* Gas */
 .gas-panel{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
 .gas-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
 .gas-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
@@ -129,23 +79,20 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .gas-bar-wrap{height:3px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden;margin-bottom:4px}
 .gas-bar{height:100%;border-radius:2px;transition:width 1.2s var(--ease)}
 
-/* NET PANEL */
+/* Net panel */
 .net-panel{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;flex:1;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
 .net-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--blue),transparent)}
-.wc-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .net-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}.net-row:last-child{border-bottom:none}
 .nr-ico{width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;background:rgba(107,163,255,0.06);border:1px solid rgba(107,163,255,0.12)}
 .nr-label{font-size:10px;color:var(--txt2);flex:1}.nr-val{font-family:'Bebas Neue',cursive;font-size:16px;color:#fff;transition:color .3s}
 .nr-bar-w{width:50px;height:2px;background:rgba(107,163,255,0.08);border-radius:2px;overflow:hidden;flex-shrink:0}.nr-bar{height:100%;background:var(--blue);border-radius:2px;transition:width 1s var(--ease)}
 
-/* ECO FEED */
+/* Eco feed */
 .eco-feed{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.09);border-radius:2px;overflow:hidden;position:relative;backdrop-filter:blur(20px);margin-bottom:28px}
 .eco-feed::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
 .eco-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .eco-head-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);flex:1}
 .eco-filter{display:flex;gap:4px}
-
-/* BUG FIX #3: eco-fbtn needs proper cursor behavior and pointer events */
 .eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s;-webkit-tap-highlight-color:transparent}
 @media(hover:none),(pointer:coarse){.eco-fbtn{cursor:pointer}}
 .eco-fbtn.active,.eco-fbtn:hover{border-color:rgba(0,200,224,0.22);color:var(--c);background:rgba(0,200,224,0.04)}
@@ -162,10 +109,8 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .eco-item.anomaly{background:rgba(255,70,70,0.03);animation:ecoIn .35s var(--ease2) both,anomalyPulse 2s ease infinite}
 @keyframes anomalyPulse{0%,100%{background:rgba(255,70,70,0.03)}50%{background:rgba(255,70,70,0.07)}}
 
-/* BOTTOM GRID */
+/* Bottom grid */
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* PERM CARD */
 .perm-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.12);border-radius:2px;padding:22px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,0.6);backdrop-filter:blur(20px)}
 .perm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
 .ph{display:flex;align-items:center;gap:11px;margin-bottom:15px}
@@ -174,7 +119,6 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .p-body{font-size:11px;color:var(--txt);line-height:1.85;margin-bottom:13px}
 .p-code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:8px 11px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.42);margin-bottom:14px;overflow-x:auto}
 .p-acts{display:flex;gap:7px}
-/* BUG FIX #4: button cursor fallback for touch */
 .p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:none;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
 .p-deny:hover{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.28)}
 .p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:none;letter-spacing:.09em;transition:box-shadow .22s,transform .1s,background .3s;text-transform:uppercase;position:relative;overflow:hidden}
@@ -184,28 +128,25 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 @keyframes shimmer{to{transform:translateX(300%) skewX(-15deg)}}
 @media(hover:none),(pointer:coarse){.p-deny,.p-approve{cursor:pointer}}
 
-/* GOV PANEL */
+/* Gov panel */
 .gov-panel{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
 .gov-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(196,154,42,0.6),transparent)}
 .gov-inner{max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,200,224,0.1) transparent}
 .gov-inner::-webkit-scrollbar{width:2px}
 .gov-inner::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.12)}
-.badge{display:inline-block;padding:2px 6px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.06em;text-transform:uppercase}
-.bc{background:rgba(0,200,224,0.06);color:var(--c);border:1px solid rgba(0,200,224,0.12)}
 
-/* BUG FIX #5: Toast bottom — raised when status bar is visible, safe default */
-#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
-/* When status bar is active (injected class on body), nudge toast up */
-body.has-sbar #toast{bottom:60px}
-#toast.on{transform:translateY(0) scale(1);opacity:1}
-.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
+/* Section headers */
+.sec-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
+.sec-ey::before{content:'';width:12px;height:1px;background:var(--c)}
+.sec-h{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,46px);letter-spacing:.03em;color:#fff;margin-bottom:10px}
+.sec-desc{font-size:11.5px;color:var(--txt2);max-width:440px;line-height:1.9;margin-bottom:36px}
 
-/* RESPONSIVE */
+/* Responsive */
 @media(max-width:768px){
   .mi-grid,.bottom-grid{grid-template-columns:1fr}
   .ei-grid{grid-template-columns:1fr 1fr}
   .fgrid{grid-template-columns:1fr 1fr}
-  .page{padding:24px 16px 80px}
+  .tl-inner{padding:24px 16px 80px}
 }
 @media(max-width:480px){.fgrid{grid-template-columns:1fr}.ei-grid{grid-template-columns:1fr 1fr}}
 </style>
@@ -214,181 +155,189 @@ body.has-sbar #toast{bottom:60px}
 
 <div id="CUR"></div>
 <div id="CUR2"></div>
+<div id="flash"></div>
+<div id="atmo"></div>
+<canvas id="BG"></canvas>
+<div class="vig"></div>
+<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
+<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Loading TrustLayer...</span></div></div>
 
-<nav>
-  <a class="nlogo" href="index.html"><div class="npulse"></div>RIALO</a>
-  <span class="nav-tag">TrustLayer</span>
+<!-- FIX: Full shared nav (was logo-only before — no navigation links) -->
+<nav id="mainNav">
+  <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
+  <ul class="nlinks" id="navLinks">
+    <li><a href="index.html" data-s="home">Home</a></li>
+    <li><a href="protocol.html" data-s="proto">Protocol</a></li>
+    <li><a href="identity.html" data-s="id">Identity</a></li>
+    <li><a href="trustlayer.html" data-s="trust">TrustLayer</a></li>
+    <li><a href="infrastructure.html" data-s="infra">Infrastructure</a></li>
+    <li><a href="devs.html" data-s="devs">Devs</a></li>
+  </ul>
+  <div class="nright">
+    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
+    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
 </nav>
 
-<div class="page">
+<div class="tl-page">
+  <div class="tl-inner">
 
-  <!-- HEADER -->
-  <div style="margin-bottom:40px" class="rv">
-    <div class="sec-ey">Core Protocol</div>
-    <h2 class="sec-h">The trust stack,<br>rebuilt from scratch.</h2>
-    <p class="sec-desc">Rialo layers trust, identity, and transparency directly into Web3 interactions — making every wallet interaction legible, safe, and verifiable.</p>
-  </div>
-
-  <!-- FEATURE GRID -->
-  <div class="fgrid rv">
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">◈</div><div class="f-title">Onchain Reputation</div><div class="f-desc">Every transaction, contribution, and governance vote builds a verifiable reputation that follows your wallet across all chains.</div></div>
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">⬡</div><div class="f-title">Identity Verification</div><div class="f-desc">Transform anonymous wallet addresses into rich, multi-dimensional identities without compromising privacy.</div></div>
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">⟳</div><div class="f-title">Real-time Risk Detection</div><div class="f-desc">Continuous monitoring across all connected chains detects risky interactions before they happen.</div></div>
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">◯</div><div class="f-title">Wallet Aura System</div><div class="f-desc">Visual identity layers that communicate trust levels at a glance — cyan for trusted, gold for builders.</div></div>
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">⌘</div><div class="f-title">Transparent Permissions</div><div class="f-desc">Every contract interaction translated into plain human language before you sign anything.</div></div>
-    <div class="fc"><div class="fc-glow"></div><div class="f-ico">∞</div><div class="f-title">Multi-chain Presence</div><div class="f-desc">A unified identity layer across Ethereum, Polygon, Arbitrum, Base, Solana, and every major chain.</div></div>
-  </div>
-
-  <!-- ECO INTEL -->
-  <div class="rv" style="margin-bottom:6px">
-    <div class="sec-ey" style="margin-bottom:14px">Ecosystem Intelligence</div>
-  </div>
-  <div class="eco-intel rv">
-    <div class="ei-head">
-      <span class="ei-title">Realtime Chain State</span>
-      <div class="mi-live"><div class="mi-live-dot"></div><span>Scanning</span></div>
+    <!-- HEADER -->
+    <div style="margin-bottom:40px" class="rv">
+      <div class="sec-ey">Core Protocol</div>
+      <h2 class="sec-h">The trust stack,<br>rebuilt from scratch.</h2>
+      <p class="sec-desc">Rialo layers trust, identity, and transparency directly into Web3 interactions — making every wallet interaction legible, safe, and verifiable.</p>
     </div>
-    <div class="ei-grid">
-      <div class="ei-card active" id="ei-market"><div class="ei-pulse"></div><div class="ei-lbl">Market Momentum</div><div class="ei-val" id="ei-mval">—</div><div class="ei-sub" id="ei-msub">Analyzing...</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-mbar" style="width:0%"></div></div></div>
-      <div class="ei-card" id="ei-gas"><div class="ei-pulse"></div><div class="ei-lbl">Gas Pressure</div><div class="ei-val" id="ei-gval">—</div><div class="ei-sub" id="ei-gsub">— gwei</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-gbar" style="width:0%"></div></div></div>
-      <div class="ei-card" id="ei-activity"><div class="ei-pulse"></div><div class="ei-lbl">Chain Activity</div><div class="ei-val" id="ei-aval">—</div><div class="ei-sub" id="ei-asub">txns/sec</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-abar" style="width:0%"></div></div></div>
-      <div class="ei-card bullish"><div class="ei-pulse"></div><div class="ei-lbl">Network Health</div><div class="ei-val" style="color:var(--green)">98%</div><div class="ei-sub">All systems normal</div><div class="ei-bar"><div class="ei-bar-fill" style="width:98%;background:var(--green)"></div></div></div>
-    </div>
-  </div>
 
-  <!-- MARKET INTEL -->
-  <div class="rv" style="margin-bottom:6px">
-    <div class="sec-ey" style="margin-bottom:14px">Market Intelligence — Realtime</div>
-  </div>
-  <div class="mi-grid rv">
-    <div class="mi-main">
-      <div class="mi-head">
-        <div class="mi-head-l"><span class="mi-head-title">Chain Markets</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
-        <span class="mi-ts" id="miTs">—</span>
+    <!-- FEATURE GRID -->
+    <div class="fgrid rv">
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">◈</div><div class="f-title">Onchain Reputation</div><div class="f-desc">Every transaction, contribution, and governance vote builds a verifiable reputation that follows your wallet across all chains.</div></div>
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">⬡</div><div class="f-title">Identity Verification</div><div class="f-desc">Transform anonymous wallet addresses into rich, multi-dimensional identities without compromising privacy.</div></div>
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">⟳</div><div class="f-title">Real-time Risk Detection</div><div class="f-desc">Continuous monitoring across all connected chains detects risky interactions before they happen.</div></div>
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">◯</div><div class="f-title">Wallet Aura System</div><div class="f-desc">Visual identity layers that communicate trust levels at a glance — cyan for trusted, gold for builders.</div></div>
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">⌘</div><div class="f-title">Transparent Permissions</div><div class="f-desc">Every contract interaction translated into plain human language before you sign anything.</div></div>
+      <div class="fc"><div class="fc-glow"></div><div class="f-ico">∞</div><div class="f-title">Multi-chain Presence</div><div class="f-desc">A unified identity layer across Ethereum, Polygon, Arbitrum, Base, Solana, and every major chain.</div></div>
+    </div>
+
+    <!-- ECO INTEL -->
+    <div class="rv" style="margin-bottom:6px">
+      <div class="sec-ey" style="margin-bottom:14px">Ecosystem Intelligence</div>
+    </div>
+    <div class="eco-intel rv">
+      <div class="ei-head">
+        <span class="ei-title">Realtime Chain State</span>
+        <div class="mi-live"><div class="mi-live-dot"></div><span>Scanning</span></div>
       </div>
-      <div class="token-rows" id="tokenRows">
-        <div style="padding:24px;text-align:center;font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2)">Loading market data...</div>
+      <div class="ei-grid">
+        <div class="ei-card active" id="ei-market"><div class="ei-pulse"></div><div class="ei-lbl">Market Momentum</div><div class="ei-val" id="ei-mval">—</div><div class="ei-sub" id="ei-msub">Analyzing...</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-mbar" style="width:0%"></div></div></div>
+        <div class="ei-card" id="ei-gas"><div class="ei-pulse"></div><div class="ei-lbl">Gas Pressure</div><div class="ei-val" id="ei-gval">—</div><div class="ei-sub" id="ei-gsub">— gwei</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-gbar" style="width:0%"></div></div></div>
+        <div class="ei-card" id="ei-activity"><div class="ei-pulse"></div><div class="ei-lbl">Chain Activity</div><div class="ei-val" id="ei-aval">—</div><div class="ei-sub" id="ei-asub">txns/sec</div><div class="ei-bar"><div class="ei-bar-fill" id="ei-abar" style="width:0%"></div></div></div>
+        <div class="ei-card bullish"><div class="ei-pulse"></div><div class="ei-lbl">Network Health</div><div class="ei-val" style="color:var(--green)">98%</div><div class="ei-sub">All systems normal</div><div class="ei-bar"><div class="ei-bar-fill" style="width:98%;background:var(--green)"></div></div></div>
       </div>
     </div>
-    <div class="mi-right">
-      <div class="gas-panel">
-        <div class="gas-title"><span>Gas Oracle</span><div class="mi-live"><div class="mi-live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span style="color:var(--gold)">Polling</span></div></div>
-        <div class="gas-main"><div class="gas-val" id="gasMain">—</div><div class="gas-unit">GWEI<br><span style="font-size:6.5px;opacity:.5" id="gasUsd">~$—</span></div></div>
-        <div class="gas-tiers">
-          <div class="gas-tier"><div class="gt-lbl">Slow</div><div class="gt-val slow-c" id="gSlow">—</div></div>
-          <div class="gas-tier"><div class="gt-lbl">Std</div><div class="gt-val std-c" id="gStd">—</div></div>
-          <div class="gas-tier"><div class="gt-lbl">Fast</div><div class="gt-val fast-c" id="gFast">—</div></div>
-          <div class="gas-tier"><div class="gt-lbl">Rapid</div><div class="gt-val rapid-c" id="gRapid">—</div></div>
+
+    <!-- MARKET INTEL -->
+    <div class="rv" style="margin-bottom:6px">
+      <div class="sec-ey" style="margin-bottom:14px">Market Intelligence — Realtime</div>
+    </div>
+    <div class="mi-grid rv">
+      <div class="mi-main">
+        <div class="mi-head">
+          <div class="mi-head-l"><span class="mi-head-title">Chain Markets</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
+          <span class="mi-ts" id="miTs">—</span>
         </div>
-        <div class="gas-bar-wrap"><div class="gas-bar" id="gasBarEl" style="background:linear-gradient(to right,var(--c),var(--gold));width:0%"></div></div>
-        <div style="font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)">Network congestion index</div>
-      </div>
-      <div class="net-panel">
-        <div class="wc-title"><span>Network Activity</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
-        <div>
-          <div class="net-row"><div class="nr-ico">⬡</div><div class="nr-label">Active wallets (1h)</div><div class="nr-val" id="nrWallets">—</div><div class="nr-bar-w"><div class="nr-bar" style="width:72%"></div></div></div>
-          <div class="net-row"><div class="nr-ico">◈</div><div class="nr-label">TXs per second</div><div class="nr-val" id="nrTps">—</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--green);width:60%"></div></div></div>
-          <div class="net-row"><div class="nr-ico">🔷</div><div class="nr-label">Total Value Locked</div><div class="nr-val" style="font-size:13px">$48.3B</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--gold);width:88%"></div></div></div>
-          <div class="net-row"><div class="nr-ico">⚡</div><div class="nr-label">Block time (avg)</div><div class="nr-val" id="nrBlock">—</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--blue);width:55%"></div></div></div>
+        <div class="token-rows" id="tokenRows">
+          <div style="padding:24px;text-align:center;font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2)">Loading market data...</div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- ECO FEED -->
-  <div class="rv" style="margin-bottom:6px">
-    <div class="sec-ey" style="margin-bottom:14px">Live Ecosystem Activity</div>
-  </div>
-  <div class="eco-feed rv">
-    <div class="eco-head">
-      <span class="eco-head-title">Realtime Feed</span>
-      <div class="eco-filter" id="ecoFilter">
-        <button class="eco-fbtn active" data-ft="all">All</button>
-        <button class="eco-fbtn" data-ft="swap">Swap</button>
-        <button class="eco-fbtn" data-ft="bridge">Bridge</button>
-        <button class="eco-fbtn" data-ft="gov">Gov</button>
-        <button class="eco-fbtn" data-ft="deploy">Deploy</button>
-      </div>
-    </div>
-    <div class="eco-stream" id="ecoStream"></div>
-  </div>
-
-  <!-- BOTTOM: PERM + GOV -->
-  <div class="rv" style="margin-bottom:6px">
-    <div class="sec-ey" style="margin-bottom:16px">Humanized Transparency & Governance</div>
-  </div>
-  <div class="bottom-grid rv">
-    <div>
-      <div class="perm-card">
-        <div class="ph"><div class="p-ico">🔐</div><div><div class="p-title">Permission Request</div><div class="p-src">app.uniswap.org</div></div></div>
-        <div class="p-body">This app requests permission to <strong style="color:#fff">verify your wallet identity</strong> and confirm your reputation score. No funds will be accessed or transferred.</div>
-        <div class="p-code">approve(0x7a250d56...F2488D, uint256 max)</div>
-        <div class="p-acts">
-          <button class="p-deny" id="denyBtn">Deny</button>
-          <button class="p-approve" id="approveBtn">Approve — Verify Identity</button>
+      <div class="mi-right">
+        <div class="gas-panel">
+          <div class="gas-title"><span>Gas Oracle</span><div class="mi-live"><div class="mi-live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span style="color:var(--gold)">Polling</span></div></div>
+          <div class="gas-main"><div class="gas-val" id="gasMain">—</div><div class="gas-unit">GWEI<br><span style="font-size:6.5px;opacity:.5" id="gasUsd">~$—</span></div></div>
+          <div class="gas-tiers">
+            <div class="gas-tier"><div class="gt-lbl">Slow</div><div class="gt-val slow-c" id="gSlow">—</div></div>
+            <div class="gas-tier"><div class="gt-lbl">Std</div><div class="gt-val std-c" id="gStd">—</div></div>
+            <div class="gas-tier"><div class="gt-lbl">Fast</div><div class="gt-val fast-c" id="gFast">—</div></div>
+            <div class="gas-tier"><div class="gt-lbl">Rapid</div><div class="gt-val rapid-c" id="gRapid">—</div></div>
+          </div>
+          <div class="gas-bar-wrap"><div class="gas-bar" id="gasBarEl" style="background:linear-gradient(to right,var(--c),var(--gold));width:0%"></div></div>
+          <div style="font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)">Network congestion index</div>
+        </div>
+        <div class="net-panel">
+          <div class="wc-title"><span>Network Activity</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>
+          <div>
+            <div class="net-row"><div class="nr-ico">⬡</div><div class="nr-label">Active wallets (1h)</div><div class="nr-val" id="nrWallets">—</div><div class="nr-bar-w"><div class="nr-bar" style="width:72%"></div></div></div>
+            <div class="net-row"><div class="nr-ico">◈</div><div class="nr-label">TXs per second</div><div class="nr-val" id="nrTps">—</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--green);width:60%"></div></div></div>
+            <div class="net-row"><div class="nr-ico">🔷</div><div class="nr-label">Total Value Locked</div><div class="nr-val" style="font-size:13px">$48.3B</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--gold);width:88%"></div></div></div>
+            <div class="net-row"><div class="nr-ico">⚡</div><div class="nr-label">Block time (avg)</div><div class="nr-val" id="nrBlock">—</div><div class="nr-bar-w"><div class="nr-bar" style="background:var(--blue);width:55%"></div></div></div>
+          </div>
         </div>
       </div>
     </div>
-    <div>
-      <div class="gov-panel">
-        <div class="wc-title" style="margin-bottom:12px"><span>Active Governance Proposals</span><span class="badge bc">Live</span></div>
-        <div class="gov-inner" id="govProposals"></div>
+
+    <!-- ECO FEED -->
+    <div class="rv" style="margin-bottom:6px">
+      <div class="sec-ey" style="margin-bottom:14px">Live Ecosystem Activity</div>
+    </div>
+    <div class="eco-feed rv">
+      <div class="eco-head">
+        <span class="eco-head-title">Realtime Feed</span>
+        <!-- FIX: event delegation on parent avoids stale button references -->
+        <div class="eco-filter" id="ecoFilter">
+          <button class="eco-fbtn active" data-ft="all">All</button>
+          <button class="eco-fbtn" data-ft="swap">Swap</button>
+          <button class="eco-fbtn" data-ft="bridge">Bridge</button>
+          <button class="eco-fbtn" data-ft="gov">Gov</button>
+          <button class="eco-fbtn" data-ft="deploy">Deploy</button>
+        </div>
+      </div>
+      <div class="eco-stream" id="ecoStream"></div>
+    </div>
+
+    <!-- BOTTOM: PERM + GOV -->
+    <div class="rv" style="margin-bottom:6px">
+      <div class="sec-ey" style="margin-bottom:16px">Humanized Transparency & Governance</div>
+    </div>
+    <div class="bottom-grid rv">
+      <div>
+        <div class="perm-card">
+          <div class="ph"><div class="p-ico">🔐</div><div><div class="p-title">Permission Request</div><div class="p-src">app.uniswap.org</div></div></div>
+          <div class="p-body">This app requests permission to <strong style="color:#fff">verify your wallet identity</strong> and confirm your reputation score. No funds will be accessed or transferred.</div>
+          <div class="p-code">approve(0x7a250d56...F2488D, uint256 max)</div>
+          <div class="p-acts">
+            <button class="p-deny" id="denyBtn">Deny</button>
+            <button class="p-approve" id="approveBtn">Approve — Verify Identity</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="gov-panel">
+          <div class="wc-title" style="margin-bottom:12px"><span>Active Governance Proposals</span><span class="badge bc">Live</span></div>
+          <div class="gov-inner" id="govProposals"></div>
+        </div>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
 
+<!-- FIX: Full shared wallet/scan/status overlays (were completely absent before) -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
+
+<div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
+
+<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
+<script src="shared.js"></script>
 <script>
-/* ─── CURSOR ─── */
-var _cur=document.getElementById('CUR'),_cur2=document.getElementById('CUR2');
-var _mx=0,_my=0,_tx=0,_ty=0;
-var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||('ontouchstart' in window);
-
-if(!isMobile&&_cur&&_cur2){
-  document.addEventListener('mousemove',function(e){
-    _mx=e.clientX;_my=e.clientY;
-    _cur.style.left=_mx+'px';_cur.style.top=_my+'px';
-  });
-  document.addEventListener('mousedown',function(){document.body.classList.add('cclick')});
-  document.addEventListener('mouseup',function(){document.body.classList.remove('cclick')});
-  (function animCur(){
-    _tx+=(_mx-_tx)*.12;
-    _ty+=(_my-_ty)*.12;
-    _cur2.style.left=_tx+'px';
-    _cur2.style.top=_ty+'px';
-    requestAnimationFrame(animCur);
-  })();
-}
-
-/* BUG FIX #6: hookCursor — properly handles all interactive elements */
-function hookCursor(){
-  if(isMobile)return;
-  var sel='a,button,.fc,.gas-tier,.tr-item,.eco-fbtn,.p-deny,.p-approve';
-  document.querySelectorAll(sel).forEach(function(el){
-    if(el._ch)return;el._ch=1;
-    el.addEventListener('mouseenter',function(){document.body.classList.add('chl')});
-    el.addEventListener('mouseleave',function(){document.body.classList.remove('chl')});
-  });
-}
-hookCursor();
-setInterval(hookCursor,800);
-
-/* ─── TOAST ─── */
-var _tt;
-function toast(msg,dur){
-  clearTimeout(_tt);
-  var t=document.getElementById('toast');
-  t.innerHTML='<span class="tdot"></span>'+msg;
-  t.classList.add('on');
-  _tt=setTimeout(function(){t.classList.remove('on')},dur||3200);
-}
+/* ─── LOCAL STATE ─── */
+var gasPrice = 14, localEthPrice = 0;
+var tokenDataLocal = {};
+var priceHistoryLocal = { eth:[], btc:[], sol:[], matic:[], arb:[], link:[] };
+var MAX_HIST = 24;
+var FALLBACK = {
+  ethereum:{price:3482,chg:2.34,mcap:418e9}, bitcoin:{price:104221,chg:1.87,mcap:2050e9},
+  solana:{price:182.40,chg:4.12,mcap:87e9}, 'matic-network':{price:0.892,chg:-0.84,mcap:8.2e9},
+  arbitrum:{price:1.24,chg:3.21,mcap:3.1e9}, chainlink:{price:18.34,chg:2.88,mcap:10.7e9}
+};
+var TL_ID_MAP = {
+  ethereum:{hist:'eth'}, bitcoin:{hist:'btc'}, solana:{hist:'sol'},
+  'matic-network':{hist:'matic'}, arbitrum:{hist:'arb'}, chainlink:{hist:'link'}
+};
+var TOKEN_CFG = [
+  {id:'ethereum',sym:'ETH',name:'Ethereum',ico:'Ξ',col:'#6f7cff',hk:'eth'},
+  {id:'bitcoin',sym:'BTC',name:'Bitcoin',ico:'₿',col:'#f7931a',hk:'btc'},
+  {id:'solana',sym:'SOL',name:'Solana',ico:'◎',col:'#ab73ff',hk:'sol'},
+  {id:'matic-network',sym:'MATIC',name:'Polygon',ico:'⬡',col:'#8247e5',hk:'matic'},
+  {id:'arbitrum',sym:'ARB',name:'Arbitrum',ico:'⬡',col:'#28a0f0',hk:'arb'},
+  {id:'chainlink',sym:'LINK',name:'Chainlink',ico:'⬡',col:'#2a5ada',hk:'link'}
+];
 
 /* ─── FORMAT ─── */
-function fmtP(p){return p>10000?'$'+Math.round(p).toLocaleString():p>1?'$'+p.toFixed(2):'$'+p.toFixed(4)}
-function fmtM(p){if(!p)return'—';if(p>=1e12)return'$'+(p/1e12).toFixed(1)+'T';if(p>=1e9)return'$'+(p/1e9).toFixed(1)+'B';return'$'+(p/1e6).toFixed(0)+'M'}
+function fmtPL(p){return p>10000?'$'+Math.round(p).toLocaleString():p>1?'$'+p.toFixed(2):'$'+p.toFixed(4)}
+function fmtML(p){if(!p)return'—';if(p>=1e12)return'$'+(p/1e12).toFixed(1)+'T';if(p>=1e9)return'$'+(p/1e9).toFixed(1)+'B';return'$'+(p/1e6).toFixed(0)+'M'}
 
 /* ─── SPARKLINE ─── */
 function buildSparkline(data,color){
@@ -399,33 +348,17 @@ function buildSparkline(data,color){
   return'<svg class="spark-svg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><path d="'+path+'L'+w+','+h+' L0,'+h+' Z" fill="'+color+'" opacity="0.18"/><path d="'+path+'" stroke="'+color+'" stroke-width="1.2" fill="none"/></svg>';
 }
 
-/* ─── STATE ─── */
-var gasPrice=14,ethPrice=0,tokenData={};
-var priceHistory={eth:[],btc:[],sol:[],matic:[],arb:[],link:[]};
-var MAX_HIST=24;
-var FALLBACK={ethereum:{price:3482,chg:2.34,mcap:418e9},bitcoin:{price:104221,chg:1.87,mcap:2050e9},solana:{price:182.40,chg:4.12,mcap:87e9},'matic-network':{price:0.892,chg:-0.84,mcap:8.2e9},arbitrum:{price:1.24,chg:3.21,mcap:3.1e9},chainlink:{price:18.34,chg:2.88,mcap:10.7e9}};
-var ID_MAP={ethereum:{hist:'eth'},bitcoin:{hist:'btc'},solana:{hist:'sol'},'matic-network':{hist:'matic'},arbitrum:{hist:'arb'},chainlink:{hist:'link'}};
-
 /* ─── TOKEN ROWS ─── */
-var TOKEN_CFG=[
-  {id:'ethereum',sym:'ETH',name:'Ethereum',ico:'Ξ',col:'#6f7cff',hk:'eth'},
-  {id:'bitcoin',sym:'BTC',name:'Bitcoin',ico:'₿',col:'#f7931a',hk:'btc'},
-  {id:'solana',sym:'SOL',name:'Solana',ico:'◎',col:'#ab73ff',hk:'sol'},
-  {id:'matic-network',sym:'MATIC',name:'Polygon',ico:'⬡',col:'#8247e5',hk:'matic'},
-  {id:'arbitrum',sym:'ARB',name:'Arbitrum',ico:'⬡',col:'#28a0f0',hk:'arb'},
-  {id:'chainlink',sym:'LINK',name:'Chainlink',ico:'⬡',col:'#2a5ada',hk:'link'}
-];
 function renderTokenRows(){
   var el=document.getElementById('tokenRows');if(!el)return;
   var now=new Date(),ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
   var tsel=document.getElementById('miTs');if(tsel)tsel.textContent=ts;
   var html='';
   TOKEN_CFG.forEach(function(cfg,i){
-    var d=tokenData[cfg.id]||{};var p=d.price||0,chg=d.chg||0,mcap=d.mcap||0,up=chg>=0;
-    html+='<div class="tr-item"><span class="tr-rank">'+(i+1)+'</span><div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div><div class="tr-chart">'+buildSparkline(priceHistory[cfg.hk]||[],up?'#1ed670':'#ff5555')+'</div><div class="tr-price">'+(p?fmtP(p):'—')+'</div><div class="tr-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div><div class="tr-mcap">'+(p?fmtM(mcap):'—')+'</div></div>';
+    var d=tokenDataLocal[cfg.id]||{};var p=d.price||0,chg=d.chg||0,mcap=d.mcap||0,up=chg>=0;
+    html+='<div class="tr-item"><span class="tr-rank">'+(i+1)+'</span><div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div><div class="tr-chart">'+buildSparkline(priceHistoryLocal[cfg.hk]||[],up?'#1ed670':'#ff5555')+'</div><div class="tr-price">'+(p?fmtPL(p):'—')+'</div><div class="tr-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div><div class="tr-mcap">'+(p?fmtML(mcap):'—')+'</div></div>';
   });
   el.innerHTML=html;
-  hookCursor();
 }
 
 /* ─── GAS ─── */
@@ -434,10 +367,8 @@ function updateGasOracle(gwei){
   var sl=Math.max(gwei-8,1),st=gwei,fa=gwei+12,ra=gwei+28;
   var el=document.getElementById('gasMain');
   if(el){el.textContent=gwei;el.className='gas-val';if(gwei>60)el.classList.add('high');else if(gwei<15)el.classList.add('low')}
-  var pu=document.getElementById('gasUsd');if(pu&&ethPrice)pu.textContent='~$'+((gwei*21000/1e9)*ethPrice).toFixed(3)+'/tx';
-  var pairs=[['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]];
-  pairs.forEach(function(t){var e=document.getElementById(t[0]);if(e)e.textContent=t[1]});
-  /* BUG FIX #7: clamp bar width to 100% max */
+  var pu=document.getElementById('gasUsd');if(pu&&localEthPrice)pu.textContent='~$'+((gwei*21000/1e9)*localEthPrice).toFixed(3)+'/tx';
+  [['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]].forEach(function(t){var e=document.getElementById(t[0]);if(e)e.textContent=t[1]});
   var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=Math.min(Math.round(gwei/120*100),100)+'%';
   updateEcoIntelGas(gwei);
 }
@@ -462,8 +393,6 @@ function updateEcoIntelMarket(coins){
   if(mv)mv.textContent=mood==='bullish'?'BULL':mood==='bearish'?'BEAR':'NEUT';
   if(ms)ms.textContent=energy.toFixed(0)+'% momentum';if(mb)mb.style.width=energy+'%';
 }
-
-/* ─── NETWORK ─── */
 function updateNetworkActivity(){
   var wallets=Math.floor(140000+Math.random()*8000),tps=(Math.random()*8+12).toFixed(1);
   var e1=document.getElementById('nrWallets'),e2=document.getElementById('nrTps');
@@ -471,8 +400,8 @@ function updateNetworkActivity(){
   var bl=document.getElementById('nrBlock');if(bl)bl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
 }
 
-/* ─── FETCH PRICES ─── */
-function fetchPrices(){
+/* ─── FETCH PRICES (local to this page) ─── */
+function fetchLocalPrices(){
   var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
   fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h')
     .then(function(r){if(!r.ok)throw new Error('fail');return r.json();})
@@ -480,41 +409,39 @@ function fetchPrices(){
       gasPrice=Math.floor(12+Math.random()*48);
       var coinObjs=[];
       coins.forEach(function(c){
-        if(!ID_MAP[c.id])return;
+        if(!TL_ID_MAP[c.id])return;
         var p=c.current_price,chg=c.price_change_percentage_24h||0;
-        tokenData[c.id]={price:p,chg:chg,mcap:c.market_cap||0};
-        if(ID_MAP[c.id].hist){priceHistory[ID_MAP[c.id].hist].push(p);if(priceHistory[ID_MAP[c.id].hist].length>MAX_HIST)priceHistory[ID_MAP[c.id].hist].shift()}
-        if(c.id==='ethereum')ethPrice=p;
+        tokenDataLocal[c.id]={price:p,chg:chg,mcap:c.market_cap||0};
+        if(TL_ID_MAP[c.id].hist){priceHistoryLocal[TL_ID_MAP[c.id].hist].push(p);if(priceHistoryLocal[TL_ID_MAP[c.id].hist].length>MAX_HIST)priceHistoryLocal[TL_ID_MAP[c.id].hist].shift()}
+        if(c.id==='ethereum')localEthPrice=p;
         coinObjs.push({chg:chg});
       });
       updateGasOracle(gasPrice);renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
     })
-    .catch(function(){applyFallback();});
+    .catch(applyLocalFallback);
 }
-
-function applyFallback(){
+function applyLocalFallback(){
   Object.keys(FALLBACK).forEach(function(id){
     var fb=FALLBACK[id],p=fb.price*(1+(Math.random()-.5)*.001);
-    tokenData[id]={price:p,chg:fb.chg+(Math.random()-.5)*.1,mcap:fb.mcap};
-    if(ID_MAP[id]&&ID_MAP[id].hist){priceHistory[ID_MAP[id].hist].push(p);if(priceHistory[ID_MAP[id].hist].length>MAX_HIST)priceHistory[ID_MAP[id].hist].shift()}
-    if(id==='ethereum')ethPrice=p;
+    tokenDataLocal[id]={price:p,chg:fb.chg+(Math.random()-.5)*.1,mcap:fb.mcap};
+    if(TL_ID_MAP[id]&&TL_ID_MAP[id].hist){priceHistoryLocal[TL_ID_MAP[id].hist].push(p);if(priceHistoryLocal[TL_ID_MAP[id].hist].length>MAX_HIST)priceHistoryLocal[TL_ID_MAP[id].hist].shift()}
+    if(id==='ethereum')localEthPrice=p;
   });
   gasPrice=Math.floor(12+Math.random()*18);
   updateGasOracle(gasPrice);renderTokenRows();updateNetworkActivity();updateEcoIntelCards();
 }
 
 /* ─── ECO FEED ─── */
-var ecoFilter='all',ecoItems=[];
+var ecoFilter='all', ecoItems=[];
 var ECO_TYPES=[
-  {k:'swap',label:'SWAP',cls:'et-swap',acts:['ETH→USDC','WBTC→ETH','UNI→DAI'],addrs:['0xd8d...604','0xAb5...9B']},
-  {k:'bridge',label:'BRIDGE',cls:'et-bridge',acts:['ETH→Arbitrum','MATIC→Ethereum'],addrs:['0x3f9...841','0x1f9...27']},
+  {k:'swap',label:'SWAP',cls:'et-swap',acts:['ETH→USDC','WBTC→ETH'],addrs:['0xd8d...604','0xAb5...9B']},
+  {k:'bridge',label:'BRIDGE',cls:'et-bridge',acts:['ETH→Arbitrum','MATIC→Ethereum'],addrs:['0x3f9...841']},
   {k:'stake',label:'STAKE',cls:'et-stake',acts:['Stake via Lido','Unstake rETH'],addrs:['0x9A3...811']},
   {k:'gov',label:'GOV',cls:'et-gov',acts:['Vote YES: EIP-7702','Vote NO: Prop #42'],addrs:['0x3C4...3BC']},
-  {k:'deploy',label:'DEPLOY',cls:'et-deploy',acts:['Deploy TrustToken.sol','Deploy UniV4Hook.sol'],addrs:['0xA16...b4']},
+  {k:'deploy',label:'DEPLOY',cls:'et-deploy',acts:['Deploy TrustToken.sol'],addrs:['0xA16...b4']},
   {k:'nft',label:'NFT',cls:'et-nft',acts:['Mint #4201','Transfer ERC-1155'],addrs:['0xAb5...9B']},
-  {k:'alert',label:'⚠ ALERT',cls:'et-alert',acts:['Suspicious approval detected','Anomalous tx pattern'],addrs:['0x???...???']}
+  {k:'alert',label:'⚠ ALERT',cls:'et-alert',acts:['Suspicious approval detected'],addrs:['0x???...???']}
 ];
-
 function addEcoItem(){
   var pool=ECO_TYPES.slice(0,-1);
   var tf=Math.random()<.08?ECO_TYPES[ECO_TYPES.length-1]:pool[Math.floor(Math.random()*pool.length)];
@@ -523,7 +450,6 @@ function addEcoItem(){
   if(ecoItems.length>40)ecoItems.pop();
   renderEcoFeed();
 }
-
 function renderEcoFeed(){
   var el=document.getElementById('ecoStream');if(!el)return;
   var filtered=ecoFilter==='all'?ecoItems:ecoItems.filter(function(it){return it.type===ecoFilter});
@@ -532,15 +458,11 @@ function renderEcoFeed(){
   if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity yet</div>';
   el.innerHTML=html;
 }
-
-/* BUG FIX #8: eco filter — use event delegation on parent to avoid re-binding issues */
+/* FIX: event delegation on parent — avoids re-binding on re-render */
 document.getElementById('ecoFilter').addEventListener('click',function(e){
-  var btn=e.target.closest('.eco-fbtn');
-  if(!btn)return;
+  var btn=e.target.closest('.eco-fbtn');if(!btn)return;
   document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
-  ecoFilter=btn.dataset.ft;
-  renderEcoFeed();
+  btn.classList.add('active');ecoFilter=btn.dataset.ft;renderEcoFeed();
 });
 
 /* ─── GOVERNANCE ─── */
@@ -550,7 +472,6 @@ var govData=[
   {title:'Protocol Fee Reduction — 0.05%→0.02%',votes:44,quorum:71,status:'Contested',color:'var(--gold)'},
   {title:'Multi-sig Upgrade: 3-of-5 → 4-of-7',votes:55,quorum:70,status:'Active',color:'var(--c)'},
 ];
-
 function renderGov(){
   var el=document.getElementById('govProposals');if(!el)return;
   el.innerHTML=govData.map(function(g){
@@ -559,49 +480,53 @@ function renderGov(){
   }).join('');
 }
 
-/* ─── BUTTONS ─── */
+/* ─── PERMISSION BUTTONS ─── */
 document.getElementById('denyBtn').addEventListener('click',function(){
-  var b=this;
-  b.textContent='Denied ✕';
-  b.style.cssText='flex:1;padding:10px;color:rgba(255,85,85,.9);border:1px solid rgba(255,70,70,.28);background:rgba(255,50,50,0.08);border-radius:2px;font-family:Space Mono,monospace;font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;cursor:none;transition:all .18s';
+  var b=this;b.textContent='Denied ✕';b.style.cssText='flex:1;padding:10px;color:rgba(255,85,85,.9);border:1px solid rgba(255,70,70,.28);background:rgba(255,50,50,0.08);border-radius:2px;font-family:Space Mono,monospace;font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;cursor:none;transition:all .18s';
   toast('Permission denied — transaction cancelled.');
-  setTimeout(function(){
-    b.textContent='Deny';
-    b.removeAttribute('style');
-  },2600);
+  setTimeout(function(){b.textContent='Deny';b.removeAttribute('style')},2600);
 });
-
 document.getElementById('approveBtn').addEventListener('click',function(){
-  var b=this;
-  var origText='Approve — Verify Identity';
-  b.textContent='Approved ✓';
-  b.style.background='var(--green)';
-  b.style.color='#000';
+  var b=this,origText='Approve — Verify Identity';
+  b.textContent='Approved ✓';b.style.background='var(--green)';b.style.color='#000';
   toast('Identity verified ✓ Trust score updated onchain.');
-  setTimeout(function(){
-    b.textContent=origText;
-    b.style.background='var(--c)';
-    b.style.color='#000';
-  },2800);
+  setTimeout(function(){b.textContent=origText;b.style.background='var(--c)';b.style.color='#000'},2800);
 });
 
-/* ─── SCROLL REVEAL ─── */
-var observer=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');observer.unobserve(e.target)}});
-},{threshold:0.1});
-document.querySelectorAll('.rv').forEach(function(el){observer.observe(el)});
+/* ─── RENDER LOOP (bg + hex) ─── */
+var lastF=0;
+function loop(t){
+  if(t-lastF>=16){lastF=t;drawBg();drawHex(t)}
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 
 /* ─── BOOT ─── */
-applyFallback();
-fetchPrices();
-setInterval(fetchPrices,28000);
-renderEcoFeed();
-for(var i=0;i<8;i++)setTimeout(addEcoItem,i*160+200);
-setInterval(addEcoItem,2200);
-renderGov();
-setInterval(function(){gasPrice=Math.max(1,gasPrice+Math.round((Math.random()-.5)*6));updateGasOracle(gasPrice)},6000);
-setInterval(updateNetworkActivity,4200);
-setInterval(updateEcoIntelCards,4000);
+document.addEventListener('DOMContentLoaded',function(){
+  initBgCanvas();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initReveal();
+  initNav('trust');
+  bindWalletModal();
+  bindDiscButton();
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+
+  applyLocalFallback();
+  fetchLocalPrices();
+  setInterval(fetchLocalPrices, 28000);
+  renderEcoFeed();
+  for(var i=0;i<8;i++)setTimeout(addEcoItem,i*160+200);
+  setInterval(addEcoItem,2200);
+  renderGov();
+  setInterval(function(){gasPrice=Math.max(1,gasPrice+Math.round((Math.random()-.5)*6));updateGasOracle(gasPrice)},6000);
+  setInterval(updateNetworkActivity,4200);
+  setInterval(updateEcoIntelCards,4000);
+});
 </script>
 </body>
 </html>
