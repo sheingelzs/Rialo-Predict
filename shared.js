@@ -1,15 +1,15 @@
 /* =====================================================================
    shared.js — RIALO · Global Shared Logic
-   FIXES APPLIED:
-   1. _startWebSocket: guard against CLOSING state (was only checking CONNECTING/OPEN)
-   2. ecosystemState.energyLevel: properly initialized and updated
-   3. triggerEcoAlert: debounced, only fires on mood *change* not every WS tick
-   4. applyFallbackPrices: doesn't clobber live prices
-   5. navBtn: queried fresh inside initNav() scope, not assumed global
-   6. onWalletConnected: also queries navBtn fresh
-   7. updateStatusBarMarket: safe when sbar absent
-   8. scanCta redirect: connAddr already persisted to sessionStorage before redirect
-   9. initNav: restores session state BEFORE buildIdentity() could run
+   FIXES vs previous version:
+   1. initCursor: MutationObserver to bind hover on dynamically-injected elements
+   2. gasPrice global exported properly (no per-page redeclaration needed)
+   3. triggerFlash: safe null-check
+   4. onWalletConnected: fresh navBtn query
+   5. initNav: session restore before any buildIdentity() call
+   6. _startWebSocket: guards CLOSING state
+   7. applyFallbackPrices: never clobbers live data
+   8. ecosystemState.energyLevel: properly initialized & updated
+   9. triggerEcoAlert: debounced, only fires on mood change
    ===================================================================== */
 
 /* ─── GLOBAL STATE ───────────────────────────────────────────────── */
@@ -17,7 +17,7 @@ var connAddr   = null;
 var connWallet = null;
 var chainId    = 1;
 var ethPrice   = 3200;
-var gasPrice   = 18;
+var gasPrice   = 18;   /* ← authoritative global; pages must NOT redeclare var gasPrice */
 var scActive   = false;
 
 var tokenData = {
@@ -33,7 +33,6 @@ var tokenData = {
 
 var priceHistory = { eth: [], btc: [], sol: [] };
 
-/* FIX: energyLevel was missing, causing drawCon() to always get 0 */
 var ecosystemState = {
   energyLevel: 0,
   mood: 'neutral'
@@ -56,7 +55,6 @@ var _BN_MAP = {
   uniusdt:   'uniswap'
 };
 
-/* ── Shared helpers ── */
 function _pushPriceHistory() {
   var map = { eth:'ethereum', btc:'bitcoin', sol:'solana' };
   ['eth','btc','sol'].forEach(function(k) {
@@ -77,8 +75,6 @@ function _onPriceUpdate(changed) {
 
 /* ── 1. Binance WebSocket ── */
 function _startWebSocket() {
-  /* FIX: was only guarding CONNECTING|OPEN — missed CLOSING state which
-     caused duplicate connections when socket was in teardown */
   if (_ws) {
     var rs = _ws.readyState;
     if (rs === WebSocket.CONNECTING || rs === WebSocket.OPEN || rs === WebSocket.CLOSING) return;
@@ -190,10 +186,14 @@ function _fetchGasPrice() {
   .then(function(d){
     if (d.result) {
       var gwei = Math.round(parseInt(d.result, 16) / 1e9);
-      if (gwei > 0 && gwei < 50000) gasPrice = gwei;
-      ['sw-fee','sw-gas-gwei','gasp','gasp2'].forEach(function(id){
+      if (gwei > 0 && gwei < 50000) {
+        gasPrice = gwei;
+        /* notify gas consumers */
+        if (typeof onGasDrift === 'function') onGasDrift(gasPrice);
+      }
+      ['sw-fee','sw-gas-gwei','gasp','gasp2','gasMain'].forEach(function(id){
         var el = document.getElementById(id);
-        if (el) el.textContent = gasPrice + ' gwei';
+        if (el) el.textContent = gasPrice + (id === 'gasMain' ? '' : ' gwei');
       });
     }
   })
@@ -201,12 +201,9 @@ function _fetchGasPrice() {
 }
 
 /* ── Public API ── */
-
-/* FIX: applyFallbackPrices should NOT overwrite live data that's already loaded.
-   Only use it to seed the DOM on page load before real data arrives. */
 var _livePricesLoaded = false;
 function applyFallbackPrices() {
-  if (_livePricesLoaded) return;   // don't clobber live data
+  if (_livePricesLoaded) return;
   ethPrice = tokenData.ethereum ? tokenData.ethereum.price : 3200;
   applyPricesToDom();
 }
@@ -282,8 +279,6 @@ function applyPricesToDom() {
 }
 
 /* ─── ECOSYSTEM MOOD ─────────────────────────────────────────────── */
-/* FIX: Only trigger alert on mood *change*, not every WebSocket tick.
-   Also properly updates ecosystemState.energyLevel (was always 0). */
 var _lastEcoMood = null;
 function updateEcosystemMood() {
   var eth = tokenData['ethereum'];
@@ -298,22 +293,14 @@ function updateEcosystemMood() {
   var nhBar  = document.getElementById('nhBar');
   var pulse  = document.getElementById('navPulse');
 
-  if (nav) {
-    nav.className = 'energized' + (mood !== 'neutral' ? ' ' + mood : '');
-  }
-  if (atmo) {
-    atmo.className = mood !== 'neutral' ? mood : '';
-    atmo.classList.add('energized');
-  }
+  if (nav)  nav.className  = 'energized' + (mood !== 'neutral' ? ' ' + mood : '');
+  if (atmo) { atmo.className = mood !== 'neutral' ? mood : ''; atmo.classList.add('energized'); }
   if (nhBar) {
     nhBar.className = 'nh-bar ' + (mood === 'bullish' ? 'nh-bullish' : mood === 'bearish' ? 'nh-alert' : 'nh-neutral');
     nhBar.style.width = (40 + ecosystemState.energyLevel * 0.6) + '%';
   }
-  if (pulse) {
-    pulse.className = 'npulse' + (mood === 'bullish' ? ' green' : mood === 'bearish' ? ' red' : '');
-  }
+  if (pulse) pulse.className = 'npulse' + (mood === 'bullish' ? ' green' : mood === 'bearish' ? ' red' : '');
 
-  /* Only fire eco alert when mood actually changes */
   if (mood !== _lastEcoMood) {
     _lastEcoMood = mood;
     var msg = mood === 'bullish'
@@ -379,7 +366,6 @@ function hideStatusBar() {
   document.body.classList.remove('has-sbar');
 }
 
-/* FIX: updateStatusBarMarket — safe when #sbMarket doesn't exist (standalone pages) */
 function updateStatusBarMarket() {
   var el = document.getElementById('sbMarket'); if (!el) return;
   var items = [
@@ -406,9 +392,6 @@ function chainShort(id) {
 }
 
 /* ─── NAV ────────────────────────────────────────────────────────── */
-/* FIX: navBtn queried fresh inside function, not assumed to exist globally.
-   Also: session restore happens here so connAddr is set before any
-   page-specific code (e.g. buildIdentity) runs via onWalletConnected. */
 function initNav(active) {
   var links = document.querySelectorAll('.nlinks a');
   links.forEach(function(a) {
@@ -433,15 +416,10 @@ function initNav(active) {
 
   detectWallets();
 
-  /* FIX: query navBtn fresh inside this scope */
   var navBtn = document.getElementById('navBtn');
-  if (navBtn) {
-    navBtn.addEventListener('click', function() {
-      openWallet();
-    });
-  }
+  if (navBtn) navBtn.addEventListener('click', function() { openWallet(); });
 
-  /* Restore wallet session — this must happen before buildIdentity() is called */
+  /* Restore session — must happen before buildIdentity() */
   var saved       = sessionStorage.getItem('rialo_addr');
   var savedWallet = sessionStorage.getItem('rialo_wallet');
   var savedChain  = parseInt(sessionStorage.getItem('rialo_chain') || '1');
@@ -491,53 +469,36 @@ function bindWalletModal() {
   if (wmClose) wmClose.addEventListener('click', closeWallet);
 
   var wovl = document.getElementById('wovl');
-  if (wovl) {
-    wovl.addEventListener('click', function(e) {
-      if (e.target === wovl) closeWallet();
-    });
-  }
+  if (wovl) wovl.addEventListener('click', function(e) { if (e.target === wovl) closeWallet(); });
 
   var optMM = document.getElementById('opt-mm');
   if (optMM) optMM.addEventListener('click', function() {
-    if (window.ethereum && !window.ethereum.isRabby) {
-      connectEVM(window.ethereum, 'MetaMask');
-    } else {
-      toast('MetaMask not detected — install at metamask.io');
-    }
+    if (window.ethereum && !window.ethereum.isRabby) connectEVM(window.ethereum, 'MetaMask');
+    else toast('MetaMask not detected — install at metamask.io');
   });
 
   var optRabby = document.getElementById('opt-rabby');
   if (optRabby) optRabby.addEventListener('click', function() {
-    if (window.ethereum && window.ethereum.isRabby) {
-      connectEVM(window.ethereum, 'Rabby');
-    } else {
-      toast('Rabby not detected — install the Rabby extension');
-    }
+    if (window.ethereum && window.ethereum.isRabby) connectEVM(window.ethereum, 'Rabby');
+    else toast('Rabby not detected — install the Rabby extension');
   });
 
   var optOKX = document.getElementById('opt-okx');
   if (optOKX) optOKX.addEventListener('click', function() {
-    if (window.okxwallet) {
-      connectEVM(window.okxwallet, 'OKX Wallet');
-    } else {
-      toast('OKX Wallet not detected — install from okx.com/web3');
-    }
+    if (window.okxwallet) connectEVM(window.okxwallet, 'OKX Wallet');
+    else toast('OKX Wallet not detected — install from okx.com/web3');
   });
 
   var optPH = document.getElementById('opt-ph');
   if (optPH) optPH.addEventListener('click', function() {
-    if (window.phantom && window.phantom.ethereum) {
-      connectEVM(window.phantom.ethereum, 'Phantom');
-    } else {
-      toast('Phantom not detected — install at phantom.com');
-    }
+    if (window.phantom && window.phantom.ethereum) connectEVM(window.phantom.ethereum, 'Phantom');
+    else toast('Phantom not detected — install at phantom.com');
   });
 
   var optDemo = document.getElementById('opt-demo');
   if (optDemo) optDemo.addEventListener('click', function() {
-    var demoAddr = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
     closeWallet();
-    startScan(demoAddr, 'Demo Mode', 1);
+    startScan('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 'Demo Mode', 1);
   });
 }
 
@@ -606,9 +567,7 @@ function startScan(addr, wallet, cid) {
   }
   setTimeout(nextPhase, 500);
 
-  /* FIX: persist to sessionStorage BEFORE the scan completes so that
-     if scanCta redirects to identity.html, connAddr is already in storage
-     and initNav() will restore it before buildIdentity() runs. */
+  /* Persist BEFORE scan ends so redirect to identity.html works correctly */
   setTimeout(function() {
     connAddr   = addr;
     connWallet = wallet;
@@ -645,15 +604,13 @@ function bindDiscButton() {
   var scanCta = document.getElementById('scanCta');
   if (scanCta) scanCta.addEventListener('click', function() {
     closeScan();
-    /* Only redirect if NOT already on identity page */
     if (window.location.pathname.indexOf('identity') === -1) {
       window.location.href = 'identity.html';
     }
   });
 }
 
-/* ─── WALLET CONNECTED CALLBACK ──────────────────────────────────── */
-/* FIX: query navBtn fresh — it doesn't exist as a closure variable here */
+/* ─── WALLET CONNECTED ───────────────────────────────────────────── */
 function onWalletConnected(addr, wallet, cid) {
   var navBtn   = document.getElementById('navBtn');
   var navLbl   = document.getElementById('navLbl');
@@ -791,12 +748,30 @@ function drawHex(t) {
 }
 
 /* ─── CURSOR ─────────────────────────────────────────────────────── */
+/*
+ * FIX: Use MutationObserver to catch dynamically-injected elements
+ * (identity.html injects cards/buttons after wallet connect — old querySelectorAll
+ * at init time would miss them entirely, breaking hover state on those elements).
+ * Also added pointer:coarse early-exit so mobile never runs cursor code.
+ */
 var _cur = null, _cur2 = null, _mx = 0, _my = 0, _tx = 0, _ty = 0;
+
+function _bindHoverEl(el) {
+  /* Only bind once — skip if already marked */
+  if (el._rialoCurBound) return;
+  el._rialoCurBound = true;
+  el.addEventListener('mouseenter', function() { document.body.classList.add('chl'); });
+  el.addEventListener('mouseleave', function() { document.body.classList.remove('chl'); });
+}
+
 function initCursor() {
   _cur  = document.getElementById('CUR');
   _cur2 = document.getElementById('CUR2');
   if (!_cur || !_cur2) return;
-  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
+  /* Skip on touch/coarse-pointer devices */
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer:coarse)').matches) return;
 
   document.addEventListener('mousemove', function(e) {
     _mx = e.clientX; _my = e.clientY;
@@ -804,10 +779,28 @@ function initCursor() {
   });
   document.addEventListener('mousedown', function() { document.body.classList.add('cclick'); });
   document.addEventListener('mouseup',   function() { document.body.classList.remove('cclick'); });
-  document.querySelectorAll('a,button,.wo,[onclick]').forEach(function(el) {
-    el.addEventListener('mouseenter', function() { document.body.classList.add('chl'); });
-    el.addEventListener('mouseleave', function() { document.body.classList.remove('chl'); });
+
+  /* Bind existing interactive elements */
+  document.querySelectorAll('a,button,.wo,[onclick]').forEach(_bindHoverEl);
+
+  /* MutationObserver: bind any new interactive elements added to the DOM later
+     (e.g. identity page injecting cards after wallet connect) */
+  var _mo = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(node) {
+        if (node.nodeType !== 1) return;
+        /* Check the node itself */
+        if (node.matches && node.matches('a,button,.wo,[onclick]')) _bindHoverEl(node);
+        /* Check all interactive descendants */
+        if (node.querySelectorAll) {
+          node.querySelectorAll('a,button,.wo,[onclick]').forEach(_bindHoverEl);
+        }
+      });
+    });
   });
+  _mo.observe(document.body, { childList: true, subtree: true });
+
+  /* Lagged trailing cursor */
   (function animCur() {
     _tx += (_mx - _tx) * 0.12;
     _ty += (_my - _ty) * 0.12;
