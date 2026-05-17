@@ -1,23 +1,19 @@
 /* =====================================================================
-   shared.js — RIALO · Global Shared Logic
-   FIXES vs previous version:
-   1. initCursor: MutationObserver to bind hover on dynamically-injected elements
-   2. gasPrice global exported properly (no per-page redeclaration needed)
-   3. triggerFlash: safe null-check
-   4. onWalletConnected: fresh navBtn query
-   5. initNav: session restore before any buildIdentity() call
-   6. _startWebSocket: guards CLOSING state
-   7. applyFallbackPrices: never clobbers live data
-   8. ecosystemState.energyLevel: properly initialized & updated
-   9. triggerEcoAlert: debounced, only fires on mood change
+   shared.js — RIALO · Global Shared Logic v2.0
+   Upgrades:
+   - Cinematic loading screen
+   - Multi-point cursor trail
+   - Better ecosystem state management
+   - Magnetic button effect
+   - Parallax tilt on cards
    ===================================================================== */
 
-/* ─── GLOBAL STATE ───────────────────────────────────────────────── */
+/* ─── GLOBAL STATE ── */
 var connAddr   = null;
 var connWallet = null;
 var chainId    = 1;
 var ethPrice   = 3200;
-var gasPrice   = 18;   /* ← authoritative global; pages must NOT redeclare var gasPrice */
+var gasPrice   = 18;
 var scActive   = false;
 
 var tokenData = {
@@ -38,7 +34,38 @@ var ecosystemState = {
   mood: 'neutral'
 };
 
-/* ─── PRICE SYSTEM ───────────────────────────────────────────────── */
+/* ─── LOADING SCREEN ── */
+function initLoader() {
+  var loader = document.getElementById('loader');
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.id = 'loader';
+    loader.innerHTML = '<div class="loader-logo">RIALO</div><div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div><div class="loader-txt">Initializing trust layer...</div>';
+    document.body.appendChild(loader);
+  }
+  var fill = document.getElementById('loaderFill');
+  var prog = 0;
+  var msgs = ['Connecting to chains...','Loading identity layer...','Scanning protocol nodes...','Initializing trust engine...','Ready'];
+  var msgIdx = 0;
+  var txtEl = loader.querySelector('.loader-txt');
+  var interval = setInterval(function() {
+    prog += Math.random() * 18 + 6;
+    if (prog >= 100) { prog = 100; clearInterval(interval); }
+    if (fill) fill.style.width = prog + '%';
+    if (txtEl && msgIdx < msgs.length - 1 && prog > msgIdx * 22 + 20) {
+      txtEl.textContent = msgs[msgIdx];
+      msgIdx++;
+    }
+    if (prog >= 100) {
+      setTimeout(function() {
+        loader.classList.add('out');
+        setTimeout(function() { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 700);
+      }, 280);
+    }
+  }, 80);
+}
+
+/* ─── PRICE SYSTEM ── */
 var _ws            = null;
 var _wsReady       = false;
 var _wsRetries     = 0;
@@ -73,20 +100,15 @@ function _onPriceUpdate(changed) {
   if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
 }
 
-/* ── 1. Binance WebSocket ── */
 function _startWebSocket() {
   if (_ws) {
     var rs = _ws.readyState;
     if (rs === WebSocket.CONNECTING || rs === WebSocket.OPEN || rs === WebSocket.CLOSING) return;
   }
-
   var streams = Object.keys(_BN_MAP).map(function(s){ return s + '@miniTicker'; }).join('/');
   var url = 'wss://stream.binance.com:9443/stream?streams=' + streams;
-
   try { _ws = new WebSocket(url); } catch(e) { _scheduleWsRetry(); return; }
-
   _ws.onopen = function() { _wsReady = true; _wsRetries = 0; };
-
   _ws.onmessage = function(e) {
     try {
       var msg = JSON.parse(e.data);
@@ -94,18 +116,14 @@ function _startWebSocket() {
       var sym = (d.s || '').toLowerCase();
       var id  = _BN_MAP[sym];
       if (!id || !d.c) return;
-
       var price = parseFloat(d.c);
       var chg   = _chgSnapshot[id] || 0;
       var changed = tokenData[id] && Math.abs(tokenData[id].price - price) > 0.0001;
-
       tokenData[id] = { price: price, chg: chg };
       if (id === 'ethereum') ethPrice = price;
-
       _onPriceUpdate(!!changed);
     } catch(err) {}
   };
-
   _ws.onerror = function() { _wsReady = false; };
   _ws.onclose = function() { _wsReady = false; _scheduleWsRetry(); };
 }
@@ -116,12 +134,10 @@ function _scheduleWsRetry() {
   setTimeout(_startWebSocket, delay);
 }
 
-/* ── 2. Binance REST snapshot ── */
 function _fetchBinanceSnapshot() {
   var symbols = ['ETHUSDT','BTCUSDT','SOLUSDT','MATICUSDT','ARBUSDT','AVAXUSDT','LINKUSDT','UNIUSDT'];
   var url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=['
     + symbols.map(function(s){ return '%22' + s + '%22'; }).join(',') + ']';
-
   return fetch(url)
     .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(arr) {
@@ -140,7 +156,6 @@ function _fetchBinanceSnapshot() {
     });
 }
 
-/* ── 3. CoinGecko REST fallback ── */
 function _fetchCoinGecko() {
   var url = 'https://api.coingecko.com/api/v3/simple/price'
     + '?ids=ethereum,bitcoin,solana,matic-network,arbitrum,avalanche-2,chainlink,uniswap'
@@ -159,7 +174,6 @@ function _fetchCoinGecko() {
     });
 }
 
-/* ── 4. Simulated drift (last resort) ── */
 function _applyDrift() {
   ['ethereum','bitcoin','solana','matic-network','arbitrum','avalanche-2','chainlink','uniswap'].forEach(function(id) {
     if (!tokenData[id] || !tokenData[id].price) return;
@@ -175,7 +189,6 @@ function _applyDrift() {
   if (typeof onPricesUpdated === 'function') onPricesUpdated(tokenData);
 }
 
-/* ── Gas price via Cloudflare Ethereum RPC ── */
 function _fetchGasPrice() {
   fetch('https://cloudflare-eth.com', {
     method: 'POST',
@@ -188,7 +201,6 @@ function _fetchGasPrice() {
       var gwei = Math.round(parseInt(d.result, 16) / 1e9);
       if (gwei > 0 && gwei < 50000) {
         gasPrice = gwei;
-        /* notify gas consumers */
         if (typeof onGasDrift === 'function') onGasDrift(gasPrice);
       }
       ['sw-fee','sw-gas-gwei','gasp','gasp2','gasMain'].forEach(function(id){
@@ -200,7 +212,6 @@ function _fetchGasPrice() {
   .catch(function(){});
 }
 
-/* ── Public API ── */
 var _livePricesLoaded = false;
 function applyFallbackPrices() {
   if (_livePricesLoaded) return;
@@ -234,7 +245,7 @@ function initPriceStreams() {
   setInterval(_fetchGasPrice, 15000);
 }
 
-/* ─── DOM PRICE ID MAP ───────────────────────────────────────────── */
+/* ─── DOM PRICE ID MAP ── */
 var ID_MAP = {
   ethereum:        { p:['ep','ep2','hmp-eth'],    c:['ec','ec2','hmc-eth'] },
   bitcoin:         { p:['bp','bp2','hmp-btc'],    c:['bc','bc2','hmc-btc'] },
@@ -278,7 +289,7 @@ function applyPricesToDom() {
   updateStatusBarMarket();
 }
 
-/* ─── ECOSYSTEM MOOD ─────────────────────────────────────────────── */
+/* ─── ECOSYSTEM MOOD ── */
 var _lastEcoMood = null;
 function updateEcosystemMood() {
   var eth = tokenData['ethereum'];
@@ -314,7 +325,7 @@ function updateEcosystemMood() {
   if (typeof onMarketUpdate === 'function') onMarketUpdate(tokenData, mood);
 }
 
-/* ─── TOAST ──────────────────────────────────────────────────────── */
+/* ─── TOAST ── */
 var _toastTimer = null;
 function toast(msg, dur) {
   var el = document.getElementById('toast'); if (!el) return;
@@ -324,7 +335,7 @@ function toast(msg, dur) {
   _toastTimer = setTimeout(function(){ el.classList.remove('on'); }, dur || 2800);
 }
 
-/* ─── ECO ALERT ──────────────────────────────────────────────────── */
+/* ─── ECO ALERT ── */
 var _ecoTimer = null;
 function triggerEcoAlert(msg, type, dur) {
   var wrap  = document.getElementById('ecoAlert');
@@ -338,14 +349,14 @@ function triggerEcoAlert(msg, type, dur) {
   _ecoTimer = setTimeout(function(){ wrap.classList.remove('show'); }, dur || 4000);
 }
 
-/* ─── FLASH ──────────────────────────────────────────────────────── */
+/* ─── FLASH ── */
 function triggerFlash(type) {
   var el = document.getElementById('flash'); if (!el) return;
   el.className = type ? type + '-flash go' : 'go';
-  setTimeout(function(){ el.className = ''; }, 120);
+  setTimeout(function(){ el.className = ''; }, 130);
 }
 
-/* ─── STATUS BAR ─────────────────────────────────────────────────── */
+/* ─── STATUS BAR ── */
 function showStatusBar() {
   var sb = document.getElementById('sbar'); if (!sb) return;
   var addr  = document.getElementById('sbAddr');
@@ -381,7 +392,7 @@ function updateStatusBarMarket() {
   }).join('');
 }
 
-/* ─── CHAIN HELPERS ──────────────────────────────────────────────── */
+/* ─── CHAIN HELPERS ── */
 function chainLabel(id) {
   var m = { 1:'Ethereum Mainnet', 11155111:'Sepolia Testnet', 137:'Polygon Mainnet', 10:'Optimism', 42161:'Arbitrum One', 8453:'Base' };
   return m[id] || 'Unknown Network';
@@ -391,7 +402,7 @@ function chainShort(id) {
   return m[id] || 'EVM';
 }
 
-/* ─── NAV ────────────────────────────────────────────────────────── */
+/* ─── NAV ── */
 function initNav(active) {
   var links = document.querySelectorAll('.nlinks a');
   links.forEach(function(a) {
@@ -419,7 +430,6 @@ function initNav(active) {
   var navBtn = document.getElementById('navBtn');
   if (navBtn) navBtn.addEventListener('click', function() { openWallet(); });
 
-  /* Restore session — must happen before buildIdentity() */
   var saved       = sessionStorage.getItem('rialo_addr');
   var savedWallet = sessionStorage.getItem('rialo_wallet');
   var savedChain  = parseInt(sessionStorage.getItem('rialo_chain') || '1');
@@ -431,7 +441,7 @@ function initNav(active) {
   }
 }
 
-/* ─── WALLET MODAL ───────────────────────────────────────────────── */
+/* ─── WALLET MODAL ── */
 function openWallet() {
   var ovl = document.getElementById('wovl'); if (!ovl) return;
   ovl.classList.add('show');
@@ -442,7 +452,7 @@ function openWallet() {
 function closeWallet() {
   var ovl = document.getElementById('wovl'); if (!ovl) return;
   ovl.classList.remove('open');
-  setTimeout(function(){ ovl.classList.remove('show'); }, 380);
+  setTimeout(function(){ ovl.classList.remove('show'); }, 400);
 }
 
 function detectWallets() {
@@ -502,7 +512,7 @@ function bindWalletModal() {
   });
 }
 
-/* ─── EVM CONNECT ────────────────────────────────────────────────── */
+/* ─── EVM CONNECT ── */
 function connectEVM(provider, name) {
   provider.request({ method: 'eth_requestAccounts' }).then(function(accounts) {
     if (!accounts || !accounts[0]) { toast('No account returned'); return; }
@@ -520,7 +530,7 @@ function connectEVM(provider, name) {
   });
 }
 
-/* ─── SCAN OVERLAY ───────────────────────────────────────────────── */
+/* ─── SCAN OVERLAY ── */
 var _scanPhases = [
   'Resolving ENS identity...',
   'Fetching onchain history...',
@@ -567,7 +577,6 @@ function startScan(addr, wallet, cid) {
   }
   setTimeout(nextPhase, 500);
 
-  /* Persist BEFORE scan ends so redirect to identity.html works correctly */
   setTimeout(function() {
     connAddr   = addr;
     connWallet = wallet;
@@ -610,7 +619,7 @@ function bindDiscButton() {
   });
 }
 
-/* ─── WALLET CONNECTED ───────────────────────────────────────────── */
+/* ─── WALLET CONNECTED ── */
 function onWalletConnected(addr, wallet, cid) {
   var navBtn   = document.getElementById('navBtn');
   var navLbl   = document.getElementById('navLbl');
@@ -630,7 +639,7 @@ function onWalletConnected(addr, wallet, cid) {
   if (typeof buildIdentity === 'function') buildIdentity();
 }
 
-/* ─── DISCONNECT ─────────────────────────────────────────────────── */
+/* ─── DISCONNECT ── */
 function disconnect() {
   connAddr   = null;
   connWallet = null;
@@ -651,31 +660,30 @@ function disconnect() {
   if (typeof buildIdentity === 'function') buildIdentity();
 }
 
-/* ─── BG CANVAS ──────────────────────────────────────────────────── */
+/* ─── BG CANVAS ── */
 var _bgC = null, _bgX = null, _bgNodes = [];
 function initBgCanvas() {
   _bgC = document.getElementById('BG'); if (!_bgC) return;
   _bgX = _bgC.getContext('2d');
   _rBg();
   window.addEventListener('resize', _rBg);
-  for (var i = 0; i < 28; i++) {
+  for (var i = 0; i < 32; i++) {
     _bgNodes.push({
       x: Math.random() * (window.innerWidth  || 1400),
       y: Math.random() * (window.innerHeight || 800),
-      vx: (Math.random() - 0.5) * 0.12,
-      vy: (Math.random() - 0.5) * 0.12,
-      r:  Math.random() * 1.8 + 0.4,
-      p:  Math.random() * Math.PI * 2
+      vx: (Math.random() - 0.5) * 0.10,
+      vy: (Math.random() - 0.5) * 0.10,
+      r:  Math.random() * 2 + 0.5,
+      p:  Math.random() * Math.PI * 2,
+      gold: Math.random() < 0.08
     });
   }
 }
-
 function _rBg() {
   if (!_bgC) return;
   _bgC.width  = window.innerWidth;
   _bgC.height = window.innerHeight;
 }
-
 function drawBg() {
   if (!_bgC || !_bgX) return;
   var W = _bgC.width, H = _bgC.height;
@@ -685,10 +693,10 @@ function drawBg() {
     n.p += 0.005; n.x += n.vx * em; n.y += n.vy * em;
     if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
     if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
-    var a = (Math.sin(n.p) * 0.5 + 0.5) * 0.18 + 0.04;
+    var a = (Math.sin(n.p) * 0.5 + 0.5) * 0.20 + 0.04;
     _bgX.beginPath();
     _bgX.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-    _bgX.fillStyle = 'rgba(0,200,224,' + a + ')';
+    _bgX.fillStyle = n.gold ? 'rgba(212,168,50,' + a + ')' : 'rgba(0,212,232,' + a + ')';
     _bgX.fill();
   });
   for (var i = 0; i < _bgNodes.length; i++) {
@@ -696,9 +704,9 @@ function drawBg() {
       var dx = _bgNodes[i].x - _bgNodes[j].x;
       var dy = _bgNodes[i].y - _bgNodes[j].y;
       var d  = Math.sqrt(dx * dx + dy * dy);
-      if (d < 180) {
+      if (d < 200) {
         _bgX.beginPath();
-        _bgX.strokeStyle = 'rgba(0,200,224,' + (1 - d / 180) * 0.055 + ')';
+        _bgX.strokeStyle = 'rgba(0,212,232,' + (1 - d / 200) * 0.048 + ')';
         _bgX.lineWidth = 0.4;
         _bgX.moveTo(_bgNodes[i].x, _bgNodes[i].y);
         _bgX.lineTo(_bgNodes[j].x, _bgNodes[j].y);
@@ -708,13 +716,12 @@ function drawBg() {
   }
 }
 
-/* ─── HEX CANVAS ─────────────────────────────────────────────────── */
+/* ─── HEX CANVAS ── */
 var _hexC = null, _hexX = null;
 function initHexCanvas() {
   _hexC = document.getElementById('hexC'); if (!_hexC) return;
   _hexX = _hexC.getContext('2d');
 }
-
 function drawHex(t) {
   if (!_hexC || !_hexX) return;
   var W = _hexC.width, H = _hexC.height;
@@ -729,39 +736,60 @@ function drawHex(t) {
       var py = cy + Math.sin(angle) * r * scale;
       s === 0 ? _hexX.moveTo(px, py) : _hexX.lineTo(px, py);
     }
-    _hexX.strokeStyle = 'rgba(0,200,224,' + (0.22 - ki * 0.065) + ')';
-    _hexX.lineWidth = 0.8;
+    _hexX.strokeStyle = 'rgba(0,212,232,' + (0.24 - ki * 0.07) + ')';
+    _hexX.lineWidth = 0.9;
     _hexX.stroke();
   });
   var ga = Math.sin(t * 0.002) * 0.5 + 0.5;
   _hexX.beginPath();
-  _hexX.arc(cx, cy, 7 + ga * 3, 0, Math.PI * 2);
-  _hexX.fillStyle = 'rgba(0,200,224,' + (0.6 + ga * 0.35) + ')';
+  _hexX.arc(cx, cy, 8 + ga * 3.5, 0, Math.PI * 2);
+  _hexX.fillStyle = 'rgba(0,212,232,' + (0.62 + ga * 0.36) + ')';
+  _hexX.shadowBlur = 20;
+  _hexX.shadowColor = 'rgba(0,212,232,0.8)';
   _hexX.fill();
+  _hexX.shadowBlur = 0;
   var oa = t * 0.0018;
   var ox = cx + Math.cos(oa) * 44;
   var oy = cy + Math.sin(oa) * 44;
   _hexX.beginPath();
-  _hexX.arc(ox, oy, 2.5, 0, Math.PI * 2);
-  _hexX.fillStyle = 'rgba(196,154,42,0.9)';
+  _hexX.arc(ox, oy, 3, 0, Math.PI * 2);
+  _hexX.fillStyle = 'rgba(212,168,50,0.95)';
+  _hexX.shadowBlur = 10;
+  _hexX.shadowColor = 'rgba(212,168,50,0.8)';
   _hexX.fill();
+  _hexX.shadowBlur = 0;
 }
 
-/* ─── CURSOR ─────────────────────────────────────────────────────── */
-/*
- * FIX: Use MutationObserver to catch dynamically-injected elements
- * (identity.html injects cards/buttons after wallet connect — old querySelectorAll
- * at init time would miss them entirely, breaking hover state on those elements).
- * Also added pointer:coarse early-exit so mobile never runs cursor code.
- */
+/* ─── CURSOR ── */
 var _cur = null, _cur2 = null, _mx = 0, _my = 0, _tx = 0, _ty = 0;
+var _trailDots = [];
+var _trailMax = 6;
 
 function _bindHoverEl(el) {
-  /* Only bind once — skip if already marked */
   if (el._rialoCurBound) return;
   el._rialoCurBound = true;
-  el.addEventListener('mouseenter', function() { document.body.classList.add('chl'); });
-  el.addEventListener('mouseleave', function() { document.body.classList.remove('chl'); });
+  el.addEventListener('mouseenter', function() {
+    document.body.classList.add('chl');
+    /* Magnetic effect on buttons */
+    if (el.matches('.btn,.btn-ghost')) {
+      el._magBound = true;
+    }
+  });
+  el.addEventListener('mouseleave', function() {
+    document.body.classList.remove('chl');
+    if (el._magBound) {
+      el.style.transform = '';
+      el._magBound = false;
+    }
+  });
+  if (el.matches('.btn,.btn-ghost')) {
+    el.addEventListener('mousemove', function(e) {
+      var rect = el.getBoundingClientRect();
+      var dx = e.clientX - (rect.left + rect.width/2);
+      var dy = e.clientY - (rect.top + rect.height/2);
+      el.style.transform = 'translate(' + dx*0.12 + 'px,' + dy*0.14 + 'px)';
+    });
+  }
 }
 
 function initCursor() {
@@ -769,29 +797,34 @@ function initCursor() {
   _cur2 = document.getElementById('CUR2');
   if (!_cur || !_cur2) return;
 
-  /* Skip on touch/coarse-pointer devices */
   if ('ontouchstart' in window || navigator.maxTouchPoints > 0 ||
       window.matchMedia('(pointer:coarse)').matches) return;
 
+  /* Create trail dots */
+  for (var ti = 0; ti < _trailMax; ti++) {
+    var dot = document.createElement('div');
+    dot.className = 'cur-trail';
+    var sz = 5 - ti * 0.6;
+    dot.style.cssText = 'width:' + sz + 'px;height:' + sz + 'px;opacity:' + (0.5 - ti * 0.07);
+    document.body.appendChild(dot);
+    _trailDots.push({ el: dot, x: 0, y: 0, tx: 0, ty: 0, delay: ti * 0.06 + 0.04 });
+  }
+
   document.addEventListener('mousemove', function(e) {
     _mx = e.clientX; _my = e.clientY;
-    _cur.style.transform = 'translate(' + (_mx - 2.5) + 'px,' + (_my - 2.5) + 'px)';
+    _cur.style.left = _mx + 'px';
+    _cur.style.top  = _my + 'px';
   });
   document.addEventListener('mousedown', function() { document.body.classList.add('cclick'); });
   document.addEventListener('mouseup',   function() { document.body.classList.remove('cclick'); });
 
-  /* Bind existing interactive elements */
   document.querySelectorAll('a,button,.wo,[onclick]').forEach(_bindHoverEl);
 
-  /* MutationObserver: bind any new interactive elements added to the DOM later
-     (e.g. identity page injecting cards after wallet connect) */
   var _mo = new MutationObserver(function(mutations) {
     mutations.forEach(function(m) {
       m.addedNodes.forEach(function(node) {
         if (node.nodeType !== 1) return;
-        /* Check the node itself */
         if (node.matches && node.matches('a,button,.wo,[onclick]')) _bindHoverEl(node);
-        /* Check all interactive descendants */
         if (node.querySelectorAll) {
           node.querySelectorAll('a,button,.wo,[onclick]').forEach(_bindHoverEl);
         }
@@ -800,44 +833,87 @@ function initCursor() {
   });
   _mo.observe(document.body, { childList: true, subtree: true });
 
-  /* Lagged trailing cursor */
+  /* Lagged trailing cursor + trail animation */
   (function animCur() {
-    _tx += (_mx - _tx) * 0.12;
-    _ty += (_my - _ty) * 0.12;
-    _cur2.style.transform = 'translate(' + (_tx - 11) + 'px,' + (_ty - 11) + 'px)';
+    _tx += (_mx - _tx) * 0.13;
+    _ty += (_my - _ty) * 0.13;
+    _cur2.style.left = _tx + 'px';
+    _cur2.style.top  = _ty + 'px';
+
+    /* Trail dots */
+    var px = _mx, py = _my;
+    _trailDots.forEach(function(td, i) {
+      td.tx += (px - td.tx) * (0.22 - i * 0.025);
+      td.ty += (py - td.ty) * (0.22 - i * 0.025);
+      td.el.style.left = td.tx + 'px';
+      td.el.style.top  = td.ty + 'px';
+      px = td.tx; py = td.ty;
+    });
+
     requestAnimationFrame(animCur);
   })();
 }
 
-/* ─── RIPPLE ─────────────────────────────────────────────────────── */
+/* ─── RIPPLE ── */
 function initRipple() {
   document.querySelectorAll('.btn,.btn-ghost').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       var r = btn.getBoundingClientRect();
       var x = e.clientX - r.left, y = e.clientY - r.top;
-      var sz = Math.max(r.width, r.height) * 1.8;
+      var sz = Math.max(r.width, r.height) * 2;
       var rp = document.createElement('div');
       rp.className = 'btn-ripple';
       rp.style.cssText = 'width:' + sz + 'px;height:' + sz + 'px;left:' + (x - sz/2) + 'px;top:' + (y - sz/2) + 'px';
       btn.querySelectorAll('.btn-ripple').forEach(function(old){ old.remove(); });
       btn.appendChild(rp);
-      setTimeout(function(){ rp.remove(); }, 600);
+      setTimeout(function(){ rp.remove(); }, 650);
     });
   });
 }
 
-/* ─── SCROLL REVEAL ──────────────────────────────────────────────── */
+/* ─── SCROLL REVEAL ── */
 function initReveal() {
   var els = document.querySelectorAll('.rv');
   if (!els.length) return;
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+      entries.forEach(function(e, idx) {
+        if (e.isIntersecting) {
+          /* stagger siblings */
+          var delay = 0;
+          var siblings = e.target.parentElement ? e.target.parentElement.querySelectorAll('.rv:not(.in)') : [];
+          siblings.forEach(function(sib, i) { if (sib === e.target) delay = i * 60; });
+          setTimeout(function() { e.target.classList.add('in'); }, delay);
+          obs.unobserve(e.target);
+        }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.10 });
     els.forEach(function(el) { obs.observe(el); });
   } else {
     els.forEach(function(el) { el.classList.add('in'); });
   }
+}
+
+/* ─── CARD TILT ── */
+function initCardTilt() {
+  if (window.matchMedia('(pointer:coarse)').matches) return;
+  document.querySelectorAll('.wcard,.dev-card,.fc,.mc,.id-live-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      var cx = r.left + r.width/2, cy = r.top + r.height/2;
+      var dx = (e.clientX - cx) / r.width;
+      var dy = (e.clientY - cy) / r.height;
+      card.style.transform = 'translateY(-3px) perspective(800px) rotateX(' + (-dy * 4) + 'deg) rotateY(' + (dx * 4) + 'deg)';
+    });
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = '';
+    });
+  });
+}
+
+/* ─── GRID PATTERN ── */
+function initGridPattern() {
+  var el = document.createElement('div');
+  el.id = 'gridPat';
+  document.body.insertBefore(el, document.body.firstChild);
 }
