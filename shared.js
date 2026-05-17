@@ -14,10 +14,14 @@ var gasPrice   = 18;     // last known gas in gwei
 var scActive   = false;  // scan overlay active?
 
 var tokenData = {
-  ethereum: { price: 3200,  chg: 0 },
-  bitcoin:  { price: 64000, chg: 0 },
-  solana:   { price: 145,   chg: 0 },
-  'matic-network': { price: 0.88, chg: 0 }
+  ethereum:        { price: 3200,  chg: 0 },
+  bitcoin:         { price: 64000, chg: 0 },
+  solana:          { price: 145,   chg: 0 },
+  'matic-network': { price: 0.88,  chg: 0 },
+  arbitrum:        { price: 1.10,  chg: 0 },
+  'avalanche-2':   { price: 38,    chg: 0 },
+  chainlink:       { price: 14,    chg: 0 },
+  uniswap:         { price: 9,     chg: 0 }
 };
 
 var priceHistory = { eth: [], btc: [], sol: [] };
@@ -43,10 +47,14 @@ var _chgSnapshot   = {};     // 24h change % from REST (WS doesn't send it)
 
 // Binance stream symbols → internal id map
 var _BN_MAP = {
-  ethusdt:  'ethereum',
-  btcusdt:  'bitcoin',
-  solusdt:  'solana',
-  maticusdt:'matic-network'
+  ethusdt:   'ethereum',
+  btcusdt:   'bitcoin',
+  solusdt:   'solana',
+  maticusdt: 'matic-network',
+  arbusdt:   'arbitrum',
+  avaxusdt:  'avalanche-2',
+  linkusdt:  'chainlink',
+  uniusdt:   'uniswap'
 };
 
 /* ── Shared helpers ── */
@@ -110,7 +118,7 @@ function _scheduleWsRetry() {
 
 /* ── 2. Binance REST snapshot (24h change + initial prices) ── */
 function _fetchBinanceSnapshot() {
-  var symbols = ['ETHUSDT','BTCUSDT','SOLUSDT','MATICUSDT'];
+  var symbols = ['ETHUSDT','BTCUSDT','SOLUSDT','MATICUSDT','ARBUSDT','AVAXUSDT','LINKUSDT','UNIUSDT'];
   var url = 'https://api.binance.com/api/v3/ticker/24hr?symbols=['
     + symbols.map(function(s){ return '%22' + s + '%22'; }).join(',') + ']';
 
@@ -135,7 +143,7 @@ function _fetchBinanceSnapshot() {
 /* ── 3. CoinGecko REST fallback ── */
 function _fetchCoinGecko() {
   var url = 'https://api.coingecko.com/api/v3/simple/price'
-    + '?ids=ethereum,bitcoin,solana,matic-network'
+    + '?ids=ethereum,bitcoin,solana,matic-network,arbitrum,avalanche-2,chainlink,uniswap'
     + '&vs_currencies=usd&include_24hr_change=true';
   return fetch(url, { signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(7000) : undefined })
     .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -153,7 +161,7 @@ function _fetchCoinGecko() {
 
 /* ── 4. Simulated drift (last resort) ── */
 function _applyDrift() {
-  ['ethereum','bitcoin','solana','matic-network'].forEach(function(id) {
+  ['ethereum','bitcoin','solana','matic-network','arbitrum','avalanche-2','chainlink','uniswap'].forEach(function(id) {
     if (!tokenData[id] || !tokenData[id].price) return;
     var drift = (Math.random() - 0.499) * 0.003;
     tokenData[id] = {
@@ -179,10 +187,10 @@ function _fetchGasPrice() {
     if (d.result) {
       var gwei = Math.round(parseInt(d.result, 16) / 1e9);
       if (gwei > 0 && gwei < 50000) gasPrice = gwei;
-      // Update gas display elements if present
-      ['sw-fee','sw-gas-gwei'].forEach(function(id){
+      // Update all gas display elements
+      ['sw-fee','sw-gas-gwei','gasp','gasp2'].forEach(function(id){
         var el = document.getElementById(id);
-        if (el) el.textContent = gasPrice + ' gwei';
+        if (el) el.textContent = gasPrice + (id === 'gasp' ? ' gwei' : ' gwei');
       });
     }
   })
@@ -238,9 +246,14 @@ function fetchPrices() {
 })();
 
 var ID_MAP = {
-  ethereum: { p:['ep','hmp-eth'], c:['ec','hmc-eth'] },
-  bitcoin:  { p:['bp','hmp-btc'], c:['bc','hmc-btc'] },
-  solana:   { p:['sp','hmp-sol'], c:['sc','hmc-sol'] }
+  ethereum:        { p:['ep','ep2','hmp-eth'],    c:['ec','ec2','hmc-eth'] },
+  bitcoin:         { p:['bp','bp2','hmp-btc'],    c:['bc','bc2','hmc-btc'] },
+  solana:          { p:['sp','sp2','hmp-sol'],    c:['sc','sc2','hmc-sol'] },
+  'matic-network': { p:['mp','mp2'],              c:['mc','mc2'] },
+  arbitrum:        { p:['ap','ap2'],              c:['ac','ac2'] },
+  'avalanche-2':   { p:['avp','avp2'],            c:['avc','avc2'] },
+  chainlink:       { p:['lp','lp2'],              c:['lc','lc2'] },
+  uniswap:         { p:['up','up2'],              c:['uc','uc2'] }
 };
 
 function fmtP(n) {
@@ -269,6 +282,12 @@ function applyPricesToDom() {
       }
     });
   });
+  // Update gas ticker (both sets)
+  ['gasp','gasp2'].forEach(function(gid){
+    var gasEl = document.getElementById(gid);
+    if (gasEl && gasPrice) gasEl.textContent = gasPrice;
+  });
+
   updateStatusBarMarket();
 }
 
