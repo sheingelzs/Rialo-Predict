@@ -102,7 +102,6 @@
 <div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
 <div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Loading infrastructure...</span></div></div>
 
-<!-- FIX: Full shared nav (was logo-only tag before — no links, no wallet button) -->
 <nav id="mainNav">
   <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
   <ul class="nlinks" id="navLinks">
@@ -123,14 +122,12 @@
 <div class="infra-page">
   <div class="infra-inner">
 
-    <!-- HEADER -->
     <div style="margin-bottom:40px" class="rv">
       <div class="sec-ey">Trust Infrastructure Tools</div>
       <h2 class="sec-h">Move assets with<br>full transparency.</h2>
       <p class="sec-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p>
     </div>
 
-    <!-- TABS -->
     <div class="infra-tabs rv">
       <button class="itab active" data-tab="swap">⇄ Swap</button>
       <button class="itab" data-tab="bridge">⬡ Bridge</button>
@@ -198,13 +195,12 @@
           <div class="swap-details" style="margin-top:9px">
             <div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div>
             <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div>
-            <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div>
+            <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r" id="bridge-fee">—</span></div>
           </div>
           <button class="btn" style="width:100%;margin-top:13px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
         </div>
         <div>
           <div class="bridge-canvas-wrap"><canvas id="bridgeC"></canvas></div>
-          <!-- FIX: resetBridgeStatus() now properly resets these on tab switch -->
           <div class="bridge-status" id="bridgeStatus">
             <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
             <div class="bs-row"><div class="bs-prog" id="bp1" style="width:65%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
@@ -261,7 +257,6 @@
   </div>
 </div>
 
-<!-- FIX: Full shared wallet/scan/status overlays (were absent) -->
 <div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
 
 <div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
@@ -271,7 +266,14 @@
 
 <script src="shared.js"></script>
 <script>
-var localEthPrice=3482, localGasPrice=14, bridgeInProgress=false, stakeEarned=0;
+/* ─── LOCAL STATE ───────────────────────────────────────────────────
+   FIX: "var gasPrice" removed — use shared.js global directly.
+   "var localEthPrice" still needed as a page-local copy for USD calcs
+   so we don't mutate the shared ethPrice inadvertently.
+   ─────────────────────────────────────────────────────────────────── */
+var localEthPrice = 3482;
+var bridgeInProgress = false;
+var stakeEarned = 0;
 
 /* ─── TABS ─── */
 document.querySelectorAll('.itab').forEach(function(btn){
@@ -281,7 +283,6 @@ document.querySelectorAll('.itab').forEach(function(btn){
     btn.classList.add('active');
     var panel=document.getElementById('panel-'+btn.dataset.tab);
     if(panel)panel.classList.add('active');
-    /* FIX: resetBridgeStatus on every bridge tab entry, not just first */
     if(btn.dataset.tab==='bridge'){initBridgeCanvas();resetBridgeStatus()}
     if(btn.dataset.tab==='stake')drawStakeRing();
     if(btn.dataset.tab==='swap')updateSwapUI();
@@ -290,13 +291,22 @@ document.querySelectorAll('.itab').forEach(function(btn){
 
 /* ─── SWAP UI ─── */
 function updateSwapUI(){
-  var p=localEthPrice;if(!p)return;
+  var p = ethPrice || localEthPrice; /* prefer shared.js live ethPrice */
+  if(!p)return;
   var sf=document.getElementById('sw-from-usd'),sta=document.getElementById('sw-to-amt'),stu=document.getElementById('sw-to-usd'),sr=document.getElementById('sw-rate'),sfe=document.getElementById('sw-fee'),sge=document.getElementById('sw-gas-est'),stot=document.getElementById('sw-total');
   if(sf)sf.textContent='≈ $'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(sta)sta.textContent=Math.round(p).toLocaleString();
   if(stu)stu.textContent='≈ $'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(sr)sr.textContent='1 ETH = '+Math.round(p)+' USDC';
-  if(localGasPrice){if(sfe)sfe.textContent=localGasPrice+' gwei';var gc=localGasPrice*21000/1e9;if(sge)sge.textContent='~$'+(gc*p).toFixed(2)+' USD';if(stot)stot.textContent='~$'+((0.003+gc)*p).toFixed(2)}
+  /* FIX: use shared gasPrice global (not undefined local) */
+  var g = gasPrice || 18;
+  if(sfe)sfe.textContent=g+' gwei';
+  var gc=g*21000/1e9;
+  if(sge)sge.textContent='~$'+(gc*p).toFixed(2)+' USD';
+  if(stot)stot.textContent='~$'+((0.003+gc)*p).toFixed(2);
+  /* update bridge fee display while we have fresh price */
+  var bf=document.getElementById('bridge-fee');
+  if(bf)bf.textContent='~$'+(2.4+(gc*p*0.5)).toFixed(2);
 }
 
 /* ─── SWAP ROUTE ─── */
@@ -315,7 +325,6 @@ var brC=document.getElementById('bridgeC'),brX=null,brPkts=[];
 function initBridgeCanvas(){
   if(!brC)return;brC.width=brC.offsetWidth||300;brC.height=brC.offsetHeight||150;brX=brC.getContext('2d');
 }
-/* FIX: resetBridgeStatus now resets all statuses to initial state */
 function resetBridgeStatus(){
   var ws=['100%','65%','0%','0%'],stats=['Complete','In progress','Pending','Pending'],cls=['done','active','pending','pending'];
   ['bp0','bp1','bp2','bp3'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.style.width=ws[i]});
@@ -343,7 +352,10 @@ function drawStakeRing(){
 
 /* ─── BUTTONS ─── */
 document.getElementById('swapArrowBtn').addEventListener('click',function(){toast('Direction flipped ⇅')});
-document.getElementById('swapExecBtn').addEventListener('click',function(){toast('Swap preview: 1 ETH → '+Math.round(localEthPrice)+' USDC — Route: Uniswap v4')});
+document.getElementById('swapExecBtn').addEventListener('click',function(){
+  var p=ethPrice||localEthPrice;
+  toast('Swap preview: 1 ETH → '+Math.round(p)+' USDC — Route: Uniswap v4');
+});
 document.getElementById('bridgeExecBtn').addEventListener('click',function(){
   if(bridgeInProgress){toast('Bridge already in progress...');return}
   bridgeInProgress=true;toast('Bridge initiated: 0.5 ETH → Arbitrum — Est. ~7 min');animateBridgeProgress();
@@ -363,14 +375,17 @@ function animateBridgeProgress(){
   setTimeout(adv,1200);
 }
 
-/* ─── FETCH PRICES (also syncs shared ethPrice/gasPrice vars) ─── */
-/* FIX: this page now uses shared.js price infrastructure — onPricesUpdated
-   callback updates localEthPrice from shared tokenData */
+/* ─── PRICE CALLBACKS ─────────────────────────────────────────────
+   FIX: onPricesUpdated receives live data from shared.js Binance WS.
+   onGasDrift is called by shared.js _fetchGasPrice() every 15s.
+   Both update the swap UI with fresh values.
+   ─────────────────────────────────────────────────────────────────── */
 function onPricesUpdated(data){
-  if(data&&data.ethereum)localEthPrice=data.ethereum.price||localEthPrice;
-  localGasPrice=gasPrice;
+  if(data&&data.ethereum)localEthPrice=data.ethereum.price;
   updateSwapUI();
 }
+
+function onGasDrift(){ updateSwapUI(); }
 
 /* ─── RENDER LOOP ─── */
 var lastF=0;
@@ -406,7 +421,6 @@ document.addEventListener('DOMContentLoaded',function(){
   initBridgeCanvas();
   drawStakeRing();
 
-  /* Staking reward tick */
   setInterval(function(){
     stakeEarned+=0.00000042;
     var el=document.getElementById('stakeReward');
