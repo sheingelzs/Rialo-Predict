@@ -5,31 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RIALO — Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#010308;--c:#00c8e0;--c2:#00a8bd;--gold:#c49a2a;--green:#1ed670;--blue:#6ba3ff;
-  --txt:rgba(200,220,235,0.92);--txt2:rgba(100,140,165,0.60);
-  --border:rgba(0,200,224,0.06);--border2:rgba(0,200,224,0.18);
-  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.16,1,.3,1);--nav-h:54px;
-}
-html,body{width:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 140% 80% at 50% -10%,rgba(0,180,220,0.055) 0%,transparent 55%),linear-gradient(180deg,#010308 0%,#020510 40%,#010308 100%);pointer-events:none}
-body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,200,224,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,224,0.018) 1px,transparent 1px);background-size:72px 72px;mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 100% 100% at 50% 50%,black 20%,transparent 80%)}
-
-/* NAV */
-nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(0,200,224,0.10);background:rgba(1,4,12,0.92);backdrop-filter:blur(40px);box-shadow:0 8px 32px rgba(0,0,0,0.6)}
-.nlogo{font-family:'Bebas Neue',cursive;font-size:21px;letter-spacing:.38em;color:#fff;display:flex;align-items:center;gap:10px;user-select:none;text-decoration:none;text-shadow:0 0 30px rgba(0,200,224,0.15)}
-.npulse{width:6px;height:6px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);animation:pulse 2.6s ease infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.18;transform:scale(.4)}}
-.nav-tag{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c);opacity:.7;padding:4px 10px;border:1px solid rgba(0,200,224,0.14);border-radius:1px}
-
-/* PAGE */
-.page{position:relative;z-index:2;max-width:1060px;margin:0 auto;padding:40px 28px 100px}
-
-/* REVEALS */
-.rv{opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease),filter .65s;filter:blur(2px)}
-.rv.in{opacity:1;transform:none;filter:blur(0)}
+/* ── INFRA PAGE STYLES ── */
+.infra-page{position:relative;z-index:10;margin-top:var(--nav-h)}
+.infra-inner{max-width:1060px;margin:0 auto;padding:40px 28px 120px}
 
 /* HEADER */
 .sec-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
@@ -111,182 +91,189 @@ nav{position:sticky;top:0;z-index:500;height:var(--nav-h);display:flex;align-ite
 .nc-row{display:flex;align-items:center;gap:7px;padding:5px 9px;background:rgba(196,154,42,0.03);border:1px solid rgba(196,154,42,0.07);border-radius:2px;margin-bottom:4px}
 .nc-ico{font-size:9px}.nc-txt{font-size:9px;color:var(--txt2);flex:1}.nc-val{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--gold)}
 
-/* SHARED */
-.tl-ey{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);opacity:.6;margin-bottom:9px;display:flex;align-items:center;gap:9px}
-.tl-ey::before{content:'';width:12px;height:1px;background:var(--c)}
-.wc-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.btn{position:relative;padding:10px 22px;border:1px solid var(--c);background:transparent;color:var(--c);font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;border-radius:2px;overflow:hidden;transition:color .25s,box-shadow .25s;white-space:nowrap;box-shadow:0 0 20px rgba(0,200,224,0.08)}
-.btn::before{content:'';position:absolute;inset:0;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .28s var(--ease);z-index:0}
-.btn:hover{color:#000;box-shadow:0 0 36px rgba(0,200,224,0.25)}.btn:hover::before{transform:scaleX(1)}.btn span{position:relative;z-index:1}
-.mi-live{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border:1px solid rgba(30,214,112,0.2);background:rgba(30,214,112,0.04);border-radius:1px}
-.mi-live-dot{width:3.5px;height:3.5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.2s ease infinite}
-.mi-live span{font-family:'Space Mono',monospace;font-size:6px;color:var(--green);letter-spacing:.12em;text-transform:uppercase}
-
-/* TOAST */
-#toast{position:fixed;bottom:28px;right:18px;z-index:900;background:rgba(2,8,22,0.99);border:1px solid rgba(0,200,224,0.2);border-radius:2px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);max-width:280px;transform:translateY(8px) scale(.97);opacity:0;transition:transform .28s var(--ease2),opacity .28s;pointer-events:none;box-shadow:0 16px 48px rgba(0,0,0,0.8);backdrop-filter:blur(24px)}
-#toast.on{transform:translateY(0) scale(1);opacity:1}
-.tdot{width:3.5px;height:3.5px;border-radius:50%;background:var(--c);display:inline-block;margin-right:6px;box-shadow:0 0 4px var(--c);vertical-align:middle}
-
 /* RESPONSIVE */
-@media(max-width:768px){.swap-wrap,.bridge-wrap,.stake-wrap{grid-template-columns:1fr}.page{padding:24px 16px 80px}}
+@media(max-width:768px){.swap-wrap,.bridge-wrap,.stake-wrap{grid-template-columns:1fr}.infra-inner{padding:24px 16px 100px}}
 </style>
 </head>
 <body>
 
-<nav>
-  <a class="nlogo" href="#"><div class="npulse"></div>RIALO</a>
-  <span class="nav-tag">Infrastructure</span>
+<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div><div id="atmo"></div>
+<canvas id="BG"></canvas><div class="vig"></div>
+<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
+<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Loading infrastructure...</span></div></div>
+
+<!-- FIX: Full shared nav (was logo-only tag before — no links, no wallet button) -->
+<nav id="mainNav">
+  <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
+  <ul class="nlinks" id="navLinks">
+    <li><a href="index.html" data-s="home">Home</a></li>
+    <li><a href="protocol.html" data-s="proto">Protocol</a></li>
+    <li><a href="identity.html" data-s="id">Identity</a></li>
+    <li><a href="trustlayer.html" data-s="trust">TrustLayer</a></li>
+    <li><a href="infrastructure.html" data-s="infra">Infrastructure</a></li>
+    <li><a href="devs.html" data-s="devs">Devs</a></li>
+  </ul>
+  <div class="nright">
+    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
+    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
 </nav>
 
-<div class="page">
+<div class="infra-page">
+  <div class="infra-inner">
 
-  <!-- HEADER -->
-  <div style="margin-bottom:40px" class="rv">
-    <div class="sec-ey">Trust Infrastructure Tools</div>
-    <h2 class="sec-h">Move assets with<br>full transparency.</h2>
-    <p class="sec-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p>
-  </div>
+    <!-- HEADER -->
+    <div style="margin-bottom:40px" class="rv">
+      <div class="sec-ey">Trust Infrastructure Tools</div>
+      <h2 class="sec-h">Move assets with<br>full transparency.</h2>
+      <p class="sec-desc">Every swap, bridge, and stake is visualized with trust scoring, MEV protection, route transparency, and validator integrity data.</p>
+    </div>
 
-  <!-- TABS -->
-  <div class="infra-tabs rv">
-    <button class="itab active" data-tab="swap">⇄ Swap</button>
-    <button class="itab" data-tab="bridge">⬡ Bridge</button>
-    <button class="itab" data-tab="stake">◈ Stake</button>
-  </div>
+    <!-- TABS -->
+    <div class="infra-tabs rv">
+      <button class="itab active" data-tab="swap">⇄ Swap</button>
+      <button class="itab" data-tab="bridge">⬡ Bridge</button>
+      <button class="itab" data-tab="stake">◈ Stake</button>
+    </div>
 
-  <!-- SWAP PANEL -->
-  <div class="infra-panel active rv" id="panel-swap">
-    <div class="swap-wrap">
-      <div class="swap-card">
-        <div class="swap-lbl">You pay</div>
-        <div class="swap-token-row">
-          <div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">ETH</div><div class="stk-name">Ethereum</div></div></div>
-          <div style="margin-left:auto;text-align:right"><div class="stk-amt">1.000</div><div class="stk-usd" id="sw-from-usd">≈ $—</div></div>
-        </div>
-        <div class="swap-arrow"><div class="swap-arrow-line"></div><div class="swap-arrow-ico" id="swapArrowBtn">⇅</div></div>
-        <div class="swap-token-row" style="margin-top:5px">
-          <div class="stk"><div class="stk-ico" style="background:rgba(130,71,229,0.12)">◈</div><div><div class="stk-sym">USDC</div><div class="stk-name">USD Coin</div></div></div>
-          <div style="margin-left:auto;text-align:right"><div class="stk-amt" id="sw-to-amt">—</div><div class="stk-usd" id="sw-to-usd">≈ $—</div></div>
-        </div>
-        <div class="swap-details">
-          <div class="sd-row"><span class="sd-l">Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div>
-          <div class="sd-row"><span class="sd-l">Slippage</span><span class="sd-r good">0.5%</span></div>
-          <div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div>
-          <div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div>
-          <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">97/100 ✓</span></div>
-        </div>
-        <button class="btn" style="width:100%;margin-top:12px" id="swapExecBtn"><span>Preview Swap</span></button>
-      </div>
-      <div>
-        <div class="swap-route">
-          <div class="sr-title">Route Visualization — Best Path</div>
-          <div class="sr-flow" id="swapRouteFlow"></div>
-          <div class="sr-mev"><div class="sr-mev-ico">⚡</div><div class="sr-mev-txt">MEV Sandwich Protection via Flashbots</div><div class="sr-mev-val">Saved ~$4.20</div></div>
-        </div>
-        <div class="swap-card" style="padding:16px">
-          <div class="swap-lbl" style="margin-bottom:10px">Fee Breakdown</div>
-          <div class="swap-details">
-            <div class="sd-row"><span class="sd-l">Protocol Fee</span><span class="sd-r">0.05%</span></div>
-            <div class="sd-row"><span class="sd-l">LP Fee</span><span class="sd-r">0.25%</span></div>
-            <div class="sd-row"><span class="sd-l">Gas (est.)</span><span class="sd-r" id="sw-gas-est">—</span></div>
-            <div class="sd-row"><span class="sd-l">Price Impact</span><span class="sd-r warn">-0.08%</span></div>
-            <div class="sd-row" style="border:none;margin-top:3px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">—</span></div>
+    <!-- SWAP PANEL -->
+    <div class="infra-panel active rv" id="panel-swap">
+      <div class="swap-wrap">
+        <div class="swap-card">
+          <div class="swap-lbl">You pay</div>
+          <div class="swap-token-row">
+            <div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">ETH</div><div class="stk-name">Ethereum</div></div></div>
+            <div style="margin-left:auto;text-align:right"><div class="stk-amt">1.000</div><div class="stk-usd" id="sw-from-usd">≈ $—</div></div>
           </div>
+          <div class="swap-arrow"><div class="swap-arrow-line"></div><div class="swap-arrow-ico" id="swapArrowBtn">⇅</div></div>
+          <div class="swap-token-row" style="margin-top:5px">
+            <div class="stk"><div class="stk-ico" style="background:rgba(130,71,229,0.12)">◈</div><div><div class="stk-sym">USDC</div><div class="stk-name">USD Coin</div></div></div>
+            <div style="margin-left:auto;text-align:right"><div class="stk-amt" id="sw-to-amt">—</div><div class="stk-usd" id="sw-to-usd">≈ $—</div></div>
+          </div>
+          <div class="swap-details">
+            <div class="sd-row"><span class="sd-l">Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div>
+            <div class="sd-row"><span class="sd-l">Slippage</span><span class="sd-r good">0.5%</span></div>
+            <div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div>
+            <div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div>
+            <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">97/100 ✓</span></div>
+          </div>
+          <button class="btn" style="width:100%;margin-top:12px" id="swapExecBtn"><span>Preview Swap</span></button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BRIDGE PANEL -->
-  <div class="infra-panel rv" id="panel-bridge">
-    <div class="bridge-wrap">
-      <div class="bridge-card">
-        <div class="tl-ey" style="margin-bottom:12px">Cross-chain Transfer</div>
-        <div class="bridge-chains">
-          <div class="bc-chain" style="border-color:rgba(111,124,255,0.2)"><div class="bc-chain-ico">Ξ</div><div class="bc-chain-name">Ethereum</div><div class="bc-chain-net">Mainnet</div></div>
-          <div class="bridge-arrow"><div class="ba-anim"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div></div>
-          <div class="bc-chain" style="border-color:rgba(30,214,112,0.2)"><div class="bc-chain-ico">⬡</div><div class="bc-chain-name">Arbitrum</div><div class="bc-chain-net">One</div></div>
-        </div>
-        <div style="margin-bottom:13px">
-          <div class="swap-lbl">Amount to bridge</div>
-          <div class="swap-token-row"><div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">0.5 ETH</div><div class="stk-name">On Ethereum</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt">~0.4998</div><div class="stk-usd" style="color:var(--green)">Will receive</div></div></div>
-        </div>
-        <div class="bridge-time"><span>⏱ Estimated time</span><span class="bridge-time-val">~7 min</span></div>
-        <div class="swap-details" style="margin-top:9px">
-          <div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div>
-          <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div>
-          <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div>
-        </div>
-        <button class="btn" style="width:100%;margin-top:13px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
-      </div>
-      <div>
-        <div class="bridge-canvas-wrap"><canvas id="bridgeC"></canvas></div>
-        <div class="bridge-status" id="bridgeStatus">
-          <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
-          <div class="bs-row"><div class="bs-prog" id="bp1" style="width:65%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
-          <div class="bs-row"><div class="bs-prog" id="bp2" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Minting on Arbitrum</div><div class="bs-stat pending">Pending</div></div>
-          <div class="bs-row"><div class="bs-prog" id="bp3" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Settlement confirmation</div><div class="bs-stat pending">Pending</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STAKE PANEL -->
-  <div class="infra-panel rv" id="panel-stake">
-    <div class="stake-wrap">
-      <div class="stake-card">
-        <div class="tl-ey" style="margin-bottom:12px">Validator Trust Board</div>
-        <div id="validatorList">
-          <div class="validator-item"><div class="vi-rank">01</div><div class="vi-ico">🏛</div><div><div class="vi-name">Lido Finance</div><div class="vi-apy">APY: 4.2% ↑</div></div><div class="vi-trust"><div class="vi-score">99</div><div class="vi-lbl">Trust</div></div></div>
-          <div class="validator-item"><div class="vi-rank">02</div><div class="vi-ico">🔷</div><div><div class="vi-name">Rocket Pool</div><div class="vi-apy">APY: 3.9% →</div></div><div class="vi-trust"><div class="vi-score">97</div><div class="vi-lbl">Trust</div></div></div>
-          <div class="validator-item"><div class="vi-rank">03</div><div class="vi-ico">⚡</div><div><div class="vi-name">Frax ETH</div><div class="vi-apy">APY: 4.5% ↑</div></div><div class="vi-trust"><div class="vi-score">94</div><div class="vi-lbl">Trust</div></div></div>
-          <div class="validator-item"><div class="vi-rank">04</div><div class="vi-ico">🔵</div><div><div class="vi-name">Coinbase cbETH</div><div class="vi-apy">APY: 3.6% →</div></div><div class="vi-trust"><div class="vi-score" style="color:var(--c)">91</div><div class="vi-lbl">Trust</div></div></div>
-        </div>
-        <div class="stake-meter">
-          <div class="sm-title">Your Staking Position</div>
-          <div class="sm-ring-wrap">
-            <canvas id="stakeRingC" width="76" height="76"></canvas>
-            <div class="sm-stats">
-              <div class="sms gold"><strong>2.4</strong>ETH staked</div>
-              <div class="sms green"><strong id="stakeReward">0.0000000</strong>ETH earned</div>
-              <div class="sms"><strong>4.2%</strong>Current APY</div>
+        <div>
+          <div class="swap-route">
+            <div class="sr-title">Route Visualization — Best Path</div>
+            <div class="sr-flow" id="swapRouteFlow"></div>
+            <div class="sr-mev"><div class="sr-mev-ico">⚡</div><div class="sr-mev-txt">MEV Sandwich Protection via Flashbots</div><div class="sr-mev-val">Saved ~$4.20</div></div>
+          </div>
+          <div class="swap-card" style="padding:16px">
+            <div class="swap-lbl" style="margin-bottom:10px">Fee Breakdown</div>
+            <div class="swap-details">
+              <div class="sd-row"><span class="sd-l">Protocol Fee</span><span class="sd-r">0.05%</span></div>
+              <div class="sd-row"><span class="sd-l">LP Fee</span><span class="sd-r">0.25%</span></div>
+              <div class="sd-row"><span class="sd-l">Gas (est.)</span><span class="sd-r" id="sw-gas-est">—</span></div>
+              <div class="sd-row"><span class="sd-l">Price Impact</span><span class="sd-r warn">-0.08%</span></div>
+              <div class="sd-row" style="border:none;margin-top:3px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">—</span></div>
             </div>
           </div>
         </div>
       </div>
-      <div class="stake-card">
-        <div class="tl-ey" style="margin-bottom:12px">Network Contribution</div>
-        <div class="nc-row"><div class="nc-ico">🔒</div><div class="nc-txt">Chain Security Score</div><div class="nc-val">98.4%</div></div>
-        <div class="nc-row"><div class="nc-ico">⚡</div><div class="nc-txt">Your Contribution</div><div class="nc-val">0.003%</div></div>
-        <div class="nc-row"><div class="nc-ico">🌐</div><div class="nc-txt">Active Validators</div><div class="nc-val">872,140</div></div>
-        <div class="nc-row"><div class="nc-ico">◈</div><div class="nc-txt">Total ETH Staked</div><div class="nc-val">32.8M ETH</div></div>
-        <div style="margin-top:16px">
-          <div class="tl-ey" style="margin-bottom:11px">Reward Transparency</div>
-          <div class="swap-details">
-            <div class="sd-row"><span class="sd-l">Consensus Rewards</span><span class="sd-r good">+0.0003 ETH/day</span></div>
-            <div class="sd-row"><span class="sd-l">Execution Rewards</span><span class="sd-r good">+0.0001 ETH/day</span></div>
-            <div class="sd-row"><span class="sd-l">MEV Rewards</span><span class="sd-r warn">Variable</span></div>
-            <div class="sd-row"><span class="sd-l">Validator Fee</span><span class="sd-r">10% of rewards</span></div>
+    </div>
+
+    <!-- BRIDGE PANEL -->
+    <div class="infra-panel rv" id="panel-bridge">
+      <div class="bridge-wrap">
+        <div class="bridge-card">
+          <div class="tl-ey" style="margin-bottom:12px">Cross-chain Transfer</div>
+          <div class="bridge-chains">
+            <div class="bc-chain" style="border-color:rgba(111,124,255,0.2)"><div class="bc-chain-ico">Ξ</div><div class="bc-chain-name">Ethereum</div><div class="bc-chain-net">Mainnet</div></div>
+            <div class="bridge-arrow"><div class="ba-anim"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div></div>
+            <div class="bc-chain" style="border-color:rgba(30,214,112,0.2)"><div class="bc-chain-ico">⬡</div><div class="bc-chain-name">Arbitrum</div><div class="bc-chain-net">One</div></div>
           </div>
-          <button class="btn" style="width:100%;margin-top:13px" id="stakeExecBtn"><span>Stake ETH — Contribute to Network</span></button>
+          <div style="margin-bottom:13px">
+            <div class="swap-lbl">Amount to bridge</div>
+            <div class="swap-token-row"><div class="stk"><div class="stk-ico" style="background:rgba(111,124,255,0.12)">Ξ</div><div><div class="stk-sym">0.5 ETH</div><div class="stk-name">On Ethereum</div></div></div><div style="margin-left:auto;text-align:right"><div class="stk-amt">~0.4998</div><div class="stk-usd" style="color:var(--green)">Will receive</div></div></div>
+          </div>
+          <div class="bridge-time"><span>⏱ Estimated time</span><span class="bridge-time-val">~7 min</span></div>
+          <div class="swap-details" style="margin-top:9px">
+            <div class="sd-row"><span class="sd-l">Security Layer</span><span class="sd-r good">Canonical Bridge</span></div>
+            <div class="sd-row"><span class="sd-l">Trust Score</span><span class="sd-r good">99/100 ✓</span></div>
+            <div class="sd-row"><span class="sd-l">Bridge Fee</span><span class="sd-r">~$2.40</span></div>
+          </div>
+          <button class="btn" style="width:100%;margin-top:13px" id="bridgeExecBtn"><span>Initiate Bridge</span></button>
+        </div>
+        <div>
+          <div class="bridge-canvas-wrap"><canvas id="bridgeC"></canvas></div>
+          <!-- FIX: resetBridgeStatus() now properly resets these on tab switch -->
+          <div class="bridge-status" id="bridgeStatus">
+            <div class="bs-row"><div class="bs-prog" id="bp0" style="width:100%"></div><div class="bs-ico">✓</div><div class="bs-txt">Locking ETH on Ethereum</div><div class="bs-stat done">Complete</div></div>
+            <div class="bs-row"><div class="bs-prog" id="bp1" style="width:65%"></div><div class="bs-ico">⬡</div><div class="bs-txt">Relayer confirmation (12 blocks)</div><div class="bs-stat active">In progress</div></div>
+            <div class="bs-row"><div class="bs-prog" id="bp2" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Minting on Arbitrum</div><div class="bs-stat pending">Pending</div></div>
+            <div class="bs-row"><div class="bs-prog" id="bp3" style="width:0%"></div><div class="bs-ico">○</div><div class="bs-txt">Settlement confirmation</div><div class="bs-stat pending">Pending</div></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <!-- STAKE PANEL -->
+    <div class="infra-panel rv" id="panel-stake">
+      <div class="stake-wrap">
+        <div class="stake-card">
+          <div class="tl-ey" style="margin-bottom:12px">Validator Trust Board</div>
+          <div id="validatorList">
+            <div class="validator-item"><div class="vi-rank">01</div><div class="vi-ico">🏛</div><div><div class="vi-name">Lido Finance</div><div class="vi-apy">APY: 4.2% ↑</div></div><div class="vi-trust"><div class="vi-score">99</div><div class="vi-lbl">Trust</div></div></div>
+            <div class="validator-item"><div class="vi-rank">02</div><div class="vi-ico">🔷</div><div><div class="vi-name">Rocket Pool</div><div class="vi-apy">APY: 3.9% →</div></div><div class="vi-trust"><div class="vi-score">97</div><div class="vi-lbl">Trust</div></div></div>
+            <div class="validator-item"><div class="vi-rank">03</div><div class="vi-ico">⚡</div><div><div class="vi-name">Frax ETH</div><div class="vi-apy">APY: 4.5% ↑</div></div><div class="vi-trust"><div class="vi-score">94</div><div class="vi-lbl">Trust</div></div></div>
+            <div class="validator-item"><div class="vi-rank">04</div><div class="vi-ico">🔵</div><div><div class="vi-name">Coinbase cbETH</div><div class="vi-apy">APY: 3.6% →</div></div><div class="vi-trust"><div class="vi-score" style="color:var(--c)">91</div><div class="vi-lbl">Trust</div></div></div>
+          </div>
+          <div class="stake-meter">
+            <div class="sm-title">Your Staking Position</div>
+            <div class="sm-ring-wrap">
+              <canvas id="stakeRingC" width="76" height="76"></canvas>
+              <div class="sm-stats">
+                <div class="sms gold"><strong>2.4</strong>ETH staked</div>
+                <div class="sms green"><strong id="stakeReward">0.0000000</strong>ETH earned</div>
+                <div class="sms"><strong>4.2%</strong>Current APY</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stake-card">
+          <div class="tl-ey" style="margin-bottom:12px">Network Contribution</div>
+          <div class="nc-row"><div class="nc-ico">🔒</div><div class="nc-txt">Chain Security Score</div><div class="nc-val">98.4%</div></div>
+          <div class="nc-row"><div class="nc-ico">⚡</div><div class="nc-txt">Your Contribution</div><div class="nc-val">0.003%</div></div>
+          <div class="nc-row"><div class="nc-ico">🌐</div><div class="nc-txt">Active Validators</div><div class="nc-val">872,140</div></div>
+          <div class="nc-row"><div class="nc-ico">◈</div><div class="nc-txt">Total ETH Staked</div><div class="nc-val">32.8M ETH</div></div>
+          <div style="margin-top:16px">
+            <div class="tl-ey" style="margin-bottom:11px">Reward Transparency</div>
+            <div class="swap-details">
+              <div class="sd-row"><span class="sd-l">Consensus Rewards</span><span class="sd-r good">+0.0003 ETH/day</span></div>
+              <div class="sd-row"><span class="sd-l">Execution Rewards</span><span class="sd-r good">+0.0001 ETH/day</span></div>
+              <div class="sd-row"><span class="sd-l">MEV Rewards</span><span class="sd-r warn">Variable</span></div>
+              <div class="sd-row"><span class="sd-l">Validator Fee</span><span class="sd-r">10% of rewards</span></div>
+            </div>
+            <button class="btn" style="width:100%;margin-top:13px" id="stakeExecBtn"><span>Stake ETH — Contribute to Network</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
+<!-- FIX: Full shared wallet/scan/status overlays (were absent) -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
+
+<div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
+
+<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
+<script src="shared.js"></script>
 <script>
-var gasPrice=14,ethPrice=3482,bridgeInProgress=false,stakeEarned=0;
-var ease='cubic-bezier(.22,1,.36,1)';
+var localEthPrice=3482, localGasPrice=14, bridgeInProgress=false, stakeEarned=0;
 
-// TOAST
-var _tt;
-function toast(msg,dur){clearTimeout(_tt);var t=document.getElementById('toast');t.innerHTML='<span class="tdot"></span>'+msg;t.classList.add('on');_tt=setTimeout(function(){t.classList.remove('on')},dur||3200)}
-
-// TABS
+/* ─── TABS ─── */
 document.querySelectorAll('.itab').forEach(function(btn){
   btn.addEventListener('click',function(){
     document.querySelectorAll('.itab').forEach(function(b){b.classList.remove('active')});
@@ -294,24 +281,25 @@ document.querySelectorAll('.itab').forEach(function(btn){
     btn.classList.add('active');
     var panel=document.getElementById('panel-'+btn.dataset.tab);
     if(panel)panel.classList.add('active');
+    /* FIX: resetBridgeStatus on every bridge tab entry, not just first */
     if(btn.dataset.tab==='bridge'){initBridgeCanvas();resetBridgeStatus()}
     if(btn.dataset.tab==='stake')drawStakeRing();
     if(btn.dataset.tab==='swap')updateSwapUI();
   });
 });
 
-// SWAP UI
+/* ─── SWAP UI ─── */
 function updateSwapUI(){
-  if(!ethPrice)return;
+  var p=localEthPrice;if(!p)return;
   var sf=document.getElementById('sw-from-usd'),sta=document.getElementById('sw-to-amt'),stu=document.getElementById('sw-to-usd'),sr=document.getElementById('sw-rate'),sfe=document.getElementById('sw-fee'),sge=document.getElementById('sw-gas-est'),stot=document.getElementById('sw-total');
-  if(sf)sf.textContent='≈ $'+ethPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  if(sta)sta.textContent=Math.round(ethPrice).toLocaleString();
-  if(stu)stu.textContent='≈ $'+ethPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  if(sr)sr.textContent='1 ETH = '+Math.round(ethPrice)+' USDC';
-  if(gasPrice){if(sfe)sfe.textContent=gasPrice+' gwei';var gc=gasPrice*21000/1e9;if(sge)sge.textContent='~$'+(gc*ethPrice).toFixed(2)+' USD';if(stot)stot.textContent='~$'+((0.003+gc)*ethPrice).toFixed(2)}
+  if(sf)sf.textContent='≈ $'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(sta)sta.textContent=Math.round(p).toLocaleString();
+  if(stu)stu.textContent='≈ $'+p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(sr)sr.textContent='1 ETH = '+Math.round(p)+' USDC';
+  if(localGasPrice){if(sfe)sfe.textContent=localGasPrice+' gwei';var gc=localGasPrice*21000/1e9;if(sge)sge.textContent='~$'+(gc*p).toFixed(2)+' USD';if(stot)stot.textContent='~$'+((0.003+gc)*p).toFixed(2)}
 }
 
-// SWAP ROUTE
+/* ─── SWAP ROUTE ─── */
 function buildSwapRoute(){
   var flow=document.getElementById('swapRouteFlow');if(!flow)return;
   var nodes=[{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];
@@ -322,14 +310,15 @@ function buildSwapRoute(){
   });
 }
 
-// BRIDGE CANVAS
+/* ─── BRIDGE CANVAS ─── */
 var brC=document.getElementById('bridgeC'),brX=null,brPkts=[];
 function initBridgeCanvas(){
   if(!brC)return;brC.width=brC.offsetWidth||300;brC.height=brC.offsetHeight||150;brX=brC.getContext('2d');
 }
+/* FIX: resetBridgeStatus now resets all statuses to initial state */
 function resetBridgeStatus(){
-  var ids=['bp0','bp1','bp2','bp3'],ws=['100%','65%','0%','0%'],stats=['Complete','In progress','Pending','Pending'],cls=['done','active','pending','pending'];
-  ids.forEach(function(id,i){var el=document.getElementById(id);if(el)el.style.width=ws[i]});
+  var ws=['100%','65%','0%','0%'],stats=['Complete','In progress','Pending','Pending'],cls=['done','active','pending','pending'];
+  ['bp0','bp1','bp2','bp3'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.style.width=ws[i]});
   document.querySelectorAll('.bs-stat').forEach(function(el,i){if(i<4){el.textContent=stats[i];el.className='bs-stat '+cls[i]}});
   bridgeInProgress=false;
 }
@@ -344,7 +333,7 @@ function drawBridge(t){
   brX.font='8px Space Mono,monospace';brX.fillStyle='rgba(100,140,165,0.52)';brX.textAlign='center';brX.fillText('ETH',lx,cy+22);brX.fillText('ARB',rx,cy+22);brX.fillText(brPkts.length+' packets',W/2,cy-18);
 }
 
-// STAKE RING
+/* ─── STAKE RING ─── */
 function drawStakeRing(){
   var c=document.getElementById('stakeRingC');if(!c)return;var x=c.getContext('2d'),r=32,cx=38,cy=38;
   x.clearRect(0,0,76,76);x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.strokeStyle='rgba(196,154,42,0.1)';x.lineWidth=5;x.stroke();
@@ -352,9 +341,9 @@ function drawStakeRing(){
   x.font='bold 10px Bebas Neue,cursive';x.fillStyle='#fff';x.textAlign='center';x.textBaseline='middle';x.fillText('72%',cx,cy);
 }
 
-// BUTTONS
+/* ─── BUTTONS ─── */
 document.getElementById('swapArrowBtn').addEventListener('click',function(){toast('Direction flipped ⇅')});
-document.getElementById('swapExecBtn').addEventListener('click',function(){toast('Swap preview: 1 ETH → '+Math.round(ethPrice)+' USDC — Route: Uniswap v4')});
+document.getElementById('swapExecBtn').addEventListener('click',function(){toast('Swap preview: 1 ETH → '+Math.round(localEthPrice)+' USDC — Route: Uniswap v4')});
 document.getElementById('bridgeExecBtn').addEventListener('click',function(){
   if(bridgeInProgress){toast('Bridge already in progress...');return}
   bridgeInProgress=true;toast('Bridge initiated: 0.5 ETH → Arbitrum — Est. ~7 min');animateBridgeProgress();
@@ -374,49 +363,56 @@ function animateBridgeProgress(){
   setTimeout(adv,1200);
 }
 
-// FETCH ETH PRICE — Binance first, CoinGecko fallback
-function fetchEthPrice(){
-  fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT')
-    .then(function(r){ if(!r.ok)throw new Error(r.status); return r.json(); })
-    .then(function(d){
-      if(d.lastPrice){ ethPrice=parseFloat(d.lastPrice); gasPrice=Math.floor(12+Math.random()*48); updateSwapUI(); }
-    })
-    .catch(function(){
-      // Fallback to CoinGecko
-      fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
-        .then(function(r){ return r.json(); })
-        .then(function(d){ if(d.ethereum&&d.ethereum.usd){ ethPrice=d.ethereum.usd; gasPrice=Math.floor(12+Math.random()*48); updateSwapUI(); } })
-        .catch(function(){ updateSwapUI(); });
-    });
-  // Gas price from Cloudflare public Ethereum RPC
-  fetch('https://cloudflare-eth.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})})
-    .then(function(r){return r.json();})
-    .then(function(d){ if(d.result){var gwei=Math.round(parseInt(d.result,16)/1e9);if(gwei>0&&gwei<50000){gasPrice=gwei;updateSwapUI();}} })
-    .catch(function(){});
+/* ─── FETCH PRICES (also syncs shared ethPrice/gasPrice vars) ─── */
+/* FIX: this page now uses shared.js price infrastructure — onPricesUpdated
+   callback updates localEthPrice from shared tokenData */
+function onPricesUpdated(data){
+  if(data&&data.ethereum)localEthPrice=data.ethereum.price||localEthPrice;
+  localGasPrice=gasPrice;
+  updateSwapUI();
 }
 
-// SCROLL REVEAL
-var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in')})},{threshold:0.1});
-document.querySelectorAll('.rv').forEach(function(el){observer.observe(el)});
-
-// STAKING REWARD TICK
-setInterval(function(){stakeEarned+=0.00000042;var el=document.getElementById('stakeReward');if(el)el.textContent=stakeEarned.toFixed(7)},900);
-
-// MAIN LOOP
+/* ─── RENDER LOOP ─── */
 var lastF=0;
 function loop(t){
-  if(t-lastF>=16){lastF=t;var activePanel=document.querySelector('.infra-panel.active');if(activePanel&&activePanel.id==='panel-bridge')drawBridge(t)}
+  if(t-lastF>=16){
+    lastF=t;
+    drawBg();
+    drawHex(t);
+    var activePanel=document.querySelector('.infra-panel.active');
+    if(activePanel&&activePanel.id==='panel-bridge')drawBridge(t);
+  }
   requestAnimationFrame(loop);
 }
-
-// BOOT
-fetchEthPrice();
-setInterval(fetchEthPrice,30000);
-updateSwapUI();
-buildSwapRoute();
-initBridgeCanvas();
-drawStakeRing();
 requestAnimationFrame(loop);
+
+/* ─── BOOT ─── */
+document.addEventListener('DOMContentLoaded',function(){
+  initBgCanvas();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initReveal();
+  initNav('infra');
+  bindWalletModal();
+  bindDiscButton();
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices,30000);
+
+  updateSwapUI();
+  buildSwapRoute();
+  initBridgeCanvas();
+  drawStakeRing();
+
+  /* Staking reward tick */
+  setInterval(function(){
+    stakeEarned+=0.00000042;
+    var el=document.getElementById('stakeReward');
+    if(el)el.textContent=stakeEarned.toFixed(7);
+  },900);
+});
 </script>
 </body>
 </html>
