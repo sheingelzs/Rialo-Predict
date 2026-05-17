@@ -199,51 +199,39 @@ function _fetchGasPrice() {
 
 /* ── Public API: applyFallbackPrices + fetchPrices ── */
 function applyFallbackPrices() {
-  ethPrice = tokenData.ethereum.price || 3200;
-  gasPrice = 18;
+  // Just render whatever tokenData currently has — don't reset to hardcode
+  // Real prices will overwrite as soon as API responds
+  ethPrice = tokenData.ethereum ? tokenData.ethereum.price : 3200;
   applyPricesToDom();
-  updateEcosystemMood();
+  // Don't call updateEcosystemMood here — chg is 0 on initial load, would flash wrongly
 }
 
 function fetchPrices() {
-  // If WebSocket is live and sending data, REST poll is just for 24h change refresh
-  if (_wsReady) {
-    _fetchBinanceSnapshot()
-      .then(function(changed) { _onPriceUpdate(changed); })
-      .catch(function(){});
-    return;
-  }
-
-  // Try Binance REST first (fast, CORS-free, no key)
+  // Always do REST fetch for latest 24h change data
+  // (WebSocket only sends current price, not 24h change)
   _fetchBinanceSnapshot()
     .then(function(changed) {
       _onPriceUpdate(changed);
-      // Start WS after first successful REST so we have baseline data
-      _startWebSocket();
+      if (!_wsReady) _startWebSocket();
     })
     .catch(function() {
-      // Binance failed — try CoinGecko
       _fetchCoinGecko()
         .then(function(changed) {
           _onPriceUpdate(changed);
-          _startWebSocket(); // still try WS
+          if (!_wsReady) _startWebSocket();
         })
         .catch(function() {
-          // Both APIs failed — apply drift so UI isn't frozen
-          _applyDrift();
+          if (!_wsReady) _applyDrift();
         });
     });
 }
 
-/* ── Kick off WebSocket + gas polling immediately ── */
-(function _initPriceStreams() {
-  // Small delay so page DOM is ready
-  setTimeout(function() {
-    _startWebSocket();
-    _fetchGasPrice();
-    setInterval(_fetchGasPrice, 15000); // refresh gas every 15s
-  }, 800);
-})();
+/* ── initPriceStreams: called by pages after DOMContentLoaded ── */
+function initPriceStreams() {
+  _startWebSocket();
+  _fetchGasPrice();
+  setInterval(_fetchGasPrice, 15000);
+}
 
 var ID_MAP = {
   ethereum:        { p:['ep','ep2','hmp-eth'],    c:['ec','ec2','hmc-eth'] },
