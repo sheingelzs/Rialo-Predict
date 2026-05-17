@@ -1,1 +1,62 @@
+<!-- shared nav + overlays snippet — same on every page -->
+<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div><div id="atmo"></div>
+<canvas id="BG"></canvas><div class="vig"></div>
+<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
+<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Initializing ecosystem intelligence...</span></div></div>
 
+<nav id="mainNav">
+  <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
+  <ul class="nlinks" id="navLinks">
+    <li><a href="index.html" data-s="home">Home</a></li>
+    <li><a href="protocol.html" data-s="proto">Protocol</a></li>
+    <li><a href="identity.html" data-s="id">Identity</a></li>
+    <li><a href="trustlayer.html" data-s="trust">TrustLayer</a></li>
+    <li><a href="infrastructure.html" data-s="infra">Infrastructure</a></li>
+    <li><a href="devs.html" data-s="devs">Devs</a></li>
+  </ul>
+  <div class="nright">
+    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
+    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Wallet Modal -->
+<div id="wovl">
+  <div class="wm"><div class="wm-bar"></div>
+  <div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div><button class="wm-x" id="wmClose">✕</button></div>
+  <div class="wm-body"><div class="wm-lbl">Available Providers</div>
+    <div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full experience — no wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div>
+    <div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div>
+  </div></div>
+</div>
+
+<!-- Scan Overlay -->
+<div id="sovl">
+  <canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas>
+  <div class="scan-inner">
+    <div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div>
+    <div class="scan-title" id="scanTitle">Identity Analysis</div>
+    <div class="scan-phase" id="scanPhase">Initializing trust layer...</div>
+    <div class="scan-addr" id="scanAddr"></div>
+    <div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div>
+    <div class="sp-pct" id="spPct">0%</div>
+    <div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div>
+    <button class="scan-cta" id="scanCta">View Identity Profile →</button>
+  </div>
+</div>
+
+<!-- Status Bar -->
+<div id="sbar"><div class="sb">
+  <div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div>
+  <div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
+  <div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div>
+  <div class="sb-market" id="sbMarket"></div>
+  <button class="sb-disc" id="discBtn">Disconnect</button>
+</div></div>
+
+<div id="toast"></div>
