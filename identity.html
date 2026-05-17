@@ -137,7 +137,10 @@ requestAnimationFrame(loop);
 document.addEventListener('DOMContentLoaded',function(){
   initBgCanvas();initCursor();initHexCanvas();initRipple();
   initNav('id');bindWalletModal();bindDiscButton();
-  applyFallbackPrices();fetchPrices();setInterval(fetchPrices,25000);
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices,30000);
   buildIdentity();
   setInterval(function(){stakeEarned+=0.00000042;var el=document.getElementById('stakeReward');if(el)el.textContent=stakeEarned.toFixed(7)},900);
 });
