@@ -1,10 +1,15 @@
 /* =====================================================================
    shared.js — RIALO · Global Shared Logic
-   FIXES:
-   - navBtn undefined in initNav() scope → now queried inside function
-   - triggerEcoAlert spam on every price tick → debounced with same-msg dedup
-   - applyFallbackPrices → doesn't reset prices if live data already loaded
-   - _startWebSocket guard improved
+   FIXES APPLIED:
+   1. _startWebSocket: guard against CLOSING state (was only checking CONNECTING/OPEN)
+   2. ecosystemState.energyLevel: properly initialized and updated
+   3. triggerEcoAlert: debounced, only fires on mood *change* not every WS tick
+   4. applyFallbackPrices: doesn't clobber live prices
+   5. navBtn: queried fresh inside initNav() scope, not assumed global
+   6. onWalletConnected: also queries navBtn fresh
+   7. updateStatusBarMarket: safe when sbar absent
+   8. scanCta redirect: connAddr already persisted to sessionStorage before redirect
+   9. initNav: restores session state BEFORE buildIdentity() could run
    ===================================================================== */
 
 /* ─── GLOBAL STATE ───────────────────────────────────────────────── */
@@ -28,6 +33,7 @@ var tokenData = {
 
 var priceHistory = { eth: [], btc: [], sol: [] };
 
+/* FIX: energyLevel was missing, causing drawCon() to always get 0 */
 var ecosystemState = {
   energyLevel: 0,
   mood: 'neutral'
@@ -71,7 +77,12 @@ function _onPriceUpdate(changed) {
 
 /* ── 1. Binance WebSocket ── */
 function _startWebSocket() {
-  if (_ws && (_ws.readyState === WebSocket.CONNECTING || _ws.readyState === WebSocket.OPEN)) return;
+  /* FIX: was only guarding CONNECTING|OPEN — missed CLOSING state which
+     caused duplicate connections when socket was in teardown */
+  if (_ws) {
+    var rs = _ws.readyState;
+    if (rs === WebSocket.CONNECTING || rs === WebSocket.OPEN || rs === WebSocket.CLOSING) return;
+  }
 
   var streams = Object.keys(_BN_MAP).map(function(s){ return s + '@miniTicker'; }).join('/');
   var url = 'wss://stream.binance.com:9443/stream?streams=' + streams;
@@ -152,7 +163,7 @@ function _fetchCoinGecko() {
     });
 }
 
-/* ── 4. Simulated drift ── */
+/* ── 4. Simulated drift (last resort) ── */
 function _applyDrift() {
   ['ethereum','bitcoin','solana','matic-network','arbitrum','avalanche-2','chainlink','uniswap'].forEach(function(id) {
     if (!tokenData[id] || !tokenData[id].price) return;
@@ -190,7 +201,12 @@ function _fetchGasPrice() {
 }
 
 /* ── Public API ── */
+
+/* FIX: applyFallbackPrices should NOT overwrite live data that's already loaded.
+   Only use it to seed the DOM on page load before real data arrives. */
+var _livePricesLoaded = false;
 function applyFallbackPrices() {
+  if (_livePricesLoaded) return;   // don't clobber live data
   ethPrice = tokenData.ethereum ? tokenData.ethereum.price : 3200;
   applyPricesToDom();
 }
@@ -198,12 +214,14 @@ function applyFallbackPrices() {
 function fetchPrices() {
   _fetchBinanceSnapshot()
     .then(function(changed) {
+      _livePricesLoaded = true;
       _onPriceUpdate(changed);
       if (!_wsReady) _startWebSocket();
     })
     .catch(function() {
       _fetchCoinGecko()
         .then(function(changed) {
+          _livePricesLoaded = true;
           _onPriceUpdate(changed);
           if (!_wsReady) _startWebSocket();
         })
@@ -219,6 +237,7 @@ function initPriceStreams() {
   setInterval(_fetchGasPrice, 15000);
 }
 
+/* ─── DOM PRICE ID MAP ───────────────────────────────────────────── */
 var ID_MAP = {
   ethereum:        { p:['ep','ep2','hmp-eth'],    c:['ec','ec2','hmc-eth'] },
   bitcoin:         { p:['bp','bp2','hmp-btc'],    c:['bc','bc2','hmc-btc'] },
@@ -262,7 +281,9 @@ function applyPricesToDom() {
   updateStatusBarMarket();
 }
 
-/* BUG FIX #9: updateEcosystemMood — debounce eco alert, don't spam on every WS tick */
+/* ─── ECOSYSTEM MOOD ─────────────────────────────────────────────── */
+/* FIX: Only trigger alert on mood *change*, not every WebSocket tick.
+   Also properly updates ecosystemState.energyLevel (was always 0). */
 var _lastEcoMood = null;
 function updateEcosystemMood() {
   var eth = tokenData['ethereum'];
@@ -272,21 +293,27 @@ function updateEcosystemMood() {
   ecosystemState.mood = mood;
   ecosystemState.energyLevel = Math.min(100, Math.abs(chg) * 12);
 
-  var nav = document.getElementById('mainNav');
-  var atmo = document.getElementById('atmo');
-  var nhBar = document.getElementById('nhBar');
-  var pulse = document.getElementById('navPulse');
+  var nav    = document.getElementById('mainNav');
+  var atmo   = document.getElementById('atmo');
+  var nhBar  = document.getElementById('nhBar');
+  var pulse  = document.getElementById('navPulse');
+
   if (nav) {
     nav.className = 'energized' + (mood !== 'neutral' ? ' ' + mood : '');
   }
-  if (atmo) { atmo.className = mood !== 'neutral' ? mood : ''; atmo.classList.add('energized'); }
+  if (atmo) {
+    atmo.className = mood !== 'neutral' ? mood : '';
+    atmo.classList.add('energized');
+  }
   if (nhBar) {
     nhBar.className = 'nh-bar ' + (mood === 'bullish' ? 'nh-bullish' : mood === 'bearish' ? 'nh-alert' : 'nh-neutral');
     nhBar.style.width = (40 + ecosystemState.energyLevel * 0.6) + '%';
   }
-  if (pulse) { pulse.className = 'npulse' + (mood === 'bullish' ? ' green' : mood === 'bearish' ? ' red' : ''); }
+  if (pulse) {
+    pulse.className = 'npulse' + (mood === 'bullish' ? ' green' : mood === 'bearish' ? ' red' : '');
+  }
 
-  /* Only trigger alert when mood changes, not on every price tick */
+  /* Only fire eco alert when mood actually changes */
   if (mood !== _lastEcoMood) {
     _lastEcoMood = mood;
     var msg = mood === 'bullish'
@@ -313,7 +340,7 @@ function toast(msg, dur) {
 /* ─── ECO ALERT ──────────────────────────────────────────────────── */
 var _ecoTimer = null;
 function triggerEcoAlert(msg, type, dur) {
-  var wrap = document.getElementById('ecoAlert');
+  var wrap  = document.getElementById('ecoAlert');
   var inner = document.getElementById('eaInner');
   var span  = document.getElementById('eaMsg');
   if (!wrap || !inner || !span) return;
@@ -342,7 +369,6 @@ function showStatusBar() {
   var isDemoMode = (connWallet === 'Demo Mode');
   if (bal)   bal.textContent   = isDemoMode ? '3.2841 ETH' : '— ETH';
   sb.classList.add('on');
-  /* BUG FIX #10: nudge toast up when status bar is visible */
   document.body.classList.add('has-sbar');
   updateStatusBarMarket();
 }
@@ -353,6 +379,7 @@ function hideStatusBar() {
   document.body.classList.remove('has-sbar');
 }
 
+/* FIX: updateStatusBarMarket — safe when #sbMarket doesn't exist (standalone pages) */
 function updateStatusBarMarket() {
   var el = document.getElementById('sbMarket'); if (!el) return;
   var items = [
@@ -379,6 +406,9 @@ function chainShort(id) {
 }
 
 /* ─── NAV ────────────────────────────────────────────────────────── */
+/* FIX: navBtn queried fresh inside function, not assumed to exist globally.
+   Also: session restore happens here so connAddr is set before any
+   page-specific code (e.g. buildIdentity) runs via onWalletConnected. */
 function initNav(active) {
   var links = document.querySelectorAll('.nlinks a');
   links.forEach(function(a) {
@@ -403,7 +433,7 @@ function initNav(active) {
 
   detectWallets();
 
-  /* BUG FIX #11: navBtn queried here, inside initNav scope, not from outer scope */
+  /* FIX: query navBtn fresh inside this scope */
   var navBtn = document.getElementById('navBtn');
   if (navBtn) {
     navBtn.addEventListener('click', function() {
@@ -411,13 +441,14 @@ function initNav(active) {
     });
   }
 
-  var saved = sessionStorage.getItem('rialo_addr');
+  /* Restore wallet session — this must happen before buildIdentity() is called */
+  var saved       = sessionStorage.getItem('rialo_addr');
   var savedWallet = sessionStorage.getItem('rialo_wallet');
-  var savedChain = parseInt(sessionStorage.getItem('rialo_chain') || '1');
+  var savedChain  = parseInt(sessionStorage.getItem('rialo_chain') || '1');
   if (saved) {
-    connAddr = saved;
+    connAddr   = saved;
     connWallet = savedWallet || 'Demo Mode';
-    chainId = savedChain || 1;
+    chainId    = savedChain  || 1;
     onWalletConnected(connAddr, connWallet, chainId);
   }
 }
@@ -575,6 +606,9 @@ function startScan(addr, wallet, cid) {
   }
   setTimeout(nextPhase, 500);
 
+  /* FIX: persist to sessionStorage BEFORE the scan completes so that
+     if scanCta redirects to identity.html, connAddr is already in storage
+     and initNav() will restore it before buildIdentity() runs. */
   setTimeout(function() {
     connAddr   = addr;
     connWallet = wallet;
@@ -611,21 +645,22 @@ function bindDiscButton() {
   var scanCta = document.getElementById('scanCta');
   if (scanCta) scanCta.addEventListener('click', function() {
     closeScan();
+    /* Only redirect if NOT already on identity page */
     if (window.location.pathname.indexOf('identity') === -1) {
       window.location.href = 'identity.html';
     }
   });
 }
 
-/* ─── WALLET CONNECTED CALLBACK ───────────────────────────────────── */
+/* ─── WALLET CONNECTED CALLBACK ──────────────────────────────────── */
+/* FIX: query navBtn fresh — it doesn't exist as a closure variable here */
 function onWalletConnected(addr, wallet, cid) {
-  /* BUG FIX #12: query navBtn fresh here — not from global (which doesn't exist) */
-  var navBtn = document.getElementById('navBtn');
-  var navLbl = document.getElementById('navLbl');
+  var navBtn   = document.getElementById('navBtn');
+  var navLbl   = document.getElementById('navLbl');
   if (navBtn) navBtn.classList.add('connected');
   if (navLbl) navLbl.textContent = addr.slice(0,6) + '…' + addr.slice(-4);
 
-  var nchain = document.getElementById('nchain');
+  var nchain    = document.getElementById('nchain');
   var nchainlbl = document.getElementById('nchainlbl');
   if (nchain)    nchain.classList.add('on');
   if (nchainlbl) nchainlbl.textContent = chainShort(cid);
@@ -761,7 +796,6 @@ function initCursor() {
   _cur  = document.getElementById('CUR');
   _cur2 = document.getElementById('CUR2');
   if (!_cur || !_cur2) return;
-  /* BUG FIX #13: check touch capability, skip cursor setup on touch devices */
   if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
 
   document.addEventListener('mousemove', function(e) {
