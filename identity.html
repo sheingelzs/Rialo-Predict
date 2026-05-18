@@ -7,44 +7,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-.page-scroll{overflow-y:auto;overflow-x:hidden;height:calc(100vh - var(--nav-h));scrollbar-width:thin;scrollbar-color:rgba(0,200,224,0.1) transparent}
-.page-scroll::-webkit-scrollbar{width:2px}.page-scroll::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.12)}
-/* ID SPECIFIC */
-.id-hero{display:flex;align-items:center;gap:18px;padding:24px;margin-bottom:10px;background:rgba(1,6,18,0.78);border:1px solid rgba(0,200,224,0.12);border-radius:2px;position:relative;overflow:hidden;flex-wrap:wrap;backdrop-filter:blur(24px)}
-.id-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent)}
-.aura-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
-.ar{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,200,224,0.24);animation:aura 3s ease infinite}
-.ar:nth-child(2){animation-delay:.9s;inset:-8px}.ar:nth-child(3){animation-delay:1.8s;inset:-16px}
-@keyframes aura{0%{transform:scale(.78);opacity:0}50%{opacity:.44}100%{transform:scale(1.1);opacity:0}}
-.aura-core{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(0,200,224,0.14),rgba(0,200,224,0.04));border:1px solid rgba(0,200,224,0.35);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8.5px;color:var(--c)}
-.id-name{font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.04em;color:#fff;margin-bottom:3px}
-.id-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);margin-bottom:8px;word-break:break-all}
-.id-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border:1px solid rgba(0,200,224,0.16);background:rgba(0,200,224,0.04);border-radius:1px}
+.page-scroll{overflow-y:auto;overflow-x:hidden;height:calc(100vh - var(--nav-h));scrollbar-width:thin;scrollbar-color:rgba(0,212,232,0.12) transparent}
+.page-scroll::-webkit-scrollbar{width:2px}.page-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,232,0.15)}
+
+/* ── ID HERO ── */
+.id-hero{
+  display:flex;align-items:center;gap:20px;padding:28px;margin-bottom:10px;
+  background:rgba(0,4,16,0.80);
+  border:1px solid rgba(0,212,232,0.13);
+  border-radius:3px;position:relative;overflow:hidden;flex-wrap:wrap;
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  box-shadow:0 8px 48px rgba(0,0,0,0.7),0 1px 0 rgba(0,212,232,0.1) inset;
+}
+.id-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),rgba(180,100,255,0.6),transparent)}
+.id-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 90% 50%,rgba(0,212,232,0.03),transparent);pointer-events:none}
+
+/* ── AURA ── */
+.aura-wrap{position:relative;width:70px;height:70px;flex-shrink:0}
+.ar{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,212,232,0.26);animation:aura 3.2s ease infinite}
+.ar:nth-child(2){animation-delay:.9s;inset:-9px}.ar:nth-child(3){animation-delay:1.8s;inset:-18px}
+@keyframes aura{0%{transform:scale(.76);opacity:0}50%{opacity:.45}100%{transform:scale(1.12);opacity:0}}
+.aura-core{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,rgba(0,212,232,0.2),rgba(0,212,232,0.05));
+  border:1px solid rgba(0,212,232,0.38);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--c);
+  box-shadow:0 0 24px rgba(0,212,232,0.2),inset 0 0 16px rgba(0,212,232,0.06);
+}
+
+.id-name{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:.04em;color:#fff;margin-bottom:4px}
+.id-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);margin-bottom:10px;word-break:break-all}
+.id-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border:1px solid rgba(0,212,232,0.18);background:rgba(0,212,232,0.05);border-radius:2px;backdrop-filter:blur(8px)}
 .ibd{width:4px;height:4px;border-radius:50%;background:var(--c);animation:pulse 2s ease infinite}
-.id-badge span{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.09em;color:var(--c)}
-.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
-.mc{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:16px;position:relative;overflow:hidden;transition:all .35s;cursor:default;backdrop-filter:blur(24px)}
-.mc:hover{border-color:rgba(0,200,224,0.18);transform:translateY(-2px)}
-.mc-l{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-bottom:7px}
-.mc-v{font-family:'Bebas Neue',cursive;font-size:30px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:5px}
+.id-badge span{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;color:var(--c)}
+
+/* ── METRIC GRID ── */
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:9px}
+.mc{
+  background:rgba(0,4,16,0.75);
+  border:1px solid rgba(0,212,232,0.10);
+  border-radius:3px;padding:18px;
+  position:relative;overflow:hidden;
+  transition:all .38s var(--ease);cursor:default;
+  backdrop-filter:blur(24px);
+}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,212,232,0.14),transparent)}
+.mc:hover{border-color:rgba(0,212,232,0.2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 20px rgba(0,212,232,0.04)}
+.mc-l{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt2);margin-bottom:8px}
+.mc-v{font-family:'Bebas Neue',cursive;font-size:36px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:6px}
 .mc-v.c{color:var(--c)}.mc-v.gr{color:var(--green)}.mc-v.go{color:var(--gold)}
-.id-live-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
-.id-live-card{background:rgba(1,6,18,0.72);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:16px;position:relative;overflow:hidden;transition:all .25s;backdrop-filter:blur(20px)}
-.id-live-card:hover{border-color:rgba(0,200,224,0.18);transform:translateY(-1px)}
-.ilc-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:8px}
-.ilc-val{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:4px;transition:color .4s}
-.ilc-sub{font-size:9px;color:var(--txt2)}.ilc-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.6s ease infinite;display:inline-block;margin-right:5px}
-.abars{display:flex;align-items:flex-end;gap:3px;height:60px}
-.abar{flex:1;background:var(--c);opacity:.18;border-radius:1px 1px 0 0;transition:opacity .18s;cursor:default}.abar:hover{opacity:.82}
-.amonths{display:flex;justify-content:space-between;margin-top:6px;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
-.cpills{display:flex;flex-wrap:wrap;gap:5px}
-.cpill{display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:100px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:9.5px;color:var(--txt);transition:all .18s;cursor:default}.cpill:hover{border-color:rgba(0,200,224,0.16);background:rgba(0,200,224,0.04)}
-.cdot{width:4px;height:4px;border-radius:50%}
-.risk-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:10.5px}.risk-row:last-child{border-bottom:none}.risk-l{color:var(--txt2)}
-.ch-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}.ch-item:last-child{border-bottom:none}
-.ch-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}.ch-txt{font-size:10.5px;color:var(--txt)}.ch-yr{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);margin-left:auto}
-.mkt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:9.5px}.mkt-row:last-child{border-bottom:none}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 120px);text-align:center;gap:14px}
+
+/* ── LIVE GRID ── */
+.id-live-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:9px}
+.id-live-card{
+  background:rgba(0,4,16,0.75);
+  border:1px solid rgba(0,212,232,0.10);
+  border-radius:3px;padding:18px;
+  position:relative;overflow:hidden;
+  transition:all .28s;backdrop-filter:blur(22px);
+}
+.id-live-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(0,212,232,0.12),transparent)}
+.id-live-card:hover{border-color:rgba(0,212,232,0.2);transform:translateY(-2px)}
+.ilc-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);margin-bottom:9px}
+.ilc-val{font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.03em;color:#fff;line-height:1;margin-bottom:5px;transition:color .4s}
+.ilc-sub{font-size:9.5px;color:var(--txt2)}
+.ilc-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 1.6s ease infinite;display:inline-block;margin-right:5px}
+
+/* ── ACTIVITY BARS ── */
+.abars{display:flex;align-items:flex-end;gap:3px;height:64px}
+.abar{flex:1;background:var(--c);opacity:.18;border-radius:1px 1px 0 0;transition:opacity .2s,transform .2s;cursor:default}
+.abar:hover{opacity:.85;transform:scaleY(1.06);transform-origin:bottom}
+.amonths{display:flex;justify-content:space-between;margin-top:7px;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
+
+/* ── CHAIN PILLS ── */
+.cpills{display:flex;flex-wrap:wrap;gap:6px}
+.cpill{
+  display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:100px;
+  background:rgba(255,255,255,0.025);border:1px solid var(--border);
+  font-size:10px;color:var(--txt);transition:all .2s;cursor:default;
+}
+.cpill:hover{border-color:rgba(0,212,232,0.18);background:rgba(0,212,232,0.05)}
+.cdot{width:5px;height:5px;border-radius:50%}
+
+/* ── RISK TABLE ── */
+.risk-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
+.risk-row:last-child{border-bottom:none}.risk-l{color:var(--txt2)}
+
+/* ── HISTORY ITEMS ── */
+.ch-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ch-item:last-child{border-bottom:none}
+.ch-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ch-txt{font-size:11px;color:var(--txt)}.ch-yr{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);margin-left:auto}
+
+/* ── MARKET ── */
+.mkt-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:10px}
+.mkt-row:last-child{border-bottom:none}
+
+/* ── EMPTY STATE ── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 160px);text-align:center;gap:16px}
+
 @media(max-width:768px){.mgrid{grid-template-columns:1fr 1fr!important}.id-live-grid{grid-template-columns:1fr 1fr!important}}
 @media(max-width:480px){.id-live-grid{grid-template-columns:1fr!important}.mgrid{grid-template-columns:1fr 1fr!important}}
 </style>
@@ -73,76 +135,89 @@
 </nav>
 
 <div class="page-scroll">
-  <div class="inner" id="idContent">
-    <!-- populated by JS -->
-  </div>
+  <div class="inner" id="idContent"></div>
 </div>
 
-<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
 <div id="sovl"><canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
 <div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
 <script src="shared.js"></script>
 <script>
-var idLiveInterval=null,stakeEarned=0;
+var idLiveInterval = null, stakeEarned = 0;
 
-function animNum(id,from,to,dur){var el=document.getElementById(id);if(!el)return;var s=performance.now();function u(now){var p=Math.min((now-s)/dur,1),e=1-Math.pow(1-p,3.5);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(u)}requestAnimationFrame(u)}
+function animNum(id, from, to, dur){
+  var el = document.getElementById(id); if (!el) return;
+  var s = performance.now();
+  function u(now){ var p=Math.min((now-s)/dur,1), e=1-Math.pow(1-p,3.5); el.textContent=Math.round(from+(to-from)*e); if(p<1)requestAnimationFrame(u); }
+  requestAnimationFrame(u);
+}
 
 function buildIdentity(){
-  if(!connAddr){
-    document.getElementById('idContent').innerHTML='<div class="empty-state"><h3 style="font-family:\'Bebas Neue\',cursive;font-size:24px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3><p style="font-size:11.5px;color:var(--txt2);max-width:300px;line-height:1.85">Connect your wallet to view your living trust identity profile.</p><button class="btn" id="connectCta"><span>Connect Wallet</span></button></div>';
-    var ct=document.getElementById('connectCta');if(ct)ct.addEventListener('click',openWallet);
+  if (!connAddr){
+    document.getElementById('idContent').innerHTML = '<div class="empty-state"><h3 style="font-family:\'Bebas Neue\',cursive;font-size:28px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3><p style="font-size:12px;color:var(--txt2);max-width:310px;line-height:1.9">Connect your wallet to view your living trust identity profile.</p><button class="btn" id="connectCta"><span>Connect Wallet →</span></button></div>';
+    var ct = document.getElementById('connectCta'); if (ct) ct.addEventListener('click', openWallet);
     return;
   }
-  var ic=document.getElementById('idContent');
-  ic.innerHTML='<div class="id-hero rv"><div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div><div style="flex:1;min-width:0"><div class="id-name">Trust Identity</div><div class="id-addr">'+connAddr+'</div><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><div class="id-badge"><div class="ibd"></div><span>'+(connWallet||'Demo Mode')+' — Cyan Aura Active</span></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:\'Bebas Neue\',cursive;font-size:44px;color:var(--c);line-height:1" id="tsv-big">0</div><div style="font-family:\'Space Mono\',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.13em">TRUST SCORE</div></div></div>'
-    +'<div class="mgrid rv"><div class="mc"><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc">Excellent</span></div><div class="mc"><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr">No threats</span></div><div class="mc"><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2">Builder</span></div><div class="mc"><div class="mc-l">Gov. Votes</div><div class="mc-v" id="gvv" style="font-size:28px">0</div><span class="badge bbl">Active voter</span></div></div>'
-    +'<div class="id-live-grid rv"><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot"></span>ETH Balance</div><div class="ilc-val" id="id-eth-bal">3.2841</div><div class="ilc-sub" id="id-usd">≈ $0.00 USD</div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></span>Gas (live)</div><div class="ilc-val" id="id-gas-val" style="color:var(--gold)">—</div><div class="ilc-sub">gwei — <span id="id-gas-usd">~$—</span></div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:#6ba3ff;box-shadow:0 0 6px #6ba3ff"></span>Network</div><div class="ilc-val" style="font-size:20px;color:#6ba3ff" id="id-chain">'+chainShort(chainId)+'</div><div class="ilc-sub" id="id-tps">—TPS</div></div></div>'
-    +'<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div><div style="font-family:\'Bebas Neue\',cursive;font-size:32px;letter-spacing:.02em;color:#fff;margin-bottom:3px">3.2841 ETH</div><div style="font-size:9px;color:var(--txt2)" id="id-usd2">≈ $0.00 USD</div><div style="margin-top:10px;font-size:8.5px;color:var(--txt2)">Network: <span style="color:var(--c)">'+chainLabel(chainId)+'</span></div><div style="margin-top:4px;font-size:8.5px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas-2">— gwei</span></div></div><div class="wcard"><div class="wc-title">Multi-chain Presence</div><div class="cpills"><div class="cpill"><div class="cdot" style="background:#6f7cff"></div>Ethereum</div><div class="cpill"><div class="cdot" style="background:#8247e5"></div>Polygon</div><div class="cpill"><div class="cdot" style="background:#ff6b35"></div>Optimism</div><div class="cpill"><div class="cdot" style="background:#1892d4"></div>Arbitrum</div><div class="cpill"><div class="cdot" style="background:#29a0b1"></div>Base</div><div class="cpill"><div class="cdot" style="background:#ab73ff"></div>Solana</div></div></div></div>'
-    +'<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>Wallet Activity (12m)</span><span class="badge bc">Monthly</span></div><div class="abars" id="id-bars"></div><div class="amonths"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div></div><div class="wcard"><div class="wc-title">Risk Detection</div><div class="risk-row"><span class="risk-l">Phishing contracts</span><span class="badge bgr">0 detected</span></div><div class="risk-row"><span class="risk-l">Flagged approvals</span><span class="badge bgr">Clean</span></div><div class="risk-row"><span class="risk-l">Mixer interactions</span><span class="badge bgr">None</span></div><div class="risk-row"><span class="risk-l">Rugpull exposure</span><span class="badge bgr">0 found</span></div></div></div>'
-    +'<div class="wgrid rv"><div class="wcard"><div class="wc-title">Contribution History</div><div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">Uniswap v4 grants contributor</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:var(--gold)"></div><div class="ch-txt">ENS DAO governance delegate</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:#6ba3ff"></div><div class="ch-txt">Open source smart contract auditor</div><div class="ch-yr">2023</div></div></div><div class="wcard"><div class="wc-title"><span>Live Market</span><span class="badge bc" id="id-mkt-ts">—</span></div><div id="id-mkt"></div></div></div>';
-  var bars=document.getElementById('id-bars');
-  if(bars)[34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){var b=document.createElement('div');b.className='abar';b.style.height=v+'%';bars.appendChild(b)});
-  animNum('tsv',0,94,1400);animNum('tsv-big',0,94,1400);animNum('brv',0,847,1700);animNum('gvv',0,23,1100);
-  updateIdLive();buildMkt();
-  setTimeout(function(){document.querySelectorAll('#idContent .rv').forEach(function(el,i){setTimeout(function(){el.classList.add('in')},i*55)})},100);
-  if(idLiveInterval){clearInterval(idLiveInterval);idLiveInterval=null}
-  idLiveInterval=setInterval(updateIdLive,3500);
+  var ic = document.getElementById('idContent');
+  ic.innerHTML =
+    '<div class="id-hero rv"><div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div><div style="flex:1;min-width:0"><div class="id-name">Trust Identity</div><div class="id-addr">' + connAddr + '</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div class="id-badge"><div class="ibd"></div><span>' + (connWallet||'Demo Mode') + ' — Cyan Aura Active</span></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:\'Bebas Neue\',cursive;font-size:52px;color:var(--c);line-height:1;text-shadow:0 0 40px rgba(0,212,232,0.4)" id="tsv-big">0</div><div style="font-family:\'Space Mono\',monospace;font-size:7px;color:var(--txt2);letter-spacing:.15em">TRUST SCORE</div></div></div>'
+    + '<div class="mgrid rv"><div class="mc"><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc">Excellent</span></div><div class="mc"><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr">No threats</span></div><div class="mc"><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2">Builder</span></div><div class="mc"><div class="mc-l">Gov. Votes</div><div class="mc-v" id="gvv" style="font-size:32px">0</div><span class="badge bbl">Active voter</span></div></div>'
+    + '<div class="id-live-grid rv"><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot"></span>ETH Balance</div><div class="ilc-val" id="id-eth-bal">3.2841</div><div class="ilc-sub" id="id-usd">≈ $0.00 USD</div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--gold);box-shadow:0 0 7px var(--gold)"></span>Gas (live)</div><div class="ilc-val" id="id-gas-val" style="color:var(--gold)">—</div><div class="ilc-sub">gwei — <span id="id-gas-usd">~$—</span></div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:#7ab4ff;box-shadow:0 0 7px #7ab4ff"></span>Network</div><div class="ilc-val" style="font-size:22px;color:#7ab4ff" id="id-chain">' + chainShort(chainId) + '</div><div class="ilc-sub" id="id-tps">—TPS</div></div></div>'
+    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div><div style="font-family:\'Bebas Neue\',cursive;font-size:38px;letter-spacing:.02em;color:#fff;margin-bottom:4px">3.2841 ETH</div><div style="font-size:10px;color:var(--txt2)" id="id-usd2">≈ $0.00 USD</div><div style="margin-top:12px;font-size:9px;color:var(--txt2)">Network: <span style="color:var(--c)">' + chainLabel(chainId) + '</span></div><div style="margin-top:5px;font-size:9px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas-2">— gwei</span></div></div><div class="wcard"><div class="wc-title">Multi-chain Presence</div><div class="cpills"><div class="cpill"><div class="cdot" style="background:#6f7cff"></div>Ethereum</div><div class="cpill"><div class="cdot" style="background:#8247e5"></div>Polygon</div><div class="cpill"><div class="cdot" style="background:#ff6b35"></div>Optimism</div><div class="cpill"><div class="cdot" style="background:#1892d4"></div>Arbitrum</div><div class="cpill"><div class="cdot" style="background:#29a0b1"></div>Base</div><div class="cpill"><div class="cdot" style="background:#ab73ff"></div>Solana</div></div></div></div>'
+    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>Wallet Activity (12m)</span><span class="badge bc">Monthly</span></div><div class="abars" id="id-bars"></div><div class="amonths"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div></div><div class="wcard"><div class="wc-title">Risk Detection</div><div class="risk-row"><span class="risk-l">Phishing contracts</span><span class="badge bgr">0 detected</span></div><div class="risk-row"><span class="risk-l">Flagged approvals</span><span class="badge bgr">Clean</span></div><div class="risk-row"><span class="risk-l">Mixer interactions</span><span class="badge bgr">None</span></div><div class="risk-row"><span class="risk-l">Rugpull exposure</span><span class="badge bgr">0 found</span></div></div></div>'
+    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title">Contribution History</div><div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">Uniswap v4 grants contributor</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:var(--gold)"></div><div class="ch-txt">ENS DAO governance delegate</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:#7ab4ff"></div><div class="ch-txt">Open source smart contract auditor</div><div class="ch-yr">2023</div></div></div><div class="wcard"><div class="wc-title"><span>Live Market</span><span class="badge bc" id="id-mkt-ts">—</span></div><div id="id-mkt"></div></div></div>';
+
+  var bars = document.getElementById('id-bars');
+  if (bars) [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){ var b=document.createElement('div'); b.className='abar'; b.style.height=v+'%'; bars.appendChild(b); });
+  animNum('tsv',0,94,1500); animNum('tsv-big',0,94,1500); animNum('brv',0,847,1800); animNum('gvv',0,23,1200);
+  updateIdLive(); buildMkt();
+  setTimeout(function(){ document.querySelectorAll('#idContent .rv').forEach(function(el,i){ setTimeout(function(){ el.classList.add('in'); },i*65); }); }, 120);
+  setTimeout(initCardTilt, 600);
+  if (idLiveInterval){ clearInterval(idLiveInterval); idLiveInterval=null; }
+  idLiveInterval = setInterval(updateIdLive, 3500);
 }
 
 function updateIdLive(){
-  if(!connAddr)return;
-  if(ethPrice){var usd='≈ $'+fmtNum(3.2841*ethPrice,2)+' USD';var e1=document.getElementById('id-usd'),e2=document.getElementById('id-usd2');if(e1)e1.textContent=usd;if(e2)e2.textContent=usd}
-  if(gasPrice){var gv=document.getElementById('id-gas-val'),g2=document.getElementById('id-gas-2');if(gv)gv.textContent=gasPrice;if(g2)g2.textContent=gasPrice+' gwei';var gu=document.getElementById('id-gas-usd');if(gu&&ethPrice)gu.textContent='~$'+((gasPrice*21000/1e9)*ethPrice).toFixed(3)}
-  var tp=document.getElementById('id-tps');if(tp)tp.textContent=(Math.random()*8+12).toFixed(1)+' TPS';
+  if (!connAddr) return;
+  if (ethPrice){ var usd='≈ $'+fmtNum(3.2841*ethPrice,2)+' USD'; var e1=document.getElementById('id-usd'),e2=document.getElementById('id-usd2'); if(e1)e1.textContent=usd; if(e2)e2.textContent=usd; }
+  if (gasPrice){ var gv=document.getElementById('id-gas-val'),g2=document.getElementById('id-gas-2'); if(gv)gv.textContent=gasPrice; if(g2)g2.textContent=gasPrice+' gwei'; var gu=document.getElementById('id-gas-usd'); if(gu&&ethPrice)gu.textContent='~$'+((gasPrice*21000/1e9)*ethPrice).toFixed(3); }
+  var tp=document.getElementById('id-tps'); if(tp)tp.textContent=(Math.random()*8+12).toFixed(1)+' TPS';
   buildMkt();
 }
 
 function buildMkt(){
-  var ml=document.getElementById('id-mkt');if(!ml)return;
+  var ml=document.getElementById('id-mkt'); if(!ml)return;
   var coins=[{sym:'ETH',id:'ethereum',col:'#6f7cff'},{sym:'BTC',id:'bitcoin',col:'#f7931a'},{sym:'SOL',id:'solana',col:'#ab73ff'},{sym:'MATIC',id:'matic-network',col:'#8247e5'}];
   var now=new Date(),ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
-  var tsel=document.getElementById('id-mkt-ts');if(tsel)tsel.textContent=ts;
-  ml.innerHTML=coins.map(function(c){var d=tokenData[c.id]||{},p=d.price||0,chg=d.chg||0,up=chg>=0;return'<div class="mkt-row"><div style="display:flex;align-items:center;gap:6px"><div style="width:5px;height:5px;border-radius:50%;background:'+c.col+'"></div><span style="font-size:10.5px;color:#fff;font-weight:500">'+c.sym+'</span></div><div style="text-align:right"><div style="font-size:10.5px;color:var(--txt)">'+(p?fmtP(p):'—')+'</div><div style="font-family:Space Mono,monospace;font-size:7.5px;color:'+(up?'var(--green)':'#ff5555')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div></div></div>'}).join('');
+  var tsel=document.getElementById('id-mkt-ts'); if(tsel)tsel.textContent=ts;
+  ml.innerHTML=coins.map(function(c){ var d=tokenData[c.id]||{},p=d.price||0,chg=d.chg||0,up=chg>=0; return'<div class="mkt-row"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:'+c.col+'"></div><span style="font-size:11px;color:#fff;font-weight:500">'+c.sym+'</span></div><div style="text-align:right"><div style="font-size:11px;color:var(--txt)">'+(p?fmtP(p):'—')+'</div><div style="font-family:Space Mono,monospace;font-size:7.5px;color:'+(up?'var(--green)':'#ff4444')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div></div></div>'; }).join('');
 }
 
-function onPricesUpdated(){updateIdLive()}
-function onGasDrift(){updateIdLive()}
+function onPricesUpdated(){ updateIdLive(); }
+function onGasDrift(){ updateIdLive(); }
 
 var lastF=0;
-function loop(t){if(t-lastF>=16){lastF=t;drawBg();drawHex(t)}requestAnimationFrame(loop)}
+function loop(t){ if(t-lastF>=16){ lastF=t; drawBg(); drawHex(t); } requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
 
-document.addEventListener('DOMContentLoaded',function(){
-  initBgCanvas();initCursor();initHexCanvas();initRipple();
-  initNav('id');bindWalletModal();bindDiscButton();
+document.addEventListener('DOMContentLoaded', function(){
+  initLoader();
+  initBgCanvas();
+  initGridPattern();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initNav('id');
+  bindWalletModal();
+  bindDiscButton();
   applyFallbackPrices();
   initPriceStreams();
   fetchPrices();
   setInterval(fetchPrices,30000);
   buildIdentity();
-  setInterval(function(){stakeEarned+=0.00000042;var el=document.getElementById('stakeReward');if(el)el.textContent=stakeEarned.toFixed(7)},900);
+  setInterval(function(){ stakeEarned+=0.00000042; var el=document.getElementById('stakeReward'); if(el)el.textContent=stakeEarned.toFixed(7); },900);
 });
 </script>
 </body>
