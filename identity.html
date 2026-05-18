@@ -7,8 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-.page-scroll{overflow-y:auto;overflow-x:hidden;height:calc(100vh - var(--nav-h));scrollbar-width:thin;scrollbar-color:rgba(0,212,232,0.12) transparent}
-.page-scroll::-webkit-scrollbar{width:2px}.page-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,232,0.15)}
+/* FIX: scroll container yang benar — full viewport minus nav, minus sbar bawah */
+.page-scroll{
+  position:fixed;
+  inset:0;
+  top:var(--nav-h);
+  /* FIX: beri ruang di bawah untuk sbar agar tidak tertutup */
+  bottom:48px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:10;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,212,232,0.12) transparent;
+}
+.page-scroll::-webkit-scrollbar{width:2px}
+.page-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,232,0.15)}
+
+/* FIX: inner padding bawah cukup agar konten terakhir tidak tertutup sbar */
+.page-scroll .inner{
+  padding:28px 28px 80px;
+  max-width:1060px;
+  margin:0 auto;
+}
 
 /* ── ID HERO ── */
 .id-hero{
@@ -105,10 +125,13 @@
 .mkt-row:last-child{border-bottom:none}
 
 /* ── EMPTY STATE ── */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 160px);text-align:center;gap:16px}
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;text-align:center;gap:16px;
+}
 
 @media(max-width:768px){.mgrid{grid-template-columns:1fr 1fr!important}.id-live-grid{grid-template-columns:1fr 1fr!important}}
-@media(max-width:480px){.id-live-grid{grid-template-columns:1fr!important}.mgrid{grid-template-columns:1fr 1fr!important}}
+@media(max-width:480px){.id-live-grid{grid-template-columns:1fr!important}.mgrid{grid-template-columns:1fr 1fr!important}.page-scroll .inner{padding:16px 16px 80px}}
 </style>
 </head>
 <body>
@@ -134,6 +157,7 @@
   </div>
 </nav>
 
+<!-- FIX: scroll container dengan inner div, bukan nested div id -->
 <div class="page-scroll">
   <div class="inner" id="idContent"></div>
 </div>
@@ -145,61 +169,200 @@
 
 <script src="shared.js"></script>
 <script>
-var idLiveInterval = null, stakeEarned = 0;
+/* FIX: idLiveInterval dideklarasikan di scope module agar clearInterval benar
+   Setiap kali buildIdentity() dipanggil ulang (reconnect), interval lama dibersihkan */
+var idLiveInterval = null;
+var stakeEarned = 0;
+var stakeInterval = null;
 
 function animNum(id, from, to, dur){
   var el = document.getElementById(id); if (!el) return;
   var s = performance.now();
-  function u(now){ var p=Math.min((now-s)/dur,1), e=1-Math.pow(1-p,3.5); el.textContent=Math.round(from+(to-from)*e); if(p<1)requestAnimationFrame(u); }
+  function u(now){
+    var p=Math.min((now-s)/dur,1), e=1-Math.pow(1-p,3.5);
+    el.textContent=Math.round(from+(to-from)*e);
+    if(p<1)requestAnimationFrame(u);
+  }
   requestAnimationFrame(u);
 }
 
 function buildIdentity(){
+  /* FIX: bersihkan interval sebelumnya setiap kali fungsi dipanggil ulang */
+  if (idLiveInterval){ clearInterval(idLiveInterval); idLiveInterval = null; }
+
   if (!connAddr){
-    document.getElementById('idContent').innerHTML = '<div class="empty-state"><h3 style="font-family:\'Bebas Neue\',cursive;font-size:28px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3><p style="font-size:12px;color:var(--txt2);max-width:310px;line-height:1.9">Connect your wallet to view your living trust identity profile.</p><button class="btn" id="connectCta"><span>Connect Wallet →</span></button></div>';
-    var ct = document.getElementById('connectCta'); if (ct) ct.addEventListener('click', openWallet);
+    document.getElementById('idContent').innerHTML =
+      '<div class="empty-state">' +
+        '<h3 style="font-family:\'Bebas Neue\',cursive;font-size:28px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3>' +
+        '<p style="font-size:12px;color:var(--txt2);max-width:310px;line-height:1.9">Connect your wallet to view your living trust identity profile.</p>' +
+        '<button class="btn" id="connectCta"><span>Connect Wallet →</span></button>' +
+      '</div>';
+    var ct = document.getElementById('connectCta');
+    if (ct) ct.addEventListener('click', openWallet);
     return;
   }
+
   var ic = document.getElementById('idContent');
   ic.innerHTML =
-    '<div class="id-hero rv"><div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div><div style="flex:1;min-width:0"><div class="id-name">Trust Identity</div><div class="id-addr">' + connAddr + '</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><div class="id-badge"><div class="ibd"></div><span>' + (connWallet||'Demo Mode') + ' — Cyan Aura Active</span></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-family:\'Bebas Neue\',cursive;font-size:52px;color:var(--c);line-height:1;text-shadow:0 0 40px rgba(0,212,232,0.4)" id="tsv-big">0</div><div style="font-family:\'Space Mono\',monospace;font-size:7px;color:var(--txt2);letter-spacing:.15em">TRUST SCORE</div></div></div>'
-    + '<div class="mgrid rv"><div class="mc"><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc">Excellent</span></div><div class="mc"><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr">No threats</span></div><div class="mc"><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2">Builder</span></div><div class="mc"><div class="mc-l">Gov. Votes</div><div class="mc-v" id="gvv" style="font-size:32px">0</div><span class="badge bbl">Active voter</span></div></div>'
-    + '<div class="id-live-grid rv"><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot"></span>ETH Balance</div><div class="ilc-val" id="id-eth-bal">3.2841</div><div class="ilc-sub" id="id-usd">≈ $0.00 USD</div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--gold);box-shadow:0 0 7px var(--gold)"></span>Gas (live)</div><div class="ilc-val" id="id-gas-val" style="color:var(--gold)">—</div><div class="ilc-sub">gwei — <span id="id-gas-usd">~$—</span></div></div><div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:#7ab4ff;box-shadow:0 0 7px #7ab4ff"></span>Network</div><div class="ilc-val" style="font-size:22px;color:#7ab4ff" id="id-chain">' + chainShort(chainId) + '</div><div class="ilc-sub" id="id-tps">—TPS</div></div></div>'
-    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div><div style="font-family:\'Bebas Neue\',cursive;font-size:38px;letter-spacing:.02em;color:#fff;margin-bottom:4px">3.2841 ETH</div><div style="font-size:10px;color:var(--txt2)" id="id-usd2">≈ $0.00 USD</div><div style="margin-top:12px;font-size:9px;color:var(--txt2)">Network: <span style="color:var(--c)">' + chainLabel(chainId) + '</span></div><div style="margin-top:5px;font-size:9px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas-2">— gwei</span></div></div><div class="wcard"><div class="wc-title">Multi-chain Presence</div><div class="cpills"><div class="cpill"><div class="cdot" style="background:#6f7cff"></div>Ethereum</div><div class="cpill"><div class="cdot" style="background:#8247e5"></div>Polygon</div><div class="cpill"><div class="cdot" style="background:#ff6b35"></div>Optimism</div><div class="cpill"><div class="cdot" style="background:#1892d4"></div>Arbitrum</div><div class="cpill"><div class="cdot" style="background:#29a0b1"></div>Base</div><div class="cpill"><div class="cdot" style="background:#ab73ff"></div>Solana</div></div></div></div>'
-    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title"><span>Wallet Activity (12m)</span><span class="badge bc">Monthly</span></div><div class="abars" id="id-bars"></div><div class="amonths"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div></div><div class="wcard"><div class="wc-title">Risk Detection</div><div class="risk-row"><span class="risk-l">Phishing contracts</span><span class="badge bgr">0 detected</span></div><div class="risk-row"><span class="risk-l">Flagged approvals</span><span class="badge bgr">Clean</span></div><div class="risk-row"><span class="risk-l">Mixer interactions</span><span class="badge bgr">None</span></div><div class="risk-row"><span class="risk-l">Rugpull exposure</span><span class="badge bgr">0 found</span></div></div></div>'
-    + '<div class="wgrid rv"><div class="wcard"><div class="wc-title">Contribution History</div><div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">Uniswap v4 grants contributor</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:var(--gold)"></div><div class="ch-txt">ENS DAO governance delegate</div><div class="ch-yr">2024</div></div><div class="ch-item"><div class="ch-dot" style="background:#7ab4ff"></div><div class="ch-txt">Open source smart contract auditor</div><div class="ch-yr">2023</div></div></div><div class="wcard"><div class="wc-title"><span>Live Market</span><span class="badge bc" id="id-mkt-ts">—</span></div><div id="id-mkt"></div></div></div>';
+    '<div class="id-hero rv">' +
+      '<div class="aura-wrap"><div class="ar"></div><div class="ar"></div><div class="ar"></div><div class="aura-core">ID</div></div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="id-name">Trust Identity</div>' +
+        '<div class="id-addr">' + connAddr + '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<div class="id-badge"><div class="ibd"></div><span>' + (connWallet||'Demo Mode') + ' — Cyan Aura Active</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="text-align:right;flex-shrink:0">' +
+        '<div style="font-family:\'Bebas Neue\',cursive;font-size:52px;color:var(--c);line-height:1;text-shadow:0 0 40px rgba(0,212,232,0.4)" id="tsv-big">0</div>' +
+        '<div style="font-family:\'Space Mono\',monospace;font-size:7px;color:var(--txt2);letter-spacing:.15em">TRUST SCORE</div>' +
+      '</div>' +
+    '</div>' +
 
+    '<div class="mgrid rv">' +
+      '<div class="mc"><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc">Excellent</span></div>' +
+      '<div class="mc"><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr">No threats</span></div>' +
+      '<div class="mc"><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2">Builder</span></div>' +
+      '<div class="mc"><div class="mc-l">Gov. Votes</div><div class="mc-v" id="gvv" style="font-size:32px">0</div><span class="badge bbl">Active voter</span></div>' +
+    '</div>' +
+
+    '<div class="id-live-grid rv">' +
+      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot"></span>ETH Balance</div><div class="ilc-val" id="id-eth-bal">3.2841</div><div class="ilc-sub" id="id-usd">≈ $0.00 USD</div></div>' +
+      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:var(--gold);box-shadow:0 0 7px var(--gold)"></span>Gas (live)</div><div class="ilc-val" id="id-gas-val" style="color:var(--gold)">—</div><div class="ilc-sub">gwei — <span id="id-gas-usd">~$—</span></div></div>' +
+      '<div class="id-live-card"><div class="ilc-lbl"><span class="ilc-dot" style="background:#7ab4ff;box-shadow:0 0 7px #7ab4ff"></span>Network</div><div class="ilc-val" style="font-size:22px;color:#7ab4ff" id="id-chain">' + chainShort(chainId) + '</div><div class="ilc-sub" id="id-tps">—TPS</div></div>' +
+    '</div>' +
+
+    '<div class="wgrid rv">' +
+      '<div class="wcard">' +
+        '<div class="wc-title"><span>ETH Balance</span><span class="badge bc">Live</span></div>' +
+        '<div style="font-family:\'Bebas Neue\',cursive;font-size:38px;letter-spacing:.02em;color:#fff;margin-bottom:4px">3.2841 ETH</div>' +
+        '<div style="font-size:10px;color:var(--txt2)" id="id-usd2">≈ $0.00 USD</div>' +
+        '<div style="margin-top:12px;font-size:9px;color:var(--txt2)">Network: <span style="color:var(--c)">' + chainLabel(chainId) + '</span></div>' +
+        '<div style="margin-top:5px;font-size:9px;color:var(--txt2)">Gas: <span style="color:var(--c)" id="id-gas-2">— gwei</span></div>' +
+      '</div>' +
+      '<div class="wcard">' +
+        '<div class="wc-title">Multi-chain Presence</div>' +
+        '<div class="cpills">' +
+          '<div class="cpill"><div class="cdot" style="background:#6f7cff"></div>Ethereum</div>' +
+          '<div class="cpill"><div class="cdot" style="background:#8247e5"></div>Polygon</div>' +
+          '<div class="cpill"><div class="cdot" style="background:#ff6b35"></div>Optimism</div>' +
+          '<div class="cpill"><div class="cdot" style="background:#1892d4"></div>Arbitrum</div>' +
+          '<div class="cpill"><div class="cdot" style="background:#29a0b1"></div>Base</div>' +
+          '<div class="cpill"><div class="cdot" style="background:#ab73ff"></div>Solana</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="wgrid rv">' +
+      '<div class="wcard">' +
+        '<div class="wc-title"><span>Wallet Activity (12m)</span><span class="badge bc">Monthly</span></div>' +
+        '<div class="abars" id="id-bars"></div>' +
+        '<div class="amonths"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>' +
+      '</div>' +
+      '<div class="wcard">' +
+        '<div class="wc-title">Risk Detection</div>' +
+        '<div class="risk-row"><span class="risk-l">Phishing contracts</span><span class="badge bgr">0 detected</span></div>' +
+        '<div class="risk-row"><span class="risk-l">Flagged approvals</span><span class="badge bgr">Clean</span></div>' +
+        '<div class="risk-row"><span class="risk-l">Mixer interactions</span><span class="badge bgr">None</span></div>' +
+        '<div class="risk-row"><span class="risk-l">Rugpull exposure</span><span class="badge bgr">0 found</span></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="wgrid rv">' +
+      '<div class="wcard">' +
+        '<div class="wc-title">Contribution History</div>' +
+        '<div class="ch-item"><div class="ch-dot" style="background:var(--c)"></div><div class="ch-txt">Uniswap v4 grants contributor</div><div class="ch-yr">2024</div></div>' +
+        '<div class="ch-item"><div class="ch-dot" style="background:var(--gold)"></div><div class="ch-txt">ENS DAO governance delegate</div><div class="ch-yr">2024</div></div>' +
+        '<div class="ch-item"><div class="ch-dot" style="background:#7ab4ff"></div><div class="ch-txt">Open source smart contract auditor</div><div class="ch-yr">2023</div></div>' +
+      '</div>' +
+      '<div class="wcard">' +
+        '<div class="wc-title"><span>Live Market</span><span class="badge bc" id="id-mkt-ts">—</span></div>' +
+        '<div id="id-mkt"></div>' +
+      '</div>' +
+    '</div>';
+
+  /* Build activity bars */
   var bars = document.getElementById('id-bars');
-  if (bars) [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){ var b=document.createElement('div'); b.className='abar'; b.style.height=v+'%'; bars.appendChild(b); });
-  animNum('tsv',0,94,1500); animNum('tsv-big',0,94,1500); animNum('brv',0,847,1800); animNum('gvv',0,23,1200);
-  updateIdLive(); buildMkt();
-  setTimeout(function(){ document.querySelectorAll('#idContent .rv').forEach(function(el,i){ setTimeout(function(){ el.classList.add('in'); },i*65); }); }, 120);
+  if (bars){
+    [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){
+      var b=document.createElement('div'); b.className='abar'; b.style.height=v+'%'; bars.appendChild(b);
+    });
+  }
+
+  animNum('tsv',0,94,1500);
+  animNum('tsv-big',0,94,1500);
+  animNum('brv',0,847,1800);
+  animNum('gvv',0,23,1200);
+
+  updateIdLive();
+  buildMkt();
+
+  setTimeout(function(){
+    document.querySelectorAll('#idContent .rv').forEach(function(el,i){
+      setTimeout(function(){ el.classList.add('in'); },i*65);
+    });
+  }, 120);
   setTimeout(initCardTilt, 600);
-  if (idLiveInterval){ clearInterval(idLiveInterval); idLiveInterval=null; }
+
+  /* FIX: simpan referensi interval baru, clear saat rebuild */
   idLiveInterval = setInterval(updateIdLive, 3500);
 }
 
 function updateIdLive(){
   if (!connAddr) return;
-  if (ethPrice){ var usd='≈ $'+fmtNum(3.2841*ethPrice,2)+' USD'; var e1=document.getElementById('id-usd'),e2=document.getElementById('id-usd2'); if(e1)e1.textContent=usd; if(e2)e2.textContent=usd; }
-  if (gasPrice){ var gv=document.getElementById('id-gas-val'),g2=document.getElementById('id-gas-2'); if(gv)gv.textContent=gasPrice; if(g2)g2.textContent=gasPrice+' gwei'; var gu=document.getElementById('id-gas-usd'); if(gu&&ethPrice)gu.textContent='~$'+((gasPrice*21000/1e9)*ethPrice).toFixed(3); }
-  var tp=document.getElementById('id-tps'); if(tp)tp.textContent=(Math.random()*8+12).toFixed(1)+' TPS';
+  /* FIX: gunakan ethPrice dan gasPrice dari shared.js (global) */
+  var ep = ethPrice || 0;
+  if (ep){
+    var usd = '≈ $' + fmtNum(3.2841 * ep, 2) + ' USD';
+    var e1=document.getElementById('id-usd'), e2=document.getElementById('id-usd2');
+    if(e1)e1.textContent=usd; if(e2)e2.textContent=usd;
+  }
+  var gp = gasPrice || 0;
+  if (gp){
+    var gv=document.getElementById('id-gas-val'), g2=document.getElementById('id-gas-2');
+    if(gv)gv.textContent=gp; if(g2)g2.textContent=gp+' gwei';
+    var gu=document.getElementById('id-gas-usd');
+    if(gu&&ep)gu.textContent='~$'+((gp*21000/1e9)*ep).toFixed(3);
+  }
+  var tp=document.getElementById('id-tps');
+  if(tp)tp.textContent=(Math.random()*8+12).toFixed(1)+' TPS';
   buildMkt();
 }
 
 function buildMkt(){
   var ml=document.getElementById('id-mkt'); if(!ml)return;
-  var coins=[{sym:'ETH',id:'ethereum',col:'#6f7cff'},{sym:'BTC',id:'bitcoin',col:'#f7931a'},{sym:'SOL',id:'solana',col:'#ab73ff'},{sym:'MATIC',id:'matic-network',col:'#8247e5'}];
-  var now=new Date(),ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+  var coins=[
+    {sym:'ETH',id:'ethereum',col:'#6f7cff'},
+    {sym:'BTC',id:'bitcoin',col:'#f7931a'},
+    {sym:'SOL',id:'solana',col:'#ab73ff'},
+    {sym:'MATIC',id:'matic-network',col:'#8247e5'}
+  ];
+  var now=new Date(), ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
   var tsel=document.getElementById('id-mkt-ts'); if(tsel)tsel.textContent=ts;
-  ml.innerHTML=coins.map(function(c){ var d=tokenData[c.id]||{},p=d.price||0,chg=d.chg||0,up=chg>=0; return'<div class="mkt-row"><div style="display:flex;align-items:center;gap:7px"><div style="width:6px;height:6px;border-radius:50%;background:'+c.col+'"></div><span style="font-size:11px;color:#fff;font-weight:500">'+c.sym+'</span></div><div style="text-align:right"><div style="font-size:11px;color:var(--txt)">'+(p?fmtP(p):'—')+'</div><div style="font-family:Space Mono,monospace;font-size:7.5px;color:'+(up?'var(--green)':'#ff4444')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div></div></div>'; }).join('');
+  ml.innerHTML=coins.map(function(c){
+    var d=tokenData[c.id]||{}, p=d.price||0, chg=d.chg||0, up=chg>=0;
+    return '<div class="mkt-row">' +
+      '<div style="display:flex;align-items:center;gap:7px">' +
+        '<div style="width:6px;height:6px;border-radius:50%;background:'+c.col+'"></div>' +
+        '<span style="font-size:11px;color:#fff;font-weight:500">'+c.sym+'</span>' +
+      '</div>' +
+      '<div style="text-align:right">' +
+        '<div style="font-size:11px;color:var(--txt)">'+(p?fmtP(p):'—')+'</div>' +
+        '<div style="font-family:Space Mono,monospace;font-size:7.5px;color:'+(up?'var(--green)':'#ff4444')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
+/* FIX: callback dari shared.js — hanya update jika halaman identity aktif */
 function onPricesUpdated(){ updateIdLive(); }
 function onGasDrift(){ updateIdLive(); }
 
 var lastF=0;
-function loop(t){ if(t-lastF>=16){ lastF=t; drawBg(); drawHex(t); } requestAnimationFrame(loop); }
+function loop(t){
+  if(t-lastF>=16){ lastF=t; drawBg(); drawHex(t); }
+  requestAnimationFrame(loop);
+}
 requestAnimationFrame(loop);
 
 document.addEventListener('DOMContentLoaded', function(){
@@ -217,7 +380,14 @@ document.addEventListener('DOMContentLoaded', function(){
   fetchPrices();
   setInterval(fetchPrices,30000);
   buildIdentity();
-  setInterval(function(){ stakeEarned+=0.00000042; var el=document.getElementById('stakeReward'); if(el)el.textContent=stakeEarned.toFixed(7); },900);
+
+  /* FIX: stakeEarned counter — simpan referensi agar bisa dibersihkan */
+  if (stakeInterval){ clearInterval(stakeInterval); }
+  stakeInterval = setInterval(function(){
+    stakeEarned += 0.00000042;
+    var el=document.getElementById('stakeReward');
+    if(el)el.textContent=stakeEarned.toFixed(7);
+  },900);
 });
 </script>
 </body>
