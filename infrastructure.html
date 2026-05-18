@@ -2,183 +2,1126 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>RIALO — Infrastructure</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=Orbitron:wght@400;600;700;900&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <style>
-:root {
-  --c:#00d4e8; --c2:#7c3aff; --gold:#f59e0b; --green:#10b981; --red:#ef4444;
-  --blue:#6ba3ff; --bg:#020408; --glass:rgba(0,212,232,0.04); --glass2:rgba(255,255,255,0.02);
-  --border:rgba(0,212,232,0.12); --border2:rgba(0,212,232,0.22);
-  --txt:rgba(255,255,255,0.85); --txt2:rgba(255,255,255,0.4); --nav-h:64px;
-  --ease:cubic-bezier(0.16,1,0.3,1);
+/* ── INFRASTRUCTURE PAGE ── */
+.infra-page{
+  position:relative;z-index:10;
+  margin-top:var(--nav-h);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{cursor:none !important;}
-body{background:var(--bg);color:var(--txt);font-family:'Syne',sans-serif;overflow-x:hidden;}
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity:.4;
+.infra-scroll{
+  overflow-y:auto;overflow-x:hidden;
+  height:calc(100vh - var(--nav-h));
+  scrollbar-width:thin;scrollbar-color:rgba(0,212,232,0.1) transparent;
 }
-.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 800px 600px at 20% 40%,rgba(0,212,232,.05) 0%,transparent 70%),
-    radial-gradient(ellipse 600px 700px at 80% 60%,rgba(124,58,255,.05) 0%,transparent 70%);
-}
-.grid-bg{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:
-    linear-gradient(rgba(0,212,232,.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,212,232,.04) 1px,transparent 1px);
-  background-size:60px 60px;
-  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 100%);
-}
-#BG{position:fixed;inset:0;z-index:1;pointer-events:none;}
-#CUR{
-  position:fixed;z-index:9999;pointer-events:none;
-  width:10px;height:10px;border-radius:50%;
-  background:var(--c);
-  box-shadow:0 0 14px var(--c),0 0 28px rgba(0,212,232,.4);
-  transform:translate(-50%,-50%);
-  transition:width .18s var(--ease),height .18s var(--ease),background .18s,opacity .2s;
-}
-#CUR2{
-  position:fixed;z-index:9998;pointer-events:none;
-  width:32px;height:32px;border-radius:50%;
-  border:1px solid rgba(0,212,232,.35);
-  transform:translate(-50%,-50%);
-  transition:transform .07s linear,width .22s var(--ease),height .22s var(--ease),border-color .3s,opacity .2s;
-}
-#CUR.link{width:22px;height:22px;background:rgba(0,212,232,.15);}
-#CUR2.link{width:52px;height:52px;border-color:rgba(0,212,232,.7);}
-#CUR.click{transform:translate(-50%,-50%) scale(.6);}
-#CUR2.click{transform:translate(-50%,-50%) scale(.85);}
-#flash{
-  position:fixed;inset:0;z-index:9990;pointer-events:none;
-  background:radial-gradient(circle 120px at var(--fx,50%) var(--fy,50%),rgba(0,212,232,.07),transparent);
-  opacity:0;transition:opacity .4s;
+.infra-scroll::-webkit-scrollbar{width:2px}
+.infra-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,232,0.14);border-radius:2px}
+.infra-inner{
+  width:100%;max-width:1080px;
+  padding:48px 32px 100px;
+  margin:0 auto;
 }
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;
-  display:flex;align-items:center;padding:0 32px;gap:40px;
-  background:rgba(2,4,8,.85);backdrop-filter:blur(32px);
-  border-bottom:1px solid rgba(0,212,232,.08);
-}
-nav::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--c),rgba(124,58,255,.8),transparent);
-}
-.logo{
-  font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#fff;
-  text-decoration:none;letter-spacing:.15em;display:flex;align-items:center;gap:10px;
-}
-.logo-dot{
-  width:8px;height:8px;border-radius:50%;background:var(--c);
-  box-shadow:0 0 12px var(--c),0 0 24px rgba(0,212,232,.4);
-  animation:logopulse 2s ease infinite;
-}
-@keyframes logopulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
-.nav-links{display:flex;gap:6px;flex:1;justify-content:center;}
-.nav-links a{
-  padding:7px 14px;font-size:11px;font-weight:600;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--txt2);text-decoration:none;
-  border-radius:4px;transition:all .2s;position:relative;
-}
-.nav-links a:hover{color:var(--txt);background:rgba(255,255,255,.04);}
-.nav-links a.active{
-  color:var(--c);background:rgba(0,212,232,.08);
-  border:1px solid rgba(0,212,232,.18);
-}
-.nav-links a.active::after{
-  content:'';position:absolute;bottom:-1px;left:20%;right:20%;
-  height:1px;background:var(--c);box-shadow:0 0 8px var(--c);
-}
-.nav-right{display:flex;align-items:center;gap:10px;}
-.chain-badge{
-  display:flex;align-items:center;gap:7px;padding:6px 14px;
-  background:rgba(0,212,232,.06);border:1px solid var(--border);border-radius:6px;
-  font-family:'Space Mono',monospace;font-size:9px;color:var(--c);
-}
-.chain-dot{width:6px;height:6px;border-radius:50%;background:#10b981;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.btn-connect{
-  padding:9px 20px;background:var(--c);color:#000;border:none;border-radius:6px;
-  font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;
-  cursor:none;transition:all .2s;text-transform:uppercase;
-  box-shadow:0 0 20px rgba(0,212,232,.3);
-}
-.btn-connect:hover{box-shadow:0 0 32px rgba(0,212,232,.5);transform:translateY(-1px);}
-
-/* LAYOUT */
-.infra-page{position:relative;z-index:10;margin-top:var(--nav-h);}
-.infra-inner{max-width:1100px;margin:0 auto;padding:40px 28px 120px;}
-
-/* TX LOADING OVERLAY */
-#tx-overlay{
-  position:fixed;inset:0;z-index:500;
-  background:rgba(2,4,8,.92);backdrop-filter:blur(20px);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-  opacity:0;pointer-events:none;transition:opacity .3s;
-}
-#tx-overlay.show{opacity:1;pointer-events:auto;}
-.tx-spinner{
-  width:56px;height:56px;border-radius:50%;
-  border:3px solid rgba(0,212,232,.15);
-  border-top-color:var(--c);
-  animation:spin 1s linear infinite;
-  box-shadow:0 0 24px rgba(0,212,232,.3);
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.tx-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#fff;}
-.tx-sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt2);text-align:center;line-height:2;}
-.tx-hash-link{
-  font-family:'Space Mono',monospace;font-size:8px;color:var(--c);
-  text-decoration:none;padding:6px 14px;border:1px solid rgba(0,212,232,.2);
-  border-radius:6px;background:rgba(0,212,232,.05);display:none;
-}
-.tx-hash-link.show{display:inline-flex;}
-
-/* SUCCESS OVERLAY */
-.success-overlay{
-  position:absolute;inset:0;z-index:20;border-radius:10px;
-  background:rgba(2,4,8,.95);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:12px;
-  opacity:0;pointer-events:none;transition:opacity .4s var(--ease);
-  backdrop-filter:blur(12px);
-}
-.success-overlay.show{opacity:1;pointer-events:auto;}
-.success-ico{font-size:40px;animation:successPop .5s var(--ease);}
-@keyframes successPop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
-.success-title{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--green);}
-.success-detail{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);text-align:center;line-height:1.8;}
-.success-bal{
-  padding:8px 20px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);
-  border-radius:6px;font-family:'Orbitron',monospace;font-size:14px;color:var(--green);
-}
-.success-txhash{
-  font-family:'Space Mono',monospace;font-size:7px;color:var(--c);
-  text-decoration:none;padding:5px 12px;border:1px solid rgba(0,212,232,.2);
-  border-radius:5px;background:rgba(0,212,232,.05);
-}
-.success-close{
-  margin-top:6px;padding:8px 24px;background:none;border:1px solid rgba(255,255,255,.12);
-  border-radius:6px;color:var(--txt2);font-family:'Space Mono',monospace;font-size:7px;
-  cursor:none;transition:all .2s;letter-spacing:.1em;
-}
-.success-close:hover{border-color:var(--border2);color:#fff;}
-
-/* TYPOGRAPHY */
-.sec-eyebrow{
-  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.22em;
-  text-transform:uppercase;color:var(--c);opacity:.7;margin-bottom:10px;
+/* ── SECTION HEADER ── */
+.sec-ey{
+  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--c);opacity:.65;margin-bottom:10px;
   display:flex;align-items:center;gap:10px;
 }
-.sec-eyebrow::before{content:'';width:14px;height:1px;background:var(--c);}
-.sec-heading{
-  font-family:'Orbitron',monospace;font-size:clamp(26px,3.5vw,42px);
-  font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:.03em;line-height:1.15;
+.sec-ey::before{
+  content:'';width:14px;height:1px;
+  background:linear-gradient(to right,transparent,var(--c));
 }
-.sec-desc{font-size:12px;color:var(--txt2);max-width:480px;line-height:2;
+.sec-h{
+  font-family:'Bebas Neue',cursive;
+  font-size:clamp(36px,6vw,64px);
+  letter-spacing:.03em;color:#fff;margin-bottom:12px;line-height:.9;
+}
+.sec-desc{
+  font-size:13px;color:var(--txt2);
+  max-width:500px;line-height:1.95;margin-bottom:0;
+}
+
+/* ── STAT BAR ── */
+.stat-bar{
+  display:flex;gap:0;margin-bottom:36px;
+  border:1px solid var(--border);border-radius:2px;overflow:hidden;
+  backdrop-filter:blur(24px);background:rgba(0,4,14,0.55);
+  box-shadow:0 4px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(0,212,232,0.06);
+}
+.stat-item{
+  flex:1;padding:18px 22px;border-right:1px solid var(--border);
+  position:relative;overflow:hidden;transition:background .25s;
+}
+.stat-item:last-child{border-right:none}
+.stat-item:hover{background:rgba(0,212,232,0.04)}
+.stat-item::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,var(--c),transparent);
+  opacity:0;transition:opacity .35s;
+}
+.stat-item:hover::before{opacity:1}
+.si-val{
+  font-family:'Bebas Neue',cursive;font-size:34px;
+  letter-spacing:.03em;color:var(--c);line-height:1;margin-bottom:3px;
+  transition:color .3s;
+}
+.si-lbl{
+  font-family:'Space Mono',monospace;font-size:6.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);
+}
+
+/* ── MAIN GRID ── */
+.infra-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.infra-card{
+  background:rgba(0,4,16,0.75);
+  border:1px solid rgba(0,212,232,0.10);
+  border-radius:3px;padding:26px;
+  position:relative;overflow:hidden;
+  transition:all .4s cubic-bezier(0.22,1,0.36,1);
+  backdrop-filter:blur(28px);
+  box-shadow:0 6px 32px rgba(0,0,0,0.55),0 1px 0 rgba(0,212,232,0.08) inset;
+}
+.infra-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,212,232,0.18),transparent);
+}
+.infra-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(0,212,232,0.025),transparent);
+  pointer-events:none;opacity:0;transition:opacity .4s;
+}
+.infra-card:hover{
+  border-color:rgba(0,212,232,0.24);transform:translateY(-4px);
+  box-shadow:0 24px 72px rgba(0,0,0,0.6),0 0 40px rgba(0,212,232,0.07),0 1px 0 rgba(0,212,232,0.18) inset;
+}
+.infra-card:hover::after{opacity:1}
+.infra-card.full-width{grid-column:1/-1}
+
+/* ── CARD HEADER ── */
+.ic-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:14px}
+.ic-title{font-size:15px;font-weight:500;color:#fff;margin-bottom:4px;letter-spacing:-.01em}
+.ic-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--c);letter-spacing:.07em;opacity:.65}
+.ic-badge{
+  font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 8px;border-radius:2px;white-space:nowrap;flex-shrink:0;
+  border:1px solid rgba(0,212,232,0.18);background:rgba(0,212,232,0.06);color:var(--c);
+}
+.ic-badge.green{border-color:rgba(0,232,122,0.22);background:rgba(0,232,122,0.05);color:var(--green)}
+.ic-badge.gold{border-color:rgba(212,168,50,0.22);background:rgba(212,168,50,0.05);color:var(--gold)}
+
+/* ── SWAP MODULE ── */
+.swap-wrap{
+  background:rgba(0,0,0,0.45);border:1px solid rgba(0,212,232,0.10);
+  border-radius:3px;padding:18px;
+  box-shadow:inset 0 1px 0 rgba(0,212,232,0.06);
+}
+.swap-row{
+  background:rgba(0,212,232,0.03);border:1px solid rgba(0,212,232,0.09);
+  border-radius:2px;padding:14px 16px;margin-bottom:8px;
+  transition:border-color .2s;
+}
+.swap-row:hover{border-color:rgba(0,212,232,0.18)}
+.swap-lbl{
+  font-family:'Space Mono',monospace;font-size:6.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px;
+}
+.swap-field{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.swap-input{
+  background:none;border:none;outline:none;
+  font-family:'Bebas Neue',cursive;font-size:32px;
+  letter-spacing:.03em;color:#fff;width:120px;
+  caret-color:var(--c);transition:color .2s;
+}
+.swap-input:focus{color:var(--c)}
+.swap-input::placeholder{color:rgba(255,255,255,0.12)}
+.swap-token{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:rgba(0,0,0,0.5);border:1px solid rgba(0,212,232,0.13);
+  border-radius:2px;cursor:none;transition:all .2s;white-space:nowrap;
+}
+.swap-token:hover{border-color:rgba(0,212,232,0.28);background:rgba(0,212,232,0.05)}
+.token-dot{width:8px;height:8px;border-radius:50%}
+.token-sym{font-family:'Space Mono',monospace;font-size:9px;color:#fff;letter-spacing:.07em}
+.token-arr{font-size:8px;color:var(--txt2)}
+.swap-usd{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);margin-top:6px}
+.swap-divider{
+  display:flex;align-items:center;justify-content:center;margin:4px 0;
+  position:relative;
+}
+.swap-div-btn{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,212,232,0.07);border:1px solid rgba(0,212,232,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--c);font-size:13px;cursor:none;
+  transition:all .25s;z-index:1;
+}
+.swap-div-btn:hover{
+  background:rgba(0,212,232,0.14);border-color:rgba(0,212,232,0.4);
+  transform:rotate(180deg);
+}
+.swap-info{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0 2px;border-top:1px solid rgba(0,212,232,0.07);margin-top:8px;
+}
+.sw-info-item{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)}
+.sw-info-val{color:var(--txt)}
+.btn-swap{
+  width:100%;margin-top:12px;padding:14px;
+  background:var(--c);border:none;color:#000;
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;border-radius:2px;
+  cursor:none;transition:all .25s;
+  box-shadow:0 0 28px rgba(0,212,232,0.28);
+}
+.btn-swap:hover{box-shadow:0 0 48px rgba(0,212,232,0.45);transform:translateY(-1px)}
+.btn-swap:active{transform:scale(.98)}
+
+/* ── BRIDGE MODULE ── */
+.bridge-chains{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.bridge-chain-sel{
+  flex:1;background:rgba(0,0,0,0.45);border:1px solid rgba(0,212,232,0.12);
+  border-radius:2px;padding:12px 14px;cursor:none;
+  transition:border-color .2s;display:flex;align-items:center;gap:10px;
+}
+.bridge-chain-sel:hover{border-color:rgba(0,212,232,0.26)}
+.bc-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.bc-info{flex:1}
+.bc-name{font-size:11px;color:#fff;font-weight:500;margin-bottom:1px}
+.bc-net{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.07em}
+.bridge-arr{
+  display:flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  font-size:14px;color:var(--c);
+  animation:arrowPulse 1.8s ease infinite;
+}
+@keyframes arrowPulse{0%,100%{opacity:.5;transform:translateX(0)}50%{opacity:1;transform:translateX(3px)}}
+.bridge-amount-row{
+  display:flex;gap:8px;margin-bottom:12px;
+}
+.bridge-amount-input{
+  flex:1;background:rgba(0,0,0,0.45);border:1px solid rgba(0,212,232,0.10);
+  border-radius:2px;padding:12px 14px;
+  font-family:'Bebas Neue',cursive;font-size:28px;color:#fff;
+  outline:none;transition:border-color .2s;
+}
+.bridge-amount-input:focus{border-color:rgba(0,212,232,0.3)}
+.bridge-amount-input::placeholder{color:rgba(255,255,255,0.12)}
+.bridge-max{
+  padding:0 14px;background:rgba(0,212,232,0.06);
+  border:1px solid rgba(0,212,232,0.18);border-radius:2px;
+  font-family:'Space Mono',monospace;font-size:7px;color:var(--c);
+  cursor:none;letter-spacing:.1em;transition:all .2s;
+}
+.bridge-max:hover{background:rgba(0,212,232,0.12)}
+.bridge-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:7px;margin-bottom:14px;
+}
+.bst{
+  padding:10px 12px;background:rgba(0,212,232,0.03);
+  border:1px solid rgba(0,212,232,0.07);border-radius:2px;
+}
+.bst-l{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin-bottom:4px}
+.bst-v{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt)}
+.btn-bridge{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,rgba(0,212,232,0.15),rgba(124,58,255,0.12));
+  border:1px solid rgba(0,212,232,0.28);color:var(--c);
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;border-radius:2px;
+  cursor:none;transition:all .25s;
+  box-shadow:0 0 20px rgba(0,212,232,0.08);
+}
+.btn-bridge:hover{
+  background:linear-gradient(135deg,rgba(0,212,232,0.22),rgba(124,58,255,0.18));
+  box-shadow:0 0 36px rgba(0,212,232,0.2);border-color:rgba(0,212,232,0.5);
+  transform:translateY(-1px);
+}
+
+/* ── STAKE MODULE ── */
+.stake-overview{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px;
+}
+.stake-metric{
+  padding:16px;background:rgba(0,0,0,0.38);
+  border:1px solid rgba(0,212,232,0.08);border-radius:2px;
+  position:relative;overflow:hidden;
+}
+.stake-metric::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,212,232,0.14),transparent);
+}
+.sm-label{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px}
+.sm-val{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.02em;line-height:1}
+.sm-val.green{color:var(--green)}.sm-val.cyan{color:var(--c)}.sm-val.gold{color:var(--gold)}
+.sm-sub{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);margin-top:3px}
+
+.stake-pools{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.pool-item{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,232,0.08);
+  border-radius:2px;cursor:none;transition:all .25s;
+}
+.pool-item:hover{border-color:rgba(0,212,232,0.22);background:rgba(0,212,232,0.04);transform:translateX(3px)}
+.pool-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pool-name{font-size:11.5px;color:#fff;flex:1;font-weight:500}
+.pool-apy{
+  font-family:'Space Mono',monospace;font-size:8px;color:var(--green);
+  padding:3px 8px;background:rgba(0,232,122,0.06);
+  border:1px solid rgba(0,232,122,0.14);border-radius:1px;
+}
+.pool-tvl{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);text-align:right;width:70px}
+
+.stake-input-row{display:flex;gap:8px;margin-bottom:10px}
+.stake-input{
+  flex:1;background:rgba(0,0,0,0.45);border:1px solid rgba(0,212,232,0.10);
+  border-radius:2px;padding:11px 14px;
+  font-family:'Bebas Neue',cursive;font-size:24px;color:#fff;
+  outline:none;transition:border-color .2s;
+}
+.stake-input:focus{border-color:rgba(0,212,232,0.28)}
+.stake-input::placeholder{color:rgba(255,255,255,0.12)}
+.stake-pct-row{display:flex;gap:5px;margin-bottom:12px}
+.pct-btn{
+  flex:1;padding:6px;background:rgba(0,212,232,0.04);
+  border:1px solid rgba(0,212,232,0.10);border-radius:1px;
+  font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);
+  cursor:none;transition:all .18s;letter-spacing:.07em;
+}
+.pct-btn:hover,.pct-btn.active{
+  background:rgba(0,212,232,0.10);border-color:rgba(0,212,232,0.3);color:var(--c);
+}
+.btn-stake{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,rgba(0,232,122,0.12),rgba(0,212,232,0.10));
+  border:1px solid rgba(0,232,122,0.24);color:var(--green);
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;border-radius:2px;
+  cursor:none;transition:all .25s;
+}
+.btn-stake:hover{
+  background:linear-gradient(135deg,rgba(0,232,122,0.2),rgba(0,212,232,0.14));
+  box-shadow:0 0 32px rgba(0,232,122,0.2);border-color:rgba(0,232,122,0.45);
+  transform:translateY(-1px);
+}
+
+/* ── LIQUIDITY MODULE ── */
+.liq-pairs{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.liq-pair{
+  display:flex;align-items:center;gap:10px;padding:11px 13px;
+  background:rgba(0,0,0,0.38);border:1px solid rgba(0,212,232,0.08);
+  border-radius:2px;cursor:none;transition:all .22s;
+}
+.liq-pair:hover{border-color:rgba(0,212,232,0.2);background:rgba(0,212,232,0.03)}
+.lp-icons{display:flex;align-items:center}
+.lp-icon{width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,212,232,0.15);flex-shrink:0}
+.lp-icon:nth-child(2){margin-left:-6px}
+.lp-name{font-size:11px;color:#fff;flex:1;font-weight:500}
+.lp-vol{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)}
+.lp-fee{
+  font-family:'Space Mono',monospace;font-size:7px;color:var(--gold);
+  padding:2px 7px;border:1px solid rgba(212,168,50,0.18);
+  background:rgba(212,168,50,0.05);border-radius:1px;
+}
+.lp-apr{font-family:'Space Mono',monospace;font-size:8px;color:var(--green);width:48px;text-align:right}
+.liq-chart-wrap{
+  padding:14px;background:rgba(0,0,0,0.38);border:1px solid rgba(0,212,232,0.08);
+  border-radius:2px;margin-bottom:14px;
+}
+.liq-chart-title{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px}
+.liq-bars{display:flex;align-items:flex-end;gap:3px;height:60px}
+.liq-bar{
+  flex:1;border-radius:1px 1px 0 0;
+  background:linear-gradient(to top,rgba(0,212,232,0.55),rgba(0,212,232,0.2));
+  cursor:default;transition:opacity .2s,transform .2s;opacity:.45;
+}
+.liq-bar:hover{opacity:1;transform:scaleY(1.06);transform-origin:bottom}
+.liq-bar.active{opacity:1}
+.liq-chart-lbl{display:flex;justify-content:space-between;margin-top:6px;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
+.btn-add-liq{
+  width:100%;padding:13px;background:none;
+  border:1px solid rgba(212,168,50,0.24);color:var(--gold);
+  font-family:'Space Mono',monospace;font-size:8px;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;border-radius:2px;
+  cursor:none;transition:all .25s;
+}
+.btn-add-liq:hover{background:rgba(212,168,50,0.07);border-color:rgba(212,168,50,0.45);box-shadow:0 0 24px rgba(212,168,50,0.12);transform:translateY(-1px)}
+
+/* ── LIVE FEED ── */
+.feed-list{display:flex;flex-direction:column;gap:0}
+.feed-item{
+  display:flex;align-items:center;gap:11px;padding:10px 0;
+  border-bottom:1px solid rgba(0,212,232,0.06);
+  transition:padding-left .2s,background .2s;
+  animation:feedIn .4s var(--ease) both;
+}
+.feed-item:last-child{border-bottom:none}
+.feed-item:hover{padding-left:4px;background:rgba(0,212,232,0.02)}
+@keyframes feedIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.feed-type{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+.feed-action{font-size:10.5px;color:var(--txt);flex:1}
+.feed-chain{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)}
+.feed-amount{font-family:'Space Mono',monospace;font-size:8px;text-align:right}
+.feed-time{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);width:38px;text-align:right}
+
+/* ── GAS TRACKER ── */
+.gas-display{
+  text-align:center;padding:18px;
+  background:rgba(0,0,0,0.38);border:1px solid rgba(0,212,232,0.08);
+  border-radius:2px;margin-bottom:16px;position:relative;overflow:hidden;
+}
+.gas-display::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,212,232,0.18),transparent);
+}
+.gas-num{
+  font-family:'Bebas Neue',cursive;font-size:62px;color:var(--gold);
+  line-height:1;text-shadow:0 0 40px rgba(212,168,50,0.35);
+  animation:gasGlow 2s ease-in-out infinite alternate;
+}
+@keyframes gasGlow{
+  0%{text-shadow:0 0 30px rgba(212,168,50,0.25)}
+  100%{text-shadow:0 0 60px rgba(212,168,50,0.55),0 0 100px rgba(212,168,50,0.15)}
+}
+.gas-unit{font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2)}
+.gas-tiers{display:flex;gap:7px;margin-bottom:16px}
+.gas-tier{
+  flex:1;padding:12px 10px;text-align:center;
+  background:rgba(0,0,0,0.38);border:1px solid rgba(0,212,232,0.08);
+  border-radius:2px;transition:all .22s;cursor:default;
+}
+.gas-tier.slow{border-color:rgba(122,180,255,0.14)}
+.gas-tier.avg{border-color:rgba(0,212,232,0.14)}
+.gas-tier.fast{border-color:rgba(0,232,122,0.14)}
+.gt-name{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px}
+.gt-val{font-family:'Bebas Neue',cursive;font-size:22px;line-height:1;margin-bottom:2px}
+.gt-time{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2)}
+.gas-chart{display:flex;align-items:flex-end;gap:2px;height:40px}
+.gc-bar{flex:1;border-radius:1px 1px 0 0;min-height:3px;transition:opacity .18s}
+.gc-bar:hover{opacity:1!important}
+
+/* ── TX RESULT TOAST ── */
+.tx-result{
+  margin-top:12px;padding:11px 14px;border-radius:2px;
+  font-size:10px;line-height:1.75;display:none;
+  animation:feedIn .3s var(--ease) both;
+}
+.tx-result.ok{
+  border:1px solid rgba(0,232,122,0.22);
+  background:rgba(0,232,122,0.04);color:var(--green);
+}
+.tx-result.loading{
+  border:1px solid rgba(0,212,232,0.18);
+  background:rgba(0,212,232,0.04);color:var(--c);
+  display:flex;align-items:center;gap:10px;
+}
+.tx-spinner-sm{
+  width:12px;height:12px;border-radius:50%;
+  border:1.5px solid rgba(0,212,232,0.18);border-top-color:var(--c);
+  animation:spin .7s linear infinite;flex-shrink:0;
+}
+
+/* ── NETWORK STATUS ── */
+.net-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.net-item{
+  padding:14px;background:rgba(0,0,0,0.38);
+  border:1px solid rgba(0,212,232,0.08);border-radius:2px;
+  text-align:center;transition:all .22s;
+}
+.net-item:hover{border-color:rgba(0,212,232,0.18);transform:translateY(-2px)}
+.net-icon{font-size:18px;margin-bottom:8px}
+.net-name{font-size:10px;color:#fff;font-weight:500;margin-bottom:3px}
+.net-stat{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--green)}
+.net-tps{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);margin-top:2px}
+
+@media(max-width:768px){
+  .infra-grid{grid-template-columns:1fr}
+  .infra-card.full-width{grid-column:auto}
+  .stake-overview{grid-template-columns:1fr 1fr}
+  .bridge-stats{grid-template-columns:1fr 1fr}
+  .net-grid{grid-template-columns:1fr 1fr}
+  .infra-inner{padding:24px 16px 80px}
+}
+@media(max-width:480px){
+  .net-grid{grid-template-columns:1fr}
+  .stake-overview{grid-template-columns:1fr}
+  .gas-tiers{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div><div id="atmo"></div>
+<canvas id="BG"></canvas><div class="vig"></div>
+<div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
+<div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Infrastructure systems online...</span></div></div>
+
+<nav id="mainNav">
+  <a href="index.html" class="nlogo"><div class="npulse" id="navPulse"></div>RIALO</a>
+  <ul class="nlinks" id="navLinks">
+    <li><a href="index.html" data-s="home">Home</a></li>
+    <li><a href="protocol.html" data-s="proto">Protocol</a></li>
+    <li><a href="identity.html" data-s="id">Identity</a></li>
+    <li><a href="trustlayer.html" data-s="trust">TrustLayer</a></li>
+    <li><a href="infrastructure.html" data-s="infra">Infrastructure</a></li>
+    <li><a href="devs.html" data-s="devs">Devs</a></li>
+  </ul>
+  <div class="nright">
+    <div class="nchain" id="nchain"><div class="nc-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <button class="btn" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
+    <button class="ham" id="hamBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="infra-page">
+  <div class="infra-scroll">
+    <div class="infra-inner">
+
+      <!-- HEADER -->
+      <div style="margin-bottom:40px" class="rv">
+        <div class="sec-ey">DeFi Infrastructure</div>
+        <h2 class="sec-h">Swap. Bridge.<br>Stake. Earn.</h2>
+        <p class="sec-desc">Native Web3 infrastructure with real-time trust verification — every transaction scanned before it signs.</p>
+      </div>
+
+      <!-- STAT BAR -->
+      <div class="stat-bar rv">
+        <div class="stat-item"><div class="si-val" id="st-vol">$2.4B</div><div class="si-lbl">24h Volume</div></div>
+        <div class="stat-item"><div class="si-val" id="st-tvl">$847M</div><div class="si-lbl">Total Value Locked</div></div>
+        <div class="stat-item"><div class="si-val" id="st-chains">12</div><div class="si-lbl">Chains Supported</div></div>
+        <div class="stat-item"><div class="si-val" style="color:var(--green)">99.97%</div><div class="si-lbl">Uptime</div></div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="infra-grid">
+
+        <!-- SWAP CARD -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Token Swap</div>
+              <div class="ic-sub">// trust-verified · best route</div>
+            </div>
+            <div class="ic-badge green" id="swap-status">Live</div>
+          </div>
+
+          <div class="swap-wrap">
+            <div class="swap-row">
+              <div class="swap-lbl">You pay</div>
+              <div class="swap-field">
+                <input class="swap-input" id="swapFromAmt" type="text" placeholder="0.00" value="1.0">
+                <div class="swap-token" id="tokenFromBtn">
+                  <div class="token-dot" style="background:#6f7cff"></div>
+                  <span class="token-sym" id="fromSym">ETH</span>
+                  <span class="token-arr">▾</span>
+                </div>
+              </div>
+              <div class="swap-usd" id="swapFromUSD">≈ $0.00</div>
+            </div>
+
+            <div class="swap-divider">
+              <button class="swap-div-btn" id="swapFlipBtn" title="Flip tokens">⇅</button>
+            </div>
+
+            <div class="swap-row">
+              <div class="swap-lbl">You receive</div>
+              <div class="swap-field">
+                <input class="swap-input" id="swapToAmt" type="text" placeholder="0.00" readonly>
+                <div class="swap-token" id="tokenToBtn">
+                  <div class="token-dot" style="background:#8247e5"></div>
+                  <span class="token-sym" id="toSym">USDC</span>
+                  <span class="token-arr">▾</span>
+                </div>
+              </div>
+              <div class="swap-usd" id="swapToUSD">≈ $0.00</div>
+            </div>
+
+            <div class="swap-info">
+              <div class="sw-info-item">Route <span class="sw-info-val" id="swapRoute">Uniswap v4</span></div>
+              <div class="sw-info-item">Slippage <span class="sw-info-val">0.5%</span></div>
+              <div class="sw-info-item">Trust <span class="sw-info-val" style="color:var(--green)">✓ Safe</span></div>
+            </div>
+
+            <button class="btn-swap" id="doSwapBtn">Swap Now →</button>
+            <div class="tx-result" id="swapResult"></div>
+          </div>
+        </div>
+
+        <!-- BRIDGE CARD -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Cross-chain Bridge</div>
+              <div class="ic-sub">// atomic · insured · fast</div>
+            </div>
+            <div class="ic-badge">12 Chains</div>
+          </div>
+
+          <div class="bridge-chains">
+            <div class="bridge-chain-sel" id="bridgeFromChain">
+              <div class="bc-icon" style="background:rgba(111,124,255,0.12)">🔷</div>
+              <div class="bc-info">
+                <div class="bc-name">Ethereum</div>
+                <div class="bc-net">EVM · Mainnet</div>
+              </div>
+            </div>
+            <div class="bridge-arr">→</div>
+            <div class="bridge-chain-sel" id="bridgeToChain">
+              <div class="bc-icon" style="background:rgba(130,71,229,0.12)">🟣</div>
+              <div class="bc-info">
+                <div class="bc-name">Polygon</div>
+                <div class="bc-net">EVM · Mainnet</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bridge-amount-row">
+            <input class="bridge-amount-input" id="bridgeAmt" type="text" placeholder="0.00">
+            <button class="bridge-max" id="bridgeMaxBtn">MAX</button>
+          </div>
+
+          <div class="bridge-stats">
+            <div class="bst"><div class="bst-l">Est. Time</div><div class="bst-v" id="bridgeTime">~2 min</div></div>
+            <div class="bst"><div class="bst-l">Bridge Fee</div><div class="bst-v" id="bridgeFee">0.05%</div></div>
+            <div class="bst"><div class="bst-l">You Receive</div><div class="bst-v" id="bridgeReceive">—</div></div>
+          </div>
+
+          <button class="btn-bridge" id="doBridgeBtn">Initiate Bridge →</button>
+          <div class="tx-result" id="bridgeResult"></div>
+        </div>
+
+        <!-- STAKE CARD -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Liquid Staking</div>
+              <div class="ic-sub">// earn yield · stay liquid</div>
+            </div>
+            <div class="ic-badge gold">APY up to 8.4%</div>
+          </div>
+
+          <div class="stake-overview">
+            <div class="stake-metric">
+              <div class="sm-label">Your Staked</div>
+              <div class="sm-val cyan" id="userStaked">0.00</div>
+              <div class="sm-sub">ETH staked</div>
+            </div>
+            <div class="stake-metric">
+              <div class="sm-label">Est. Rewards</div>
+              <div class="sm-val green" id="userRewards">0.000</div>
+              <div class="sm-sub">ETH / year</div>
+            </div>
+          </div>
+
+          <div class="stake-pools" id="stakePools">
+            <div class="pool-item">
+              <div class="pool-dot" style="background:#00d4e8;box-shadow:0 0 8px #00d4e8"></div>
+              <span class="pool-name">ETH Liquid Pool</span>
+              <span class="pool-apy">8.4% APY</span>
+              <span class="pool-tvl">$420M TVL</span>
+            </div>
+            <div class="pool-item">
+              <div class="pool-dot" style="background:#d4a832;box-shadow:0 0 8px #d4a832"></div>
+              <span class="pool-name">Diversified Vault</span>
+              <span class="pool-apy">6.2% APY</span>
+              <span class="pool-tvl">$218M TVL</span>
+            </div>
+            <div class="pool-item">
+              <div class="pool-dot" style="background:#7ab4ff;box-shadow:0 0 8px #7ab4ff"></div>
+              <span class="pool-name">Governance Stake</span>
+              <span class="pool-apy">4.8% APY</span>
+              <span class="pool-tvl">$96M TVL</span>
+            </div>
+          </div>
+
+          <div class="stake-input-row">
+            <input class="stake-input" id="stakeAmt" type="text" placeholder="0.00 ETH">
+          </div>
+          <div class="stake-pct-row">
+            <button class="pct-btn" data-pct="25">25%</button>
+            <button class="pct-btn" data-pct="50">50%</button>
+            <button class="pct-btn" data-pct="75">75%</button>
+            <button class="pct-btn" data-pct="100">MAX</button>
+          </div>
+          <button class="btn-stake" id="doStakeBtn">Stake ETH →</button>
+          <div class="tx-result" id="stakeResult"></div>
+        </div>
+
+        <!-- LIQUIDITY CARD -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Liquidity Pools</div>
+              <div class="ic-sub">// provide · earn fees</div>
+            </div>
+            <div class="ic-badge">Top Pairs</div>
+          </div>
+
+          <div class="liq-pairs" id="liqPairs">
+            <div class="liq-pair">
+              <div class="lp-icons">
+                <div class="lp-icon" style="background:#6f7cff"></div>
+                <div class="lp-icon" style="background:#8247e5"></div>
+              </div>
+              <span class="lp-name">ETH / MATIC</span>
+              <span class="lp-vol" id="lp-vol-0">Vol $24M</span>
+              <span class="lp-fee">0.3%</span>
+              <span class="lp-apr">12.8%</span>
+            </div>
+            <div class="liq-pair">
+              <div class="lp-icons">
+                <div class="lp-icon" style="background:#6f7cff"></div>
+                <div class="lp-icon" style="background:#26a17b"></div>
+              </div>
+              <span class="lp-name">ETH / USDT</span>
+              <span class="lp-vol" id="lp-vol-1">Vol $88M</span>
+              <span class="lp-fee">0.05%</span>
+              <span class="lp-apr">9.4%</span>
+            </div>
+            <div class="liq-pair">
+              <div class="lp-icons">
+                <div class="lp-icon" style="background:#f7931a"></div>
+                <div class="lp-icon" style="background:#26a17b"></div>
+              </div>
+              <span class="lp-name">BTC / USDC</span>
+              <span class="lp-vol" id="lp-vol-2">Vol $56M</span>
+              <span class="lp-fee">0.05%</span>
+              <span class="lp-apr">7.1%</span>
+            </div>
+            <div class="liq-pair">
+              <div class="lp-icons">
+                <div class="lp-icon" style="background:#ab73ff"></div>
+                <div class="lp-icon" style="background:#26a17b"></div>
+              </div>
+              <span class="lp-name">SOL / USDC</span>
+              <span class="lp-vol" id="lp-vol-3">Vol $31M</span>
+              <span class="lp-fee">0.3%</span>
+              <span class="lp-apr">15.2%</span>
+            </div>
+          </div>
+
+          <div class="liq-chart-wrap">
+            <div class="liq-chart-title">Pool Volume — 7 Days</div>
+            <div class="liq-bars" id="liqBars"></div>
+            <div class="liq-chart-lbl">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            </div>
+          </div>
+
+          <button class="btn-add-liq" id="addLiqBtn">+ Add Liquidity</button>
+          <div class="tx-result" id="liqResult"></div>
+        </div>
+
+        <!-- GAS TRACKER (half width) -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Gas Tracker</div>
+              <div class="ic-sub">// ethereum mainnet · live</div>
+            </div>
+            <div class="ic-badge green">Live</div>
+          </div>
+
+          <div class="gas-display">
+            <div class="gas-unit">Current Base Fee</div>
+            <div class="gas-num" id="gasDisplay">—</div>
+            <div class="gas-unit" style="margin-top:2px">GWEI</div>
+          </div>
+
+          <div class="gas-tiers">
+            <div class="gas-tier slow">
+              <div class="gt-name">Slow</div>
+              <div class="gt-val" style="color:#7ab4ff" id="gasSlowVal">—</div>
+              <div class="gt-time">~5 min</div>
+            </div>
+            <div class="gas-tier avg">
+              <div class="gt-name">Average</div>
+              <div class="gt-val" style="color:var(--c)" id="gasAvgVal">—</div>
+              <div class="gt-time">~1 min</div>
+            </div>
+            <div class="gas-tier fast">
+              <div class="gt-name">Fast</div>
+              <div class="gt-val" style="color:var(--green)" id="gasFastVal">—</div>
+              <div class="gt-time">~15 sec</div>
+            </div>
+          </div>
+
+          <div style="font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:8px">Gas History — 24h</div>
+          <div class="gas-chart" id="gasChart"></div>
+        </div>
+
+        <!-- LIVE ACTIVITY FEED -->
+        <div class="infra-card rv">
+          <div class="ic-header">
+            <div>
+              <div class="ic-title">Live Activity</div>
+              <div class="ic-sub">// real-time transactions</div>
+            </div>
+            <div class="ic-badge green">
+              <span style="display:inline-flex;align-items:center;gap:4px">
+                <span style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite;display:inline-block"></span>
+                Streaming
+              </span>
+            </div>
+          </div>
+
+          <div class="feed-list" id="feedList"></div>
+        </div>
+
+      </div>
+
+      <!-- NETWORK STATUS -->
+      <div class="infra-card rv" style="margin-bottom:12px">
+        <div class="ic-header">
+          <div>
+            <div class="ic-title">Network Status</div>
+            <div class="ic-sub">// supported chains</div>
+          </div>
+          <div class="ic-badge green">All Systems Online</div>
+        </div>
+        <div class="net-grid" id="netGrid">
+          <div class="net-item"><div class="net-icon">🔷</div><div class="net-name">Ethereum</div><div class="net-stat" id="net-eth-st">Online</div><div class="net-tps" id="net-eth-tps">— TPS</div></div>
+          <div class="net-item"><div class="net-icon">🟣</div><div class="net-name">Polygon</div><div class="net-stat" id="net-pol-st">Online</div><div class="net-tps" id="net-pol-tps">— TPS</div></div>
+          <div class="net-item"><div class="net-icon">🔴</div><div class="net-name">Optimism</div><div class="net-stat" id="net-opt-st">Online</div><div class="net-tps" id="net-opt-tps">— TPS</div></div>
+          <div class="net-item"><div class="net-icon">🔵</div><div class="net-name">Arbitrum</div><div class="net-stat" id="net-arb-st">Online</div><div class="net-tps" id="net-arb-tps">— TPS</div></div>
+          <div class="net-item"><div class="net-icon">🟦</div><div class="net-name">Base</div><div class="net-stat" id="net-bas-st">Online</div><div class="net-tps" id="net-bas-tps">— TPS</div></div>
+          <div class="net-item"><div class="net-icon">🌑</div><div class="net-name">Solana</div><div class="net-stat" id="net-sol-st">Online</div><div class="net-tps" id="net-sol-tps">— TPS</div></div>
+        </div>
+      </div>
+
+    </div><!-- /infra-inner -->
+  </div><!-- /infra-scroll -->
+</div><!-- /infra-page -->
+
+<!-- SHARED MODALS -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Full experience — no wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div></div></div></div>
+<div id="sovl"><canvas id="sC" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></canvas><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
+<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
+<div id="toast"></div>
+
+<script src="shared.js"></script>
+<script>
+/* ════════════════════════════════
+   INFRASTRUCTURE PAGE LOGIC
+════════════════════════════════ */
+
+/* ── GAS CHART ── */
+var gasHistory = [];
+for (var i = 0; i < 24; i++) gasHistory.push(12 + Math.random() * 28);
+
+function buildGasChart() {
+  var el = document.getElementById('gasChart'); if (!el) return;
+  el.innerHTML = '';
+  var mn = Math.min.apply(null, gasHistory), mx = Math.max.apply(null, gasHistory), rng = mx - mn || 1;
+  gasHistory.forEach(function(v, i) {
+    var b = document.createElement('div'); b.className = 'gc-bar';
+    var h = 12 + ((v - mn) / rng) * 25;
+    var hot = v > mx * 0.75;
+    b.style.cssText = 'height:' + h + 'px;background:' + (hot ? 'rgba(255,160,40,0.55)' : 'rgba(0,212,232,0.38)') + ';opacity:' + (i === gasHistory.length - 1 ? 1 : 0.55);
+    b.title = Math.round(v) + ' gwei';
+    el.appendChild(b);
+  });
+}
+buildGasChart();
+
+/* ── UPDATE GAS UI ── */
+function updateGasUI() {
+  if (!gasPrice) return;
+  var gp = gasPrice;
+  var gd = document.getElementById('gasDisplay'); if (gd) gd.textContent = gp;
+  var gs = document.getElementById('gasSlowVal'); if (gs) gs.textContent = Math.max(1, gp - 3);
+  var ga = document.getElementById('gasAvgVal'); if (ga) ga.textContent = gp;
+  var gf = document.getElementById('gasFastVal'); if (gf) gf.textContent = gp + 5;
+  gasHistory.push(gp); if (gasHistory.length > 24) gasHistory.shift();
+  buildGasChart();
+}
+
+/* ── LIQUIDITY BARS ── */
+(function() {
+  var vols = [62, 45, 78, 55, 88, 40, 92];
+  var el = document.getElementById('liqBars'); if (!el) return;
+  vols.forEach(function(v, i) {
+    var b = document.createElement('div'); b.className = 'liq-bar';
+    if (i === vols.length - 1) b.classList.add('active');
+    b.style.height = (20 + (v / 100) * 38) + 'px';
+    el.appendChild(b);
+  });
+})();
+
+/* ── LIVE FEED ── */
+var feedActions = [
+  { type: 'swap',   col: '#00d4e8', label: 'Swap',   col2: '#6f7cff' },
+  { type: 'bridge', col: '#d4a832', label: 'Bridge', col2: '#8247e5' },
+  { type: 'stake',  col: '#00e87a', label: 'Stake',  col2: '#00e87a' },
+  { type: 'liq',    col: '#7ab4ff', label: 'Add LP', col2: '#f7931a' }
+];
+var feedChains = ['Ethereum', 'Polygon', 'Arbitrum', 'Optimism', 'Base'];
+var feedPairs  = ['ETH→USDC', 'BTC→USDT', 'SOL→ETH', 'MATIC→ETH', 'ETH→ARB'];
+
+function genFeedItem() {
+  var act = feedActions[Math.floor(Math.random() * feedActions.length)];
+  var chain = feedChains[Math.floor(Math.random() * feedChains.length)];
+  var pair = feedPairs[Math.floor(Math.random() * feedPairs.length)];
+  var amt = '$' + (Math.random() * 48000 + 100).toLocaleString('en-US', {maximumFractionDigits: 0});
+  var addr = '0x' + Math.random().toString(16).slice(2, 6).toUpperCase() + '…' + Math.random().toString(16).slice(2, 6).toUpperCase();
+  return { act: act, chain: chain, pair: pair, amt: amt, addr: addr };
+}
+
+var feedItems = [];
+for (var i = 0; i < 8; i++) feedItems.push(genFeedItem());
+
+function buildFeed() {
+  var el = document.getElementById('feedList'); if (!el) return;
+  el.innerHTML = '';
+  feedItems.forEach(function(item, idx) {
+    var now = new Date();
+    var sec = idx * 4;
+    var timeStr = Math.floor(sec / 60) > 0 ? Math.floor(sec / 60) + 'm' : sec + 's';
+    var row = document.createElement('div'); row.className = 'feed-item';
+    row.innerHTML =
+      '<div class="feed-type" style="background:' + item.act.col + ';box-shadow:0 0 7px ' + item.act.col + '"></div>'
+      + '<div class="feed-action"><span class="badge bc" style="margin-right:6px;color:' + item.act.col + ';border-color:' + item.act.col + '22">' + item.act.label + '</span>' + item.pair + ' · ' + item.addr + '</div>'
+      + '<div class="feed-chain">' + item.chain + '</div>'
+      + '<div class="feed-amount" style="color:' + item.act.col + '">' + item.amt + '</div>'
+      + '<div class="feed-time">' + timeStr + ' ago</div>';
+    el.appendChild(row);
+  });
+}
+buildFeed();
+
+setInterval(function() {
+  feedItems.unshift(genFeedItem());
+  if (feedItems.length > 8) feedItems.pop();
+  buildFeed();
+}, 3200);
+
+/* ── NETWORK TPS ── */
+function updateNetTPS() {
+  var nets = [
+    { id: 'eth', range: [12, 22] },
+    { id: 'pol', range: [180, 340] },
+    { id: 'opt', range: [8,  18]  },
+    { id: 'arb', range: [14, 28]  },
+    { id: 'bas', range: [10, 22]  },
+    { id: 'sol', range: [2800, 4200] }
+  ];
+  nets.forEach(function(n) {
+    var el = document.getElementById('net-' + n.id + '-tps');
+    if (el) el.textContent = (n.range[0] + Math.random() * (n.range[1] - n.range[0])).toFixed(1) + ' TPS';
+  });
+}
+updateNetTPS();
+setInterval(updateNetTPS, 4000);
+
+/* ── SWAP LOGIC ── */
+function updateSwapPreview() {
+  var fromAmt = parseFloat(document.getElementById('swapFromAmt').value) || 0;
+  var fromSym = document.getElementById('fromSym').textContent;
+  var price = 0;
+  if (fromSym === 'ETH') price = ethPrice || 3200;
+  else if (fromSym === 'BTC') price = (tokenData['bitcoin'] || {}).price || 65000;
+  else if (fromSym === 'SOL') price = (tokenData['solana'] || {}).price || 120;
+  else price = 1;
+  var usdVal = fromAmt * price;
+  var toAmt = usdVal; // assuming USDC
+  var toSym = document.getElementById('toSym').textContent;
+  if (toSym === 'ETH') toAmt = usdVal / (ethPrice || 3200);
+  var fd = document.getElementById('swapFromUSD'); if (fd) fd.textContent = '≈ $' + usdVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  var td = document.getElementById('swapToAmt'); if (td) td.value = toAmt.toFixed(toSym === 'USDC' || toSym === 'USDT' ? 2 : 6);
+  var tu = document.getElementById('swapToUSD'); if (tu) tu.textContent = '≈ $' + usdVal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+var swapFromEl = document.getElementById('swapFromAmt');
+if (swapFromEl) swapFromEl.addEventListener('input', updateSwapPreview);
+
+document.getElementById('swapFlipBtn').addEventListener('click', function() {
+  var fs = document.getElementById('fromSym'), ts = document.getElementById('toSym');
+  var tmp = fs.textContent; fs.textContent = ts.textContent; ts.textContent = tmp;
+  var fDot = document.querySelector('#tokenFromBtn .token-dot');
+  var tDot = document.querySelector('#tokenToBtn .token-dot');
+  var tmpBg = fDot.style.background; fDot.style.background = tDot.style.background; tDot.style.background = tmpBg;
+  updateSwapPreview();
+  toast('Tokens flipped'); triggerFlash();
+});
+
+document.getElementById('doSwapBtn').addEventListener('click', function() {
+  var btn = this; btn.classList.add('btn-loading');
+  var res = document.getElementById('swapResult');
+  res.className = 'tx-result loading'; res.style.display = 'flex';
+  res.innerHTML = '<div class="tx-spinner-sm"></div> Scanning transaction for trust vectors...';
+  setTimeout(function() {
+    btn.classList.remove('btn-loading');
+    var fromAmt = document.getElementById('swapFromAmt').value || '1.0';
+    var fromSym = document.getElementById('fromSym').textContent;
+    var toSym   = document.getElementById('toSym').textContent;
+    var toAmt   = document.getElementById('swapToAmt').value || '—';
+    res.className = 'tx-result ok'; res.style.display = 'block';
+    res.innerHTML = '✓ Swap simulated — ' + fromAmt + ' ' + fromSym + ' → ' + toAmt + ' ' + toSym + ' · Trust: 97/100 · Route: Uniswap v4 · Gas: ' + (gasPrice || 18) + ' gwei';
+    toast('Swap complete ✓'); triggerFlash();
+    if (typeof ecoWave === 'function') ecoWave();
+  }, 1800);
+});
+
+/* ── BRIDGE LOGIC ── */
+var bridgeChainCycle = ['Polygon', 'Arbitrum', 'Optimism', 'Base', 'Avalanche'];
+var bridgeChainIdx = 0;
+document.getElementById('bridgeToChain').addEventListener('click', function() {
+  bridgeChainIdx = (bridgeChainIdx + 1) % bridgeChainCycle.length;
+  this.querySelector('.bc-name').textContent = bridgeChainCycle[bridgeChainIdx];
+  toast('Chain selected: ' + bridgeChainCycle[bridgeChainIdx]);
+});
+document.getElementById('bridgeFromChain').addEventListener('click', function() {
+  toast('Source chain: Ethereum (default)');
+});
+document.getElementById('bridgeMaxBtn').addEventListener('click', function() {
+  var el = document.getElementById('bridgeAmt');
+  if (el) { el.value = '3.2841'; updateBridgePreview(); }
+});
+function updateBridgePreview() {
+  var amt = parseFloat(document.getElementById('bridgeAmt').value) || 0;
+  var fee = amt * 0.0005;
+  var receive = (amt - fee).toFixed(6);
+  var br = document.getElementById('bridgeReceive'); if (br) br.textContent = receive + ' ETH';
+}
+document.getElementById('bridgeAmt').addEventListener('input', updateBridgePreview);
+
+document.getElementById('doBridgeBtn').addEventListener('click', function() {
+  var btn = this; btn.classList.add('btn-loading');
+  var res = document.getElementById('bridgeResult');
+  var amt = document.getElementById('bridgeAmt').value || '0.00';
+  var toChain = bridgeChainCycle[bridgeChainIdx];
+  res.className = 'tx-result loading'; res.style.display = 'flex';
+  res.innerHTML = '<div class="tx-spinner-sm"></div> Initiating atomic bridge to ' + toChain + '...';
+  setTimeout(function() {
+    btn.classList.remove('btn-loading');
+    res.className = 'tx-result ok'; res.style.display = 'block';
+    var txHash = '0x' + Math.random().toString(16).slice(2, 10).toUpperCase() + '…';
+    res.innerHTML = '✓ Bridge initiated — ' + amt + ' ETH → ' + toChain + ' · Tx: ' + txHash + ' · Est. arrival: ~2 min';
+    toast('Bridge initiated ✓'); triggerFlash();
+  }, 2200);
+});
+
+/* ── STAKE LOGIC ── */
+document.querySelectorAll('.pct-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.pct-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    var pct = parseInt(this.dataset.pct);
+    var bal = 3.2841;
+    var amt = (bal * pct / 100).toFixed(6);
+    var si = document.getElementById('stakeAmt'); if (si) si.value = amt + ' ETH';
+    var apy = 0.084;
+    var rewards = (parseFloat(amt) * apy).toFixed(4);
+    var rv = document.getElementById('userRewards'); if (rv) rv.textContent = rewards;
+  });
+});
+
+var selectedPool = 'ETH Liquid Pool';
+document.querySelectorAll('.pool-item').forEach(function(p) {
+  p.addEventListener('click', function() {
+    document.querySelectorAll('.pool-item').forEach(function(pp) {
+      pp.style.borderColor = '';
+      pp.style.background = '';
+    });
+    this.style.borderColor = 'rgba(0,212,232,0.3)';
+    this.style.background = 'rgba(0,212,232,0.06)';
+    selectedPool = this.querySelector('.pool-name').textContent;
+    toast('Pool selected: ' + selectedPool);
+  });
+});
+
+document.getElementById('doStakeBtn').addEventListener('click', function() {
+  var btn = this; btn.classList.add('btn-loading');
+  var res = document.getElementById('stakeResult');
+  var amt = (document.getElementById('stakeAmt').value || '0.00 ETH').replace(' ETH', '');
+  res.className = 'tx-result loading'; res.style.display = 'flex';
+  res.innerHTML = '<div class="tx-spinner-sm"></div> Staking in ' + selectedPool + '...';
+  setTimeout(function() {
+    btn.classList.remove('btn-loading');
+    if (parseFloat(amt) <= 0 || isNaN(parseFloat(amt))) {
+      res.className = 'tx-result ok'; res.style.display = 'block';
+      res.style.borderColor = 'rgba(255,165,0,0.22)'; res.style.color = '#f0a946';
+      res.innerHTML = '⚠ Enter an amount to stake'; return;
+    }
+    res.className = 'tx-result ok'; res.style.display = 'block';
+    res.style.borderColor = ''; res.style.color = '';
+    var staked = document.getElementById('userStaked'); if (staked) staked.textContent = parseFloat(amt).toFixed(4);
+    var rewards = document.getElementById('userRewards'); if (rewards) rewards.textContent = (parseFloat(amt) * 0.084).toFixed(4);
+    res.innerHTML = '✓ Staked ' + parseFloat(amt).toFixed(4) + ' ETH in ' + selectedPool + ' · Earning 8.4% APY · Position is liquid';
+    toast('Staking complete ✓'); triggerFlash();
+  }, 2000);
+});
+
+/* ── LIQUIDITY LOGIC ── */
+document.getElementById('addLiqBtn').addEventListener('click', function() {
+  var btn = this; btn.classList.add('btn-loading');
+  var res = document.getElementById('liqResult');
+  res.className = 'tx-result loading'; res.style.display = 'flex';
+  res.innerHTML = '<div class="tx-spinner-sm"></div> Preparing liquidity position...';
+  setTimeout(function() {
+    btn.classList.remove('btn-loading');
+    res.className = 'tx-result ok'; res.style.display = 'block';
+    res.style.color = 'var(--gold)'; res.style.borderColor = 'rgba(212,168,50,0.22)';
+    res.innerHTML = '✓ LP position created · ETH/USDT pool · Earning 0.05% per swap · Trust verified';
+    toast('Liquidity added ✓'); triggerFlash();
+  }, 1900);
+});
+
+/* Simulate volume updates */
+setInterval(function() {
+  [0, 1, 2, 3].forEach(function(i) {
+    var el = document.getElementById('lp-vol-' + i);
+    if (!el) return;
+    var base = [24, 88, 56, 31][i];
+    var delta = (Math.random() - 0.5) * 2;
+    el.textContent = 'Vol $' + (base + delta).toFixed(0) + 'M';
+  });
+}, 5000);
+
+/* ── PRICE UPDATES ── */
+function onPricesUpdated() {
+  updateSwapPreview();
+  updateGasUI();
+}
+
+/* ── RENDER LOOP ── */
+var lastF = 0;
+function loop(t) {
+  if (t - lastF >= 16) { lastF = t; drawBg(); drawHex(t); }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', function() {
+  initLoader();
+  initBgCanvas();
+  initGridPattern();
+  initCursor();
+  initHexCanvas();
+  initRipple();
+  initReveal();
+  initNav('infra');
+  bindWalletModal();
+  bindDiscButton();
+  applyFallbackPrices();
+  initPriceStreams();
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+  setTimeout(updateSwapPreview, 800);
+  setTimeout(function() {
+    triggerEcoAlert('Infrastructure online — Swap · Bridge · Stake ready', 'info', 4000);
+  }, 1600);
+  setTimeout(function() {
+    if (typeof initCardTilt === 'function') initCardTilt();
+  }, 900);
+});
+</script>
+</body>
+</html>
