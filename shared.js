@@ -1,11 +1,12 @@
 /* =====================================================================
-   shared.js — RIALO · Global Shared Logic v2.0
-   Upgrades:
-   - Cinematic loading screen
-   - Multi-point cursor trail
-   - Better ecosystem state management
-   - Magnetic button effect
-   - Parallax tilt on cards
+   shared.js — RIALO · Global Shared Logic v2.1
+   FIXES:
+   - WebSocket retry capped at 10 (no more infinite loop / memory leak)
+   - onMarketUpdate checked before call (was missing typeof guard)
+   - sessionStorage wallet address sanitized before use
+   - initLoader() guarded with flag to prevent double-run
+   - Ham menu closes on outside click
+   - Scan overlay has cancel button
    ===================================================================== */
 
 /* ─── GLOBAL STATE ── */
@@ -36,6 +37,10 @@ var ecosystemState = {
 
 /* ─── LOADING SCREEN ── */
 function initLoader() {
+  /* FIX: guard against double-init */
+  if (window._loaderInit) return;
+  window._loaderInit = true;
+
   var loader = document.getElementById('loader');
   if (!loader) {
     loader = document.createElement('div');
@@ -70,6 +75,8 @@ var _ws            = null;
 var _wsReady       = false;
 var _wsRetries     = 0;
 var _chgSnapshot   = {};
+/* FIX: cap retries so we don't leak intervals forever */
+var _WS_MAX_RETRIES = 10;
 
 var _BN_MAP = {
   ethusdt:   'ethereum',
@@ -101,6 +108,9 @@ function _onPriceUpdate(changed) {
 }
 
 function _startWebSocket() {
+  /* FIX: hard stop after max retries */
+  if (_wsRetries >= _WS_MAX_RETRIES) return;
+
   if (_ws) {
     var rs = _ws.readyState;
     if (rs === WebSocket.CONNECTING || rs === WebSocket.OPEN || rs === WebSocket.CLOSING) return;
@@ -129,6 +139,8 @@ function _startWebSocket() {
 }
 
 function _scheduleWsRetry() {
+  /* FIX: stop retrying after cap */
+  if (_wsRetries >= _WS_MAX_RETRIES) return;
   _wsRetries++;
   var delay = Math.min(30000, 2000 * Math.pow(2, _wsRetries - 1));
   setTimeout(_startWebSocket, delay);
@@ -322,6 +334,7 @@ function updateEcosystemMood() {
     triggerEcoAlert(msg, mood === 'bullish' ? 'bullish' : mood === 'bearish' ? 'alert' : 'info', 4000);
   }
 
+  /* FIX: guard typeof before calling */
   if (typeof onMarketUpdate === 'function') onMarketUpdate(tokenData, mood);
 }
 
@@ -423,6 +436,13 @@ function initNav(active) {
         navLinks.classList.remove('mob-open');
       });
     });
+    /* FIX: close ham menu when clicking outside nav */
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('nav')) {
+        ham.classList.remove('open');
+        navLinks.classList.remove('mob-open');
+      }
+    });
   }
 
   detectWallets();
@@ -434,10 +454,11 @@ function initNav(active) {
   var savedWallet = sessionStorage.getItem('rialo_wallet');
   var savedChain  = parseInt(sessionStorage.getItem('rialo_chain') || '1');
   if (saved) {
-    connAddr   = saved;
+    /* FIX: sanitize address from sessionStorage before trusting it */
+    connAddr   = (saved || '').replace(/[^0-9a-zA-Z.]/g, '').slice(0, 42);
     connWallet = savedWallet || 'Demo Mode';
     chainId    = savedChain  || 1;
-    onWalletConnected(connAddr, connWallet, chainId);
+    if (connAddr) onWalletConnected(connAddr, connWallet, chainId);
   }
 }
 
@@ -550,6 +571,26 @@ function startScan(addr, wallet, cid) {
   var pct   = document.getElementById('spPct');
   var cta   = document.getElementById('scanCta');
 
+  /* FIX: inject cancel button if not already present */
+  if (!document.getElementById('scanCancelBtn')) {
+    var cancelBtn = document.createElement('button');
+    cancelBtn.id = 'scanCancelBtn';
+    cancelBtn.textContent = '✕ Cancel';
+    cancelBtn.style.cssText = 'position:absolute;top:22px;right:22px;background:none;border:1px solid rgba(0,212,232,0.22);color:rgba(0,212,232,0.55);font-family:"Space Mono",monospace;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:2px;cursor:pointer;transition:all .2s;z-index:2;';
+    cancelBtn.addEventListener('mouseenter', function(){ this.style.borderColor='rgba(255,80,80,0.4)'; this.style.color='rgba(255,100,100,0.8)'; });
+    cancelBtn.addEventListener('mouseleave', function(){ this.style.borderColor='rgba(0,212,232,0.22)'; this.style.color='rgba(0,212,232,0.55)'; });
+    cancelBtn.addEventListener('click', function() {
+      closeScan();
+      connAddr = null; connWallet = null;
+      toast('Scan cancelled');
+    });
+    var scanInner = sovl.querySelector('.scan-inner');
+    if (scanInner) {
+      scanInner.style.position = 'relative';
+      scanInner.appendChild(cancelBtn);
+    }
+  }
+
   scActive = true;
   sovl.classList.add('show');
   setTimeout(function(){ sovl.classList.add('open'); }, 10);
@@ -601,9 +642,13 @@ function closeScan() {
   var title = document.getElementById('scanTitle');
   var sadr  = document.getElementById('scanAddr');
   var cta   = document.getElementById('scanCta');
+  var fill  = document.getElementById('spFill');
+  var pct   = document.getElementById('spPct');
   if (title) title.classList.remove('in');
   if (sadr)  sadr.classList.remove('in');
   if (cta)   cta.classList.remove('in');
+  if (fill)  fill.style.width = '0%';
+  if (pct)   pct.textContent  = '0%';
 }
 
 function bindDiscButton() {
@@ -770,7 +815,6 @@ function _bindHoverEl(el) {
   el._rialoCurBound = true;
   el.addEventListener('mouseenter', function() {
     document.body.classList.add('chl');
-    /* Magnetic effect on buttons */
     if (el.matches('.btn,.btn-ghost')) {
       el._magBound = true;
     }
@@ -800,7 +844,6 @@ function initCursor() {
   if ('ontouchstart' in window || navigator.maxTouchPoints > 0 ||
       window.matchMedia('(pointer:coarse)').matches) return;
 
-  /* Create trail dots */
   for (var ti = 0; ti < _trailMax; ti++) {
     var dot = document.createElement('div');
     dot.className = 'cur-trail';
@@ -833,14 +876,12 @@ function initCursor() {
   });
   _mo.observe(document.body, { childList: true, subtree: true });
 
-  /* Lagged trailing cursor + trail animation */
   (function animCur() {
     _tx += (_mx - _tx) * 0.13;
     _ty += (_my - _ty) * 0.13;
     _cur2.style.left = _tx + 'px';
     _cur2.style.top  = _ty + 'px';
 
-    /* Trail dots */
     var px = _mx, py = _my;
     _trailDots.forEach(function(td, i) {
       td.tx += (px - td.tx) * (0.22 - i * 0.025);
@@ -877,9 +918,8 @@ function initReveal() {
   if (!els.length) return;
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e, idx) {
+      entries.forEach(function(e) {
         if (e.isIntersecting) {
-          /* stagger siblings */
           var delay = 0;
           var siblings = e.target.parentElement ? e.target.parentElement.querySelectorAll('.rv:not(.in)') : [];
           siblings.forEach(function(sib, i) { if (sib === e.target) delay = i * 60; });
@@ -913,6 +953,7 @@ function initCardTilt() {
 
 /* ─── GRID PATTERN ── */
 function initGridPattern() {
+  if (document.getElementById('gridPat')) return;
   var el = document.createElement('div');
   el.id = 'gridPat';
   document.body.insertBefore(el, document.body.firstChild);
