@@ -10,22 +10,56 @@
 body{overflow:hidden}
 #app{position:fixed;inset:0;top:var(--nav-h);z-index:10}
 #conC{width:100%;height:100%;display:block;position:absolute;inset:0;will-change:transform}
-.proto-info{position:absolute;bottom:32px;left:32px;z-index:2}
-.proto-title{font-family:'Bebas Neue',cursive;font-size:clamp(28px,4vw,50px);letter-spacing:.04em;color:#fff;margin-bottom:6px}
-.proto-sub{font-size:11px;color:var(--txt2);max-width:280px;line-height:1.9}
-.proto-legend{position:absolute;bottom:32px;right:32px;z-index:2;display:flex;flex-direction:column;gap:6px}
-.pl{display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2)}
-.pl-d{width:6px;height:6px;border-radius:50%}
-.proto-stats{position:absolute;top:20px;left:32px;right:32px;z-index:2;display:flex;gap:28px;flex-wrap:wrap}
-.pst{border-left:1px solid var(--border);padding-left:14px}
-.pst-v{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.04em;color:var(--c);margin-bottom:0;transition:color .6s}
-.pst-l{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);letter-spacing:.11em;text-transform:uppercase}
-.proto-tooltip{position:fixed;z-index:3;pointer-events:none;opacity:0;transition:opacity .15s;background:rgba(2,6,18,0.99);border:1px solid var(--border2);border-radius:2px;padding:8px 12px;min-width:140px}
+
+/* ── PROTO INFO ── */
+.proto-info{
+  position:absolute;bottom:40px;left:40px;z-index:2;
+  animation:fadeUp .8s var(--ease2) .6s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.proto-title{
+  font-family:'Bebas Neue',cursive;
+  font-size:clamp(32px,5vw,60px);
+  letter-spacing:.04em;color:#fff;
+  margin-bottom:8px;line-height:.88;
+  text-shadow:0 0 60px rgba(0,212,232,0.12);
+}
+.proto-sub{font-size:12px;color:var(--txt2);max-width:290px;line-height:1.95}
+
+.proto-legend{
+  position:absolute;bottom:40px;right:40px;z-index:2;
+  display:flex;flex-direction:column;gap:7px;
+  animation:fadeUp .8s var(--ease2) .8s both;
+}
+.pl{display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2)}
+.pl-d{width:7px;height:7px;border-radius:50%}
+
+/* ── STATS ── */
+.proto-stats{
+  position:absolute;top:20px;left:32px;right:32px;z-index:2;
+  display:flex;gap:32px;flex-wrap:wrap;
+  animation:fadeUp .8s var(--ease2) .4s both;
+}
+.pst{border-left:1px solid rgba(0,212,232,0.18);padding-left:16px;transition:border-color .3s}
+.pst:hover{border-color:rgba(0,212,232,0.4)}
+.pst-v{font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.04em;color:var(--c);margin-bottom:0;transition:color .5s}
+.pst-l{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase}
+
+/* ── TOOLTIP ── */
+.proto-tooltip{
+  position:fixed;z-index:3;pointer-events:none;opacity:0;transition:opacity .15s;
+  background:rgba(0,4,16,0.99);
+  border:1px solid rgba(0,212,232,0.22);
+  border-radius:2px;padding:10px 14px;min-width:150px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.8),0 0 20px rgba(0,212,232,0.08);
+  backdrop-filter:blur(16px);
+}
 .proto-tooltip.show{opacity:1}
-.pt-type{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--c);margin-bottom:3px}
-.pt-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt);margin-bottom:2px}
-.pt-score{font-family:'Bebas Neue',cursive;font-size:20px;color:#fff}
-@media(max-width:480px){.proto-stats{gap:14px;flex-wrap:wrap}.pst-v{font-size:20px}}
+.pt-type{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
+.pt-addr{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);margin-bottom:3px}
+.pt-score{font-family:'Bebas Neue',cursive;font-size:24px;color:#fff}
+
+@media(max-width:480px){.proto-stats{gap:16px;flex-wrap:wrap}.pst-v{font-size:22px}}
 </style>
 </head>
 <body>
@@ -53,7 +87,11 @@ body{overflow:hidden}
 
 <div id="app">
   <canvas id="conC"></canvas>
-  <div class="proto-tooltip" id="protoTip"><div class="pt-type" id="ptType">Trusted</div><div class="pt-addr" id="ptAddr">0x0000...0000</div><div class="pt-score" id="ptScore">94</div></div>
+  <div class="proto-tooltip" id="protoTip">
+    <div class="pt-type" id="ptType">Trusted</div>
+    <div class="pt-addr" id="ptAddr">0x0000...0000</div>
+    <div class="pt-score" id="ptScore">94</div>
+  </div>
   <div class="proto-stats rv">
     <div class="pst"><div class="pst-v" id="sNodes">82</div><div class="pst-l">Active Nodes</div></div>
     <div class="pst"><div class="pst-v" id="sConns">0</div><div class="pst-l">Connections</div></div>
@@ -61,216 +99,159 @@ body{overflow:hidden}
     <div class="pst"><div class="pst-v" id="sTx">8</div><div class="pst-l">Live Txns/min</div></div>
     <div class="pst"><div class="pst-v" style="color:var(--green)">Online</div><div class="pst-l">Network Status</div></div>
   </div>
-  <div class="proto-info rv"><div class="proto-title">Identity<br>Constellation</div><div class="proto-sub">Every wallet is a living node. Hover to inspect trust data. The network breathes in real time.</div></div>
+  <div class="proto-info rv">
+    <div class="proto-title">Identity<br>Constellation</div>
+    <div class="proto-sub">Every wallet is a living node. Hover to inspect trust data. The network breathes in real time.</div>
+  </div>
   <div class="proto-legend rv">
-    <div class="pl"><div class="pl-d" style="background:#00c8e0"></div>Trusted</div>
-    <div class="pl"><div class="pl-d" style="background:#c49a2a"></div>Builder</div>
-    <div class="pl"><div class="pl-d" style="background:#6ba3ff"></div>Governance</div>
-    <div class="pl"><div class="pl-d" style="background:rgba(255,70,70,.85)"></div>Risky</div>
-    <div class="pl"><div class="pl-d" style="background:rgba(65,85,105,.5)"></div>Inactive</div>
+    <div class="pl"><div class="pl-d" style="background:#00d4e8"></div>Trusted</div>
+    <div class="pl"><div class="pl-d" style="background:#d4a832"></div>Builder</div>
+    <div class="pl"><div class="pl-d" style="background:#7ab4ff"></div>Governance</div>
+    <div class="pl"><div class="pl-d" style="background:rgba(255,60,60,.85)"></div>Risky</div>
+    <div class="pl"><div class="pl-d" style="background:rgba(60,80,100,.5)"></div>Inactive</div>
   </div>
 </div>
 
-<!-- Wallet / Scan / Status bar / Toast — shared across all pages -->
-<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,200,224,0.16)"><div class="wo-ico" style="background:rgba(0,200,224,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
-
-<!-- BUG FIX #14: Removed unused #sC canvas element from scan overlay — it was declared but never initialized or drawn, causing a silent waste of memory -->
+<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
 <div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
-
 <div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
 <div id="toast"></div>
 
 <script src="shared.js"></script>
 <script>
-/* ─── CONSTELLATION CANVAS ─── */
 var conC = document.getElementById('conC');
 var conX = conC.getContext('2d');
-
-/* BUG FIX #15: use window.innerWidth/innerHeight explicitly — avoids bare reference errors */
-function rCon() {
-  conC.width  = conC.offsetWidth  || window.innerWidth;
-  conC.height = conC.offsetHeight || (window.innerHeight - 54);
-}
-rCon();
-window.addEventListener('resize', rCon);
+function rCon(){ conC.width = conC.offsetWidth || window.innerWidth; conC.height = conC.offsetHeight || (window.innerHeight - 58); }
+rCon(); window.addEventListener('resize', rCon);
 
 var CTYPES = ['trusted','builder','gov','risky','inactive'];
 var fakeAddrs = ['0xd8dA...6045','0xAb58...eC9B','0x71C7...C62','0x1f98...4A27','0x9A30...B811','0x3C44...93BC'];
 var CN = [];
 
-for (var i = 0; i < 80; i++) {
+for (var i = 0; i < 82; i++){
   var tp = CTYPES[Math.floor(Math.random() * CTYPES.length)];
-  CN.push({
-    x: Math.random() * (window.innerWidth || 1400),
-    y: Math.random() * ((window.innerHeight - 54) || 700),
-    vx: (Math.random() - 0.5) * 0.1,
-    vy: (Math.random() - 0.5) * 0.1,
-    r: Math.random() * 3.5 + 1.2,
-    p: Math.random() * Math.PI * 2,
-    type: tp,
-    hover: 0,
-    pulse: 0,
-    addr: fakeAddrs[Math.floor(Math.random() * fakeAddrs.length)],
-    score: Math.floor(55 + Math.random() * 45)
-  });
+  CN.push({ x:Math.random()*(window.innerWidth||1400), y:Math.random()*((window.innerHeight-58)||700), vx:(Math.random()-.5)*.09, vy:(Math.random()-.5)*.09, r:Math.random()*3.5+1.2, p:Math.random()*Math.PI*2, type:tp, hover:0, pulse:0, addr:fakeAddrs[Math.floor(Math.random()*fakeAddrs.length)], score:Math.floor(55+Math.random()*45) });
 }
-/* Main "your wallet" node */
-CN.push({ x: 700, y: 350, r: 13, vx: 0, vy: 0, p: 0, type: 'main', fixed: true, score: 94, addr: 'Your Wallet' });
+CN.push({ x:700, y:350, r:14, vx:0, vy:0, p:0, type:'main', fixed:true, score:94, addr:'Your Wallet' });
 
-function cnCol(type, a) {
-  var m = { trusted:'0,200,224', builder:'196,154,42', gov:'107,163,255', risky:'255,70,70', inactive:'65,85,105', main:'0,200,224' };
+function cnCol(type, a){
+  var m = { trusted:'0,212,232', builder:'212,168,50', gov:'122,180,255', risky:'255,60,60', inactive:'60,85,110', main:'0,212,232' };
   return 'rgba(' + (m[type] || m.inactive) + ',' + a + ')';
 }
 
 var cMX = 0, cMY = 0, cHov = -1;
 var protoTip = document.getElementById('protoTip');
 
-/* BUG FIX #16: mouse events on conC — use getBoundingClientRect for correct offset */
-conC.addEventListener('mousemove', function(e) {
+conC.addEventListener('mousemove', function(e){
   var r = conC.getBoundingClientRect();
-  cMX = e.clientX - r.left;
-  cMY = e.clientY - r.top;
-  cHov = -1;
-  CN.forEach(function(n, i) {
-    if (Math.hypot(cMX - n.x, cMY - n.y) < n.r * 3) cHov = i;
-  });
-  if (cHov >= 0) {
+  cMX = e.clientX - r.left; cMY = e.clientY - r.top; cHov = -1;
+  CN.forEach(function(n, i){ if (Math.hypot(cMX-n.x, cMY-n.y) < n.r * 3.5) cHov = i; });
+  if (cHov >= 0){
     var n = CN[cHov];
-    document.getElementById('ptType').textContent  = n.type.charAt(0).toUpperCase() + n.type.slice(1);
-    document.getElementById('ptAddr').textContent  = n.addr || '0x???';
+    document.getElementById('ptType').textContent = n.type.charAt(0).toUpperCase() + n.type.slice(1);
+    document.getElementById('ptAddr').textContent = n.addr || '0x???';
     document.getElementById('ptScore').textContent = n.score || '—';
-    protoTip.style.left = (e.clientX + 14) + 'px';
-    protoTip.style.top  = (e.clientY - 14) + 'px';
+    protoTip.style.left = (e.clientX + 16) + 'px';
+    protoTip.style.top  = (e.clientY - 16) + 'px';
     protoTip.classList.add('show');
-  } else {
-    protoTip.classList.remove('show');
-  }
+  } else { protoTip.classList.remove('show'); }
 });
+conC.addEventListener('mouseleave', function(){ protoTip.classList.remove('show'); });
 
-conC.addEventListener('mouseleave', function() { protoTip.classList.remove('show'); });
-
-/* Periodic pulse + tx counter */
-setInterval(function() {
-  document.getElementById('sTx').textContent = Math.floor(Math.random() * 14 + 4);
-  if (Math.random() < 0.14) {
-    var idx = Math.floor(Math.random() * (CN.length - 1));
-    CN[idx].pulse = 1;
-  }
+setInterval(function(){
+  document.getElementById('sTx').textContent = Math.floor(Math.random()*14 + 4);
+  if (Math.random() < .14){ var idx = Math.floor(Math.random()*(CN.length-1)); CN[idx].pulse = 1; }
 }, 1800);
 
-function drawCon() {
+function drawCon(){
   var W = conC.width, H = conC.height;
   if (!W || !H) return;
   conX.clearRect(0, 0, W, H);
-
-  var main = CN[CN.length - 1];
-  if (main.fixed) { main.x = W / 2; main.y = H / 2; }
-  if (connAddr) main.r = 13 + Math.sin(Date.now() * 0.0018) * 1.5;
-
+  var main = CN[CN.length-1];
+  if (main.fixed){ main.x = W/2; main.y = H/2; }
+  if (connAddr) main.r = 14 + Math.sin(Date.now()*.0018) * 1.8;
   var em = 1 + ecosystemState.energyLevel / 400;
 
-  CN.forEach(function(n, i) {
-    if (!n.fixed) {
-      n.x += n.vx * em; n.y += n.vy * em; n.p += 0.006;
-      n.hover = i === cHov ? Math.min(1, n.hover + 0.08) : Math.max(0, n.hover - 0.06);
-      n.pulse = Math.max(0, (n.pulse || 0) - 0.013);
-      if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
-      if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
-      /* Gentle repulsion from cursor */
-      var dx = cMX - n.x, dy = cMY - n.y, d = Math.hypot(dx, dy);
-      if (d < 80 && d > 1) { n.vx -= dx / d * 0.0009; n.vy -= dy / d * 0.0009; }
+  CN.forEach(function(n, i){
+    if (!n.fixed){
+      n.x += n.vx*em; n.y += n.vy*em; n.p += .006;
+      n.hover = i===cHov ? Math.min(1, n.hover+.09) : Math.max(0, n.hover-.07);
+      n.pulse = Math.max(0, (n.pulse||0)-.012);
+      if (n.x<0) n.x=W; if (n.x>W) n.x=0;
+      if (n.y<0) n.y=H; if (n.y>H) n.y=0;
+      var dx=cMX-n.x, dy=cMY-n.y, d=Math.hypot(dx,dy);
+      if (d<90 && d>1){ n.vx -= dx/d*.0008; n.vy -= dy/d*.0008; }
     }
   });
 
-  /* Lines from non-inactive nodes to main */
-  CN.forEach(function(n) {
-    if (n.type === 'inactive' || n === main) return;
-    var d = Math.hypot(main.x - n.x, main.y - n.y);
-    if (d < 200) {
+  /* Lines from trusted nodes to main */
+  CN.forEach(function(n){
+    if (n.type==='inactive' || n===main) return;
+    var d = Math.hypot(main.x-n.x, main.y-n.y);
+    if (d<220){
       conX.beginPath();
-      conX.strokeStyle = cnCol(n.type, Math.min((1 - d / 200) * (n.type === 'trusted' ? 0.28 : 0.10) * em, 0.35));
-      conX.lineWidth = 0.45;
-      conX.moveTo(n.x, n.y);
-      conX.lineTo(main.x, main.y);
-      conX.stroke();
+      conX.strokeStyle = cnCol(n.type, Math.min((1-d/220)*(n.type==='trusted'?0.30:0.11)*em, 0.36));
+      conX.lineWidth = .5;
+      conX.moveTo(n.x, n.y); conX.lineTo(main.x, main.y); conX.stroke();
     }
   });
 
   /* Node-to-node micro connections */
-  for (var i = 0; i < CN.length - 1; i++) {
-    for (var j = i + 1; j < CN.length - 1; j++) {
-      var na = CN[i], nb = CN[j];
-      if (na.type === 'inactive' || nb.type === 'inactive') continue;
-      var d2 = Math.hypot(na.x - nb.x, na.y - nb.y);
-      if (d2 < 60) {
+  for (var i=0; i<CN.length-1; i++){
+    for (var j=i+1; j<CN.length-1; j++){
+      var na=CN[i], nb=CN[j];
+      if (na.type==='inactive'||nb.type==='inactive') continue;
+      var d2=Math.hypot(na.x-nb.x, na.y-nb.y);
+      if (d2<65){
         conX.beginPath();
-        conX.strokeStyle = 'rgba(0,200,224,' + (1 - d2 / 60) * 0.038 + ')';
-        conX.lineWidth = 0.28;
-        conX.moveTo(na.x, na.y);
-        conX.lineTo(nb.x, nb.y);
-        conX.stroke();
+        conX.strokeStyle='rgba(0,212,232,'+(1-d2/65)*.04+')';
+        conX.lineWidth=.3; conX.moveTo(na.x,na.y); conX.lineTo(nb.x,nb.y); conX.stroke();
       }
     }
   }
 
   /* Draw nodes */
-  CN.forEach(function(n) {
-    var pa = Math.sin(n.p) * 0.5 + 0.5;
-    var sc = 1 + n.hover * 0.45 + (n.pulse || 0) * 0.35;
-    if (n.type === 'main') {
-      [3, 2, 1].forEach(function(k) {
-        conX.beginPath();
-        conX.arc(n.x, n.y, n.r * k * 1.3, 0, Math.PI * 2);
-        conX.fillStyle = 'rgba(0,200,224,' + 0.024 / k + ')';
-        conX.fill();
+  CN.forEach(function(n){
+    var pa = Math.sin(n.p)*.5+.5;
+    var sc = 1 + n.hover*.48 + (n.pulse||0)*.36;
+    if (n.type==='main'){
+      [3,2,1].forEach(function(k){
+        conX.beginPath(); conX.arc(n.x,n.y,n.r*k*1.35,0,Math.PI*2);
+        conX.fillStyle='rgba(0,212,232,'+.026/k+')'; conX.fill();
       });
-      conX.beginPath();
-      conX.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      conX.fillStyle = 'rgba(0,200,224,.9)';
-      conX.fill();
+      conX.beginPath(); conX.arc(n.x,n.y,n.r,0,Math.PI*2);
+      conX.fillStyle='rgba(0,212,232,.94)';
+      conX.shadowBlur=28; conX.shadowColor='rgba(0,212,232,0.75)';
+      conX.fill(); conX.shadowBlur=0;
     } else {
-      var sz = n.r * sc;
-      var a3 = n.type === 'inactive' ? 0.09 : (0.18 + pa * 0.42 + n.hover * 0.24 + (n.pulse || 0) * 0.28);
-      conX.beginPath();
-      conX.arc(n.x, n.y, sz, 0, Math.PI * 2);
-      conX.fillStyle = cnCol(n.type, a3);
-      conX.fill();
-      if (n.hover > 0.1 || n.pulse > 0.1) {
-        conX.beginPath();
-        conX.arc(n.x, n.y, sz * 2.2, 0, Math.PI * 2);
-        conX.fillStyle = cnCol(n.type, (n.hover + (n.pulse || 0)) * 0.07);
-        conX.fill();
+      var sz=n.r*sc;
+      var a3=n.type==='inactive'?.08:(0.17+pa*.44+n.hover*.26+(n.pulse||0)*.3);
+      conX.beginPath(); conX.arc(n.x,n.y,sz,0,Math.PI*2);
+      conX.fillStyle=cnCol(n.type, a3); conX.fill();
+      if (n.hover>.1||(n.pulse||0)>.1){
+        conX.beginPath(); conX.arc(n.x,n.y,sz*2.5,0,Math.PI*2);
+        conX.fillStyle=cnCol(n.type,(n.hover+(n.pulse||0))*.065); conX.fill();
       }
     }
   });
 
-  /* Update connection count stat */
-  var cc = 0;
-  CN.forEach(function(n) {
-    if (n.type !== 'inactive' && n !== main && Math.hypot(main.x - n.x, main.y - n.y) < 200) cc++;
-  });
-  document.getElementById('sConns').textContent = cc;
-
-  var nv = document.getElementById('sNodes');
-  if (nv) nv.textContent = 80 + Math.floor(ecosystemState.energyLevel / 4);
+  var cc=0;
+  CN.forEach(function(n){ if(n.type!=='inactive'&&n!==main&&Math.hypot(main.x-n.x,main.y-n.y)<220)cc++; });
+  document.getElementById('sConns').textContent=cc;
+  var nv=document.getElementById('sNodes'); if(nv)nv.textContent=82+Math.floor(ecosystemState.energyLevel/4);
 }
 
-/* ─── RENDER LOOP ─── */
-var lastF = 0;
-function loop(t) {
-  if (t - lastF >= 16) {
-    lastF = t;
-    drawBg();
-    drawCon();
-    drawHex(t);
-  }
+var lastF=0;
+function loop(t){
+  if(t-lastF>=16){ lastF=t; drawBg(); drawCon(); drawHex(t); }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 
-/* ─── BOOT ─── */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function(){
+  initLoader();
   initBgCanvas();
+  initGridPattern();
   initCursor();
   initHexCanvas();
   initRipple();
