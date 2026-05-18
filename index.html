@@ -7,8 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
+/* ── FIX: body overflow hidden agar tidak ada scroll ganda di halaman ini ── */
 body{overflow:hidden}
-#app{position:fixed;inset:0;top:var(--nav-h);z-index:10;overflow:hidden}
+
+#app{
+  position:fixed;
+  /* FIX: bottom diset ke 30px agar tidak tumpuk dengan ticker bar (height 30px) */
+  inset:0;
+  top:var(--nav-h);
+  bottom:30px;
+  z-index:10;
+  overflow:hidden;
+}
 
 /* ── GRADIENT MESH BACKGROUND ── */
 #meshBg{
@@ -110,20 +120,8 @@ body{overflow:hidden}
 }
 .hero-eyebrow::before{content:'';width:20px;height:1px;background:linear-gradient(to right,transparent,var(--c))}
 
-h1{
-  font-family:'Bebas Neue',cursive;
-  font-size:clamp(72px,10.5vw,148px);
-  line-height:.82;letter-spacing:.01em;color:#fff;
-  margin-bottom:28px;
-  text-shadow:0 0 80px rgba(0,212,232,0.08);
-  animation:heroAwaken 1.6s cubic-bezier(0.22,1,0.36,1) .6s both;
-}
-h1 em{font-style:normal;-webkit-text-stroke:1.5px rgba(0,212,232,0.55);color:transparent}
-h1 strong{
-  font-style:normal;color:transparent;
-  background:linear-gradient(135deg,rgba(0,220,255,0.95),rgba(0,180,220,0.7),rgba(120,80,255,0.8));
-  -webkit-background-clip:text;background-clip:text;
-}
+/* ── FIX: h1 "Trust should be visible" DIHAPUS ── */
+/* h1 hanya dipakai jika ada konten hero lain yang perlu heading — sekarang tidak ada */
 
 .hero-sub{
   font-size:15px;color:var(--txt2);max-width:380px;
@@ -140,12 +138,12 @@ h1 strong{
 
 /* ── SCROLL HINT ── */
 .hero-scroll{
-  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;
   opacity:0;animation:fadeUp 1s ease 2s both;
 }
 @keyframes fadeUp{to{opacity:.5}}
-.hero-scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--c),transparent);animation:scrollLine 2s ease infinite}
+.hero-scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,var(--c),transparent);animation:scrollLine 2s ease infinite}
 @keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 .hero-scroll span{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2)}
 
@@ -172,10 +170,12 @@ h1 strong{
 .hm-spark{width:54px;height:20px}
 
 /* ── TICKER ── */
+/* FIX: ticker posisi fixed bottom:0, tidak lagi inside #app sehingga tidak tumpuk dengan sbar */
 .ticker{
-  position:fixed;bottom:0;left:0;right:0;border-top:1px solid rgba(0,212,232,0.09);
+  position:fixed;bottom:0;left:0;right:0;
+  border-top:1px solid rgba(0,212,232,0.09);
   overflow:hidden;background:rgba(0,3,10,0.94);backdrop-filter:blur(28px);
-  z-index:12;height:30px;display:flex;align-items:center;
+  z-index:20;height:30px;display:flex;align-items:center;
   transition:border-color .8s;
 }
 .ticker::before,.ticker::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
@@ -205,7 +205,12 @@ h1 strong{
 .hs-val{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.03em;color:#fff;line-height:1}
 .hs-lbl{font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2)}
 
-@media(max-width:900px){.hero-orb-wrap{display:none}.hero-wrap{padding:0 24px;align-items:center;text-align:center}.hero-eyebrow::before{display:none}h1{font-size:clamp(64px,14vw,100px)}.hero-stats{justify-content:center}}
+/* ── FIX: sbar (status bar wallet) tidak tumpuk ticker ── */
+/* sbar sudah diatur di shared.css dengan bottom default.
+   Pada halaman ini pastikan sbar berada di atas ticker */
+#sbar{z-index:21}
+
+@media(max-width:900px){.hero-orb-wrap{display:none}.hero-wrap{padding:0 24px;align-items:center;text-align:center}.hero-eyebrow::before{display:none}.hero-stats{justify-content:center}}
 @media(max-width:700px){.hero-mkt{display:none}.hero-btns{flex-direction:column;align-items:stretch}.hero-btns .btn,.hero-btns .btn-ghost{text-align:center;justify-content:center}}
 </style>
 </head>
@@ -235,7 +240,7 @@ h1 strong{
 </nav>
 
 <div id="app">
-  <canvas id="heroC"></canvas>
+  <canvas id="heroC" style="position:absolute;inset:0;width:100%;height:100%;display:block"></canvas>
   <div id="meshBg"></div>
   <div id="protoLines"></div>
 
@@ -259,12 +264,15 @@ h1 strong{
     </div>
   </div>
 
-  <!-- Hero content -->
+  <!-- Hero content — FIX: h1 "Trust should be visible" DIHAPUS sepenuhnya -->
   <div style="position:relative;z-index:3;height:100%;display:flex;align-items:center">
     <div class="hero-wrap">
       <div class="hero-eyebrow">Trust Layer Protocol v1.0</div>
       <div class="hero-tag" id="heroTag"><span class="htdot"></span><span id="heroTagTxt">Live on Ethereum Mainnet</span></div>
-      <h1><strong>Trust</strong><br><em>should be</em><br>visible.</h1>
+
+      <!-- FIX: h1 dengan teks "Trust should be visible" DIHAPUS -->
+      <!-- Hero sekarang langsung ke sub-description dan CTA buttons -->
+
       <p class="hero-sub">Rialo transforms wallets into transparent digital identities — reputation, security, and contribution made legible onchain.</p>
       <div class="hero-btns">
         <button class="btn" id="heroBtn"><span>Enter the Trust Layer →</span></button>
@@ -285,7 +293,7 @@ h1 strong{
   </div>
 </div>
 
-<!-- TICKER -->
+<!-- TICKER — FIX: ditempatkan di luar #app, langsung di body sebagai fixed element -->
 <div class="ticker" id="tickerEl">
   <div class="tick-inner" id="tickInner">
     <div class="tick-live"><div class="tl-dot"></div>Live</div>
@@ -298,7 +306,7 @@ h1 strong{
     <div class="ti"><span class="ti-s">LINK</span><span class="ti-p" id="lp">—</span><span id="lc" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">UNI</span><span class="ti-p" id="up">—</span><span id="uc" class="ti-chg ti-u">—</span></div>
     <div class="ti-gas"><span class="ti-s" style="margin-right:3px">⛽</span><span class="ti-p" id="gasp">—</span><span style="color:var(--txt2);font-size:6.5px;margin-left:2px">GWEI</span></div>
-    <!-- set B duplicate -->
+    <!-- Set B duplicate untuk seamless scroll -->
     <div class="tick-live"><div class="tl-dot"></div>Live</div>
     <div class="ti"><span class="ti-s">ETH</span><span class="ti-p" id="ep2">—</span><span id="ec2" class="ti-chg ti-u">—</span></div>
     <div class="ti"><span class="ti-s">BTC</span><span class="ti-p" id="bp2">—</span><span id="bc2" class="ti-chg ti-u">—</span></div>
@@ -335,17 +343,25 @@ h1 strong{
 })();
 
 /* ── HERO CANVAS ── */
-var hC = document.getElementById('heroC'), hX = hC.getContext('2d');
-function rH(){ hC.width = hC.offsetWidth || innerWidth; hC.height = hC.offsetHeight || (innerHeight - 58); }
-rH(); window.addEventListener('resize', rH);
+var hC = document.getElementById('heroC');
+var hX = hC ? hC.getContext('2d') : null;
+function rH(){
+  if (!hC) return;
+  hC.width = hC.offsetWidth || innerWidth;
+  hC.height = hC.offsetHeight || (innerHeight - 88);
+}
+rH();
+window.addEventListener('resize', rH);
+
 var HN = [];
 for (var i = 0; i < 44; i++) {
   var a = (i/44)*Math.PI*2, r2 = 80 + Math.random()*220;
   HN.push({ x:0, y:0, ox:Math.cos(a)*r2, oy:Math.sin(a)*r2, vx:(Math.random()-.5)*.16, vy:(Math.random()-.5)*.16, r:Math.random()*2.6+.8, p:Math.random()*Math.PI*2, gold:Math.random()<.09, init:false });
 }
 HN.push({ x:0, y:0, r:11, vx:0, vy:0, p:0, center:true, init:true });
+
 function drawHero(t) {
-  if (!hC.offsetWidth || !hC.offsetHeight) return;
+  if (!hX || !hC.offsetWidth || !hC.offsetHeight) return;
   hX.clearRect(0, 0, hC.width, hC.height);
   var cx = hC.width/2, cy = hC.height/2, ef = 1 + ecosystemState.energyLevel/300;
   var main = HN[HN.length-1]; main.x = cx; main.y = cy;
@@ -399,23 +415,40 @@ function drawHeroSpark(id, data, up){
   ctx.strokeStyle = up ? 'rgba(0,232,122,0.9)' : 'rgba(255,68,68,0.9)';
   ctx.lineWidth=1.3; ctx.stroke();
 }
+
 function updateHeroStrip(){
   var map={ethereum:'eth',bitcoin:'btc',solana:'sol'};
   Object.keys(map).forEach(function(id){
     var key=map[id], d=tokenData[id]; if(!d) return;
     var pe=document.getElementById('hmp-'+key), ce=document.getElementById('hmc-'+key), ie=document.getElementById('hm-'+key);
     var ch=d.chg||0, p=d.price, up=ch>=0;
-    if(pe){ var old=pe.textContent; pe.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2)); if(old!==pe.textContent){pe.classList.add(up?'flash-up':'flash-dn');setTimeout(function(){pe.classList.remove('flash-up','flash-dn')},600)}}
+    if(pe){
+      var old=pe.textContent;
+      pe.textContent='$'+(p>1000?Math.round(p).toLocaleString():p.toFixed(2));
+      if(old!==pe.textContent){
+        pe.classList.add(up?'flash-up':'flash-dn');
+        setTimeout(function(){pe.classList.remove('flash-up','flash-dn')},600);
+      }
+    }
     if(ce){ ce.textContent=(up?'+':'')+ch.toFixed(2)+'%'; ce.className='hm-chg '+(up?'up':'dn'); }
     if(ie) ie.className='hm-item '+(up?'up':'dn');
     drawHeroSpark(key, priceHistory[key]||[], up);
   });
 }
+
 function onPricesUpdated(data){ updateHeroStrip(); }
+
 function onMarketUpdate(coins, mood){
   var ht=document.getElementById('heroTag'), htt=document.getElementById('heroTagTxt'), tick=document.getElementById('tickerEl');
-  if(ht&&htt){ ht.className='hero-tag '+(mood==='neutral'?'':mood); htt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Live on Ethereum Mainnet'; }
-  if(tick){ tick.className='ticker'; if(mood==='bullish')tick.classList.add('bullish'); else if(mood==='bearish')tick.classList.add('alert'); }
+  if(ht&&htt){
+    ht.className='hero-tag '+(mood==='neutral'?'':mood);
+    htt.textContent=mood==='bullish'?'Markets bullish — ecosystem energized':mood==='bearish'?'Market correction — monitoring anomalies':'Live on Ethereum Mainnet';
+  }
+  if(tick){
+    tick.className='ticker';
+    if(mood==='bullish')tick.classList.add('bullish');
+    else if(mood==='bearish')tick.classList.add('alert');
+  }
 }
 
 /* ── RENDER LOOP ── */
@@ -441,8 +474,13 @@ document.addEventListener('DOMContentLoaded', function(){
   initPriceStreams();
   fetchPrices();
   setInterval(fetchPrices, 30000);
-  document.getElementById('heroBtn').addEventListener('click', openWallet);
-  setTimeout(function(){ triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',4000); }, 1500);
+
+  var hb = document.getElementById('heroBtn');
+  if(hb) hb.addEventListener('click', openWallet);
+
+  setTimeout(function(){
+    triggerEcoAlert('Ecosystem intelligence online — monitoring 50 chains','info',4000);
+  }, 1500);
 });
 </script>
 </body>
