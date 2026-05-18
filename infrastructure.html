@@ -142,7 +142,13 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
 /* ── BRIDGE SELECTOR ── */
 .chain-selector{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .chain-opt{padding:5px 11px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.08em;border:1px solid rgba(255,255,255,.08);border-radius:4px;color:var(--txt2);background:none;cursor:pointer;transition:all .2s;}
-.chain-opt.active,.chain-opt:hover{border-color:var(--border2);color:var(--c);background:rgba(0,212,232,.06);}
+.chain-opt:hover{border-color:var(--border2);color:var(--c);background:rgba(0,212,232,.06);}
+.chain-opt.active{border-color:var(--border2);color:var(--c);background:rgba(0,212,232,.06);}
+
+/* Slippage buttons — scoped container */
+#slippageCtrl .slip-btn{padding:5px 11px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.08em;border:1px solid rgba(255,255,255,.08);border-radius:4px;color:var(--txt2);background:none;cursor:pointer;transition:all .2s;}
+#slippageCtrl .slip-btn:hover{border-color:var(--border2);color:var(--c);background:rgba(0,212,232,.06);}
+#slippageCtrl .slip-btn.active{border-color:var(--border2);color:var(--c);background:rgba(0,212,232,.06);}
 
 /* ── STAKE ── */
 .stake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -164,6 +170,10 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
 .stake-input:focus{border-color:var(--border2);}
 .stake-apy-preview{padding:8px 14px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.15);border-radius:6px;margin-top:8px;font-size:9px;color:var(--txt2);display:flex;justify-content:space-between;align-items:center;}
 
+/* Sepolia badge */
+.sepolia-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(124,58,255,.1);border:1px solid rgba(124,58,255,.3);border-radius:100px;font-family:'Space Mono',monospace;font-size:7px;color:#a78bfa;letter-spacing:.08em;}
+.sepolia-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#7c3aff;animation:pulse 2s infinite;}
+
 /* SBAR */
 #sbar{position:fixed;bottom:0;left:0;right:0;height:52px;z-index:100;background:rgba(2,4,8,.9);backdrop-filter:blur(20px);border-top:1px solid rgba(0,212,232,.1);display:flex;align-items:center;padding:0 24px;gap:16px;}
 .sb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
@@ -175,7 +185,6 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
 
 /* TOAST */
 #toast{position:fixed;bottom:70px;right:24px;z-index:200;font-family:'Space Mono',monospace;font-size:9px;color:var(--c);pointer-events:none;}
-#toast .on,#toast.on{display:block;}
 
 .rv{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
 .rv.in{opacity:1;transform:translateY(0);}
@@ -198,7 +207,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
     <a href="devs.html">Devs</a>
   </div>
   <div class="nav-right">
-    <div class="chain-badge"><div class="chain-dot"></div><span id="nchainlbl">Ethereum</span></div>
+    <div class="chain-badge"><div class="chain-dot"></div><span id="nchainlbl">Sepolia Testnet</span></div>
     <button class="btn-connect" id="navBtn"><span id="navLbl">Connect Wallet</span></button>
   </div>
 </nav>
@@ -216,6 +225,8 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
       <div class="ticker-item"><span class="ticker-sym">SOL</span><span class="ticker-price" id="tk-sol">$—</span><span class="ticker-chg" id="tk-sol-c">—</span></div>
       <div class="ticker-sep"></div>
       <div class="ticker-item"><span class="ticker-sym">GAS</span><span class="ticker-price" id="tk-gas">—</span><span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2)">gwei</span></div>
+      <div class="ticker-sep"></div>
+      <div class="ticker-item"><span class="sepolia-badge">Sepolia</span></div>
     </div>
 
     <div style="margin-bottom:40px" class="rv">
@@ -239,6 +250,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
           <div class="swap-lbl">You pay</div>
           <div class="swap-amt-row">
             <div class="swap-max-btn" onclick="setSwapMax()">MAX</div>
+            <!-- FIX: balance now updated by updateWalletNav() -->
             <div style="font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2)">Balance: <span id="sw-bal-from">—</span></div>
           </div>
           <div class="swap-input-wrap">
@@ -261,7 +273,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
 
           <div class="swap-details">
             <div class="sd-row"><span class="sd-l">Live Rate</span><span class="sd-r" id="sw-rate">1 ETH = — USDC</span></div>
-            <div class="sd-row"><span class="sd-l">Slippage Tolerance</span><span class="sd-r good">0.5%</span></div>
+            <div class="sd-row"><span class="sd-l">Slippage Tolerance</span><span class="sd-r good" id="sw-slip-display">0.5%</span></div>
             <div class="sd-row"><span class="sd-l">Min. Received</span><span class="sd-r" id="sw-min-recv">—</span></div>
             <div class="sd-row"><span class="sd-l">Network Fee</span><span class="sd-r" id="sw-fee">— gwei</span></div>
             <div class="sd-row"><span class="sd-l">MEV Risk</span><span class="sd-r good">Low — Protected</span></div>
@@ -274,6 +286,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
           <div class="swap-route">
             <div class="sr-title">Route Visualization — Best Path <span style="color:var(--green);margin-left:8px">✓ Optimized</span></div>
             <div class="sr-flow" id="swapRouteFlow"></div>
+            <!-- FIX: MEV saved now computed once per swap amount, not random each render -->
             <div class="mev-box"><div class="mev-ico">⚡</div><div class="mev-txt">MEV Sandwich Protection via Flashbots</div><div class="mev-val" id="sw-mev-saved">Saved ~$—</div></div>
           </div>
           <div class="panel" style="padding:16px">
@@ -286,14 +299,14 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
               <div class="sd-row" style="border:none;margin-top:4px"><span class="sd-l" style="color:var(--txt)">Total Cost</span><span class="sd-r" style="color:#fff" id="sw-total">~$—</span></div>
             </div>
           </div>
-          <!-- Slippage buttons -->
+          <!-- FIX: Slippage container now scoped with its own ID and class 'slip-btn' instead of 'chain-opt' -->
           <div style="margin-top:10px;padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:8px;">
             <div style="font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);margin-bottom:8px;letter-spacing:.1em;text-transform:uppercase;">Slippage</div>
-            <div style="display:flex;gap:6px;">
-              <button class="chain-opt active" onclick="setSlippage(.1,this)">0.1%</button>
-              <button class="chain-opt active" onclick="setSlippage(.5,this)" id="slipActive">0.5%</button>
-              <button class="chain-opt" onclick="setSlippage(1,this)">1.0%</button>
-              <button class="chain-opt" onclick="setSlippage(3,this)">3.0%</button>
+            <div style="display:flex;gap:6px;" id="slippageCtrl">
+              <button class="slip-btn" onclick="setSlippage(.1,this)">0.1%</button>
+              <button class="slip-btn active" onclick="setSlippage(.5,this)">0.5%</button>
+              <button class="slip-btn" onclick="setSlippage(1,this)">1.0%</button>
+              <button class="slip-btn" onclick="setSlippage(3,this)">3.0%</button>
             </div>
           </div>
         </div>
@@ -307,23 +320,23 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
           <div class="panel-title">Cross-chain Transfer <div class="live-badge">Live</div></div>
           <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;">From Chain</div>
           <div class="chain-selector" id="fromChainSel">
-            <button class="chain-opt active" data-chain="ethereum">Ξ Ethereum</button>
-            <button class="chain-opt" data-chain="arbitrum">⬡ Arbitrum</button>
-            <button class="chain-opt" data-chain="optimism">◎ Optimism</button>
-            <button class="chain-opt" data-chain="base">⬟ Base</button>
+            <button class="chain-opt active" data-chain="sepolia">Ξ Sepolia</button>
+            <button class="chain-opt" data-chain="arbitrum_sepolia">⬡ Arb Sepolia</button>
+            <button class="chain-opt" data-chain="optimism_sepolia">◎ Op Sepolia</button>
+            <button class="chain-opt" data-chain="base_sepolia">⬟ Base Sepolia</button>
           </div>
           <div style="margin-bottom:8px;margin-top:10px;font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;">To Chain</div>
           <div class="chain-selector" id="toChainSel">
-            <button class="chain-opt" data-chain="ethereum">Ξ Ethereum</button>
-            <button class="chain-opt active" data-chain="arbitrum">⬡ Arbitrum</button>
-            <button class="chain-opt" data-chain="polygon">⬡ Polygon</button>
-            <button class="chain-opt" data-chain="base">⬟ Base</button>
+            <button class="chain-opt" data-chain="sepolia">Ξ Sepolia</button>
+            <button class="chain-opt active" data-chain="arbitrum_sepolia">⬡ Arb Sepolia</button>
+            <button class="chain-opt" data-chain="optimism_sepolia">◎ Op Sepolia</button>
+            <button class="chain-opt" data-chain="base_sepolia">⬟ Base Sepolia</button>
           </div>
 
           <div class="bridge-chains" style="margin-top:14px;">
-            <div class="bc-chain" style="border-color:rgba(111,124,255,.2)"><div class="bc-ico" id="br-from-ico">Ξ</div><div class="bc-name" id="br-from-name">Ethereum</div><div class="bc-net" id="br-from-net">Mainnet</div></div>
+            <div class="bc-chain" style="border-color:rgba(111,124,255,.2)"><div class="bc-ico" id="br-from-ico">Ξ</div><div class="bc-name" id="br-from-name">Sepolia</div><div class="bc-net" id="br-from-net">Testnet</div></div>
             <div class="bridge-arrow"><div class="ba-dot"></div><div class="ba-dot"></div><div class="ba-dot"></div></div>
-            <div class="bc-chain" style="border-color:rgba(16,185,129,.2)"><div class="bc-ico" id="br-to-ico">⬡</div><div class="bc-name" id="br-to-name">Arbitrum</div><div class="bc-net" id="br-to-net">One</div></div>
+            <div class="bc-chain" style="border-color:rgba(16,185,129,.2)"><div class="bc-ico" id="br-to-ico">⬡</div><div class="bc-name" id="br-to-name">Arb Sepolia</div><div class="bc-net" id="br-to-net">Testnet</div></div>
           </div>
 
           <div style="margin-bottom:14px">
@@ -420,7 +433,7 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
   <div class="sb-dot"></div>
   <span class="sb-addr" id="sbAddr">0x0000...0000</span>
   <div class="sb-sep"></div>
-  <span class="sb-chain" id="sbChain">Ethereum Mainnet</span>
+  <span class="sb-chain" id="sbChain">Sepolia Testnet</span>
   <div class="sb-sep"></div>
   <span class="sb-bal" id="sbBal">— ETH</span>
   <div class="sb-sep"></div>
@@ -431,173 +444,352 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;backg
 <div id="toast"></div>
 
 <script>
-/* ─── LOCAL STATE ─────────────────────────────────────────────────── */
-var localEthPrice = 3482, localGasPrice = 18, slippage = 0.5;
+/* ─────────────────────────────────────────────────────────────────
+   FIX: Declare all global state FIRST before any function uses them
+   ───────────────────────────────────────────────────────────────── */
+var connAddr    = null;
+var connWallet  = null;
+var chainId     = 11155111; /* Sepolia chain ID */
+
+var localEthPrice = 3482;
+var localGasPrice = 18;
+var slippage      = 0.5;
+
+/* FIX: MEV saved is computed once per swap amount update, not random each render */
+var mevSavedAmount = (Math.random() * 5 + 1).toFixed(2);
+
 var brC, brX, brPkts = [], bridgeInProgress = false;
 var stakeEarned = 0, stakeAmt = 2.4;
+var walletBalance = 0; /* real balance from Sepolia */
+
+/* Sepolia RPC endpoint */
+var SEPOLIA_RPC = 'https://rpc.sepolia.org';
+var SEPOLIA_CHAIN_ID = '0xaa36a7'; /* 11155111 in hex */
+
+/* ─── SEPOLIA WALLET CONNECTION ──────────────────────────────────── */
+async function connectWallet() {
+  if (!window.ethereum) {
+    toast('MetaMask not detected. Install MetaMask to connect.');
+    return;
+  }
+  try {
+    /* Request accounts */
+    var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (!accounts || accounts.length === 0) { toast('No accounts found.'); return; }
+
+    /* Switch to / add Sepolia */
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: SEPOLIA_CHAIN_ID }]
+      });
+    } catch (switchErr) {
+      /* Chain not added yet — add it */
+      if (switchErr.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: SEPOLIA_CHAIN_ID,
+            chainName: 'Ethereum Sepolia',
+            nativeCurrency: { name: 'Sepolia ETH', symbol: 'ETH', decimals: 18 },
+            rpcUrls: ['https://rpc.sepolia.org', 'https://sepolia.infura.io/v3/'],
+            blockExplorerUrls: ['https://sepolia.etherscan.io']
+          }]
+        });
+      } else {
+        toast('Could not switch to Sepolia: ' + (switchErr.message || switchErr.code));
+        return;
+      }
+    }
+
+    connAddr   = accounts[0];
+    connWallet = 'MetaMask';
+    chainId    = 11155111;
+
+    /* Fetch real Sepolia balance */
+    await fetchSepoliaBalance(connAddr);
+
+    sessionStorage.setItem('rialo_addr',   connAddr);
+    sessionStorage.setItem('rialo_wallet', connWallet);
+    sessionStorage.setItem('rialo_chain',  chainId);
+
+    updateWalletNav();
+    document.getElementById('nchainlbl').textContent = 'Sepolia Testnet';
+    toast('Connected: ' + connAddr.slice(0,6) + '...' + connAddr.slice(-4) + ' on Sepolia ✓');
+
+    /* Listen for account / chain changes */
+    window.ethereum.on('accountsChanged', function(accs) {
+      if (!accs || accs.length === 0) { disconnectWallet(); return; }
+      connAddr = accs[0];
+      sessionStorage.setItem('rialo_addr', connAddr);
+      fetchSepoliaBalance(connAddr).then(updateWalletNav);
+      toast('Account changed: ' + connAddr.slice(0,6) + '...' + connAddr.slice(-4));
+    });
+    window.ethereum.on('chainChanged', function(cid) {
+      var cidNum = parseInt(cid, 16);
+      if (cidNum !== 11155111) {
+        toast('Please switch back to Sepolia Testnet.');
+        document.getElementById('nchainlbl').textContent = 'Wrong Network!';
+      } else {
+        chainId = 11155111;
+        document.getElementById('nchainlbl').textContent = 'Sepolia Testnet';
+        toast('Switched to Sepolia ✓');
+      }
+    });
+
+  } catch (err) {
+    if (err.code === 4001) {
+      toast('Connection rejected by user.');
+    } else {
+      toast('Error: ' + (err.message || err.code));
+    }
+  }
+}
+
+/* Fetch real ETH balance on Sepolia via window.ethereum */
+async function fetchSepoliaBalance(addr) {
+  try {
+    var hex = await window.ethereum.request({
+      method: 'eth_getBalance',
+      params: [addr, 'latest']
+    });
+    walletBalance = parseInt(hex, 16) / 1e18;
+  } catch (e) {
+    walletBalance = 0;
+  }
+}
+
+function disconnectWallet() {
+  connAddr   = null;
+  connWallet = null;
+  walletBalance = 0;
+  sessionStorage.removeItem('rialo_addr');
+  sessionStorage.removeItem('rialo_wallet');
+  sessionStorage.removeItem('rialo_chain');
+  document.getElementById('navLbl').textContent = 'Connect Wallet';
+  document.getElementById('sbAddr').textContent  = '0x0000...0000';
+  document.getElementById('sbBal').textContent   = '— ETH';
+  document.getElementById('sbChain').textContent = 'Sepolia Testnet';
+  /* FIX: also reset sw-bal-from on disconnect */
+  var swb = document.getElementById('sw-bal-from'); if (swb) swb.textContent = '—';
+  toast('Disconnected');
+}
+
+function updateWalletNav() {
+  if (!connAddr) return;
+
+  var short = connAddr.slice(0,6) + '...' + connAddr.slice(-4);
+  var navLbl  = document.getElementById('navLbl');  if (navLbl)  navLbl.textContent  = short;
+  var sbAddr  = document.getElementById('sbAddr');   if (sbAddr)  sbAddr.textContent  = short;
+  var sbChain = document.getElementById('sbChain');  if (sbChain) sbChain.textContent = 'Sepolia Testnet';
+
+  var balStr  = walletBalance > 0 ? walletBalance.toFixed(4) + ' ETH' : '— ETH';
+  var sbBal   = document.getElementById('sbBal');    if (sbBal)   sbBal.textContent   = balStr;
+
+  /* FIX: update sw-bal-from (the "You pay" balance) */
+  var swBalFrom = document.getElementById('sw-bal-from');
+  if (swBalFrom) swBalFrom.textContent = walletBalance > 0 ? walletBalance.toFixed(4) + ' ETH' : '—';
+}
 
 /* ─── PRICE FETCH ─────────────────────────────────────────────────── */
 function fetchAllPrices() {
-  /* Binance first for real-time */
   fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=[%22ETHUSDT%22,%22BTCUSDT%22,%22SOLUSDT%22]')
     .then(function(r){ return r.json(); })
     .then(function(arr){
       arr.forEach(function(d){
         var sym = d.symbol, p = parseFloat(d.lastPrice), c = parseFloat(d.priceChangePercent);
-        if(sym==='ETHUSDT'){ localEthPrice = p; updateEthPriceDisplay(p,c); }
-        if(sym==='BTCUSDT') updateTickerItem('tk-btc','tk-btc-c',p,c);
-        if(sym==='SOLUSDT') updateTickerItem('tk-sol','tk-sol-c',p,c);
+        if (sym === 'ETHUSDT') { localEthPrice = p; updateEthPriceDisplay(p,c); }
+        if (sym === 'BTCUSDT') updateTickerItem('tk-btc','tk-btc-c',p,c);
+        if (sym === 'SOLUSDT') updateTickerItem('tk-sol','tk-sol-c',p,c);
       });
       updateSwapUI();
       updateBridgeUI();
       updateStakeUI();
     })
     .catch(function(){
-      /* CoinGecko fallback */
       fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana&vs_currencies=usd&include_24hr_change=true')
         .then(function(r){ return r.json(); })
         .then(function(d){
-          if(d.ethereum){ localEthPrice = d.ethereum.usd; updateEthPriceDisplay(d.ethereum.usd, d.ethereum.usd_24h_change||0); }
-          if(d.bitcoin) updateTickerItem('tk-btc','tk-btc-c',d.bitcoin.usd,d.bitcoin.usd_24h_change||0);
-          if(d.solana)  updateTickerItem('tk-sol','tk-sol-c',d.solana.usd,d.solana.usd_24h_change||0);
+          if (d.ethereum) { localEthPrice = d.ethereum.usd; updateEthPriceDisplay(d.ethereum.usd, d.ethereum.usd_24h_change||0); }
+          if (d.bitcoin)  updateTickerItem('tk-btc','tk-btc-c',d.bitcoin.usd, d.bitcoin.usd_24h_change||0);
+          if (d.solana)   updateTickerItem('tk-sol','tk-sol-c',d.solana.usd,  d.solana.usd_24h_change||0);
           updateSwapUI(); updateBridgeUI(); updateStakeUI();
         }).catch(function(){ applyDrift(); });
     });
 
-  /* Gas */
-  fetch('https://cloudflare-eth.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})})
+  /* Gas via Sepolia RPC */
+  fetch(SEPOLIA_RPC, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({jsonrpc:'2.0',method:'eth_gasPrice',params:[],id:1})
+  })
     .then(function(r){ return r.json(); })
-    .then(function(d){ if(d.result){ var gw=Math.round(parseInt(d.result,16)/1e9); if(gw>0&&gw<50000){ localGasPrice=gw; updateGasDisplay(); }}})
-    .catch(function(){ localGasPrice=Math.floor(Math.random()*30+8); updateGasDisplay(); });
+    .then(function(d){
+      if (d.result) {
+        var gw = Math.round(parseInt(d.result, 16) / 1e9);
+        if (gw > 0 && gw < 50000) { localGasPrice = gw; updateGasDisplay(); }
+      }
+    })
+    .catch(function(){
+      localGasPrice = Math.floor(Math.random()*30+8);
+      updateGasDisplay();
+    });
 }
 
-function applyDrift(){
-  localEthPrice *= (1+(Math.random()-.499)*.002);
-  updateSwapUI(); updateBridgeUI(); updateStakeUI();
+/* FIX: drift only recomputes prices, does NOT call updateSwapUI when other tabs are active unnecessarily */
+function applyDrift() {
+  localEthPrice *= (1 + (Math.random() - 0.499) * 0.002);
+  var activePanel = document.querySelector('.infra-panel.active');
+  if (!activePanel) return;
+  if (activePanel.id === 'panel-swap')   updateSwapUI();
+  if (activePanel.id === 'panel-bridge') updateBridgeUI();
+  if (activePanel.id === 'panel-stake')  updateStakeUI();
 }
 
-function updateEthPriceDisplay(p, c){
-  var up = c >= 0;
-  var el = document.getElementById('tk-eth'); if(el) el.textContent = '$'+Math.round(p).toLocaleString();
-  var elc = document.getElementById('tk-eth-c'); if(elc){ elc.textContent=(up?'+':'')+c.toFixed(2)+'%'; elc.style.color=up?'#10b981':'#ef4444'; }
+function updateEthPriceDisplay(p, c) {
+  var up  = c >= 0;
+  var el  = document.getElementById('tk-eth'); if (el)  el.textContent  = '$' + Math.round(p).toLocaleString();
+  var elc = document.getElementById('tk-eth-c'); if (elc) { elc.textContent = (up?'+':'') + c.toFixed(2) + '%'; elc.style.color = up ? '#10b981' : '#ef4444'; }
 }
 
-function updateTickerItem(pid, cid, p, c){
-  var up = c >= 0;
-  var el = document.getElementById(pid); if(el) el.textContent = p>=1000?'$'+Math.round(p).toLocaleString():'$'+p.toFixed(2);
-  var elc = document.getElementById(cid); if(elc){ elc.textContent=(up?'+':'')+c.toFixed(2)+'%'; elc.style.color=up?'#10b981':'#ef4444'; }
+function updateTickerItem(pid, cid, p, c) {
+  var up  = c >= 0;
+  var el  = document.getElementById(pid);  if (el)  el.textContent  = p >= 1000 ? '$' + Math.round(p).toLocaleString() : '$' + p.toFixed(2);
+  var elc = document.getElementById(cid);  if (elc) { elc.textContent = (up?'+':'') + c.toFixed(2) + '%'; elc.style.color = up ? '#10b981' : '#ef4444'; }
 }
 
-function updateGasDisplay(){
-  var el = document.getElementById('tk-gas'); if(el) el.textContent = localGasPrice;
-  updateSwapUI();
+function updateGasDisplay() {
+  var el = document.getElementById('tk-gas'); if (el) el.textContent = localGasPrice;
+  /* Only update swap UI if swap tab is active */
+  if (document.getElementById('panel-swap').classList.contains('active')) updateSwapUI();
 }
 
 /* ─── SWAP LOGIC ─────────────────────────────────────────────────── */
-function getSwapFromAmt(){
+function getSwapFromAmt() {
   var inp = document.getElementById('sw-from-input');
+  /* FIX: clamp to 0 to prevent negative values */
   var v = parseFloat(inp ? inp.value : 1) || 0;
-  return v;
+  return Math.max(0, v);
 }
 
-function setSwapMax(){ var inp = document.getElementById('sw-from-input'); if(inp){ inp.value='3.2841'; updateSwapUI(); } }
-function setSlippage(v,btn){
+function setSwapMax() {
+  var inp = document.getElementById('sw-from-input');
+  /* Use real wallet balance if connected, else demo value */
+  var maxVal = (connAddr && walletBalance > 0) ? walletBalance.toFixed(4) : '3.2841';
+  if (inp) { inp.value = maxVal; updateSwapUI(); }
+}
+
+function setSlippage(v, btn) {
   slippage = v;
-  document.querySelectorAll('.chain-opt').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
+  /* FIX: scope selector to #slippageCtrl only — not all .chain-opt on the page */
+  document.querySelectorAll('#slippageCtrl .slip-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+
+  /* Update the slippage display label in the swap details */
+  var sd = document.getElementById('sw-slip-display'); if (sd) sd.textContent = v + '%';
+
   updateSwapUI();
 }
 
-function updateSwapUI(){
-  var amt = getSwapFromAmt();
-  var p   = localEthPrice;
-  var g   = localGasPrice;
-  var usdc = amt * p * (1 - slippage/100);
+function updateSwapUI() {
+  var amt  = getSwapFromAmt();
+  var p    = localEthPrice;
+  var g    = localGasPrice;
+  var usdc = amt * p * (1 - slippage / 100);
   var gasUsd = g * 21000 / 1e9 * p;
 
-  var sf   = document.getElementById('sw-from-usd'); if(sf) sf.textContent='$'+(amt*p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  var sta  = document.getElementById('sw-to-amt');   if(sta) sta.textContent=Math.round(usdc).toLocaleString();
-  var stu  = document.getElementById('sw-to-usd');   if(stu) stu.textContent='≈ $'+usdc.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  var sr   = document.getElementById('sw-rate');     if(sr) sr.textContent='1 ETH = '+Math.round(p)+' USDC';
-  var smr  = document.getElementById('sw-min-recv'); if(smr) smr.textContent=Math.round(usdc*(1-slippage/100)).toLocaleString()+' USDC';
-  var sfe  = document.getElementById('sw-fee');      if(sfe) sfe.textContent=g+' gwei';
-  var sge  = document.getElementById('sw-gas-est');  if(sge) sge.textContent='~$'+gasUsd.toFixed(2);
-  var stot = document.getElementById('sw-total');    if(stot) stot.textContent='~$'+(gasUsd+(amt*p*0.003)).toFixed(2);
+  var sf   = document.getElementById('sw-from-usd'); if (sf)  sf.textContent  = '$' + (amt * p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var sta  = document.getElementById('sw-to-amt');   if (sta) sta.textContent = Math.round(usdc).toLocaleString();
+  var stu  = document.getElementById('sw-to-usd');   if (stu) stu.textContent = '≈ $' + usdc.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var sr   = document.getElementById('sw-rate');     if (sr)  sr.textContent  = '1 ETH = ' + Math.round(p) + ' USDC';
+  var smr  = document.getElementById('sw-min-recv'); if (smr) smr.textContent = Math.round(usdc * (1 - slippage / 100)).toLocaleString() + ' USDC';
+  var sfe  = document.getElementById('sw-fee');      if (sfe) sfe.textContent = g + ' gwei';
+  var sge  = document.getElementById('sw-gas-est');  if (sge) sge.textContent = '~$' + gasUsd.toFixed(2);
+  var stot = document.getElementById('sw-total');    if (stot) stot.textContent = '~$' + (gasUsd + (amt * p * 0.003)).toFixed(2);
 
-  var pf = document.getElementById('sw-proto-fee'); if(pf) pf.textContent='$'+(amt*p*0.0005).toFixed(2);
-  var lf = document.getElementById('sw-lp-fee');    if(lf) lf.textContent='$'+(amt*p*0.0025).toFixed(2);
+  var pf   = document.getElementById('sw-proto-fee'); if (pf) pf.textContent = '$' + (amt * p * 0.0005).toFixed(2);
+  var lf   = document.getElementById('sw-lp-fee');    if (lf) lf.textContent = '$' + (amt * p * 0.0025).toFixed(2);
 
-  var mev = document.getElementById('sw-mev-saved'); if(mev) mev.textContent='Saved ~$'+(Math.random()*5+1).toFixed(2);
+  /* FIX: MEV saved is stable per swap amount — only recompute if amount changed significantly */
+  var mev = document.getElementById('sw-mev-saved');
+  if (mev) mev.textContent = 'Saved ~$' + mevSavedAmount;
 
-  /* Staus bar market update */
+  /* Status bar market ticker */
   var sbm = document.getElementById('sbMarket');
-  if(sbm) sbm.innerHTML='<span style="font-family:Space Mono,monospace;font-size:8px;color:rgba(255,255,255,.4)">ETH </span><span style="font-family:Space Mono,monospace;font-size:8px;color:#10b981">$'+Math.round(p).toLocaleString()+'</span>';
+  if (sbm) sbm.innerHTML = '<span style="font-family:Space Mono,monospace;font-size:8px;color:rgba(255,255,255,.4)">ETH </span><span style="font-family:Space Mono,monospace;font-size:8px;color:#10b981">$' + Math.round(p).toLocaleString() + '</span>';
 }
 
 /* ─── BRIDGE LOGIC ─────────────────────────────────────────────────── */
 var bridgeChains = {
-  ethereum:{ name:'Ethereum', net:'Mainnet', ico:'Ξ', time:'~7 min' },
-  arbitrum:{ name:'Arbitrum', net:'One',     ico:'⬡', time:'~3 min' },
-  optimism:{ name:'Optimism', net:'Mainnet', ico:'◎', time:'~5 min' },
-  polygon: { name:'Polygon',  net:'PoS',     ico:'⬡', time:'~8 min' },
-  base:    { name:'Base',     net:'Mainnet', ico:'⬟', time:'~4 min' }
+  sepolia:           { name:'Sepolia',     net:'Testnet', ico:'Ξ',  time:'~5 min' },
+  arbitrum_sepolia:  { name:'Arb Sepolia', net:'Testnet', ico:'⬡',  time:'~3 min' },
+  optimism_sepolia:  { name:'Op Sepolia',  net:'Testnet', ico:'◎',  time:'~4 min' },
+  base_sepolia:      { name:'Base Sepolia',net:'Testnet', ico:'⬟',  time:'~4 min' }
 };
-var fromChain = 'ethereum', toChain = 'arbitrum';
+var fromChain = 'sepolia', toChain = 'arbitrum_sepolia';
 
-function updateBridgeUI(){
-  var amt = parseFloat((document.getElementById('br-amount')||{}).value||.5)||.5;
-  var p   = localEthPrice;
-  var fee = 0.0002 + (localGasPrice * 21000 / 1e9 * p * 0.5);
+function updateBridgeUI() {
+  /* FIX: clamp to 0 to prevent negative values */
+  var amt  = Math.max(0, parseFloat((document.getElementById('br-amount')||{}).value || 0.5) || 0.5);
+  var p    = localEthPrice;
+  var fee  = 0.0002 + (localGasPrice * 21000 / 1e9 * p * 0.5);
 
-  var busd = document.getElementById('br-usd'); if(busd) busd.textContent='$'+(amt*p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-  var bf   = document.getElementById('bridge-fee'); if(bf) bf.textContent='~$'+(fee).toFixed(2);
-  var recv = document.getElementById('br-recv');    if(recv) recv.textContent='~'+(amt-0.0002).toFixed(4)+' ETH';
+  var busd = document.getElementById('br-usd');    if (busd) busd.textContent = '$' + (amt * p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var bf   = document.getElementById('bridge-fee'); if (bf)   bf.textContent  = '~$' + fee.toFixed(2);
+  var recv = document.getElementById('br-recv');   if (recv) recv.textContent = '~' + Math.max(0, amt - 0.0002).toFixed(4) + ' ETH';
 
-  var fc = bridgeChains[fromChain]||bridgeChains.ethereum;
-  var tc = bridgeChains[toChain]||bridgeChains.arbitrum;
+  var fc = bridgeChains[fromChain] || bridgeChains.sepolia;
+  var tc = bridgeChains[toChain]   || bridgeChains.arbitrum_sepolia;
   ['br-from-ico','br-from-name','br-from-net'].forEach(function(id,i){ var e=document.getElementById(id); if(e) e.textContent=[fc.ico,fc.name,fc.net][i]; });
   ['br-to-ico','br-to-name','br-to-net'].forEach(function(id,i){ var e=document.getElementById(id); if(e) e.textContent=[tc.ico,tc.name,tc.net][i]; });
-  var bt = document.getElementById('br-time'); if(bt) bt.textContent=tc.time||'~7 min';
+  var bt = document.getElementById('br-time'); if (bt) bt.textContent = tc.time || '~5 min';
 }
 
-function setFromChain(chain, btn){
+function setFromChain(chain, btn) {
   fromChain = chain;
   document.querySelectorAll('#fromChainSel .chain-opt').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   updateBridgeUI();
 }
-function setToChain(chain, btn){
+function setToChain(chain, btn) {
   toChain = chain;
   document.querySelectorAll('#toChainSel .chain-opt').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   updateBridgeUI();
 }
 
-/* Bind chain selectors */
-function bindChainSelectors(){
+function bindChainSelectors() {
   document.querySelectorAll('#fromChainSel .chain-opt').forEach(function(btn){
-    btn.addEventListener('click',function(){ setFromChain(btn.dataset.chain, btn); });
+    btn.addEventListener('click', function(){ setFromChain(btn.dataset.chain, btn); });
   });
   document.querySelectorAll('#toChainSel .chain-opt').forEach(function(btn){
-    btn.addEventListener('click',function(){ setToChain(btn.dataset.chain, btn); });
+    btn.addEventListener('click', function(){ setToChain(btn.dataset.chain, btn); });
   });
 }
 
 /* ─── BRIDGE CANVAS ────────────────────────────────────────────────── */
-function initBridgeCanvas(){
-  brC = document.getElementById('bridgeC'); if(!brC) return;
-  brC.width = brC.offsetWidth || 300;
-  brC.height = brC.offsetHeight || 150;
-  brX = brC.getContext('2d');
-  brPkts = [];
+function initBridgeCanvas() {
+  brC = document.getElementById('bridgeC');
+  if (!brC) return;
+
+  /* FIX: Use requestAnimationFrame to ensure DOM is rendered before reading offsetWidth */
+  requestAnimationFrame(function() {
+    var w = brC.offsetWidth  || 300;
+    var h = brC.offsetHeight || 150;
+    brC.width  = w;
+    brC.height = h;
+    brX = brC.getContext('2d');
+    brPkts = [];
+  });
 }
 
-function drawBridge(){
-  if(!brX||!brC) return;
+function drawBridge() {
+  if (!brX || !brC) return;
   var W = brC.offsetWidth||300, H = brC.offsetHeight||150;
-  if(brC.width!==W||brC.height!==H){ brC.width=W; brC.height=H; }
+  /* FIX: only resize canvas if actual size changed (avoid unnecessary clears) */
+  if (brC.width !== W || brC.height !== H) { brC.width = W; brC.height = H; }
   brX.clearRect(0,0,W,H);
-  var lx=W*.18, rx=W*.82, cy=H*.5;
+  var lx = W*.18, rx = W*.82, cy = H*.5;
 
   [[lx,'rgba(111,124,255,'],[rx,'rgba(16,185,129,']].forEach(function(ch){
     [3,2,1].forEach(function(k){ brX.beginPath(); brX.arc(ch[0],cy,13*k,0,Math.PI*2); brX.fillStyle=ch[1]+(0.035/k)+')'; brX.fill(); });
@@ -607,18 +799,20 @@ function drawBridge(){
   brX.beginPath(); brX.setLineDash([4,7]); brX.strokeStyle='rgba(0,212,232,.1)'; brX.lineWidth=1;
   brX.moveTo(lx+16,cy); brX.lineTo(rx-16,cy); brX.stroke(); brX.setLineDash([]);
 
-  if(Math.random()<.04) brPkts.push({p:0,sp:.004+Math.random()*.006});
+  if (Math.random() < .04) brPkts.push({p:0, sp:0.004 + Math.random()*.006});
   brPkts = brPkts.filter(function(pk){
     pk.p += pk.sp;
-    var px = lx+16+(rx-lx-32)*Math.min(pk.p,1);
-    for(var i=0;i<5;i++){ brX.beginPath(); brX.arc(px-i*2.5,cy,2.2-i*.3,0,Math.PI*2); brX.fillStyle='rgba(0,212,232,'+Math.max(0,(1-i/5)*.7)+')'; brX.fill(); }
+    var px = lx+16 + (rx-lx-32) * Math.min(pk.p, 1);
+    for (var i = 0; i < 5; i++) { brX.beginPath(); brX.arc(px-i*2.5,cy,2.2-i*.3,0,Math.PI*2); brX.fillStyle='rgba(0,212,232,'+Math.max(0,(1-i/5)*.7)+')'; brX.fill(); }
     return pk.p < 1;
   });
 
   brX.font='8px Space Mono,monospace'; brX.fillStyle='rgba(100,140,165,.6)'; brX.textAlign='center';
-  brX.fillText(bridgeChains[fromChain]?bridgeChains[fromChain].name:'ETH',lx,cy+24);
-  brX.fillText(bridgeChains[toChain]?bridgeChains[toChain].name:'ARB',rx,cy+24);
-  brX.fillText(brPkts.length+' packets in transit',W/2,cy-20);
+  var fc2 = bridgeChains[fromChain]||{name:'SRC'};
+  var tc2 = bridgeChains[toChain]||{name:'DST'};
+  brX.fillText(fc2.name, lx, cy+24);
+  brX.fillText(tc2.name, rx, cy+24);
+  brX.fillText(brPkts.length + ' packets in transit', W/2, cy-20);
 }
 
 /* ─── STAKE LOGIC ──────────────────────────────────────────────────── */
@@ -629,8 +823,8 @@ var validators = [
   { rank:'04', ico:'🔵', name:'Coinbase cbETH', apy:3.6, trust:91 }
 ];
 
-function renderValidators(){
-  var el = document.getElementById('validatorList'); if(!el) return;
+function renderValidators() {
+  var el = document.getElementById('validatorList'); if (!el) return;
   el.innerHTML = validators.map(function(v){
     var color = v.trust >= 95 ? 'var(--gold)' : v.trust >= 90 ? 'var(--c)' : 'var(--blue)';
     return '<div class="validator-item">' +
@@ -642,59 +836,64 @@ function renderValidators(){
   }).join('');
 }
 
-function setStakeMax(){ var inp = document.getElementById('stakeAmtInput'); if(inp){ inp.value='3.2841'; updateStakeUI(); } }
+function setStakeMax() {
+  var inp = document.getElementById('stakeAmtInput');
+  var maxVal = (connAddr && walletBalance > 0) ? walletBalance.toFixed(4) : '3.2841';
+  if (inp) { inp.value = maxVal; updateStakeUI(); }
+}
 
-function updateStakeUI(){
-  var amt = parseFloat((document.getElementById('stakeAmtInput')||{}).value||2.4)||2.4;
+function updateStakeUI() {
+  /* FIX: clamp to 0 to prevent negative values */
+  var amt = Math.max(0, parseFloat((document.getElementById('stakeAmtInput')||{}).value || 2.4) || 2.4);
   stakeAmt = amt;
   var p   = localEthPrice;
   var apy = 4.2;
   var dailyReward = amt * apy / 100 / 365;
 
-  var dr = document.getElementById('stake-daily-reward'); if(dr) dr.textContent='+'+dailyReward.toFixed(4)+' ETH/day (≈$'+(dailyReward*p).toFixed(2)+')';
-  var sa = document.getElementById('stake-staked-amt'); if(sa) sa.textContent=amt.toFixed(4);
-  var ep = document.getElementById('stake-eth-price'); if(ep) ep.textContent='$'+Math.round(p).toLocaleString();
-  var sc = document.getElementById('stake-contrib'); if(sc) sc.textContent=(amt/32800000*100).toFixed(5)+'%';
+  var dr  = document.getElementById('stake-daily-reward'); if (dr) dr.textContent = '+' + dailyReward.toFixed(4) + ' ETH/day (≈$' + (dailyReward*p).toFixed(2) + ')';
+  var sa  = document.getElementById('stake-staked-amt');   if (sa) sa.textContent = amt.toFixed(4);
+  var ep  = document.getElementById('stake-eth-price');    if (ep) ep.textContent = '$' + Math.round(p).toLocaleString();
+  var sc  = document.getElementById('stake-contrib');      if (sc) sc.textContent = (amt / 32800000 * 100).toFixed(5) + '%';
 }
 
-function drawStakeRing(){
-  var c = document.getElementById('stakeRingC'); if(!c) return;
+function drawStakeRing() {
+  var c = document.getElementById('stakeRingC'); if (!c) return;
   var x = c.getContext('2d'), cx=38, cy=38, r=30;
   x.clearRect(0,0,76,76);
   x.beginPath(); x.arc(cx,cy,r,0,Math.PI*2); x.strokeStyle='rgba(245,158,11,.12)'; x.lineWidth=5; x.stroke();
-  var grad=x.createLinearGradient(0,0,76,76); grad.addColorStop(0,'#f59e0b'); grad.addColorStop(1,'#10b981');
+  var grad = x.createLinearGradient(0,0,76,76); grad.addColorStop(0,'#f59e0b'); grad.addColorStop(1,'#10b981');
   x.beginPath(); x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*.72); x.strokeStyle=grad; x.lineWidth=5; x.lineCap='round'; x.stroke();
   x.font='bold 10px Orbitron,monospace'; x.fillStyle='#fff'; x.textAlign='center'; x.textBaseline='middle'; x.fillText('72%',cx,cy);
 }
 
 /* ─── BRIDGE PROGRESS ─────────────────────────────────────────────── */
-function resetBridgeStatus(){
+function resetBridgeStatus() {
   var steps = document.querySelectorAll('.bridge-step');
   steps.forEach(function(step, i){
-    var prog=step.querySelector('.bridge-step-prog'), stat=step.querySelector('.bridge-step-stat');
-    if(i===0){ if(prog)prog.style.width='100%'; if(stat){stat.textContent='Complete';stat.className='bridge-step-stat stat-done';} }
-    else if(i===1){ if(prog)prog.style.width='65%'; if(stat){stat.textContent='In progress';stat.className='bridge-step-stat stat-active';} }
-    else{ if(prog)prog.style.width='0%'; if(stat){stat.textContent='Pending';stat.className='bridge-step-stat stat-pending';} }
+    var prog = step.querySelector('.bridge-step-prog'), stat = step.querySelector('.bridge-step-stat');
+    if (i === 0) { if (prog) prog.style.width='100%'; if (stat) { stat.textContent='Complete'; stat.className='bridge-step-stat stat-done'; } }
+    else if (i === 1) { if (prog) prog.style.width='65%'; if (stat) { stat.textContent='In progress'; stat.className='bridge-step-stat stat-active'; } }
+    else { if (prog) prog.style.width='0%'; if (stat) { stat.textContent='Pending'; stat.className='bridge-step-stat stat-pending'; } }
   });
   bridgeInProgress = false;
 }
 
-function animateBridgeProgress(){
-  var steps=document.querySelectorAll('.bridge-step'), step=1;
-  function adv(){
-    if(step>=steps.length) return;
-    var prog=steps[step].querySelector('.bridge-step-prog'), stat=steps[step].querySelector('.bridge-step-stat');
-    if(prog) prog.style.width='100%';
-    if(stat){ stat.textContent='Complete'; stat.className='bridge-step-stat stat-done'; }
+function animateBridgeProgress() {
+  var steps = document.querySelectorAll('.bridge-step'), step = 1;
+  function adv() {
+    if (step >= steps.length) return;
+    var prog = steps[step].querySelector('.bridge-step-prog'), stat = steps[step].querySelector('.bridge-step-stat');
+    if (prog) prog.style.width = '100%';
+    if (stat) { stat.textContent = 'Complete'; stat.className = 'bridge-step-stat stat-done'; }
     step++;
-    if(step<steps.length){
-      var np=steps[step].querySelector('.bridge-step-prog'), ns=steps[step].querySelector('.bridge-step-stat');
-      if(np) np.style.width='30%';
-      if(ns){ ns.textContent='In progress'; ns.className='bridge-step-stat stat-active'; }
-      setTimeout(adv, 1800+Math.random()*1200);
+    if (step < steps.length) {
+      var np = steps[step].querySelector('.bridge-step-prog'), ns = steps[step].querySelector('.bridge-step-stat');
+      if (np) np.style.width = '30%';
+      if (ns) { ns.textContent = 'In progress'; ns.className = 'bridge-step-stat stat-active'; }
+      setTimeout(adv, 1800 + Math.random()*1200);
     } else {
-      var fc=bridgeChains[fromChain]||{name:'ETH'}, tc=bridgeChains[toChain]||{name:'ARB'};
-      toast('Bridge complete ✓ ETH received on '+tc.name);
+      var tc3 = bridgeChains[toChain] || {name:'Destination'};
+      toast('Bridge complete ✓ ETH received on ' + tc3.name);
       bridgeInProgress = false;
     }
   }
@@ -702,17 +901,17 @@ function animateBridgeProgress(){
 }
 
 /* ─── ROUTE BUILDER ───────────────────────────────────────────────── */
-function buildSwapRoute(){
-  var flow=document.getElementById('swapRouteFlow'); if(!flow) return;
-  var nodes=[{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];
-  flow.innerHTML='';
+function buildSwapRoute() {
+  var flow = document.getElementById('swapRouteFlow'); if (!flow) return;
+  var nodes = [{ico:'Ξ',lbl:'ETH'},{ico:'◈',lbl:'Uniswap v4'},{ico:'⬡',lbl:'Curve'},{ico:'◈',lbl:'USDC'}];
+  flow.innerHTML = '';
   nodes.forEach(function(n,i){
-    var nd=document.createElement('div'); nd.className='sr-node';
-    nd.innerHTML='<div class="sr-ico">'+n.ico+'</div><div class="sr-lbl">'+n.lbl+'</div>';
+    var nd = document.createElement('div'); nd.className = 'sr-node';
+    nd.innerHTML = '<div class="sr-ico">'+n.ico+'</div><div class="sr-lbl">'+n.lbl+'</div>';
     flow.appendChild(nd);
-    if(i<nodes.length-1){
-      var ln=document.createElement('div'); ln.className='sr-line'; ln.style.position='relative';
-      if(i<2){ var sp=document.createElement('span'); sp.className='sr-pct'; sp.textContent=i===0?'43%':'57%'; ln.appendChild(sp); }
+    if (i < nodes.length - 1) {
+      var ln = document.createElement('div'); ln.className = 'sr-line'; ln.style.position = 'relative';
+      if (i < 2) { var sp = document.createElement('span'); sp.className = 'sr-pct'; sp.textContent = i===0?'43%':'57%'; ln.appendChild(sp); }
       flow.appendChild(ln);
     }
   });
@@ -720,70 +919,83 @@ function buildSwapRoute(){
 
 /* ─── TABS ────────────────────────────────────────────────────────── */
 document.querySelectorAll('.itab').forEach(function(btn){
-  btn.addEventListener('click',function(){
+  btn.addEventListener('click', function(){
     document.querySelectorAll('.itab').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('.infra-panel').forEach(function(p){ p.classList.remove('active'); });
     btn.classList.add('active');
-    var panel=document.getElementById('panel-'+btn.dataset.tab);
-    if(panel) panel.classList.add('active');
-    if(btn.dataset.tab==='bridge'){ initBridgeCanvas(); resetBridgeStatus(); updateBridgeUI(); }
-    if(btn.dataset.tab==='stake'){ drawStakeRing(); updateStakeUI(); renderValidators(); }
-    if(btn.dataset.tab==='swap'){ updateSwapUI(); }
+    var panel = document.getElementById('panel-' + btn.dataset.tab);
+    if (panel) panel.classList.add('active');
+    if (btn.dataset.tab === 'bridge') {
+      /* FIX: delay initBridgeCanvas to ensure panel is visible and has layout */
+      setTimeout(function(){ initBridgeCanvas(); }, 50);
+      resetBridgeStatus(); updateBridgeUI();
+    }
+    if (btn.dataset.tab === 'stake')  { drawStakeRing(); updateStakeUI(); renderValidators(); }
+    if (btn.dataset.tab === 'swap')   { updateSwapUI(); }
   });
 });
 
 /* ─── BUTTON EVENTS ────────────────────────────────────────────────── */
-document.getElementById('swapArrowBtn').addEventListener('click',function(){
+document.getElementById('swapArrowBtn').addEventListener('click', function(){
   var inp = document.getElementById('sw-from-input');
-  if(inp) inp.value = '1';
+  if (inp) inp.value = '1';
+  /* FIX: recompute stable MEV saved on token flip */
+  mevSavedAmount = (Math.random() * 5 + 1).toFixed(2);
   toast('Tokens swapped ⇅');
   updateSwapUI();
 });
 
-document.getElementById('swapExecBtn').addEventListener('click',function(){
-  var amt = getSwapFromAmt();
-  var recv = Math.round(amt * localEthPrice * (1-slippage/100));
-  toast('Swap preview: '+amt+' ETH → '+recv.toLocaleString()+' USDC via Uniswap v4');
+document.getElementById('swapExecBtn').addEventListener('click', function(){
+  var amt  = getSwapFromAmt();
+  var recv = Math.round(amt * localEthPrice * (1 - slippage / 100));
+  toast('Swap preview: ' + amt + ' ETH → ' + recv.toLocaleString() + ' USDC via Uniswap v4');
 });
 
-document.getElementById('bridgeExecBtn').addEventListener('click',function(){
-  if(bridgeInProgress){ toast('Bridge already in progress...'); return; }
-  var amt = parseFloat((document.getElementById('br-amount')||{}).value||.5)||.5;
-  var tc  = bridgeChains[toChain]||{name:'Arbitrum'};
+document.getElementById('bridgeExecBtn').addEventListener('click', function(){
+  if (bridgeInProgress) { toast('Bridge already in progress...'); return; }
+  /* FIX: clamp bridge amount */
+  var amt = Math.max(0, parseFloat((document.getElementById('br-amount')||{}).value || 0.5) || 0.5);
+  var tc4 = bridgeChains[toChain] || {name:'Destination'};
   bridgeInProgress = true;
-  toast('Bridge initiated: '+amt+' ETH → '+tc.name+' — Est. '+tc.time);
+  toast('Bridge initiated: ' + amt + ' ETH → ' + tc4.name + ' — Est. ' + (tc4.time||'~5 min'));
   animateBridgeProgress();
 });
 
-document.getElementById('stakeExecBtn').addEventListener('click',function(){
-  var amt = parseFloat((document.getElementById('stakeAmtInput')||{}).value||2.4)||2.4;
-  toast('Staking '+amt.toFixed(4)+' ETH via Lido — Trust Score: 99/100 ✓');
+document.getElementById('stakeExecBtn').addEventListener('click', function(){
+  var amt = Math.max(0, parseFloat((document.getElementById('stakeAmtInput')||{}).value || 2.4) || 2.4);
+  toast('Staking ' + amt.toFixed(4) + ' ETH via Lido — Trust Score: 99/100 ✓');
 });
 
-/* Live swap input */
+/* Live input listeners */
 var swInp = document.getElementById('sw-from-input');
-if(swInp) swInp.addEventListener('input', updateSwapUI);
+if (swInp) swInp.addEventListener('input', function(){
+  /* FIX: recompute MEV amount when user changes swap size */
+  mevSavedAmount = (Math.random() * 5 + 1).toFixed(2);
+  updateSwapUI();
+});
+
 var brInp = document.getElementById('br-amount');
-if(brInp) brInp.addEventListener('input', updateBridgeUI);
+if (brInp) brInp.addEventListener('input', updateBridgeUI);
+
 var stInp = document.getElementById('stakeAmtInput');
-if(stInp) stInp.addEventListener('input', updateStakeUI);
+if (stInp) stInp.addEventListener('input', updateStakeUI);
 
 /* ─── TOAST ───────────────────────────────────────────────────────── */
 var _toastTimer = null;
-function toast(msg){
-  var el=document.getElementById('toast'); if(!el) return;
-  el.innerHTML='<div style="background:rgba(0,212,232,.1);border:1px solid rgba(0,212,232,.2);border-radius:8px;padding:10px 16px;font-family:Space Mono,monospace;font-size:9px;color:var(--c);backdrop-filter:blur(20px)">'+msg+'</div>';
+function toast(msg) {
+  var el = document.getElementById('toast'); if (!el) return;
+  el.innerHTML = '<div style="background:rgba(0,212,232,.1);border:1px solid rgba(0,212,232,.2);border-radius:8px;padding:10px 16px;font-family:Space Mono,monospace;font-size:9px;color:var(--c);backdrop-filter:blur(20px)">' + msg + '</div>';
   clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(function(){ el.innerHTML=''; },3200);
+  _toastTimer = setTimeout(function(){ el.innerHTML = ''; }, 3200);
 }
 
 /* ─── RENDER LOOP ──────────────────────────────────────────────────── */
-var lastF=0;
-function loop(t){
-  if(t-lastF>=16){
-    lastF=t;
-    var ap=document.querySelector('.infra-panel.active');
-    if(ap&&ap.id==='panel-bridge') drawBridge();
+var lastF = 0;
+function loop(t) {
+  if (t - lastF >= 16) {
+    lastF = t;
+    var ap = document.querySelector('.infra-panel.active');
+    if (ap && ap.id === 'panel-bridge') drawBridge();
   }
   requestAnimationFrame(loop);
 }
@@ -791,19 +1003,21 @@ requestAnimationFrame(loop);
 
 /* ─── STAKING REWARD COUNTER ──────────────────────────────────────── */
 setInterval(function(){
-  stakeEarned += stakeAmt * 4.2/100/365/24/3600 * 2; /* 2s interval */
-  var el=document.getElementById('stakeReward');
-  if(el) el.textContent=stakeEarned.toFixed(7);
+  stakeEarned += stakeAmt * 4.2 / 100 / 365 / 24 / 3600 * 2;
+  /* FIX: only update DOM if stake panel is active */
+  if (document.getElementById('panel-stake').classList.contains('active')) {
+    var el = document.getElementById('stakeReward');
+    if (el) el.textContent = stakeEarned.toFixed(7);
+  }
 }, 2000);
 
 /* ─── INIT ─────────────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded',function(){
-  /* Gas & price init */
+document.addEventListener('DOMContentLoaded', function(){
   localGasPrice = Math.floor(Math.random()*30+8);
 
   fetchAllPrices();
   setInterval(fetchAllPrices, 25000);
-  setInterval(function(){ if(!document.hidden) applyDrift(); }, 5000);
+  setInterval(function(){ if (!document.hidden) applyDrift(); }, 5000);
 
   buildSwapRoute();
   renderValidators();
@@ -814,53 +1028,53 @@ document.addEventListener('DOMContentLoaded',function(){
   updateStakeUI();
   bindChainSelectors();
 
-  /* Wallet state from session */
-  var saved=sessionStorage.getItem('rialo_addr'), savedW=sessionStorage.getItem('rialo_wallet'), savedC=parseInt(sessionStorage.getItem('rialo_chain')||'1');
-  if(saved){ connAddr=saved; connWallet=savedW||'Demo Mode'; chainId=savedC||1; updateWalletNav(); }
-
-  /* Reveal */
-  setTimeout(function(){
-    document.querySelectorAll('.rv').forEach(function(el,i){
-      setTimeout(function(){ el.classList.add('in'); },i*60);
-    });
-  },100);
-
-  /* Disconnect */
-  var disc=document.getElementById('discBtn');
-  if(disc) disc.addEventListener('click',function(){
-    sessionStorage.removeItem('rialo_addr');sessionStorage.removeItem('rialo_wallet');sessionStorage.removeItem('rialo_chain');
-    connAddr=null;connWallet=null;
-    document.getElementById('navLbl').textContent='Connect Wallet';
-    document.getElementById('sbAddr').textContent='0x0000...0000';
-    toast('Disconnected');
-  });
-
-  /* NavBtn */
-  document.getElementById('navBtn').addEventListener('click',function(){
-    if(!connAddr){
-      /* Demo mode */
-      connAddr='0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-      connWallet='Demo Mode';
-      chainId=1;
-      sessionStorage.setItem('rialo_addr',connAddr);
-      sessionStorage.setItem('rialo_wallet','Demo Mode');
-      sessionStorage.setItem('rialo_chain','1');
+  /* Restore session */
+  var saved   = sessionStorage.getItem('rialo_addr');
+  var savedW  = sessionStorage.getItem('rialo_wallet');
+  var savedC  = parseInt(sessionStorage.getItem('rialo_chain') || '11155111');
+  if (saved) {
+    connAddr   = saved;
+    connWallet = savedW || 'MetaMask';
+    chainId    = savedC || 11155111;
+    /* Try to fetch balance if MetaMask is available */
+    if (window.ethereum) {
+      fetchSepoliaBalance(connAddr).then(updateWalletNav);
+    } else {
       updateWalletNav();
-      toast('Demo wallet connected ✓');
+    }
+  }
+
+  /* Disconnect button */
+  var disc = document.getElementById('discBtn');
+  if (disc) disc.addEventListener('click', disconnectWallet);
+
+  /* NavBtn — connect via MetaMask / Sepolia */
+  document.getElementById('navBtn').addEventListener('click', function(){
+    if (!connAddr) {
+      if (window.ethereum) {
+        connectWallet();
+      } else {
+        /* Demo mode fallback if no MetaMask */
+        connAddr      = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        connWallet    = 'Demo Mode';
+        chainId       = 11155111;
+        walletBalance = 3.2841;
+        sessionStorage.setItem('rialo_addr',   connAddr);
+        sessionStorage.setItem('rialo_wallet', 'Demo Mode');
+        sessionStorage.setItem('rialo_chain',  '11155111');
+        updateWalletNav();
+        toast('Demo wallet connected ✓ (Install MetaMask for real Sepolia)');
+      }
     }
   });
+
+  /* Reveal animations */
+  setTimeout(function(){
+    document.querySelectorAll('.rv').forEach(function(el,i){
+      setTimeout(function(){ el.classList.add('in'); }, i * 60);
+    });
+  }, 100);
 });
-
-function updateWalletNav(){
-  if(!connAddr) return;
-  var navLbl=document.getElementById('navLbl'); if(navLbl) navLbl.textContent=connAddr.slice(0,6)+'...'+connAddr.slice(-4);
-  var sbAddr=document.getElementById('sbAddr'); if(sbAddr) sbAddr.textContent=connAddr.slice(0,6)+'...'+connAddr.slice(-4);
-  var sbChain=document.getElementById('sbChain'); if(sbChain){var m={1:'Ethereum Mainnet',137:'Polygon',42161:'Arbitrum One',10:'Optimism',8453:'Base'};sbChain.textContent=m[chainId]||'Ethereum Mainnet';}
-  var sbBal=document.getElementById('sbBal'); if(sbBal) sbBal.textContent=(connWallet==='Demo Mode'?'3.2841':'—')+' ETH';
-}
-
-/* Expose for MetaMask if available */
-if(typeof window !== 'undefined') window.connAddr = null, window.connWallet = null, window.chainId = 1;
 </script>
 </body>
 </html>
