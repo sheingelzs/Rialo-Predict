@@ -9,8 +9,12 @@
   --grain-opacity:0.032;
 }
 html,body{width:100%;min-height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
-body{cursor:none;overflow-x:hidden}
-@media(hover:none),(pointer:coarse){body{cursor:auto}}
+body{overflow-x:hidden}
+
+/* FIX: cursor:none only on true pointer devices — not touch, not coarse */
+@media(hover:hover) and (pointer:fine){
+  body{cursor:none}
+}
 
 /* ── GRAIN OVERLAY ── */
 body::before{
@@ -44,7 +48,7 @@ body::after{
   -webkit-mask-image:radial-gradient(ellipse 110% 110% at 50% 50%,black 10%,transparent 75%);
 }
 
-/* ── CUSTOM CURSOR ── */
+/* ── CUSTOM CURSOR — only active on pointer:fine devices ── */
 #CUR,#CUR2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
 #CUR{
   width:6px;height:6px;
@@ -62,7 +66,8 @@ body.chl #CUR{width:8px;height:8px;background:#fff;box-shadow:0 0 20px var(--c),
 body.chl #CUR2{width:50px;height:50px;border-color:rgba(0,212,232,0.5);background:rgba(0,212,232,0.04)}
 body.cclick #CUR{width:3px;height:3px;opacity:.6}
 body.cclick #CUR2{width:16px;height:16px;opacity:.4}
-@media(hover:none){#CUR,#CUR2{display:none}}
+/* FIX: hide cursor elements on all non-fine-pointer devices */
+@media(hover:none),(pointer:coarse){#CUR,#CUR2{display:none}}
 
 /* ── CURSOR TRAIL ── */
 .cur-trail{
@@ -72,6 +77,8 @@ body.cclick #CUR2{width:16px;height:16px;opacity:.4}
   transition:opacity .6s;
   will-change:transform,opacity;
 }
+/* Hide trail on touch/coarse devices */
+@media(hover:none),(pointer:coarse){.cur-trail{display:none}}
 
 /* ── ATMOSPHERE ── */
 #atmo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 2.4s ease}
@@ -129,10 +136,12 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 
 .nlogo{
   font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:.42em;color:#fff;
-  display:flex;align-items:center;gap:11px;cursor:none;user-select:none;flex-shrink:0;
+  display:flex;align-items:center;gap:11px;user-select:none;flex-shrink:0;
   text-decoration:none;text-shadow:0 0 40px rgba(0,212,232,0.18);
   transition:letter-spacing .3s var(--ease);
 }
+/* FIX: cursor:none only where custom cursor is active */
+@media(hover:hover) and (pointer:fine){.nlogo{cursor:none}}
 .nlogo:hover{letter-spacing:.5em}
 .npulse{
   width:7px;height:7px;border-radius:50%;background:var(--c);
@@ -149,9 +158,11 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
   display:flex;align-items:center;height:var(--nav-h);
   padding:0 14px;font-size:7.5px;font-family:'Space Mono',monospace;
   letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);
-  text-decoration:none;cursor:none;position:relative;
+  text-decoration:none;position:relative;
   border-right:1px solid var(--border);transition:color .2s;white-space:nowrap;
 }
+/* FIX: cursor:none only on fine pointer */
+@media(hover:hover) and (pointer:fine){.nlinks a{cursor:none}}
 .nlinks a::after{
   content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;
   background:var(--c);box-shadow:0 0 10px var(--c);
@@ -166,7 +177,8 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 .nchain.on{display:flex}
 .nc-dot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 1.8s ease infinite}
 
-.ham{display:none;flex-direction:column;gap:5px;cursor:none;padding:9px;background:rgba(0,8,20,0.7);border:1px solid rgba(0,212,232,0.13);border-radius:2px;margin-left:5px;backdrop-filter:blur(14px)}
+.ham{display:none;flex-direction:column;gap:5px;padding:9px;background:rgba(0,8,20,0.7);border:1px solid rgba(0,212,232,0.13);border-radius:2px;margin-left:5px;backdrop-filter:blur(14px)}
+@media(hover:hover) and (pointer:fine){.ham{cursor:none}}
 .ham span{width:18px;height:1px;background:var(--txt2);transition:all .28s var(--ease);display:block}
 .ham.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}.ham.open span:nth-child(2){opacity:0;transform:scaleX(0)}.ham.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 @media(max-width:940px){
@@ -179,17 +191,19 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
   position:relative;padding:11px 24px;
   border:1px solid var(--c);background:transparent;color:var(--c);
   font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
-  cursor:none;border-radius:2px;overflow:hidden;
+  border-radius:2px;overflow:hidden;
   transition:color .25s,box-shadow .25s,transform .12s;white-space:nowrap;
   -webkit-tap-highlight-color:transparent;
   box-shadow:0 0 24px rgba(0,212,232,0.06),inset 0 0 12px rgba(0,212,232,0.03);
 }
+@media(hover:hover) and (pointer:fine){.btn{cursor:none}}
 .btn::before{
   content:'';position:absolute;inset:0;
   background:linear-gradient(135deg,var(--c) 0%,rgba(0,180,200,0.85) 100%);
   transform:scaleX(0);transform-origin:left;
   transition:transform .3s var(--ease);z-index:0;
 }
+/* FIX: btn::after is only for shine — spinner uses a <span> injected by JS, not ::after */
 .btn::after{
   content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
@@ -206,18 +220,28 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
   padding:11px 20px;background:none;
   border:1px solid rgba(255,255,255,0.10);color:rgba(255,255,255,0.38);
   font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
-  cursor:none;border-radius:2px;transition:all .24s;white-space:nowrap;
+  border-radius:2px;transition:all .24s;white-space:nowrap;
 }
+@media(hover:hover) and (pointer:fine){.btn-ghost{cursor:none}}
 .btn-ghost:hover{border-color:rgba(255,255,255,0.28);color:rgba(255,255,255,0.78)}
 .btn-ghost:active{transform:scale(.96)}
 .btn-ghost.alt{border-color:rgba(0,212,232,0.2);color:var(--c)}.btn-ghost.alt:hover{border-color:rgba(0,212,232,0.45);color:var(--c);box-shadow:0 0 24px rgba(0,212,232,0.1)}
 .btn-sm{padding:7px 14px;font-size:7.5px}
-@media(hover:none){.btn,.btn-ghost{cursor:pointer}}
+/* Allow real cursor on touch */
+@media(hover:none),(pointer:coarse){.btn,.btn-ghost{cursor:pointer}}
 .btn-ripple{position:absolute;border-radius:50%;background:rgba(0,212,232,0.30);transform:scale(0);animation:rippleAnim .6s ease-out forwards;pointer-events:none;z-index:10}
 @keyframes rippleAnim{to{transform:scale(4);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* FIX: btn-loading spinner uses ::before so it doesn't conflict with ::after (shine) */
 .btn-loading span{opacity:0!important}
-.btn-loading::after{content:'';position:absolute;inset:0;width:14px;height:14px;border:1.5px solid rgba(0,212,232,0.25);border-top-color:var(--c);border-radius:50%;animation:spin .6s linear infinite;margin:auto;z-index:2}
+.btn-loading::before{
+  content:'';position:absolute;inset:0;
+  width:14px;height:14px;
+  border:1.5px solid rgba(0,212,232,0.25);border-top-color:var(--c);
+  border-radius:50%;animation:spin .6s linear infinite;
+  margin:auto;z-index:2;
+  background:none!important;transform:none!important;transform-origin:center;
+}
 
 /* ── PAGE WRAPPER ── */
 .page{position:relative;z-index:10;min-height:calc(100vh - var(--nav-h));margin-top:var(--nav-h);overflow-x:hidden}
@@ -271,24 +295,29 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 .sb-disc{
   padding:4px 12px;background:none;border:1px solid rgba(255,40,40,0.16);
   color:rgba(255,80,80,0.55);font-family:'Space Mono',monospace;font-size:7px;
-  letter-spacing:.1em;text-transform:uppercase;cursor:none;border-radius:1px;
+  letter-spacing:.1em;text-transform:uppercase;border-radius:1px;
   transition:all .2s;white-space:nowrap;
 }
+@media(hover:hover) and (pointer:fine){.sb-disc{cursor:none}}
+@media(hover:none),(pointer:coarse){.sb-disc{cursor:pointer}}
 .sb-disc:hover{background:rgba(255,30,30,0.07);border-color:rgba(255,60,60,0.32)}
 
 /* ── TOAST ── */
+/* FIX: offset toast above sbar when wallet is connected */
 #toast{
-  position:fixed;bottom:54px;right:20px;z-index:900;
+  position:fixed;bottom:14px;right:20px;z-index:900;
   background:rgba(1,6,20,0.99);
   border:1px solid rgba(0,212,232,0.22);
   border-radius:2px;padding:11px 16px;
   font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);
   max-width:290px;transform:translateY(10px) scale(.97);opacity:0;
-  transition:transform .3s var(--ease2),opacity .3s;pointer-events:none;
+  transition:transform .3s var(--ease2),opacity .3s,bottom .3s var(--ease);pointer-events:none;
   box-shadow:0 20px 60px rgba(0,0,0,0.85),0 0 30px rgba(0,212,232,0.06);
   backdrop-filter:blur(24px);word-break:break-word;
 }
 #toast.on{transform:translateY(0) scale(1);opacity:1}
+/* When sbar is visible, lift toast above it */
+body.has-sbar #toast{bottom:48px}
 .tdot{width:4px;height:4px;border-radius:50%;background:var(--c);display:inline-block;margin-right:7px;box-shadow:0 0 5px var(--c);vertical-align:middle}
 
 /* ── WALLET MODAL ── */
@@ -314,17 +343,21 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 .wm-head{padding:24px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 .wm-title{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:.06em;color:#fff;margin-bottom:3px}
 .wm-sub{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);letter-spacing:.1em}
-.wm-x{width:28px;height:28px;background:none;border:1px solid var(--border);color:var(--txt2);cursor:none;font-size:11px;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:all .2s;flex-shrink:0;line-height:1}
+.wm-x{width:28px;height:28px;background:none;border:1px solid var(--border);color:var(--txt2);font-size:11px;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:all .2s;flex-shrink:0;line-height:1}
+@media(hover:hover) and (pointer:fine){.wm-x{cursor:none}}
+@media(hover:none),(pointer:coarse){.wm-x{cursor:pointer}}
 .wm-x:hover{border-color:rgba(255,60,60,0.36);color:rgba(255,90,90,0.9);background:rgba(255,30,30,0.06)}
 .wm-body{padding:20px 24px 24px}
 .wm-lbl{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2);opacity:.5;margin-bottom:12px}
 .wo{
   display:flex;align-items:center;gap:13px;padding:13px 15px;
   border:1px solid var(--border);border-radius:2px;
-  background:rgba(0,5,16,0.55);cursor:none;
+  background:rgba(0,5,16,0.55);
   transition:all .28s cubic-bezier(0.22,1,0.36,1);margin-bottom:7px;
   position:relative;overflow:hidden;
 }
+@media(hover:hover) and (pointer:fine){.wo{cursor:none}}
+@media(hover:none),(pointer:coarse){.wo{cursor:pointer}}
 .wo::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--c);opacity:0;transition:opacity .2s}
 .wo::after{content:'';position:absolute;top:0;left:-100%;right:100%;bottom:0;background:linear-gradient(90deg,transparent,rgba(0,212,232,0.04),transparent);transition:left .4s var(--ease),right .4s var(--ease)}
 .wo:hover{border-color:rgba(0,212,232,0.26);background:rgba(0,212,232,0.055);transform:translateX(4px)}
@@ -376,10 +409,12 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 .scan-cta{
   display:none;padding:13px 30px;background:var(--c);border:none;color:#000;
   font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  cursor:none;border-radius:2px;
+  border-radius:2px;
   transition:box-shadow .28s,transform .12s;
   box-shadow:0 0 36px rgba(0,212,232,0.38),0 6px 24px rgba(0,0,0,0.5);
 }
+@media(hover:hover) and (pointer:fine){.scan-cta{cursor:none}}
+@media(hover:none),(pointer:coarse){.scan-cta{cursor:pointer}}
 .scan-cta.in{display:inline-block;animation:fadeUp .48s var(--ease2) both,ctaPulse 2s ease .6s infinite}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes ctaPulse{0%,100%{box-shadow:0 0 24px rgba(0,212,232,0.4)}50%{box-shadow:0 0 48px rgba(0,212,232,0.75),0 0 70px rgba(0,212,232,0.22)}}
@@ -429,6 +464,14 @@ nav.bullish{border-bottom-color:rgba(0,232,122,0.13)}
 .loader-fill{height:100%;background:linear-gradient(to right,var(--c),rgba(180,100,255,0.8));width:0%;box-shadow:0 0 10px var(--c);transition:width .05s linear}
 .loader-txt{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt2);opacity:.6}
 
+/* ── FIX: ticker offset when sbar active ── */
+.ticker{
+  position:fixed;bottom:0;left:0;right:0;
+  transition:bottom .3s var(--ease),border-color .8s;
+}
+body.has-sbar .ticker{bottom:40px}
+
 /* ── MOBILE ── */
 @media(max-width:768px){.wgrid{grid-template-columns:1fr!important}nav{padding:0 16px}.inner{padding:16px 14px 80px!important}}
 @media(max-width:600px){#sbar{padding:6px 16px}.sb-chain,.sb-bal,.sb-market{display:none}}
+             
