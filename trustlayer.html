@@ -8,8 +8,22 @@
 <link rel="stylesheet" href="shared.css">
 <style>
 /* ── TRUSTLAYER PAGE STYLES ── */
-.tl-page{position:relative;z-index:10;margin-top:var(--nav-h);overflow-x:hidden}
-.tl-inner{max-width:1060px;margin:0 auto;padding:40px 28px 120px}
+/* FIX: page-wrapper scrollable, isi bisa di-scroll dengan benar */
+.tl-page{
+  position:fixed;
+  inset:0;
+  top:var(--nav-h);
+  bottom:48px; /* ruang untuk sbar */
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:10;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,200,224,0.12) transparent;
+}
+.tl-page::-webkit-scrollbar{width:2px}
+.tl-page::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.15)}
+
+.tl-inner{max-width:1060px;margin:0 auto;padding:40px 28px 100px}
 
 /* Feature grid */
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
@@ -93,11 +107,23 @@
 .eco-head{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .eco-head-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2);flex:1}
 .eco-filter{display:flex;gap:4px}
-.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:none;transition:all .18s;-webkit-tap-highlight-color:transparent}
-@media(hover:none),(pointer:coarse){.eco-fbtn{cursor:pointer}}
+.eco-fbtn{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border);border-radius:1px;color:var(--txt2);background:none;cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent}
 .eco-fbtn.active,.eco-fbtn:hover{border-color:rgba(0,200,224,0.22);color:var(--c);background:rgba(0,200,224,0.04)}
-.eco-stream{max-height:280px;overflow:hidden;position:relative}
-.eco-stream::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,rgba(2,7,16,0.92),transparent);pointer-events:none;z-index:1}
+
+/* FIX: eco-stream — hapus overflow:hidden agar bisa scroll, gunakan max-height + overflow-y */
+.eco-stream{
+  max-height:280px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  position:relative;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,200,224,0.08) transparent;
+}
+.eco-stream::-webkit-scrollbar{width:2px}
+.eco-stream::-webkit-scrollbar-thumb{background:rgba(0,200,224,0.12)}
+/* FIX: hapus ::after fade overlay yang memblokir scroll visual */
+.eco-stream::after{content:none}
+
 .eco-item{display:flex;align-items:center;gap:9px;padding:8px 16px;border-bottom:1px solid var(--border);animation:ecoIn .35s var(--ease2) both}
 .eco-item:last-child{border-bottom:none}
 @keyframes ecoIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
@@ -119,14 +145,13 @@
 .p-body{font-size:11px;color:var(--txt);line-height:1.85;margin-bottom:13px}
 .p-code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:2px;padding:8px 11px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(0,200,224,0.42);margin-bottom:14px;overflow-x:auto}
 .p-acts{display:flex;gap:7px}
-.p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:none;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
+.p-deny{flex:1;padding:10px;background:rgba(255,50,50,0.04);border:1px solid rgba(255,50,50,0.13);color:rgba(255,85,85,0.58);border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;cursor:pointer;letter-spacing:.09em;transition:all .18s;text-transform:uppercase}
 .p-deny:hover{background:rgba(255,50,50,0.08);border-color:rgba(255,70,70,0.28)}
-.p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:none;letter-spacing:.09em;transition:box-shadow .22s,transform .1s,background .3s;text-transform:uppercase;position:relative;overflow:hidden}
+.p-approve{flex:2;padding:10px;background:var(--c);border:none;color:#000;border-radius:2px;font-family:'Space Mono',monospace;font-size:7.5px;font-weight:700;cursor:pointer;letter-spacing:.09em;transition:box-shadow .22s,transform .1s,background .3s;text-transform:uppercase;position:relative;overflow:hidden}
 .p-approve:hover{box-shadow:0 0 24px rgba(0,200,224,0.45)}
 .p-approve::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.2),transparent);transform:translateX(-100%) skewX(-15deg);pointer-events:none}
 .p-approve:hover::after{animation:shimmer .65s ease forwards}
 @keyframes shimmer{to{transform:translateX(300%) skewX(-15deg)}}
-@media(hover:none),(pointer:coarse){.p-deny,.p-approve{cursor:pointer}}
 
 /* Gov panel */
 .gov-panel{background:rgba(1,6,18,0.70);border:1px solid rgba(0,200,224,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;backdrop-filter:blur(20px)}
@@ -265,6 +290,7 @@
           <button class="eco-fbtn" data-ft="deploy">Deploy</button>
         </div>
       </div>
+      <!-- FIX: eco-stream sekarang overflow-y:auto, bisa di-scroll -->
       <div class="eco-stream" id="ecoStream"></div>
     </div>
 
@@ -304,10 +330,8 @@
 <script src="shared.js"></script>
 <script>
 /* ─── LOCAL STATE ───────────────────────────────────────────────────
-   FIX: removed "var gasPrice = 14" — gasPrice is a global from shared.js.
-   Redeclaring it with var created a local shadow that never received
-   shared.js updates (_fetchGasPrice writes to the global, not the local).
-   Now we just read/write the shared global directly.
+   FIX: TIDAK ada "var gasPrice" di sini.
+   gasPrice adalah global dari shared.js — kita hanya membacanya.
    ─────────────────────────────────────────────────────────────────── */
 var localEthPrice = 0;
 var tokenDataLocal = {};
@@ -352,46 +376,60 @@ function renderTokenRows(){
   var html='';
   TOKEN_CFG.forEach(function(cfg,i){
     var d=tokenDataLocal[cfg.id]||{};var p=d.price||0,chg=d.chg||0,mcap=d.mcap||0,up=chg>=0;
-    html+='<div class="tr-item"><span class="tr-rank">'+(i+1)+'</span><div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div><div class="tr-chart">'+buildSparkline(priceHistoryLocal[cfg.hk]||[],up?'#1ed670':'#ff5555')+'</div><div class="tr-price">'+(p?fmtPL(p):'—')+'</div><div class="tr-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div><div class="tr-mcap">'+(p?fmtML(mcap):'—')+'</div></div>';
+    html+='<div class="tr-item">' +
+      '<span class="tr-rank">'+(i+1)+'</span>' +
+      '<div class="tr-sym-wrap"><div class="tr-ico" style="background:'+cfg.col+'22;color:'+cfg.col+'">'+cfg.ico+'</div><div><div class="tr-sym">'+cfg.sym+'</div><div class="tr-name">'+cfg.name+'</div></div></div>' +
+      '<div class="tr-chart">'+buildSparkline(priceHistoryLocal[cfg.hk]||[],up?'#1ed670':'#ff5555')+'</div>' +
+      '<div class="tr-price">'+(p?fmtPL(p):'—')+'</div>' +
+      '<div class="tr-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div>' +
+      '<div class="tr-mcap">'+(p?fmtML(mcap):'—')+'</div>' +
+    '</div>';
   });
   el.innerHTML=html;
 }
 
 /* ─── GAS ORACLE UI ───────────────────────────────────────────────
-   FIX: updateGasOracle() now reads from shared.js "gasPrice" global.
-   Called on page load AND via onGasDrift() callback from shared.js
-   _fetchGasPrice() (every 15s).
+   FIX: membaca global gasPrice dari shared.js (bukan local variable)
    ─────────────────────────────────────────────────────────────────── */
 function updateGasOracle(){
-  var gwei = gasPrice; /* shared global */
+  var gwei = gasPrice; /* shared global dari shared.js */
   if(!gwei)return;
-  var sl=Math.max(gwei-8,1),st=gwei,fa=gwei+12,ra=gwei+28;
+  var sl=Math.max(gwei-8,1), st=gwei, fa=gwei+12, ra=gwei+28;
   var el=document.getElementById('gasMain');
   if(el){el.textContent=gwei;el.className='gas-val';if(gwei>60)el.classList.add('high');else if(gwei<15)el.classList.add('low')}
-  var pu=document.getElementById('gasUsd');if(pu&&localEthPrice)pu.textContent='~$'+((gwei*21000/1e9)*localEthPrice).toFixed(3)+'/tx';
-  [['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]].forEach(function(t){var e=document.getElementById(t[0]);if(e)e.textContent=t[1]});
-  var bar=document.getElementById('gasBarEl');if(bar)bar.style.width=Math.min(Math.round(gwei/120*100),100)+'%';
+  var pu=document.getElementById('gasUsd');
+  if(pu&&localEthPrice)pu.textContent='~$'+((gwei*21000/1e9)*localEthPrice).toFixed(3)+'/tx';
+  [['gSlow',sl],['gStd',st],['gFast',fa],['gRapid',ra]].forEach(function(t){
+    var e=document.getElementById(t[0]);if(e)e.textContent=t[1];
+  });
+  var bar=document.getElementById('gasBarEl');
+  if(bar)bar.style.width=Math.min(Math.round(gwei/120*100),100)+'%';
   updateEcoIntelGas(gwei);
 }
 
-/* Called by shared.js _fetchGasPrice every 15s */
+/* Callback dari shared.js _fetchGasPrice setiap 15s */
 function onGasDrift(){ updateGasOracle(); }
 
 /* ─── ECO INTEL ─── */
 function updateEcoIntelCards(){
   var tx=(Math.random()*8+12).toFixed(1);
-  var av=document.getElementById('ei-aval'),as=document.getElementById('ei-asub'),ab=document.getElementById('ei-abar');
-  if(av)av.textContent=tx;if(as)as.textContent='txns/sec now';if(ab)ab.style.width=Math.min(parseFloat(tx)/22*100,100)+'%';
+  var av=document.getElementById('ei-aval'),as_=document.getElementById('ei-asub'),ab=document.getElementById('ei-abar');
+  if(av)av.textContent=tx;if(as_)as_.textContent='txns/sec now';if(ab)ab.style.width=Math.min(parseFloat(tx)/22*100,100)+'%';
 }
 function updateEcoIntelGas(g){
   var gc=document.getElementById('ei-gas'),gv=document.getElementById('ei-gval'),gs=document.getElementById('ei-gsub'),gb=document.getElementById('ei-gbar');
-  if(!gc)return;var gp=g>80?'CRIT':g>40?'HIGH':g>20?'MED':'LOW',gcl=g>40?'alert':g>20?'active':'bullish';
-  gc.className='ei-card '+gcl;if(gv)gv.textContent=gp;if(gs)gs.textContent=g+' gwei';if(gb)gb.style.width=Math.min(Math.round(g/120*100),100)+'%';
+  if(!gc)return;
+  var gp=g>80?'CRIT':g>40?'HIGH':g>20?'MED':'LOW';
+  var gcl=g>40?'alert':g>20?'active':'bullish';
+  gc.className='ei-card '+gcl;
+  if(gv)gv.textContent=gp;if(gs)gs.textContent=g+' gwei';
+  if(gb)gb.style.width=Math.min(Math.round(g/120*100),100)+'%';
 }
 function updateEcoIntelMarket(coins){
   var mc=document.getElementById('ei-market'),mv=document.getElementById('ei-mval'),ms=document.getElementById('ei-msub'),mb=document.getElementById('ei-mbar');
   if(!mc||!coins||!coins.length)return;
-  var g=0,l=0,tot=0;coins.forEach(function(c){var ch=c.chg||0;if(ch>0)g++;else if(ch<0)l++;tot+=Math.abs(ch)});
+  var g=0,l=0,tot=0;
+  coins.forEach(function(c){var ch=c.chg||0;if(ch>0)g++;else if(ch<0)l++;tot+=Math.abs(ch)});
   var avg=tot/coins.length,mood=g>l*1.5?'bullish':l>g*1.5?'bearish':'neutral',energy=Math.min(avg*8,100);
   mc.className='ei-card '+(mood==='bullish'?'bullish':mood==='bearish'?'alert':'active');
   if(mv)mv.textContent=mood==='bullish'?'BULL':mood==='bearish'?'BEAR':'NEUT';
@@ -404,7 +442,7 @@ function updateNetworkActivity(){
   var bl=document.getElementById('nrBlock');if(bl)bl.textContent=(11.8+Math.random()*.8).toFixed(1)+'s';
 }
 
-/* ─── FETCH LOCAL PRICES (CoinGecko for mcap data not in Binance) ─── */
+/* ─── FETCH LOCAL PRICES ─── */
 function fetchLocalPrices(){
   var ids='ethereum,bitcoin,solana,matic-network,arbitrum,chainlink';
   fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&order=market_cap_desc&sparkline=false&price_change_percentage=24h')
@@ -415,12 +453,16 @@ function fetchLocalPrices(){
         if(!TL_ID_MAP[c.id])return;
         var p=c.current_price,chg=c.price_change_percentage_24h||0;
         tokenDataLocal[c.id]={price:p,chg:chg,mcap:c.market_cap||0};
-        if(TL_ID_MAP[c.id].hist){priceHistoryLocal[TL_ID_MAP[c.id].hist].push(p);if(priceHistoryLocal[TL_ID_MAP[c.id].hist].length>MAX_HIST)priceHistoryLocal[TL_ID_MAP[c.id].hist].shift()}
+        if(TL_ID_MAP[c.id].hist){
+          priceHistoryLocal[TL_ID_MAP[c.id].hist].push(p);
+          if(priceHistoryLocal[TL_ID_MAP[c.id].hist].length>MAX_HIST)
+            priceHistoryLocal[TL_ID_MAP[c.id].hist].shift();
+        }
         if(c.id==='ethereum')localEthPrice=p;
         coinObjs.push({chg:chg});
       });
       renderTokenRows();updateEcoIntelMarket(coinObjs);updateNetworkActivity();
-      updateGasOracle(); /* refresh gas USD with fresh eth price */
+      updateGasOracle();
     })
     .catch(applyLocalFallback);
 }
@@ -429,16 +471,19 @@ function applyLocalFallback(){
   Object.keys(FALLBACK).forEach(function(id){
     var fb=FALLBACK[id],p=fb.price*(1+(Math.random()-.5)*.001);
     tokenDataLocal[id]={price:p,chg:fb.chg+(Math.random()-.5)*.1,mcap:fb.mcap};
-    if(TL_ID_MAP[id]&&TL_ID_MAP[id].hist){priceHistoryLocal[TL_ID_MAP[id].hist].push(p);if(priceHistoryLocal[TL_ID_MAP[id].hist].length>MAX_HIST)priceHistoryLocal[TL_ID_MAP[id].hist].shift()}
+    if(TL_ID_MAP[id]&&TL_ID_MAP[id].hist){
+      priceHistoryLocal[TL_ID_MAP[id].hist].push(p);
+      if(priceHistoryLocal[TL_ID_MAP[id].hist].length>MAX_HIST)
+        priceHistoryLocal[TL_ID_MAP[id].hist].shift();
+    }
     if(id==='ethereum')localEthPrice=p;
   });
   renderTokenRows();updateNetworkActivity();updateEcoIntelCards();updateGasOracle();
 }
 
-/* Called by shared.js when Binance/CoinGecko prices update */
+/* Callback dari shared.js Binance WebSocket */
 function onPricesUpdated(data){
   if(data&&data.ethereum){localEthPrice=data.ethereum.price}
-  /* Merge into local for sparkline/mcap (use local mcap, live price) */
   Object.keys(TL_ID_MAP).forEach(function(id){
     if(data[id]&&tokenDataLocal[id]){
       tokenDataLocal[id].price=data[id].price;
@@ -460,22 +505,37 @@ var ECO_TYPES=[
   {k:'nft',label:'NFT',cls:'et-nft',acts:['Mint #4201','Transfer ERC-1155'],addrs:['0xAb5...9B']},
   {k:'alert',label:'⚠ ALERT',cls:'et-alert',acts:['Suspicious approval detected'],addrs:['0x???...???']}
 ];
+
 function addEcoItem(){
   var pool=ECO_TYPES.slice(0,-1);
   var tf=Math.random()<.08?ECO_TYPES[ECO_TYPES.length-1]:pool[Math.floor(Math.random()*pool.length)];
   var now=new Date(),ts=now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
-  ecoItems.unshift({type:tf.k,label:tf.label,cls:tf.cls,addr:tf.addrs[Math.floor(Math.random()*tf.addrs.length)],act:tf.acts[Math.floor(Math.random()*tf.acts.length)],amt:(Math.random()*12+0.01).toFixed(3),ts:ts,anomaly:tf.k==='alert'});
+  ecoItems.unshift({
+    type:tf.k,label:tf.label,cls:tf.cls,
+    addr:tf.addrs[Math.floor(Math.random()*tf.addrs.length)],
+    act:tf.acts[Math.floor(Math.random()*tf.acts.length)],
+    amt:(Math.random()*12+0.01).toFixed(3),ts:ts,anomaly:tf.k==='alert'
+  });
   if(ecoItems.length>40)ecoItems.pop();
   renderEcoFeed();
 }
+
 function renderEcoFeed(){
   var el=document.getElementById('ecoStream');if(!el)return;
   var filtered=ecoFilter==='all'?ecoItems:ecoItems.filter(function(it){return it.type===ecoFilter});
   var html='';
-  filtered.slice(0,12).forEach(function(it){html+='<div class="eco-item'+(it.anomaly?' anomaly':'')+'"><span class="eco-type '+it.cls+'">'+it.label+'</span><span class="eco-addr">'+it.addr+' · '+it.act+'</span><span class="eco-val">'+it.amt+' ETH</span><span class="eco-ts">'+it.ts+'</span></div>'});
+  filtered.slice(0,12).forEach(function(it){
+    html+='<div class="eco-item'+(it.anomaly?' anomaly':'')+'">'+
+      '<span class="eco-type '+it.cls+'">'+it.label+'</span>'+
+      '<span class="eco-addr">'+it.addr+' · '+it.act+'</span>'+
+      '<span class="eco-val">'+it.amt+' ETH</span>'+
+      '<span class="eco-ts">'+it.ts+'</span>'+
+    '</div>';
+  });
   if(!html)html='<div style="padding:16px;text-align:center;font-family:Space Mono,monospace;font-size:7.5px;color:var(--txt2)">No '+ecoFilter+' activity yet</div>';
   el.innerHTML=html;
 }
+
 document.getElementById('ecoFilter').addEventListener('click',function(e){
   var btn=e.target.closest('.eco-fbtn');if(!btn)return;
   document.querySelectorAll('.eco-fbtn').forEach(function(b){b.classList.remove('active')});
@@ -493,16 +553,27 @@ function renderGov(){
   var el=document.getElementById('govProposals');if(!el)return;
   el.innerHTML=govData.map(function(g){
     var pct=Math.min(g.votes/g.quorum*100,100);
-    return'<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="font-size:10px;color:var(--txt);margin-bottom:5px">'+g.title+'</div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+g.color+';border-radius:2px;transition:width 1s"></div></div><span style="font-family:Space Mono,monospace;font-size:6.5px;color:'+g.color+'">'+g.votes+'% · '+g.status+'</span></div></div>';
+    return '<div style="padding:9px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="font-size:10px;color:var(--txt);margin-bottom:5px">'+g.title+'</div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="flex:1;height:2px;background:rgba(0,200,224,0.06);border-radius:2px;overflow:hidden">' +
+          '<div style="height:100%;width:'+pct+'%;background:'+g.color+';border-radius:2px;transition:width 1s"></div>' +
+        '</div>' +
+        '<span style="font-family:Space Mono,monospace;font-size:6.5px;color:'+g.color+'">'+g.votes+'% · '+g.status+'</span>' +
+      '</div>' +
+    '</div>';
   }).join('');
 }
 
 /* ─── PERMISSION BUTTONS ─── */
 document.getElementById('denyBtn').addEventListener('click',function(){
-  var b=this;b.textContent='Denied ✕';b.style.cssText='flex:1;padding:10px;color:rgba(255,85,85,.9);border:1px solid rgba(255,70,70,.28);background:rgba(255,50,50,0.08);border-radius:2px;font-family:Space Mono,monospace;font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;cursor:none;transition:all .18s';
+  var b=this;
+  b.textContent='Denied ✕';
+  b.style.cssText='flex:1;padding:10px;color:rgba(255,85,85,.9);border:1px solid rgba(255,70,70,.28);background:rgba(255,50,50,0.08);border-radius:2px;font-family:Space Mono,monospace;font-size:7.5px;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .18s';
   toast('Permission denied — transaction cancelled.');
   setTimeout(function(){b.textContent='Deny';b.removeAttribute('style')},2600);
 });
+
 document.getElementById('approveBtn').addEventListener('click',function(){
   var b=this,origText='Approve — Verify Identity';
   b.textContent='Approved ✓';b.style.background='var(--green)';b.style.color='#000';
@@ -529,19 +600,19 @@ document.addEventListener('DOMContentLoaded',function(){
   bindWalletModal();
   bindDiscButton();
   applyFallbackPrices();
-  initPriceStreams();   /* starts WebSocket + gas polling (every 15s) */
-  fetchPrices();        /* immediate REST snapshot */
+  initPriceStreams();
+  fetchPrices();
   setInterval(fetchPrices, 30000);
 
   applyLocalFallback();
   fetchLocalPrices();
   setInterval(fetchLocalPrices, 28000);
   renderEcoFeed();
-  for(var i=0;i<8;i++)setTimeout(addEcoItem,i*160+200);
-  setInterval(addEcoItem,2200);
+  for(var i=0;i<8;i++) setTimeout(addEcoItem, i*160+200);
+  setInterval(addEcoItem, 2200);
   renderGov();
-  setInterval(updateNetworkActivity,4200);
-  setInterval(updateEcoIntelCards,4000);
+  setInterval(updateNetworkActivity, 4200);
+  setInterval(updateEcoIntelCards, 4000);
 });
 </script>
 </body>
