@@ -7,9 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
+/* FIX: body overflow hidden agar tidak ada scrollbar tak terpakai */
 body{overflow:hidden}
-#app{position:fixed;inset:0;top:var(--nav-h);z-index:10}
-#conC{width:100%;height:100%;display:block;position:absolute;inset:0;will-change:transform}
+
+#app{
+  position:fixed;
+  inset:0;
+  top:var(--nav-h);
+  z-index:10;
+  /* FIX: tidak ada ticker di halaman ini, cukup full height */
+}
+
+#conC{
+  width:100%;height:100%;display:block;
+  position:absolute;inset:0;
+  will-change:transform;
+}
 
 /* ── PROTO INFO ── */
 .proto-info{
@@ -42,12 +55,16 @@ body{overflow:hidden}
 }
 .pst{border-left:1px solid rgba(0,212,232,0.18);padding-left:16px;transition:border-color .3s}
 .pst:hover{border-color:rgba(0,212,232,0.4)}
-.pst-v{font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.04em;color:var(--c);margin-bottom:0;transition:color .5s}
+.pst-v{
+  font-family:'Bebas Neue',cursive;font-size:32px;
+  letter-spacing:.04em;color:var(--c);margin-bottom:0;transition:color .5s;
+}
 .pst-l{font-family:'Space Mono',monospace;font-size:7px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase}
 
 /* ── TOOLTIP ── */
 .proto-tooltip{
-  position:fixed;z-index:3;pointer-events:none;opacity:0;transition:opacity .15s;
+  position:fixed;z-index:30;pointer-events:none;opacity:0;
+  transition:opacity .15s;
   background:rgba(0,4,16,0.99);
   border:1px solid rgba(0,212,232,0.22);
   border-radius:2px;padding:10px 14px;min-width:150px;
@@ -59,7 +76,12 @@ body{overflow:hidden}
 .pt-addr{font-family:'Space Mono',monospace;font-size:8.5px;color:var(--txt);margin-bottom:3px}
 .pt-score{font-family:'Bebas Neue',cursive;font-size:24px;color:#fff}
 
-@media(max-width:480px){.proto-stats{gap:16px;flex-wrap:wrap}.pst-v{font-size:22px}}
+@media(max-width:480px){
+  .proto-stats{gap:16px;flex-wrap:wrap}
+  .pst-v{font-size:22px}
+  .proto-info{left:20px;bottom:24px}
+  .proto-legend{right:20px;bottom:24px}
+}
 </style>
 </head>
 <body>
@@ -87,11 +109,14 @@ body{overflow:hidden}
 
 <div id="app">
   <canvas id="conC"></canvas>
+
+  <!-- Tooltip: z-index tinggi agar selalu di atas canvas -->
   <div class="proto-tooltip" id="protoTip">
     <div class="pt-type" id="ptType">Trusted</div>
     <div class="pt-addr" id="ptAddr">0x0000...0000</div>
     <div class="pt-score" id="ptScore">94</div>
   </div>
+
   <div class="proto-stats rv">
     <div class="pst"><div class="pst-v" id="sNodes">82</div><div class="pst-l">Active Nodes</div></div>
     <div class="pst"><div class="pst-v" id="sConns">0</div><div class="pst-l">Connections</div></div>
@@ -99,10 +124,12 @@ body{overflow:hidden}
     <div class="pst"><div class="pst-v" id="sTx">8</div><div class="pst-l">Live Txns/min</div></div>
     <div class="pst"><div class="pst-v" style="color:var(--green)">Online</div><div class="pst-l">Network Status</div></div>
   </div>
+
   <div class="proto-info rv">
     <div class="proto-title">Identity<br>Constellation</div>
     <div class="proto-sub">Every wallet is a living node. Hover to inspect trust data. The network breathes in real time.</div>
   </div>
+
   <div class="proto-legend rv">
     <div class="pl"><div class="pl-d" style="background:#00d4e8"></div>Trusted</div>
     <div class="pl"><div class="pl-d" style="background:#d4a832"></div>Builder</div>
@@ -112,6 +139,7 @@ body{overflow:hidden}
   </div>
 </div>
 
+<!-- Wallet / scan / status modals -->
 <div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
 <div id="sovl"><div class="scan-inner"><div class="scan-orb"><canvas id="hexC" width="180" height="180"></canvas><div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div><div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div></div><div class="scan-title" id="scanTitle">Identity Analysis</div><div class="scan-phase" id="scanPhase">Initializing trust layer...</div><div class="scan-addr" id="scanAddr"></div><div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div><div class="sp-pct" id="spPct">0%</div><div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div><button class="scan-cta" id="scanCta">View Identity Profile →</button></div></div>
 <div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
@@ -121,8 +149,15 @@ body{overflow:hidden}
 <script>
 var conC = document.getElementById('conC');
 var conX = conC.getContext('2d');
-function rCon(){ conC.width = conC.offsetWidth || window.innerWidth; conC.height = conC.offsetHeight || (window.innerHeight - 58); }
-rCon(); window.addEventListener('resize', rCon);
+
+/* FIX: resize canvas berdasarkan parent #app, bukan window langsung */
+function rCon(){
+  var app = document.getElementById('app');
+  conC.width  = app ? app.offsetWidth  : window.innerWidth;
+  conC.height = app ? app.offsetHeight : (window.innerHeight - 58);
+}
+rCon();
+window.addEventListener('resize', rCon);
 
 var CTYPES = ['trusted','builder','gov','risky','inactive'];
 var fakeAddrs = ['0xd8dA...6045','0xAb58...eC9B','0x71C7...C62','0x1f98...4A27','0x9A30...B811','0x3C44...93BC'];
@@ -130,7 +165,15 @@ var CN = [];
 
 for (var i = 0; i < 82; i++){
   var tp = CTYPES[Math.floor(Math.random() * CTYPES.length)];
-  CN.push({ x:Math.random()*(window.innerWidth||1400), y:Math.random()*((window.innerHeight-58)||700), vx:(Math.random()-.5)*.09, vy:(Math.random()-.5)*.09, r:Math.random()*3.5+1.2, p:Math.random()*Math.PI*2, type:tp, hover:0, pulse:0, addr:fakeAddrs[Math.floor(Math.random()*fakeAddrs.length)], score:Math.floor(55+Math.random()*45) });
+  CN.push({
+    x: Math.random()*(window.innerWidth||1400),
+    y: Math.random()*((window.innerHeight-58)||700),
+    vx:(Math.random()-.5)*.09, vy:(Math.random()-.5)*.09,
+    r: Math.random()*3.5+1.2, p: Math.random()*Math.PI*2,
+    type:tp, hover:0, pulse:0,
+    addr:fakeAddrs[Math.floor(Math.random()*fakeAddrs.length)],
+    score:Math.floor(55+Math.random()*45)
+  });
 }
 CN.push({ x:700, y:350, r:14, vx:0, vy:0, p:0, type:'main', fixed:true, score:94, addr:'Your Wallet' });
 
@@ -142,25 +185,46 @@ function cnCol(type, a){
 var cMX = 0, cMY = 0, cHov = -1;
 var protoTip = document.getElementById('protoTip');
 
-conC.addEventListener('mousemove', function(e){
+/* FIX: event listener pada #app bukan conC agar koordinat selalu akurat */
+var appEl = document.getElementById('app');
+appEl.addEventListener('mousemove', function(e){
   var r = conC.getBoundingClientRect();
-  cMX = e.clientX - r.left; cMY = e.clientY - r.top; cHov = -1;
-  CN.forEach(function(n, i){ if (Math.hypot(cMX-n.x, cMY-n.y) < n.r * 3.5) cHov = i; });
+  cMX = e.clientX - r.left;
+  cMY = e.clientY - r.top;
+  cHov = -1;
+  CN.forEach(function(n, i){
+    if (Math.hypot(cMX-n.x, cMY-n.y) < n.r * 3.5) cHov = i;
+  });
   if (cHov >= 0){
     var n = CN[cHov];
     document.getElementById('ptType').textContent = n.type.charAt(0).toUpperCase() + n.type.slice(1);
     document.getElementById('ptAddr').textContent = n.addr || '0x???';
     document.getElementById('ptScore').textContent = n.score || '—';
-    protoTip.style.left = (e.clientX + 16) + 'px';
-    protoTip.style.top  = (e.clientY - 16) + 'px';
+    /* FIX: clamp tooltip agar tidak keluar viewport */
+    var tipW = 170, tipH = 80;
+    var tx = Math.min(e.clientX + 16, window.innerWidth - tipW - 8);
+    var ty = Math.max(e.clientY - 16, 8);
+    if (ty + tipH > window.innerHeight) ty = window.innerHeight - tipH - 8;
+    protoTip.style.left = tx + 'px';
+    protoTip.style.top  = ty + 'px';
     protoTip.classList.add('show');
-  } else { protoTip.classList.remove('show'); }
+  } else {
+    protoTip.classList.remove('show');
+  }
 });
-conC.addEventListener('mouseleave', function(){ protoTip.classList.remove('show'); });
+appEl.addEventListener('mouseleave', function(){
+  protoTip.classList.remove('show');
+  cHov = -1;
+});
 
-setInterval(function(){
-  document.getElementById('sTx').textContent = Math.floor(Math.random()*14 + 4);
-  if (Math.random() < .14){ var idx = Math.floor(Math.random()*(CN.length-1)); CN[idx].pulse = 1; }
+/* FIX: interval dibersihkan referensinya untuk hindari leak */
+var txInterval = setInterval(function(){
+  var el = document.getElementById('sTx');
+  if (el) el.textContent = Math.floor(Math.random()*14 + 4);
+  if (Math.random() < .14){
+    var idx = Math.floor(Math.random()*(CN.length-1));
+    CN[idx].pulse = 1;
+  }
 }, 1800);
 
 function drawCon(){
@@ -184,7 +248,7 @@ function drawCon(){
     }
   });
 
-  /* Lines from trusted nodes to main */
+  /* Lines dari trusted nodes ke main */
   CN.forEach(function(n){
     if (n.type==='inactive' || n===main) return;
     var d = Math.hypot(main.x-n.x, main.y-n.y);
@@ -197,9 +261,9 @@ function drawCon(){
   });
 
   /* Node-to-node micro connections */
-  for (var i=0; i<CN.length-1; i++){
-    for (var j=i+1; j<CN.length-1; j++){
-      var na=CN[i], nb=CN[j];
+  for (var ii=0; ii<CN.length-1; ii++){
+    for (var jj=ii+1; jj<CN.length-1; jj++){
+      var na=CN[ii], nb=CN[jj];
       if (na.type==='inactive'||nb.type==='inactive') continue;
       var d2=Math.hypot(na.x-nb.x, na.y-nb.y);
       if (d2<65){
@@ -237,7 +301,7 @@ function drawCon(){
 
   var cc=0;
   CN.forEach(function(n){ if(n.type!=='inactive'&&n!==main&&Math.hypot(main.x-n.x,main.y-n.y)<220)cc++; });
-  document.getElementById('sConns').textContent=cc;
+  var sc2=document.getElementById('sConns'); if(sc2)sc2.textContent=cc;
   var nv=document.getElementById('sNodes'); if(nv)nv.textContent=82+Math.floor(ecosystemState.energyLevel/4);
 }
 
