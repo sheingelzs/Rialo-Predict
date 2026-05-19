@@ -7,60 +7,72 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
-/* ── PAGE SCROLL ── */
-.page-scroll{
-  overflow-y:auto;overflow-x:hidden;
-  height:calc(100vh - var(--nav-h));
-  scrollbar-width:thin;scrollbar-color:rgba(0,212,232,0.1) transparent;
-}
+.page-scroll{overflow-y:auto;overflow-x:hidden;height:calc(100vh - var(--nav-h));scrollbar-width:thin;scrollbar-color:rgba(0,212,232,0.1) transparent}
 .page-scroll::-webkit-scrollbar{width:2px}
 .page-scroll::-webkit-scrollbar-thumb{background:rgba(0,212,232,0.14);border-radius:2px}
 
-/* ── REVEAL ANIMATION — tidak pakai .rv karena elemen dibuat dinamis ── */
-@keyframes fadeInUp{
-  from{opacity:0;transform:translateY(22px);filter:blur(4px)}
-  to{opacity:1;transform:none;filter:blur(0)}
-}
-.id-anim{
-  animation:fadeInUp .65s cubic-bezier(0.22,1,0.36,1) both;
-}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(22px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+.id-anim{animation:fadeInUp .65s cubic-bezier(0.22,1,0.36,1) both}
 
-/* ── HERO PROFILE ── */
-.id-hero{
-  display:grid;grid-template-columns:auto 1fr auto;
-  gap:24px;align-items:center;
-  padding:28px;margin-bottom:12px;
-  background:rgba(0,6,18,0.74);
-  border:1px solid rgba(0,212,232,0.14);
-  border-radius:2px;
+/* ══ DEMO BANNER ══ */
+.demo-banner{
+  display:flex;align-items:center;gap:10px;padding:11px 18px;margin-bottom:14px;
+  background:rgba(255,165,0,0.05);border:1px solid rgba(255,165,0,0.24);border-radius:2px;
+  font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.09em;color:rgba(255,185,40,0.82);
   position:relative;overflow:hidden;
-  backdrop-filter:blur(28px);
 }
-.id-hero::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--c),rgba(180,100,255,0.7),transparent);
+.demo-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,165,0,0.45),transparent)}
+.demo-upgrade-btn{
+  margin-left:auto;flex-shrink:0;padding:5px 14px;
+  background:rgba(0,212,232,0.07);border:1px solid rgba(0,212,232,0.28);border-radius:1px;
+  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;color:var(--c);
+  cursor:pointer;transition:all .2s;
 }
-.id-hero::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 350px 180px at 30% 50%,rgba(0,212,232,0.05),transparent),
-    radial-gradient(ellipse 280px 280px at 90% 50%,rgba(124,58,255,0.04),transparent);
+.demo-upgrade-btn:hover{background:rgba(0,212,232,0.16);border-color:rgba(0,212,232,0.55)}
+
+/* ══ WALLET VERIFIED BANNER ══ */
+.wallet-banner{
+  display:flex;align-items:center;gap:10px;padding:11px 18px;margin-bottom:14px;
+  background:rgba(0,232,122,0.05);border:1px solid rgba(0,232,122,0.22);border-radius:2px;
+  font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.09em;color:rgba(0,220,110,0.78);
+  position:relative;overflow:hidden;
+}
+.wallet-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,232,122,0.4),transparent)}
+.wb-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.8s infinite;flex-shrink:0}
+.wb-provider{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px;background:rgba(0,232,122,0.07);border:1px solid rgba(0,232,122,0.18);
+  border-radius:1px;color:var(--green);font-size:7px;letter-spacing:.09em;
 }
 
-/* Aura ring */
-.aura-wrap{position:relative;width:72px;height:72px;flex-shrink:0;z-index:1}
-.aura-ring{
-  position:absolute;border-radius:50%;border:1px solid rgba(0,212,232,0.28);
-  animation:auraRing 3.2s ease infinite;
+/* ══ HERO ══ */
+.id-hero{
+  display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;
+  padding:28px;margin-bottom:12px;
+  background:rgba(0,6,18,0.74);border:1px solid rgba(0,212,232,0.14);border-radius:2px;
+  position:relative;overflow:hidden;backdrop-filter:blur(28px);
 }
+.id-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),rgba(180,100,255,0.7),transparent)}
+.id-hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 350px 180px at 30% 50%,rgba(0,212,232,0.05),transparent),radial-gradient(ellipse 280px 280px at 90% 50%,rgba(124,58,255,0.04),transparent)}
+/* Demo hero = amber stripe */
+.id-hero.demo::before{background:linear-gradient(90deg,transparent,rgba(255,165,0,0.55),rgba(0,212,232,0.35),transparent)}
+.id-hero.demo{border-color:rgba(255,165,0,0.16)}
+/* Real hero = green stripe */
+.id-hero.real::before{background:linear-gradient(90deg,transparent,rgba(0,232,122,0.5),var(--c),transparent)}
+.id-hero.real{border-color:rgba(0,232,122,0.18)}
+
+/* Aura */
+.aura-wrap{position:relative;width:72px;height:72px;flex-shrink:0;z-index:1}
+.aura-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,212,232,0.28);animation:auraRing 3.2s ease infinite}
 .aura-ring:nth-child(1){inset:0}
 .aura-ring:nth-child(2){inset:-9px;animation-delay:.9s;border-color:rgba(0,212,232,0.14)}
 .aura-ring:nth-child(3){inset:-18px;animation-delay:1.8s;border-color:rgba(0,212,232,0.07)}
-@keyframes auraRing{
-  0%{transform:scale(.76);opacity:0}
-  50%{opacity:.55}
-  100%{transform:scale(1.12);opacity:0}
-}
+/* Demo aura amber */
+.aura-wrap.demo .aura-ring{border-color:rgba(255,165,0,0.32)}
+.aura-wrap.demo .aura-ring:nth-child(2){border-color:rgba(255,165,0,0.16)}
+.aura-wrap.demo .aura-ring:nth-child(3){border-color:rgba(255,165,0,0.08)}
+.aura-wrap.demo .aura-core{border-color:rgba(255,165,0,0.42);background:radial-gradient(circle at 40% 35%,rgba(255,165,0,0.18),rgba(255,165,0,0.04) 60%);color:rgba(255,185,40,0.9);box-shadow:0 0 30px rgba(255,165,0,0.16),inset 0 0 20px rgba(255,165,0,0.07)}
+@keyframes auraRing{0%{transform:scale(.76);opacity:0}50%{opacity:.55}100%{transform:scale(1.12);opacity:0}}
 .aura-core{
   position:absolute;inset:0;border-radius:50%;
   background:radial-gradient(circle at 40% 35%,rgba(0,212,232,0.22),rgba(0,212,232,0.05) 60%);
@@ -68,61 +80,46 @@
   display:flex;align-items:center;justify-content:center;
   font-family:'Space Mono',monospace;font-size:9px;color:var(--c);
   box-shadow:0 0 40px rgba(0,212,232,0.22),inset 0 0 24px rgba(0,212,232,0.08);
-  z-index:1;letter-spacing:.08em;
-  animation:corePulse 3s ease-in-out infinite alternate;
+  z-index:1;letter-spacing:.08em;animation:corePulse 3s ease-in-out infinite alternate;
 }
-@keyframes corePulse{
-  0%{box-shadow:0 0 30px rgba(0,212,232,0.18),inset 0 0 16px rgba(0,212,232,0.06)}
-  100%{box-shadow:0 0 60px rgba(0,212,232,0.36),inset 0 0 30px rgba(0,212,232,0.12)}
-}
+@keyframes corePulse{0%{box-shadow:0 0 30px rgba(0,212,232,0.18),inset 0 0 16px rgba(0,212,232,0.06)}100%{box-shadow:0 0 60px rgba(0,212,232,0.36),inset 0 0 30px rgba(0,212,232,0.12)}}
 
 .id-info{position:relative;z-index:1}
-.id-name{
-  font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.05em;
-  color:#fff;margin-bottom:5px;
-  text-shadow:0 0 40px rgba(0,212,232,0.25);
-}
-.id-addr{
-  font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);
-  margin-bottom:10px;letter-spacing:.05em;word-break:break-all;
-}
+.id-name{font-family:'Bebas Neue',cursive;font-size:28px;letter-spacing:.05em;color:#fff;margin-bottom:5px;text-shadow:0 0 40px rgba(0,212,232,0.25)}
+.id-addr{font-family:'Space Mono',monospace;font-size:8px;color:var(--txt2);margin-bottom:10px;letter-spacing:.05em;word-break:break-all}
 .id-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.id-badge{
-  display:inline-flex;align-items:center;gap:6px;padding:4px 12px;
-  background:rgba(0,212,232,0.06);border:1px solid rgba(0,212,232,0.2);
-  border-radius:1px;
-  font-family:'Space Mono',monospace;font-size:7px;color:var(--c);letter-spacing:.09em;
-}
+.id-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(0,212,232,0.06);border:1px solid rgba(0,212,232,0.2);border-radius:1px;font-family:'Space Mono',monospace;font-size:7px;color:var(--c);letter-spacing:.09em}
 .id-badge-dot{width:4px;height:4px;border-radius:50%;background:var(--c);animation:pulse 1.8s infinite;box-shadow:0 0 6px var(--c)}
 .id-badge.gold{color:var(--gold);background:rgba(212,168,50,0.06);border-color:rgba(212,168,50,0.22)}
 .id-badge.gold .id-badge-dot{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+/* Demo badge */
+.id-badge.demo-tag{color:rgba(255,185,40,0.85);background:rgba(255,165,0,0.06);border-color:rgba(255,165,0,0.22)}
+.id-badge.demo-tag .id-badge-dot{background:rgba(255,185,40,0.85);box-shadow:0 0 6px rgba(255,165,0,0.5)}
+/* Verified badge */
+.id-badge.verified{color:var(--green);background:rgba(0,232,122,0.06);border-color:rgba(0,232,122,0.22)}
+.id-badge.verified .id-badge-dot{background:var(--green);box-shadow:0 0 6px var(--green)}
 
-/* Score ring */
+/* Score */
 .score-wrap{position:relative;z-index:1;text-align:center;flex-shrink:0}
 .score-ring-wrap{position:relative;display:inline-block}
-.score-num{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-}
-.score-val{
-  font-family:'Bebas Neue',cursive;font-size:46px;color:var(--c);line-height:1;
-  text-shadow:0 0 30px rgba(0,212,232,0.5);
-  animation:scoreGlow 2.5s ease-in-out infinite alternate;
-}
-@keyframes scoreGlow{
-  0%{text-shadow:0 0 20px rgba(0,212,232,0.35)}
-  100%{text-shadow:0 0 50px rgba(0,212,232,0.7),0 0 80px rgba(0,212,232,0.2)}
-}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-val{font-family:'Bebas Neue',cursive;font-size:46px;color:var(--c);line-height:1;text-shadow:0 0 30px rgba(0,212,232,0.5);animation:scoreGlow 2.5s ease-in-out infinite alternate}
+.score-val.demo-score{color:rgba(255,185,40,0.88);animation:scoreGlowD 2.5s ease-in-out infinite alternate}
+@keyframes scoreGlow{0%{text-shadow:0 0 20px rgba(0,212,232,0.35)}100%{text-shadow:0 0 50px rgba(0,212,232,0.7),0 0 80px rgba(0,212,232,0.2)}}
+@keyframes scoreGlowD{0%{text-shadow:0 0 20px rgba(255,165,0,0.35)}100%{text-shadow:0 0 40px rgba(255,165,0,0.55)}}
 .score-lbl{font-family:'Space Mono',monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.16em;text-transform:uppercase;margin-top:1px}
 
-/* ── METRICS ── */
+/* ══ DATA SOURCE TAG ══ */
+.dtag{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:1px;font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.09em;margin-top:5px}
+.dtag.sim{background:rgba(255,165,0,0.06);border:1px solid rgba(255,165,0,0.18);color:rgba(255,185,40,0.65)}
+.dtag.live{background:rgba(0,232,122,0.06);border:1px solid rgba(0,232,122,0.18);color:rgba(0,220,110,0.72)}
+.dtag-dot{width:3px;height:3px;border-radius:50%}
+.dtag.sim .dtag-dot{background:rgba(255,185,40,0.65)}
+.dtag.live .dtag-dot{background:rgba(0,220,110,0.85);animation:pulse 2s infinite;box-shadow:0 0 4px var(--green)}
+
+/* ══ METRICS ══ */
 .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
-.mc{
-  background:rgba(0,6,18,0.72);border:1px solid rgba(0,212,232,0.10);
-  border-radius:2px;padding:18px;position:relative;overflow:hidden;
-  transition:all .35s var(--ease);cursor:default;
-  backdrop-filter:blur(24px);
-}
+.mc{background:rgba(0,6,18,0.72);border:1px solid rgba(0,212,232,0.10);border-radius:2px;padding:18px;position:relative;overflow:hidden;transition:all .35s var(--ease);cursor:default;backdrop-filter:blur(24px)}
 .mc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,232,0.14),transparent)}
 .mc:hover{border-color:rgba(0,212,232,0.22);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.5),0 0 24px rgba(0,212,232,0.06)}
 .mc-accent{position:absolute;top:0;left:0;bottom:0;width:2px;border-radius:0 2px 2px 0}
@@ -130,122 +127,69 @@
 .mc-v{font-family:'Bebas Neue',cursive;font-size:32px;letter-spacing:.03em;line-height:1;margin-bottom:7px;padding-left:14px}
 .mc-v.c{color:var(--c)}.mc-v.gr{color:var(--green)}.mc-v.go{color:var(--gold)}
 .mc-badge{margin-left:14px}
+/* demo metrics: "SIMULATED" label */
+.mode-demo .mc::after{content:'SIMULATED';position:absolute;bottom:6px;right:8px;font-family:'Space Mono',monospace;font-size:5.5px;letter-spacing:.1em;color:rgba(255,165,0,0.22)}
 
-/* ── LIVE DATA CARDS ── */
+/* ══ LIVE CARDS ══ */
 .live-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
-.live-card{
-  padding:22px;border-radius:2px;position:relative;overflow:hidden;
-  background:rgba(0,6,18,0.72);border:1px solid rgba(0,212,232,0.10);
-  transition:all .3s;cursor:default;backdrop-filter:blur(22px);
-}
+.live-card{padding:22px;border-radius:2px;position:relative;overflow:hidden;background:rgba(0,6,18,0.72);border:1px solid rgba(0,212,232,0.10);transition:all .3s;cursor:default;backdrop-filter:blur(22px)}
 .live-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,232,0.12),transparent)}
 .live-card:hover{border-color:rgba(0,212,232,0.22);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.5)}
-.live-label{
-  display:flex;align-items:center;gap:7px;margin-bottom:10px;
-  font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);
-}
+.live-label{display:flex;align-items:center;gap:7px;margin-bottom:10px;font-family:'Space Mono',monospace;font-size:6.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2)}
 .live-dot{width:5px;height:5px;border-radius:50%;animation:pulse 1.5s infinite;flex-shrink:0}
-.live-value{
-  font-family:'Bebas Neue',cursive;font-size:30px;letter-spacing:.02em;
-  line-height:1;margin-bottom:5px;transition:color .5s;
-}
+.live-value{font-family:'Bebas Neue',cursive;font-size:30px;letter-spacing:.02em;line-height:1;margin-bottom:5px;transition:color .5s}
 .live-sub{font-size:9px;color:var(--txt2)}
 
-/* ── TWO-COL ── */
+/* ══ TWO-COL ══ */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-
-/* Activity bars */
 .activity-bars{display:flex;align-items:flex-end;gap:3px;height:68px}
-.a-bar{
-  flex:1;border-radius:2px 2px 0 0;cursor:default;
-  transition:opacity .2s,transform .2s;
-  background:linear-gradient(to top,rgba(0,212,232,0.7),rgba(0,212,232,0.25));
-  opacity:.22;
-}
+.a-bar{flex:1;border-radius:2px 2px 0 0;cursor:default;transition:opacity .2s,transform .2s;background:linear-gradient(to top,rgba(0,212,232,0.7),rgba(0,212,232,0.25));opacity:.22}
 .a-bar:hover{opacity:.95;transform:scaleY(1.08);transform-origin:bottom}
 .months{display:flex;justify-content:space-between;margin-top:7px;font-family:'Space Mono',monospace;font-size:6px;color:var(--txt2)}
-
-/* Chain pills */
 .chain-pills{display:flex;flex-wrap:wrap;gap:7px}
-.chain-pill{
-  display:flex;align-items:center;gap:6px;padding:6px 12px;
-  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
-  border-radius:1px;font-size:10.5px;color:var(--txt);
-  transition:all .2s;cursor:default;
-}
+.chain-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:1px;font-size:10.5px;color:var(--txt);transition:all .2s;cursor:default}
 .chain-pill:hover{border-color:rgba(0,212,232,0.22);background:rgba(0,212,232,0.05)}
 .cpill-dot{width:6px;height:6px;border-radius:50%}
-
-/* Risk rows */
-.risk-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0;border-bottom:1px solid rgba(0,212,232,0.06);font-size:10.5px;
-}
+.risk-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,212,232,0.06);font-size:10.5px}
 .risk-item:last-child{border-bottom:none}
 .risk-label{color:var(--txt2)}
-.risk-ok{
-  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
-  background:rgba(0,232,122,0.07);border:1px solid rgba(0,232,122,0.18);
-  border-radius:1px;font-family:'Space Mono',monospace;font-size:7px;color:var(--green);
-}
-
-/* History */
+.risk-ok{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(0,232,122,0.07);border:1px solid rgba(0,232,122,0.18);border-radius:1px;font-family:'Space Mono',monospace;font-size:7px;color:var(--green)}
 .hist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,212,232,0.06)}
 .hist-item:last-child{border-bottom:none}
 .hist-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .hist-text{font-size:10.5px;color:var(--txt)}
 .hist-year{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);margin-left:auto}
-
-/* Market rows */
-.mkt-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0;border-bottom:1px solid rgba(0,212,232,0.06);font-size:10.5px;
-}
+.mkt-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(0,212,232,0.06);font-size:10.5px}
 .mkt-item:last-child{border-bottom:none}
 .mkt-sym{display:flex;align-items:center;gap:8px}
 .mkt-dot{width:6px;height:6px;border-radius:50%}
 .mkt-price-val{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt)}
 .mkt-chg{font-family:'Space Mono',monospace;font-size:7.5px}
 .up{color:var(--green)}.dn{color:#ff4444}
-
-/* Empty state */
-.empty-state{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:60vh;gap:16px;text-align:center;
-  opacity:0;
-  animation:fadeInUp .7s cubic-bezier(0.22,1,0.36,1) .1s both;
-}
-
-/* Portfolio value flash animation */
-@keyframes valFlash{
-  0%{color:var(--c)}
-  50%{color:#fff}
-  100%{color:var(--c)}
-}
+@keyframes valFlash{0%{color:var(--c)}50%{color:#fff}100%{color:var(--c)}}
 .val-flash{animation:valFlash .4s ease}
 
-@media(max-width:768px){
-  .mgrid{grid-template-columns:1fr 1fr}
-  .live-grid{grid-template-columns:1fr 1fr}
-  .two-col{grid-template-columns:1fr}
-  .id-hero{grid-template-columns:1fr;text-align:center}
-  .id-badges{justify-content:center}
-  .score-wrap{margin-top:12px}
-}
-@media(max-width:480px){
-  .live-grid{grid-template-columns:1fr}
-  .mgrid{grid-template-columns:1fr 1fr}
-}
+/* ══ SAMPLE LABEL for wcard titles ══ */
+.sample-label{font-size:7px;color:rgba(255,185,40,0.5);margin-left:6px;font-family:'Space Mono',monospace;letter-spacing:.08em}
+
+/* ══ FETCHING STATE ══ */
+@keyframes fetchPulse{0%,100%{opacity:.35}50%{opacity:.9}}
+.fetching{font-family:'Space Mono',monospace;font-size:9px;color:var(--txt2);animation:fetchPulse 1.4s ease-in-out infinite}
+
+/* ══ EMPTY STATE ══ */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;opacity:0;animation:fadeInUp .7s cubic-bezier(0.22,1,0.36,1) .1s both}
+.es-hint{font-family:'Space Mono',monospace;font-size:7.5px;color:var(--txt2);letter-spacing:.08em;margin-top:4px}
+.btn-ghost-amber{padding:10px 22px;border:1px solid rgba(255,165,0,0.28);color:rgba(255,185,40,0.85);background:rgba(255,165,0,0.05);border-radius:2px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.1em;cursor:pointer;transition:all .2s}
+.btn-ghost-amber:hover{background:rgba(255,165,0,0.12);border-color:rgba(255,165,0,0.5)}
+
+@media(max-width:768px){.mgrid{grid-template-columns:1fr 1fr}.live-grid{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}.id-hero{grid-template-columns:1fr;text-align:center}.id-badges{justify-content:center}.score-wrap{margin-top:12px}}
+@media(max-width:480px){.live-grid{grid-template-columns:1fr}.mgrid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<div id="CUR"></div>
-<div id="CUR2"></div>
-<div id="flash"></div>
-<div id="atmo"></div>
-<canvas id="BG"></canvas>
-<div class="vig"></div>
+<div id="CUR"></div><div id="CUR2"></div><div id="flash"></div><div id="atmo"></div>
+<canvas id="BG"></canvas><div class="vig"></div>
 <div id="netHealth"><div class="nh-bar nh-neutral" id="nhBar" style="width:0%"></div></div>
 <div id="ecoAlert"><div class="ea-inner info" id="eaInner"><div class="ea-dot"></div><span id="eaMsg">Loading identity...</span></div></div>
 
@@ -271,7 +215,23 @@
 </div>
 
 <!-- Wallet Modal -->
-<div id="wovl"><div class="wm"><div class="wm-bar"></div><div class="wm-head"><div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider</div></div><button class="wm-x" id="wmClose">✕</button></div><div class="wm-body"><div class="wm-lbl">Available Providers</div><div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div><div class="wo" id="opt-demo" style="border-color:rgba(0,212,232,0.18)"><div class="wo-ico" style="background:rgba(0,212,232,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">No wallet needed</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div><div class="wm-note">🔒 Read-only identity access.</div></div></div></div>
+<div id="wovl"><div class="wm"><div class="wm-bar"></div>
+  <div class="wm-head">
+    <div><div class="wm-title">Connect Wallet</div><div class="wm-sub">// select_provider — read-only identity access</div></div>
+    <button class="wm-x" id="wmClose">✕</button>
+  </div>
+  <div class="wm-body">
+    <div class="wm-lbl">Real Wallets — your actual on-chain data</div>
+    <div class="wo" id="opt-mm"><div class="wo-ico" style="background:rgba(255,108,0,0.09)">🦊</div><div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">Most used EVM wallet</div></div><div class="wo-badge ok" id="mm-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-rabby"><div class="wo-ico" style="background:rgba(98,126,234,0.10)">🐇</div><div class="wo-info"><div class="wo-name">Rabby Wallet</div><div class="wo-desc">Security-focused multi-chain</div></div><div class="wo-badge ok" id="rabby-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-okx"><div class="wo-ico" style="background:rgba(255,255,255,0.04)">⬛</div><div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Multi-chain Web3 wallet</div></div><div class="wo-badge ok" id="okx-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div class="wo" id="opt-ph"><div class="wo-ico" style="background:rgba(171,115,255,0.09)">👻</div><div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Solana + EVM multi-chain</div></div><div class="wo-badge ok" id="ph-st">Detecting...</div><div class="wo-arr">→</div></div>
+    <div style="height:1px;background:rgba(0,212,232,0.08);margin:14px 0"></div>
+    <div class="wm-lbl" style="color:rgba(255,185,40,0.65)">Demo — preview only, no wallet needed</div>
+    <div class="wo" id="opt-demo" style="border-color:rgba(255,165,0,0.18)"><div class="wo-ico" style="background:rgba(255,165,0,0.07)">⚡</div><div class="wo-info"><div class="wo-name">Demo Mode</div><div class="wo-desc">Sample identity · simulated on-chain data</div></div><div class="wo-badge ok">Always ready</div><div class="wo-arr">→</div></div>
+    <div class="wm-note">🔒 Rialo never stores private keys. Connection is read-only for identity analysis.</div>
+  </div>
+</div></div>
 
 <!-- Scan Overlay -->
 <div id="sovl">
@@ -288,411 +248,435 @@
   </div>
 </div>
 
-<div id="sbar"><div class="sb"><div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div><div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div><div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div><div class="sb-market" id="sbMarket"></div><button class="sb-disc" id="discBtn">Disconnect</button></div></div>
+<div id="sbar"><div class="sb">
+  <div class="sb-dot"></div><div class="sb-addr" id="sbAddr">0x0000...0000</div>
+  <div class="sb-sep"></div><div class="sb-chain" id="sbChain">Ethereum Mainnet</div>
+  <div class="sb-sep"></div><div class="sb-bal" id="sbBal">— ETH</div>
+  <div class="sb-market" id="sbMarket"></div>
+  <button class="sb-disc" id="discBtn">Disconnect</button>
+</div></div>
 <div id="toast"></div>
 
 <script src="shared.js"></script>
 <script>
-/* ═══════════════════════════════════════════════
-   SCORE RING
-═══════════════════════════════════════════════ */
-function drawScoreRing(canvas, score) {
-  var dpr = window.devicePixelRatio || 1;
-  var size = 140;
-  canvas.width = size * dpr;
-  canvas.height = size * dpr;
-  canvas.style.width = size + 'px';
-  canvas.style.height = size + 'px';
-  var ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  var cx = size/2, cy = size/2, r = 54;
-  // Track
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI*2);
-  ctx.strokeStyle = 'rgba(0,212,232,0.10)';
-  ctx.lineWidth = 5;
-  ctx.stroke();
-  // Arc
-  var grad = ctx.createLinearGradient(0, 0, size, size);
-  grad.addColorStop(0, '#00d4e8');
-  grad.addColorStop(1, '#7c3aff');
-  var angle = (score / 100) * Math.PI * 2 - Math.PI/2;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, -Math.PI/2, angle);
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
-  ctx.stroke();
-  // Glow
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, -Math.PI/2, angle);
-  ctx.strokeStyle = 'rgba(0,212,232,0.28)';
-  ctx.lineWidth = 12;
-  ctx.lineCap = 'round';
-  ctx.globalAlpha = 0.4;
-  ctx.stroke();
-  ctx.globalAlpha = 1;
+/* ───── HELPERS ───── */
+function fmtUSD(n){ return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtPrice(n){ if(!n) return '—'; if(n>=1000) return '$'+Math.round(n).toLocaleString(); if(n>=1) return '$'+n.toFixed(2); return '$'+n.toFixed(4); }
+function animNum(el,to,dur){
+  if(!el) return;
+  var t0=null;
+  (function step(ts){ if(!t0) t0=ts; var p=Math.min((ts-t0)/dur,1); el.textContent=Math.round(p*to); if(p<1) requestAnimationFrame(step); })(0);
+  requestAnimationFrame(function(ts){ t0=ts; (function step(ts2){ var p=Math.min((ts2-t0)/dur,1); el.textContent=Math.round(p*to); if(p<1) requestAnimationFrame(step); })(ts); });
+}
+function _ethChgStr(){ if(!tokenData||!tokenData.ethereum) return '—'; var c=tokenData.ethereum.chg||0,up=c>=0; return '<span style="color:'+(up?'var(--green)':'#ff4444')+'">'+(up?'+':'')+c.toFixed(2)+'%</span>'; }
+
+/* data source tag */
+function dtag(label, isLive){
+  return '<span class="dtag '+(isLive?'live':'sim')+'"><span class="dtag-dot"></span>'+(isLive?'● LIVE':'◌ SIMULATED')+' · '+label+'</span>';
+}
+/* sample badge for wcard titles */
+function sampleBadge(show){
+  return show ? '<span class="sample-label">[SAMPLE]</span>' : '';
 }
 
-/* ═══════════════════════════════════════════════
-   ANIMATED NUMBER
-═══════════════════════════════════════════════ */
-function animNum(el, to, dur) {
-  if (!el) return;
-  var s = performance.now(), from = 0;
-  (function u(now) {
-    var p = Math.min((now - s) / dur, 1);
-    var e = 1 - Math.pow(1 - p, 3.5);
-    el.textContent = Math.round(from + (to - from) * e);
-    if (p < 1) requestAnimationFrame(u);
-  })(s);
+/* ───── SCORE RING ───── */
+function drawScoreRing(canvas, score, isDemo){
+  var dpr=window.devicePixelRatio||1, sz=140;
+  canvas.width=sz*dpr; canvas.height=sz*dpr;
+  canvas.style.width=sz+'px'; canvas.style.height=sz+'px';
+  var ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  var cx=sz/2, cy=sz/2, r=54;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle='rgba(0,212,232,0.10)'; ctx.lineWidth=5; ctx.stroke();
+  var g=ctx.createLinearGradient(0,0,sz,sz);
+  if(isDemo){ g.addColorStop(0,'rgba(255,185,40,0.9)'); g.addColorStop(1,'rgba(200,120,0,0.7)'); }
+  else       { g.addColorStop(0,'#00d4e8'); g.addColorStop(1,'#7c3aff'); }
+  var a=(score/100)*Math.PI*2-Math.PI/2;
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,a);
+  ctx.strokeStyle=g; ctx.lineWidth=5; ctx.lineCap='round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,a);
+  ctx.strokeStyle=isDemo?'rgba(255,165,0,0.20)':'rgba(0,212,232,0.26)';
+  ctx.lineWidth=12; ctx.lineCap='round'; ctx.globalAlpha=0.35; ctx.stroke(); ctx.globalAlpha=1;
 }
 
-/* ═══════════════════════════════════════════════
-   FORMAT HELPERS
-═══════════════════════════════════════════════ */
-function fmtPrice(n) {
-  if (!n) return '—';
-  if (n >= 1000) return '$' + Math.round(n).toLocaleString();
-  if (n >= 1)    return '$' + n.toFixed(2);
-  return '$' + n.toFixed(4);
-}
-function fmtUSD(n) {
-  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
-}
+/* ───── STATE ───── */
+var idLiveInterval=null, _idBuilt=false;
 
-/* ═══════════════════════════════════════════════
-   LIVE INTERVAL REF
-═══════════════════════════════════════════════ */
-var idLiveInterval = null;
-var _idBuilt = false;
+/* ─────────────────────────────────────────
+   BUILD IDENTITY — main render
+───────────────────────────────────────── */
+function buildIdentity(){
+  if(idLiveInterval){ clearInterval(idLiveInterval); idLiveInterval=null; }
+  var ic=document.getElementById('idContent');
+  if(!ic) return;
 
-/* ═══════════════════════════════════════════════
-   BUILD IDENTITY — dipanggil setelah connAddr tersedia
-═══════════════════════════════════════════════ */
-function buildIdentity() {
-  // Bersihkan interval lama
-  if (idLiveInterval) { clearInterval(idLiveInterval); idLiveInterval = null; }
-
-  var ic = document.getElementById('idContent');
-  if (!ic) return;
-
-  // ── Tidak ada wallet ──
-  if (!connAddr) {
-    _idBuilt = false;
-    ic.innerHTML =
+  /* ── EMPTY STATE — no wallet, no session ── */
+  if(!connAddr){
+    _idBuilt=false;
+    ic.innerHTML=
       '<div class="empty-state">'
-        + '<div style="font-family:Bebas Neue,cursive;font-size:48px;color:rgba(0,212,232,0.12);letter-spacing:.1em;animation:fadeInUp .5s both">⬡</div>'
-        + '<h3 style="font-family:Bebas Neue,cursive;font-size:26px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3>'
-        + '<p style="font-size:11.5px;color:var(--txt2);max-width:300px;line-height:1.9">Connect your wallet to view your living trust identity profile and realtime portfolio data.</p>'
-        + '<button class="btn" id="connectCta" style="margin-top:8px"><span>Connect Wallet →</span></button>'
-      + '</div>';
+        +'<div style="font-family:Bebas Neue,cursive;font-size:52px;color:rgba(0,212,232,0.10);letter-spacing:.1em">⬡</div>'
+        +'<h3 style="font-family:Bebas Neue,cursive;font-size:26px;color:#fff;letter-spacing:.04em">No Wallet Connected</h3>'
+        +'<p style="font-size:11.5px;color:var(--txt2);max-width:340px;line-height:1.9">'
+          +'Connect your <strong style="color:var(--c)">real wallet</strong> to see live on-chain data, '
+          +'or use <strong style="color:rgba(255,185,40,0.85)">Demo Mode</strong> to preview a sample identity.'
+        +'</p>'
+        +'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px">'
+          +'<button class="btn" id="idConnectCta"><span>Connect Real Wallet →</span></button>'
+          +'<button class="btn-ghost-amber" id="idDemoCta">⚡ Preview Demo Mode</button>'
+        +'</div>'
+        +'<div class="es-hint">Real wallet = your actual on-chain data &nbsp;·&nbsp; Demo = simulated sample</div>'
+      +'</div>';
     setTimeout(function(){
-      var ct = document.getElementById('connectCta');
-      if (ct) ct.addEventListener('click', openWallet);
-    }, 50);
+      var c=document.getElementById('idConnectCta');
+      var d=document.getElementById('idDemoCta');
+      if(c) c.addEventListener('click', openWallet);
+      if(d) d.addEventListener('click', function(){ startScan('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045','Demo Mode',1); });
+    },50);
     return;
   }
 
-  _idBuilt = true;
+  _idBuilt=true;
+  var isDemo=(connWallet==='Demo Mode');
+  var curEthPrice=(tokenData&&tokenData.ethereum)?tokenData.ethereum.price:3200;
+  var curGas=gasPrice||18;
 
-  // Ambil harga ETH saat ini dari shared tokenData
-  var curEthPrice = (tokenData && tokenData.ethereum) ? tokenData.ethereum.price : 3200;
-  var ethBal = 3.2841;
-  var ethUsd = fmtUSD(ethBal * curEthPrice);
-  var curGas = gasPrice || 18;
+  /* ── DEMO: sample balance; REAL: akan di-fetch via RPC ── */
+  var ethBal  = isDemo ? 3.2841 : null;
+  var ethUsd  = ethBal!==null ? fmtUSD(ethBal*curEthPrice) : '—';
 
-  ic.innerHTML =
+  /* ── scores: demo = elite sample, real = lower (normal active user) ── */
+  var trustScore = isDemo ? 94 : 87;
+  var builderRep = isDemo ? 847 : 312;
+  var govVotes   = isDemo ? 23 : 7;
 
-    /* ── HERO ── */
-    '<div class="id-hero id-anim" style="animation-delay:.05s">'
-      + '<div class="aura-wrap">'
-        + '<div class="aura-ring"></div>'
-        + '<div class="aura-ring"></div>'
-        + '<div class="aura-ring"></div>'
-        + '<div class="aura-core">ID</div>'
-      + '</div>'
-      + '<div class="id-info">'
-        + '<div class="id-name">Trust Identity</div>'
-        + '<div class="id-addr">' + connAddr + '</div>'
-        + '<div class="id-badges">'
-          + '<div class="id-badge"><div class="id-badge-dot"></div>' + (connWallet || 'Demo Mode') + ' — Cyan Aura Active</div>'
-          + '<div class="id-badge gold"><div class="id-badge-dot"></div>Builder Rep: Elite</div>'
-        + '</div>'
-      + '</div>'
-      + '<div class="score-wrap">'
-        + '<div class="score-ring-wrap">'
-          + '<canvas id="scoreCanvas"></canvas>'
-          + '<div class="score-num">'
-            + '<div class="score-val" id="tsv-big">0</div>'
-            + '<div class="score-lbl">Trust</div>'
-          + '</div>'
-        + '</div>'
-      + '</div>'
-    + '</div>'
+  /* ══ TOP BANNER — perbedaan paling jelas ══ */
+  var banner = isDemo
+    ? '<div class="demo-banner id-anim">'
+        +'<span style="font-size:14px">⚡</span>'
+        +'<div><strong style="color:rgba(255,200,60,0.95)">DEMO MODE</strong>'
+          +' — Semua metric di bawah adalah <strong style="color:rgba(255,185,40,0.85)">data simulasi</strong>.'
+          +' Tidak terhubung ke wallet nyata. Harga market tetap real-time dari Binance.'
+        +'</div>'
+        +'<button class="demo-upgrade-btn" id="upgradeWalletBtn">Connect Real Wallet →</button>'
+      +'</div>'
+    : '<div class="wallet-banner id-anim">'
+        +'<div class="wvb-dot" style="width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.8s infinite;flex-shrink:0"></div>'
+        +'<div><strong>WALLET VERIFIED</strong>'
+          +' — Data on-chain aktif. Saldo diambil langsung dari RPC. Harga market real-time Binance.'
+        +'</div>'
+        +'<div class="wb-provider">🦊 '+(connWallet||'Wallet')+' · '+chainLabel(chainId)+'</div>'
+      +'</div>';
 
-    /* ── METRICS ── */
-    + '<div class="mgrid id-anim" style="animation-delay:.12s">'
-      + '<div class="mc"><div class="mc-accent" style="background:var(--c)"></div><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc mc-badge">Excellent</span></div>'
-      + '<div class="mc"><div class="mc-accent" style="background:var(--green)"></div><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr mc-badge">No threats</span></div>'
-      + '<div class="mc"><div class="mc-accent" style="background:var(--gold)"></div><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2 mc-badge">Builder</span></div>'
-      + '<div class="mc"><div class="mc-accent" style="background:#7ab4ff"></div><div class="mc-l">Gov. Votes</div><div class="mc-v" style="color:#7ab4ff" id="gvv">0</div><span class="badge bbl mc-badge">Active voter</span></div>'
-    + '</div>'
+  /* ══ HERO ══ */
+  var heroHtml =
+    '<div class="id-hero '+(isDemo?'demo':'real')+' id-anim" style="animation-delay:.05s">'
+      +'<div class="aura-wrap '+(isDemo?'demo':'')+'">'
+        +'<div class="aura-ring"></div><div class="aura-ring"></div><div class="aura-ring"></div>'
+        +'<div class="aura-core">'+(isDemo?'DEMO':'ID')+'</div>'
+      +'</div>'
+      +'<div class="id-info">'
+        +'<div class="id-name">'+(isDemo?'Demo Identity Profile':'Trust Identity')+'</div>'
+        +'<div class="id-addr">'
+          +connAddr
+          +(isDemo?' <span style="color:rgba(255,165,0,0.45);font-size:6.5px;font-style:italic">[sample address]</span>':'')
+        +'</div>'
+        +'<div class="id-badges">'
+          +(isDemo
+            ? '<div class="id-badge demo-tag"><div class="id-badge-dot"></div>Demo Mode — Sample Identity</div>'
+              +'<div class="id-badge gold"><div class="id-badge-dot"></div>Builder Rep: Elite (sample)</div>'
+            : '<div class="id-badge verified"><div class="id-badge-dot"></div>'+(connWallet||'Wallet')+' — Identity Verified</div>'
+              +'<div class="id-badge gold"><div class="id-badge-dot"></div>Builder Rep: Active</div>'
+           )
+        +'</div>'
+        +'<div style="margin-top:9px;font-family:Space Mono,monospace;font-size:7px;letter-spacing:.08em;color:'
+          +(isDemo?'rgba(255,185,40,0.5)':'rgba(0,220,110,0.6)')+';">'
+          +(isDemo
+            ? '◌ Semua metric adalah simulasi · harga market = Binance real-time'
+            : '● On-chain data aktif · harga market = Binance real-time')
+        +'</div>'
+      +'</div>'
+      +'<div class="score-wrap">'
+        +'<div class="score-ring-wrap">'
+          +'<canvas id="scoreCanvas"></canvas>'
+          +'<div class="score-num">'
+            +'<div class="'+(isDemo?'score-val demo-score':'score-val')+'" id="tsv-big">0</div>'
+            +'<div class="score-lbl">'+(isDemo?'SAMPLE':'TRUST')+'</div>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
 
-    /* ── LIVE CARDS ── */
-    + '<div class="live-grid id-anim" style="animation-delay:.19s">'
-      + '<div class="live-card">'
-        + '<div class="live-label"><div class="live-dot" style="background:var(--c);box-shadow:0 0 6px var(--c)"></div>ETH Balance</div>'
-        + '<div class="live-value" id="id-eth-bal" style="color:#fff">' + ethBal + '</div>'
-        + '<div class="live-sub" id="id-usd">≈ ' + ethUsd + ' USD</div>'
-      + '</div>'
-      + '<div class="live-card">'
-        + '<div class="live-label"><div class="live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div>Gas (live)</div>'
-        + '<div class="live-value" style="color:var(--gold)" id="id-gas-val">' + curGas + '</div>'
-        + '<div class="live-sub">gwei · <span id="id-gas-usd">~$' + ((curGas*21000/1e9)*curEthPrice).toFixed(3) + '</span>/tx</div>'
-      + '</div>'
-      + '<div class="live-card">'
-        + '<div class="live-label"><div class="live-dot" style="background:#7ab4ff;box-shadow:0 0 6px #7ab4ff"></div>ETH Price</div>'
-        + '<div class="live-value" id="id-eth-price" style="color:#7ab4ff">' + fmtPrice(curEthPrice) + '</div>'
-        + '<div class="live-sub" id="id-eth-chg">' + _ethChgStr() + ' · ' + chainLabel(chainId) + '</div>'
-      + '</div>'
-    + '</div>'
+  /* ══ METRICS ══ */
+  var metricsHtml =
+    '<div class="mgrid '+(isDemo?'mode-demo':'')+' id-anim" style="animation-delay:.12s">'
+      +'<div class="mc"><div class="mc-accent" style="background:var(--c)"></div><div class="mc-l">Trust Score</div><div class="mc-v c" id="tsv">0</div><span class="badge bc mc-badge">Excellent</span></div>'
+      +'<div class="mc"><div class="mc-accent" style="background:var(--green)"></div><div class="mc-l">Security Status</div><div class="mc-v gr">Secure</div><span class="badge bgr mc-badge">No threats</span></div>'
+      +'<div class="mc"><div class="mc-accent" style="background:var(--gold)"></div><div class="mc-l">Builder Rep</div><div class="mc-v go" id="brv">0</div><span class="badge bg2 mc-badge">Builder</span></div>'
+      +'<div class="mc"><div class="mc-accent" style="background:#7ab4ff"></div><div class="mc-l">Gov. Votes</div><div class="mc-v" style="color:#7ab4ff" id="gvv">0</div><span class="badge bbl mc-badge">Active voter</span></div>'
+    +'</div>';
 
-    /* ── ROW 1 ── */
-    + '<div class="two-col id-anim" style="animation-delay:.26s">'
-      + '<div class="wcard">'
-        + '<div class="wc-title"><span>Portfolio Value</span><div class="mi-live"><div class="mi-live-dot"></div><span>Live</span></div></div>'
-        + '<div style="font-family:Bebas Neue,cursive;font-size:34px;letter-spacing:.02em;color:#fff;margin-bottom:4px" id="id-portfolio">' + ethUsd + '</div>'
-        + '<div style="font-size:9px;color:var(--txt2)" id="id-portfolio-sub">' + ethBal + ' ETH · Network: <span style="color:var(--c)">' + chainLabel(chainId) + '</span></div>'
-        + '<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">'
-          + '<div style="padding:10px;background:rgba(0,212,232,0.04);border:1px solid rgba(0,212,232,0.1);border-radius:2px">'
-            + '<div style="font-family:Space Mono,monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">ETH Price</div>'
-            + '<div style="font-family:Space Mono,monospace;font-size:11px;color:#fff" id="id-price-detail">' + fmtPrice(curEthPrice) + '</div>'
-          + '</div>'
-          + '<div style="padding:10px;background:rgba(212,168,50,0.04);border:1px solid rgba(212,168,50,0.12);border-radius:2px">'
-            + '<div style="font-family:Space Mono,monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Gas Fee</div>'
-            + '<div style="font-family:Space Mono,monospace;font-size:11px;color:var(--gold)" id="id-gas-detail">' + curGas + ' gwei</div>'
-          + '</div>'
-        + '</div>'
-      + '</div>'
-      + '<div class="wcard">'
-        + '<div class="wc-title">Multi-chain Presence</div>'
-        + '<div class="chain-pills">'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#6f7cff"></div>Ethereum</div>'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#8247e5"></div>Polygon</div>'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#ff6b35"></div>Optimism</div>'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#1892d4"></div>Arbitrum</div>'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#29a0b1"></div>Base</div>'
-          + '<div class="chain-pill"><div class="cpill-dot" style="background:#ab73ff"></div>Solana</div>'
-        + '</div>'
-      + '</div>'
-    + '</div>'
+  /* ══ LIVE CARDS (3 kartu harga) ══
+     - ETH Balance: DEMO = sample / REAL = fetched via RPC
+     - Gas:         ALWAYS real (Cloudflare RPC, refresh 15s)
+     - ETH Price:   ALWAYS real (Binance WS)
+  ══ */
+  var balanceCardBody = isDemo
+    ? '<div class="live-value" style="color:#fff">'+ethBal+'</div>'
+      +'<div class="live-sub" id="id-usd">≈ '+ethUsd+' USD</div>'
+      +dtag('Sample balance (bukan saldo nyata)', false)
+    : '<div class="live-value" style="color:#fff" id="id-eth-bal"><span class="fetching" id="id-eth-bal-txt">Fetching…</span></div>'
+      +'<div class="live-sub" id="id-usd">—</div>'
+      +dtag('On-chain via Ethereum RPC', true);
 
-    /* ── ROW 2 ── */
-    + '<div class="two-col id-anim" style="animation-delay:.33s">'
-      + '<div class="wcard">'
-        + '<div class="wc-title"><span>Wallet Activity (12m)</span><span class="badge bc">Monthly</span></div>'
-        + '<div class="activity-bars" id="id-bars"></div>'
-        + '<div class="months"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>'
-      + '</div>'
-      + '<div class="wcard">'
-        + '<div class="wc-title">Risk Detection</div>'
-        + '<div class="risk-item"><span class="risk-label">Phishing contracts</span><div class="risk-ok">0 detected</div></div>'
-        + '<div class="risk-item"><span class="risk-label">Flagged approvals</span><div class="risk-ok">Clean</div></div>'
-        + '<div class="risk-item"><span class="risk-label">Mixer interactions</span><div class="risk-ok">None</div></div>'
-        + '<div class="risk-item"><span class="risk-label">Rugpull exposure</span><div class="risk-ok">0 found</div></div>'
-      + '</div>'
-    + '</div>'
+  var liveCardsHtml =
+    '<div class="live-grid id-anim" style="animation-delay:.19s">'
+      +'<div class="live-card">'
+        +'<div class="live-label"><div class="live-dot" style="background:'+(isDemo?'rgba(255,185,40,0.8)':'var(--c)')+';box-shadow:0 0 6px '+(isDemo?'rgba(255,165,0,0.5)':'var(--c)')+'"></div>'
+          +(isDemo?'ETH Balance <span style="color:rgba(255,185,40,0.5);margin-left:4px">[SAMPLE]</span>':'ETH Balance')
+        +'</div>'
+        +balanceCardBody
+      +'</div>'
+      /* Gas — always real */
+      +'<div class="live-card">'
+        +'<div class="live-label"><div class="live-dot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div>Gas (live)</div>'
+        +'<div class="live-value" style="color:var(--gold)" id="id-gas-val">'+curGas+'</div>'
+        +'<div class="live-sub">gwei · <span id="id-gas-usd">~$'+((curGas*21000/1e9)*curEthPrice).toFixed(3)+'</span>/tx</div>'
+        +dtag('Ethereum RPC · 15s refresh', true)
+      +'</div>'
+      /* ETH Price — always real */
+      +'<div class="live-card">'
+        +'<div class="live-label"><div class="live-dot" style="background:#7ab4ff;box-shadow:0 0 6px #7ab4ff"></div>ETH Price</div>'
+        +'<div class="live-value" id="id-eth-price" style="color:#7ab4ff">'+fmtPrice(curEthPrice)+'</div>'
+        +'<div class="live-sub" id="id-eth-chg">'+_ethChgStr()+' · '+chainLabel(chainId)+'</div>'
+        +dtag('Binance WebSocket · real-time', true)
+      +'</div>'
+    +'</div>';
 
-    /* ── ROW 3 ── */
-    + '<div class="two-col id-anim" style="animation-delay:.40s">'
-      + '<div class="wcard">'
-        + '<div class="wc-title">Contribution History</div>'
-        + '<div class="hist-item"><div class="hist-dot" style="background:var(--c)"></div><div class="hist-text">Uniswap v4 grants contributor</div><div class="hist-year">2024</div></div>'
-        + '<div class="hist-item"><div class="hist-dot" style="background:var(--gold)"></div><div class="hist-text">ENS DAO governance delegate</div><div class="hist-year">2024</div></div>'
-        + '<div class="hist-item"><div class="hist-dot" style="background:#7ab4ff"></div><div class="hist-text">Open source smart contract auditor</div><div class="hist-year">2023</div></div>'
-      + '</div>'
-      + '<div class="wcard">'
-        + '<div class="wc-title"><span>Live Market</span><div class="mi-live"><div class="mi-live-dot"></div><span id="id-mkt-ts">—</span></div></div>'
-        + '<div id="id-mkt"></div>'
-      + '</div>'
-    + '</div>';
+  /* ══ ROW 1: Portfolio + Multi-chain ══ */
+  var row1Html =
+    '<div class="two-col id-anim" style="animation-delay:.26s">'
+      +'<div class="wcard">'
+        +'<div class="wc-title"><span>Portfolio Value</span>'
+          +'<div class="mi-live"><div class="mi-live-dot"></div><span>'+(isDemo?'DEMO':'Live')+'</span></div>'
+        +'</div>'
+        +'<div style="font-family:Bebas Neue,cursive;font-size:34px;letter-spacing:.02em;color:'+(isDemo?'rgba(255,200,80,0.9)':'#fff')+';margin-bottom:4px" id="id-portfolio">'+ethUsd+'</div>'
+        +'<div style="font-size:9px;color:var(--txt2)" id="id-portfolio-sub">'
+          +(isDemo?ethBal+' ETH (sample)':'— ETH')
+          +' · Network: <span style="color:var(--c)">'+chainLabel(chainId)+'</span>'
+        +'</div>'
+        +'<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+          +'<div style="padding:10px;background:rgba(0,212,232,0.04);border:1px solid rgba(0,212,232,0.1);border-radius:2px">'
+            +'<div style="font-family:Space Mono,monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">ETH Price'+dtag('Binance',true)+'</div>'
+            +'<div style="font-family:Space Mono,monospace;font-size:11px;color:#fff" id="id-price-detail">'+fmtPrice(curEthPrice)+'</div>'
+          +'</div>'
+          +'<div style="padding:10px;background:rgba(212,168,50,0.04);border:1px solid rgba(212,168,50,0.12);border-radius:2px">'
+            +'<div style="font-family:Space Mono,monospace;font-size:6.5px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px">Gas Fee'+dtag('RPC',true)+'</div>'
+            +'<div style="font-family:Space Mono,monospace;font-size:11px;color:var(--gold)" id="id-gas-detail">'+curGas+' gwei</div>'
+          +'</div>'
+        +'</div>'
+        +(isDemo
+          ? '<div style="margin-top:10px">'+dtag('Portfolio = simulasi · Prices = Binance real-time', false)+'</div>'
+          : '<div style="margin-top:10px">'+dtag('Portfolio dari on-chain · Prices = Binance real-time', true)+'</div>'
+         )
+      +'</div>'
+      +'<div class="wcard">'
+        +'<div class="wc-title">Multi-chain Presence'+sampleBadge(isDemo)+'</div>'
+        +'<div class="chain-pills">'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#6f7cff"></div>Ethereum</div>'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#8247e5"></div>Polygon</div>'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#ff6b35"></div>Optimism</div>'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#1892d4"></div>Arbitrum</div>'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#29a0b1"></div>Base</div>'
+          +'<div class="chain-pill"><div class="cpill-dot" style="background:#ab73ff"></div>Solana</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+
+  /* ══ ROW 2: Activity + Risk ══ */
+  var row2Html =
+    '<div class="two-col id-anim" style="animation-delay:.33s">'
+      +'<div class="wcard">'
+        +'<div class="wc-title">Wallet Activity (12m)'+sampleBadge(isDemo)
+          +' <span class="badge '+(isDemo?'':'bc')+'" style="'+(isDemo?'background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.18);color:rgba(255,185,40,0.65);font-size:7px;padding:2px 8px':'')+'">'
+            +(isDemo?'SIMULATED':'Monthly')
+          +'</span>'
+        +'</div>'
+        +'<div class="activity-bars" id="id-bars"></div>'
+        +'<div class="months"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>'
+      +'</div>'
+      +'<div class="wcard">'
+        +'<div class="wc-title">Risk Detection'+sampleBadge(isDemo)+'</div>'
+        +'<div class="risk-item"><span class="risk-label">Phishing contracts</span><div class="risk-ok">0 detected</div></div>'
+        +'<div class="risk-item"><span class="risk-label">Flagged approvals</span><div class="risk-ok">Clean</div></div>'
+        +'<div class="risk-item"><span class="risk-label">Mixer interactions</span><div class="risk-ok">None</div></div>'
+        +'<div class="risk-item"><span class="risk-label">Rugpull exposure</span><div class="risk-ok">0 found</div></div>'
+      +'</div>'
+    +'</div>';
+
+  /* ══ ROW 3: History + Live Market ══ */
+  var row3Html =
+    '<div class="two-col id-anim" style="animation-delay:.40s">'
+      +'<div class="wcard">'
+        +'<div class="wc-title">Contribution History'+sampleBadge(isDemo)+'</div>'
+        +'<div class="hist-item"><div class="hist-dot" style="background:var(--c)"></div><div class="hist-text">Uniswap v4 grants contributor</div><div class="hist-year">2024</div></div>'
+        +'<div class="hist-item"><div class="hist-dot" style="background:var(--gold)"></div><div class="hist-text">ENS DAO governance delegate</div><div class="hist-year">2024</div></div>'
+        +'<div class="hist-item"><div class="hist-dot" style="background:#7ab4ff"></div><div class="hist-text">Open source smart contract auditor</div><div class="hist-year">2023</div></div>'
+      +'</div>'
+      +'<div class="wcard">'
+        +'<div class="wc-title"><span>Live Market</span><div class="mi-live"><div class="mi-live-dot"></div><span id="id-mkt-ts">—</span></div></div>'
+        +dtag('Binance real-time · update tiap 3 detik', true)
+        +'<div id="id-mkt" style="margin-top:10px"></div>'
+      +'</div>'
+    +'</div>';
+
+  /* ══ RENDER ALL ══ */
+  ic.innerHTML = banner + heroHtml + metricsHtml + liveCardsHtml + row1Html + row2Html + row3Html;
 
   /* ── Activity bars ── */
-  var bars = document.getElementById('id-bars');
-  if (bars) {
-    [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v) {
-      var b = document.createElement('div');
-      b.className = 'a-bar';
-      b.style.height = v + '%';
-      bars.appendChild(b);
+  var bars=document.getElementById('id-bars');
+  if(bars){
+    [34,56,24,82,48,70,88,40,66,52,76,44].forEach(function(v){
+      var b=document.createElement('div'); b.className='a-bar'; b.style.height=v+'%'; bars.appendChild(b);
     });
   }
 
-  /* ── Score ring — tunggu DOM render ── */
-  setTimeout(function() {
-    var c = document.getElementById('scoreCanvas');
-    if (c) drawScoreRing(c, 94);
-    // Animated counters
-    animNum(document.getElementById('tsv'), 94, 1400);
-    animNum(document.getElementById('tsv-big'), 94, 1400);
-    animNum(document.getElementById('brv'), 847, 1700);
-    animNum(document.getElementById('gvv'), 23, 1100);
-  }, 80);
+  /* ── Upgrade CTA (demo only) ── */
+  setTimeout(function(){
+    var u=document.getElementById('upgradeWalletBtn');
+    if(u) u.addEventListener('click', openWallet);
+  },80);
 
-  // First live update
-  updateIdLive();
-  buildMkt();
+  /* ── Score ring ── */
+  setTimeout(function(){
+    var c=document.getElementById('scoreCanvas');
+    if(c) drawScoreRing(c, trustScore, isDemo);
+    animNum(document.getElementById('tsv'), trustScore, 1400);
+    animNum(document.getElementById('tsv-big'), trustScore, 1400);
+    animNum(document.getElementById('brv'), builderRep, 1700);
+    animNum(document.getElementById('gvv'), govVotes, 1100);
+  },80);
 
-  // Interval live refresh setiap 3 detik
-  idLiveInterval = setInterval(function() {
-    if (connAddr) { updateIdLive(); buildMkt(); }
-  }, 3000);
-}
+  /* ── Real wallet: fetch actual ETH balance via provider ── */
+  if(!isDemo && window.ethereum && connAddr){
+    window.ethereum.request({ method:'eth_getBalance', params:[connAddr,'latest'] })
+      .then(function(hex){
+        var wei=parseInt(hex,16);
+        var bal=(wei/1e18).toFixed(4);
+        var usdVal=fmtUSD((wei/1e18)*((tokenData&&tokenData.ethereum)?tokenData.ethereum.price:3200));
 
-/* ═══════════════════════════════════════════════
-   HELPER: ETH change string
-═══════════════════════════════════════════════ */
-function _ethChgStr() {
-  if (!tokenData || !tokenData.ethereum) return '—';
-  var chg = tokenData.ethereum.chg || 0;
-  var up = chg >= 0;
-  return '<span style="color:' + (up ? 'var(--green)' : '#ff4444') + '">' + (up ? '+' : '') + chg.toFixed(2) + '%</span>';
-}
+        var btEl=document.getElementById('id-eth-bal-txt');
+        if(btEl) btEl.outerHTML=bal;
+        var buEl=document.getElementById('id-usd');
+        if(buEl) buEl.textContent='≈ '+usdVal+' USD';
+        var portEl=document.getElementById('id-portfolio');
+        if(portEl){ portEl.textContent=usdVal; portEl.style.color='#fff'; portEl.classList.add('val-flash'); }
+        var subEl=document.getElementById('id-portfolio-sub');
+        if(subEl) subEl.innerHTML=bal+' ETH · Network: <span style="color:var(--c)">'+chainLabel(chainId)+'</span>';
 
-/* ═══════════════════════════════════════════════
-   UPDATE LIVE DATA — dipanggil setiap 3 detik
-═══════════════════════════════════════════════ */
-function updateIdLive() {
-  if (!connAddr || !_idBuilt) return;
-
-  var ethBal = 3.2841;
-  var curEthPrice = (tokenData && tokenData.ethereum) ? tokenData.ethereum.price : 3200;
-  var curGas = gasPrice || 18;
-
-  // USD value
-  var usdStr = '≈ ' + fmtUSD(ethBal * curEthPrice) + ' USD';
-  var usdEl = document.getElementById('id-usd');
-  if (usdEl) usdEl.textContent = usdStr;
-
-  // Portfolio
-  var portEl = document.getElementById('id-portfolio');
-  if (portEl) {
-    var newVal = fmtUSD(ethBal * curEthPrice);
-    if (portEl.textContent !== newVal) {
-      portEl.textContent = newVal;
-      portEl.classList.remove('val-flash');
-      void portEl.offsetWidth; // reflow
-      portEl.classList.add('val-flash');
-    }
+        var sbBal=document.getElementById('sbBal');
+        if(sbBal) sbBal.textContent=bal+' ETH';
+      })
+      .catch(function(){ /* silent fallback */ });
   }
 
-  // Gas
-  var gvEl = document.getElementById('id-gas-val');
-  if (gvEl) gvEl.textContent = curGas;
-  var guEl = document.getElementById('id-gas-usd');
-  if (guEl) guEl.textContent = '~$' + ((curGas*21000/1e9)*curEthPrice).toFixed(3);
-  var gdEl = document.getElementById('id-gas-detail');
-  if (gdEl) gdEl.textContent = curGas + ' gwei';
-
-  // ETH price card
-  var epEl = document.getElementById('id-eth-price');
-  if (epEl) epEl.textContent = fmtPrice(curEthPrice);
-  var ecEl = document.getElementById('id-eth-chg');
-  if (ecEl) ecEl.innerHTML = _ethChgStr() + ' · ' + chainLabel(chainId);
-  var pdEl = document.getElementById('id-price-detail');
-  if (pdEl) pdEl.textContent = fmtPrice(curEthPrice);
+  /* ── First live update + interval ── */
+  updateIdLive();
+  buildMkt();
+  idLiveInterval=setInterval(function(){ if(connAddr){ updateIdLive(); buildMkt(); } },3000);
 }
 
-/* ═══════════════════════════════════════════════
-   BUILD MARKET TABLE — live prices dari tokenData
-═══════════════════════════════════════════════ */
-function buildMkt() {
-  if (!_idBuilt) return;
-  var ml = document.getElementById('id-mkt');
-  if (!ml) return;
+/* ─────────────────────────────────────────
+   UPDATE LIVE DATA — harga ALWAYS real-time
+   Binance WS → shared.js tokenData
+───────────────────────────────────────── */
+function updateIdLive(){
+  if(!connAddr||!_idBuilt) return;
+  var isDemo=(connWallet==='Demo Mode');
+  var curEthPrice=(tokenData&&tokenData.ethereum)?tokenData.ethereum.price:3200;
+  var curGas=gasPrice||18;
 
-  var coins = [
-    { sym:'ETH',  id:'ethereum',        col:'#6f7cff' },
-    { sym:'BTC',  id:'bitcoin',         col:'#f7931a' },
-    { sym:'SOL',  id:'solana',          col:'#ab73ff' },
-    { sym:'MATIC',id:'matic-network',   col:'#8247e5' }
+  /* ETH Price — always real */
+  var epEl=document.getElementById('id-eth-price'); if(epEl) epEl.textContent=fmtPrice(curEthPrice);
+  var ecEl=document.getElementById('id-eth-chg');   if(ecEl) ecEl.innerHTML=_ethChgStr()+' · '+chainLabel(chainId);
+  var pdEl=document.getElementById('id-price-detail'); if(pdEl) pdEl.textContent=fmtPrice(curEthPrice);
+
+  /* Gas — always real */
+  var gvEl=document.getElementById('id-gas-val'); if(gvEl) gvEl.textContent=curGas;
+  var guEl=document.getElementById('id-gas-usd'); if(guEl) guEl.textContent='~$'+((curGas*21000/1e9)*curEthPrice).toFixed(3);
+  var gdEl=document.getElementById('id-gas-detail'); if(gdEl) gdEl.textContent=curGas+' gwei';
+
+  /* Demo-only: recalculate USD from sample balance */
+  if(isDemo){
+    var sampleBal=3.2841;
+    var usdEl=document.getElementById('id-usd'); if(usdEl) usdEl.textContent='≈ '+fmtUSD(sampleBal*curEthPrice)+' USD';
+    var portEl=document.getElementById('id-portfolio');
+    if(portEl){
+      var nv=fmtUSD(sampleBal*curEthPrice);
+      if(portEl.textContent!==nv){ portEl.textContent=nv; portEl.classList.remove('val-flash'); void portEl.offsetWidth; portEl.classList.add('val-flash'); }
+    }
+  }
+}
+
+/* ─────────────────────────────────────────
+   BUILD MARKET TABLE — always real-time
+───────────────────────────────────────── */
+function buildMkt(){
+  if(!_idBuilt) return;
+  var ml=document.getElementById('id-mkt'); if(!ml) return;
+  var coins=[
+    {sym:'ETH', id:'ethereum',      col:'#6f7cff'},
+    {sym:'BTC', id:'bitcoin',       col:'#f7931a'},
+    {sym:'SOL', id:'solana',        col:'#ab73ff'},
+    {sym:'MATIC',id:'matic-network',col:'#8247e5'}
   ];
-
-  var now = new Date();
-  var ts = now.getHours().toString().padStart(2,'0') + ':'
-         + now.getMinutes().toString().padStart(2,'0') + ':'
-         + now.getSeconds().toString().padStart(2,'0');
-  var tsel = document.getElementById('id-mkt-ts');
-  if (tsel) tsel.textContent = ts;
-
-  ml.innerHTML = coins.map(function(c) {
-    var d = tokenData[c.id] || {};
-    var p = d.price || 0;
-    var chg = d.chg || 0;
-    var up = chg >= 0;
+  var now=new Date();
+  var ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+  var tsel=document.getElementById('id-mkt-ts'); if(tsel) tsel.textContent=ts;
+  ml.innerHTML=coins.map(function(c){
+    var d=tokenData[c.id]||{}, p=d.price||0, chg=d.chg||0, up=chg>=0;
     return '<div class="mkt-item">'
-      + '<div class="mkt-sym"><div class="mkt-dot" style="background:' + c.col + '"></div>'
-      + '<span style="font-size:11px;color:#fff;font-weight:500">' + c.sym + '</span></div>'
-      + '<div style="text-align:right">'
-        + '<div class="mkt-price-val">' + (p ? fmtPrice(p) : '—') + '</div>'
-        + '<div class="mkt-chg ' + (up ? 'up' : 'dn') + '">'
-          + (p ? (up ? '+' : '') + chg.toFixed(2) + '%' : '—')
-        + '</div>'
-      + '</div>'
-    + '</div>';
+      +'<div class="mkt-sym"><div class="mkt-dot" style="background:'+c.col+'"></div>'
+      +'<span style="font-size:11px;color:#fff;font-weight:500">'+c.sym+'</span></div>'
+      +'<div style="text-align:right">'
+        +'<div class="mkt-price-val">'+(p?fmtPrice(p):'—')+'</div>'
+        +'<div class="mkt-chg '+(up?'up':'dn')+'">'+(p?(up?'+':'')+chg.toFixed(2)+'%':'—')+'</div>'
+      +'</div></div>';
   }).join('');
 }
 
-/* ═══════════════════════════════════════════════
-   HOOK: dipanggil shared.js setiap harga update
-═══════════════════════════════════════════════ */
-function onPricesUpdated() {
-  // Jika identity sudah dibangun, update live data langsung
-  if (_idBuilt && connAddr) {
-    updateIdLive();
-    buildMkt();
-  }
-}
+/* hook dari shared.js */
+function onPricesUpdated(){ if(_idBuilt&&connAddr){ updateIdLive(); buildMkt(); } }
 
-/* ═══════════════════════════════════════════════
+/* ─────────────────────────────────────────
    RENDER LOOP
-═══════════════════════════════════════════════ */
-var lastF = 0;
-function loop(t) {
-  if (t - lastF >= 16) { lastF = t; drawBg(); drawHex(t); }
-  requestAnimationFrame(loop);
-}
+───────────────────────────────────────── */
+var lastF=0;
+function loop(t){ if(t-lastF>=16){ lastF=t; drawBg(); drawHex(t); } requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
 
-/* ═══════════════════════════════════════════════
-   BOOT
-═══════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', function() {
-  // FIX: initLoader harus dipanggil agar halaman tidak blank
+/* ─────────────────────────────────────────
+   BOOT — DOMContentLoaded
+───────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function(){
   initLoader();
   initBgCanvas();
   initGridPattern();
   initCursor();
   initHexCanvas();
   initRipple();
-  // TIDAK pakai initReveal() karena elemen dibuat dinamis
-  initNav('id');
+  initNav('id');        /* restores session → onWalletConnected → buildIdentity */
   bindWalletModal();
   bindDiscButton();
 
-  // FIX: harga langsung tersedia tanpa delay
+  /* real-time price stream mulai langsung */
   applyFallbackPrices();
   initPriceStreams();
   fetchPrices();
   setInterval(fetchPrices, 30000);
 
-  // FIX: buildIdentity dipanggil setelah semua inisialisasi
-  // initNav akan restore session dan memanggil onWalletConnected → buildIdentity
-  // Tapi kita juga panggil langsung untuk handle kasus connAddr sudah ada
-  setTimeout(function() {
-    buildIdentity();
-  }, 120);
+  /* setTimeout safety: jika session tidak ada → buildIdentity menampilkan empty state */
+  setTimeout(buildIdentity, 150);
 });
 </script>
 </body>
