@@ -320,7 +320,7 @@ section{padding:6rem 4rem;}
   line-height:1.1;margin-bottom:1rem;
 }
 
-/* EXPLORE (PARALLAX LOGIC MODIFIED) */
+/* EXPLORE */
 #explore{
   background:var(--dark2);
   position:relative;
@@ -342,7 +342,6 @@ section{padding:6rem 4rem;}
   border:1px solid rgba(124,58,237,0.2);
   padding:2rem;
   position:relative;
-  /* PENTING: Jangan gunakan overflow hidden atau clip-path disini agar kepala karakter bisa tembus keluar kotak */
   overflow: visible; 
   transition: border-color 0.4s;
 }
@@ -355,7 +354,7 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* Frame Box Khusus Gambar - Di sinilah potongan siber dipasang */
+/* Frame Box Gambar */
 .card-img-container {
   width: 100%;
   height: 160px;
@@ -366,17 +365,17 @@ section{padding:6rem 4rem;}
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
 }
 
-/* Gambar Aset Karakter dengan class target pop-avatar (WAJIB ADA) */
+/* Gambar Karakter Ter-target Pop Avatar (MENGGUNAKAN DEMO URL TRANS-PNG) */
 .pop-avatar {
-  width: 90%;
+  width: 80%;
   height: auto;
   max-height: 190px;
   position: absolute;
-  bottom: -5px; 
-  left: 5%;
+  bottom: -15px; 
+  left: 10%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(20px); /* Titik render awal */
+  transform: translateY(20px);
   will-change: transform;
 }
 
@@ -620,7 +619,7 @@ footer{
       </div>
       
       <div class="logo-container-fixed">
-        <img src="images/market.png" alt="Market Logo" class="logo-muter"/>
+        <img src="https://i.ibb.co/VWVgS9Y/cube-logo.png" alt="Market Logo" class="logo-muter"/>
       </div>
       
       <div class="logo-glow"></div>
@@ -635,7 +634,7 @@ footer{
   <div class="cards-grid">
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="images/shein.png" alt="Shein Visual" class="pop-avatar"/>
+        <img src="https://i.ibb.co/vYg6fC6/alpaca-demo.png" alt="Alpaca Cyber" class="pop-avatar"/>
       </div>
       <div class="card-icon">⚡</div>
       <div class="card-title">Cyberpunk Arena</div>
@@ -645,7 +644,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="images/gelzs.png" alt="Gelzs Visual" class="pop-avatar"/>
+        <img src="https://i.ibb.co/68v8wN8/bear-demo.png" alt="Bear Cyber" class="pop-avatar"/>
       </div>
       <div class="card-icon">🧬</div>
       <div class="card-title">Curse System</div>
@@ -655,7 +654,7 @@ footer{
     
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
+        <img src="https://i.ibb.co/9V4zZdf/cat-demo.png" alt="Cat Cyber" class="pop-avatar"/>
       </div>
       <div class="card-icon">🌐</div>
       <div class="card-title">Open World</div>
@@ -665,7 +664,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
+        <img src="https://i.ibb.co/VJyv9Sg/mecha-demo.png" alt="Mecha Cyber" class="pop-avatar"/>
       </div>
       <div class="card-icon">🎭</div>
       <div class="card-title">Identity Forge</div>
@@ -772,37 +771,6 @@ footer{
       <div class="char-role">Android Warrior</div>
       <div class="char-power">A — Rank</div>
     </div>
-    
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="42" r="26" fill="#c4a882"/>
-          <path d="M28 35 Q22 18 34 8 Q46 0 50 4 Q54 0 66 8 Q78 18 72 35" fill="#4a3728"/>
-          <path d="M22 35 Q15 28 16 20 Q18 13 24 14 Q30 15 30 24" fill="#4a3728"/>
-          <path d="M78 35 Q85 28 84 20 Q82 13 76 14 Q70 15 70 24" fill="#4a3728"/>
-          <circle cx="40" cy="44" r="5" fill="#f97316"/><circle cx="60" cy="44" r="5" fill="#f97316"/>
-        </svg>
-      </div>
-      <div class="char-name">KIRA</div>
-      <div class="char-role">Demon Hunter</div>
-      <div class="char-power">A+ Rank</div>
-    </div>
-    
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <ellipse cx="50" cy="44" rx="26" ry="28" fill="#374151"/>
-          <circle cx="40" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="60" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="40" cy="42" r="4" fill="#10b981"/>
-          <circle cx="60" cy="42" r="4" fill="#10b981"/>
-          <rect x="34" y="68" width="32" height="16" rx="4" fill="#1f2937" stroke="#10b981" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="char-name">GHOST</div>
-      <div class="char-role">Stealth Unit</div>
-      <div class="char-power">A — Rank</div>
-    </div>
   </div>
 </section>
 
@@ -832,8 +800,7 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- INTERAKTIF PARALLAX + POP-OUT KEPALA KONTROL JAMINAN JALAN ---- */
-// 1. Kotak meluncur horizontal dari kiri
+/* ---- INTERAKTIF PARALLAX + POP-OUT KEPALA KONTROL ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -100, opacity: 0 }, 
@@ -848,7 +815,6 @@ gsap.utils.toArray('.slide-left-card').forEach(card => {
   );
 });
 
-// 2. Kotak meluncur horizontal dari kanan
 gsap.utils.toArray('.slide-right-card').forEach(card => {
   gsap.fromTo(card, 
     { x: 100, opacity: 0 }, 
@@ -863,18 +829,18 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-// 3. Efek Pop-out Kepala Karakter Keluar dari Frame (Fixed Targeting Engine)
+// Efek Pop-out Kepala Karakter Keluar dari Frame (Sumbu Y digerakkan dinamis via Scroll)
 gsap.utils.toArray('.pop-avatar').forEach(img => {
   gsap.fromTo(img,
-    { y: 35, scale: 0.95 },
+    { y: 30, scale: 0.95 },
     { 
-      y: -35, /* Melesat ke atas tembus batas garis */
+      y: -35, /* Kepala didorong ke atas menembus border box */
       scale: 1.15,
       ease: "none",
       scrollTrigger: {
         trigger: img.closest('.card'),
         start: "top 90%",
-        end: "bottom 20%",
+        end: "bottom 15%",
         scrub: 1.2
       }
     }
@@ -882,7 +848,7 @@ gsap.utils.toArray('.pop-avatar').forEach(img => {
 });
 
 
-/* ---- CURSOR ---- */
+/* ---- CURSOR ANIMS ---- */
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
@@ -906,7 +872,7 @@ document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
   });
 });
 
-/* ---- PARTICLES ---- */
+/* ---- BACKGROUND PARTICLES ---- */
 const pcanvas = document.getElementById('particles-canvas');
 const pctx = pcanvas.getContext('2d');
 function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
