@@ -86,7 +86,7 @@ nav{
 }
 .nav-btn:hover{background:var(--cyan);color:var(--dark);}
 
-/* HERO (STRATEGIC ROW GRID LAYOUT) */
+/* HERO GRID LAYOUT */
 #hero{
   min-height:100vh;
   position:relative;
@@ -102,7 +102,7 @@ nav{
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr; /* Membagi teks di kiri dan logo strategis di kanan */
+  grid-template-columns: 1.2fr 0.8fr;
   gap: 2rem;
   align-items: center;
 }
@@ -210,20 +210,24 @@ nav{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* === STRATEGIC HOLOGRAPHIC SPHERE HOLDER === */
+/* === HOLOGRAPHIC SPHERE === */
 .logo-33d-wrap{
   position: relative;
-  width:100%;
+  width: 100%;
   height: 420px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  animation:fadeUp 1s 0.4s ease both;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeUp 1s 0.4s ease both;
 }
 .logo-rings{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 .ring{position:absolute;border-radius:50%;border-style:solid;}
 .ring-1{
@@ -250,12 +254,11 @@ nav{
 .dot-purple{background:var(--purple);box-shadow:0 0 10px var(--purple);}
 .dot-pink{background:var(--pink);box-shadow:0 0 8px var(--pink);}
 
-/* Pembungkus Kotak Stabil Beraspek Rasio 1:1 Untuk Kunci Gambar */
 .logo-container-fixed {
-  position: relative;
+  position: absolute;
   z-index: 5;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,19 +269,13 @@ nav{
   width: 100%;
   height: 100%;
   object-fit: contain;
-  max-width: 200px;
-  max-height: 200px;
   display: block;
   animation: neonPulseAlaRialo 3s ease-in-out infinite;
 }
 
 @keyframes logoFloatAlaRialo {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
 
 @keyframes neonPulseAlaRialo {
@@ -291,7 +288,9 @@ nav{
 }
 
 .logo-glow{
-  position:absolute;bottom:30px;left:50%;
+  position:absolute;
+  bottom: 0px;
+  left:50%;
   transform:translateX(-50%);
   width:220px;height:30px;
   background:radial-gradient(ellipse,rgba(124,58,237,0.45) 0%,transparent 70%);
@@ -433,16 +432,28 @@ section{padding:6rem 4rem;}
 }
 .char-showcase::-webkit-scrollbar{height:3px;}
 .char-showcase::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+
+/* === EFEK REVEAL BARU ALA RIALO PREDICT === */
+.char-card.reveal {
+  opacity: 0;
+  transform: scale(0.6) translateY(50px); /* Efek mengkerut mengecil dan turun */
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.char-card.reveal.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0); /* Melebar ke bentuk sempurna pas di-scroll */
+}
+
 .char-card{
   min-width:190px;flex-shrink:0;
   background:rgba(255,255,255,0.02);
   border:1px solid rgba(124,58,237,0.2);
   padding:1.5rem 1rem;text-align:center;
-  transition:all 0.4s;cursor:pointer;
+  cursor:pointer;
   clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
 }
-.char-card:hover{border-color:var(--pink);transform:translateY(-6px);}
-.char-card.active{border-color:var(--cyan);}
+.char-card:hover{border-color:var(--pink);transform:translateY(-6px) !important;}
+.char-card.active{border-color:var(--cyan);background: rgba(6, 182, 212, 0.04);}
 .char-avatar{
   width:90px;height:90px;border-radius:50%;
   margin:0 auto 1rem;
@@ -494,42 +505,24 @@ footer{
 .footer-links a{color:var(--muted);font-size:0.75rem;text-decoration:none;transition:color 0.3s;}
 .footer-links a:hover{color:var(--cyan);}
 
-/* REVEAL */
+/* STANDARD REVEAL FOR OTHER CONTENT */
 .reveal{opacity:0;transform:translateY(35px);transition:opacity 0.7s ease,transform 0.7s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
 /* PARTICLES */
 #particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
 
-/* MEDIA QUERY RESPONSIVE FOR MOBILE DEVICES */
 @media (max-width: 968px) {
-  #hero {
-    padding: 7rem 2rem 3rem 2rem;
-  }
-  .hero-wrapper {
-    grid-template-columns: 1fr; /* Menumpuk vertikal jika dibuka di layar kecil */
-    text-align: center;
-  }
-  .hero-content {
-    max-width: 100%;
-    order: 2; /* Teks turun ke bawah */
-  }
-  .logo-33d-wrap {
-    order: 1; /* Logo naik ke atas di perangkat mobile */
-    height: 320px;
-  }
+  #hero { padding: 7rem 2rem 3rem 2rem; }
+  .hero-wrapper { grid-template-columns: 1fr; text-align: center; }
+  .hero-content { max-width: 100%; order: 2; }
+  .logo-33d-wrap { order: 1; height: 320px; }
   .ring-1 { width: 300px; height: 300px; }
   .ring-2 { width: 240px; height: 240px; }
   .ring-3 { width: 180px; height: 180px; }
-  .hero-btns, .stats-bar {
-    justify-content: center;
-  }
-  nav {
-    padding: 1.2rem 2rem;
-  }
-  .nav-links {
-    display: none; /* Menyembunyikan menu link bawaan di mobile demi estetika clean */
-  }
+  .hero-btns, .stats-bar { justify-content: center; }
+  nav { padding: 1.2rem 2rem; }
+  .nav-links { display: none; }
 }
 </style>
 </head>
@@ -555,7 +548,6 @@ footer{
   <div class="scanline"></div>
   
   <div class="hero-wrapper">
-    
     <div class="hero-content">
       <div class="hero-tag">System Online // v2.077</div>
       <h1 class="hero-title">
@@ -597,7 +589,6 @@ footer{
       
       <div class="logo-glow"></div>
     </div>
-
   </div>
 </section>
 
@@ -680,6 +671,7 @@ footer{
 <section id="characters">
   <div class="section-tag">// 03 — Roster</div>
   <h2 class="section-title reveal">Choose Your<br/><span style="color:var(--purple)">Fighter</span></h2>
+  
   <div class="char-showcase">
     <div class="char-card active reveal">
       <div class="char-avatar">
@@ -696,6 +688,7 @@ footer{
       <div class="char-role">Curse Wielder</div>
       <div class="char-power">SS — Rank</div>
     </div>
+    
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -709,6 +702,7 @@ footer{
       <div class="char-role">Void Mage</div>
       <div class="char-power">S — Rank</div>
     </div>
+    
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -726,6 +720,7 @@ footer{
       <div class="char-role">Android Warrior</div>
       <div class="char-power">A — Rank</div>
     </div>
+    
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -740,6 +735,7 @@ footer{
       <div class="char-role">Demon Hunter</div>
       <div class="char-power">A+ Rank</div>
     </div>
+    
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -831,15 +827,32 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- SCROLL REVEAL ---- */
+/* ---- SCROLL REVEAL STAGGERED (MODIFIED FOR RIALO STYLE) ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry, i) {
-    if (entry.isIntersecting) {
-      setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+  // Mencari semua elemen kartu di baris karakter
+  let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
+  let otherEntries = Array.from(entries).filter(e => !e.target.classList.contains('char-card'));
+  
+  // 1. Eksekusi Animasi Kartu Karakter secara Berantai (Staggered)
+  let visibleCount = 0;
+  charCards.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+      setTimeout(function() {
+        entry.target.classList.add('visible');
+      }, visibleCount * 180); // Jeda kemunculan 180ms antar kartu kontinu ke kanan
+      visibleCount++;
     }
   });
-}, { threshold: 0.1 });
+
+  // 2. Eksekusi Animasi Elemen Biasa (Judul/Section Tag)
+  otherEntries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
 reveals.forEach(function(el) { observer.observe(el); });
 
 /* ---- CHAR CARD SELECT ---- */
