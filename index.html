@@ -265,10 +265,10 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* FIX PERBAIKAN MARKET.PNG - Gambar Diambil dari Link Gambar Kubus Virtual Baru */
+/* FIX PERBAIKAN MARKET.PNG - Menggunakan Gambar Aset Mesh Cube Hologram */
 .logo-muter{
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
   display: block;
   animation: neonPulseAlaRialo 3s ease-in-out infinite;
@@ -345,7 +345,6 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
-  perspective: 1000px; /* Untuk efek kedalaman 3D kepala */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -373,7 +372,7 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* GAMBAR KARAKTER DENGAN REAL-TIME INTERACTION HEADS */
+/* FIX ANIMASI OTOMATIS BERGERAK (IDLE FLOATING & TILTING EFFECT) */
 .pop-avatar {
   width: 85%;
   height: auto;
@@ -383,8 +382,30 @@ section{padding:6rem 4rem;}
   left: 7.5%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(15px); /* Letak default */
+  transform: translateY(15px);
   will-change: transform;
+}
+
+/* Memberikan ritme durasi animasi yang berbeda di tiap card supaya terlihat organik tidak serempak */
+.cards-grid .card:nth-child(1) .pop-avatar { animation: nexusHeadFloating 4s ease-in-out infinite; }
+.cards-grid .card:nth-child(2) .pop-avatar { animation: nexusHeadFloating 4.8s ease-in-out infinite; }
+.cards-grid .card:nth-child(3) .pop-avatar { animation: nexusHeadFloating 4.3s ease-in-out infinite; }
+.cards-grid .card:nth-child(4) .pop-avatar { animation: nexusHeadFloating 5.2s ease-in-out infinite; }
+
+/* Timeline Gerakan Kepala Bernapas, Melayang Naik Turun, & Menoleh Sendiri Secara Halus */
+@keyframes nexusHeadFloating {
+  0%, 100% {
+    transform: translateY(15px) rotateY(0deg) rotateX(0deg) scale(1.02);
+  }
+  25% {
+    transform: translateY(6px) rotateY(7deg) rotateX(4deg) scale(1.06);
+  }
+  50% {
+    transform: translateY(18px) rotateY(-5deg) rotateX(-3deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(8px) rotateY(4deg) rotateX(5deg) scale(1.05);
+  }
 }
 
 .card-icon{
@@ -835,48 +856,6 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
       }
     }
   );
-});
-
-/* ---- FIX INTERAKTIF MOUSE TRACKING HEADS YANG SEBENARNYA ---- */
-const cards = document.querySelectorAll('.card');
-
-cards.forEach(card => {
-  const avatar = card.querySelector('.pop-avatar');
-  let currentX = 0, currentY = 0;
-  let targetX = 0, targetY = 0;
-  
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const cardCenterX = rect.left + rect.width / 2;
-    const cardCenterY = rect.top + rect.height / 2;
-    
-    // Menghitung rasio jarak kursor dari titik tengah kotak
-    const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
-    const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
-    
-    // Nilai derajat rotasi 3D maksimal kepala menoleh
-    targetX = angleX * 30; 
-    targetY = angleY * -30; 
-  });
-  
-  // Reset posisi kepala jika kursor keluar dari batas area kartu
-  card.addEventListener('mouseleave', () => {
-    targetX = 0;
-    targetY = 0;
-  });
-
-  // Fungsi loop rendering interpolasi (Lerp) agar mulus tanpa lag patah-patah
-  function updateHeadMovement() {
-    currentX += (targetX - currentX) * 0.08;
-    currentY += (targetY - currentY) * 0.08;
-    
-    if (avatar) {
-      // Mengubah inline style langsung bypass bentrokan framework GSAP scroll
-      avatar.style.transform = `translateY(15px) scale(1.15) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
-    }
-    requestAnimationFrame(updateHeadMovement);
-  }
-  updateHeadMovement();
 });
 
 /* ---- CURSOR EFF ---- */
