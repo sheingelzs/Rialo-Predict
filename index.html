@@ -195,31 +195,107 @@ nav{
 }
 .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
 
-/* CHARACTER */
-.hero-char{
-  position:absolute;right:0;bottom:0;
-  width:520px;
-  animation:floatChar 4s ease-in-out infinite,fadeUp 1s 0.4s ease both;
+/* 3D SPINNING LOGO */
+.logo-3d-wrap{
+  position:absolute;right:6%;top:50%;
+  transform:translateY(-50%);
+  width:420px;height:420px;
+  display:flex;align-items:center;justify-content:center;
   z-index:2;
+  animation:fadeUp 1s 0.4s ease both;
 }
-.hero-char svg{width:100%;height:auto;}
+.logo-rings{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.ring{
+  position:absolute;border-radius:50%;border-style:solid;
+}
+.ring-1{
+  width:380px;height:380px;
+  border-width:1px;border-color:rgba(124,58,237,0.25);
+  animation:spinCW 18s linear infinite;
+}
+.ring-2{
+  width:310px;height:310px;
+  border-width:1px;border-color:rgba(6,182,212,0.3);
+  border-style:dashed;
+  animation:spinCCW 12s linear infinite;
+}
+.ring-3{
+  width:240px;height:240px;
+  border-width:1px;border-color:rgba(236,72,153,0.2);
+  animation:spinCW 8s linear infinite;
+}
+.ring-dot{
+  position:absolute;width:8px;height:8px;
+  border-radius:50%;top:-4px;left:50%;transform:translateX(-50%);
+}
+.ring-dot-cyan{background:var(--cyan);box-shadow:0 0 12px var(--cyan);}
+.ring-dot-purple{background:var(--purple);box-shadow:0 0 12px var(--purple);}
+.ring-dot-pink{background:var(--pink);box-shadow:0 0 10px var(--pink);}
 
-.char-glow{
-  position:absolute;right:80px;bottom:80px;
-  width:300px;height:300px;
-  background:radial-gradient(circle,rgba(124,58,237,0.25) 0%,transparent 70%);
+.logo-scene{
+  width:200px;height:200px;
+  perspective:600px;
+  position:relative;z-index:2;
+}
+.logo-cube{
+  width:200px;height:200px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:rotateCube 10s ease-in-out infinite;
+}
+.logo-face{
+  position:absolute;width:200px;height:200px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(124,58,237,0.35);
+  background:rgba(13,0,32,0.7);
+  overflow:hidden;
+}
+.logo-face img{
+  width:130px;height:130px;
+  object-fit:contain;
+  filter:drop-shadow(0 0 12px rgba(6,182,212,0.7));
+}
+.logo-face-front {transform:translateZ(100px);}
+.logo-face-back  {transform:rotateY(180deg) translateZ(100px);}
+.logo-face-left  {transform:rotateY(-90deg) translateZ(100px);}
+.logo-face-right {transform:rotateY(90deg)  translateZ(100px);}
+.logo-face-top   {transform:rotateX(90deg)  translateZ(100px);}
+.logo-face-bottom{transform:rotateX(-90deg) translateZ(100px);}
+
+.logo-glow-base{
+  position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);
+  width:200px;height:30px;
+  background:radial-gradient(ellipse,rgba(124,58,237,0.4) 0%,transparent 70%);
   border-radius:50%;
   animation:glowPulse 3s ease-in-out infinite;
-  pointer-events:none;
+}
+.logo-scan{
+  position:absolute;inset:0;overflow:hidden;pointer-events:none;
+}
+.logo-scan::after{
+  content:'';position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(6,182,212,0.6),transparent);
+  animation:scanMove 3s ease-in-out infinite;
+}
+@keyframes scanMove{
+  0%{top:-2px;}100%{top:202px;}
 }
 
-@keyframes floatChar{
-  0%,100%{transform:translateY(0px);}
-  50%{transform:translateY(-18px);}
+@keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+@keyframes rotateCube{
+  0%  {transform:rotateY(0deg)   rotateX(10deg);}
+  25% {transform:rotateY(90deg)  rotateX(5deg);}
+  50% {transform:rotateY(180deg) rotateX(10deg);}
+  75% {transform:rotateY(270deg) rotateX(5deg);}
+  100%{transform:rotateY(360deg) rotateX(10deg);}
 }
 @keyframes glowPulse{
-  0%,100%{transform:scale(1);opacity:0.8;}
-  50%{transform:scale(1.2);opacity:0.4;}
+  0%,100%{transform:translateX(-50%) scale(1);opacity:0.8;}
+  50%{transform:translateX(-50%) scale(1.3);opacity:0.4;}
 }
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(30px);}
@@ -537,406 +613,26 @@ footer{
     </div>
   </div>
 
-  <!-- HERO CHARACTER SVG -->
-  <div class="hero-char">
-    <div class="char-glow"></div>
-    <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ef4444"/>
-          <stop offset="100%" stop-color="#7f1d1d"/>
-        </radialGradient>
-        <radialGradient id="charBg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.2"/>
-          <stop offset="100%" stop-color="#050010" stop-opacity="0"/>
-        </radialGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-
-      <!-- glow bg -->
-      <ellipse cx="200" cy="480" rx="140" ry="30" fill="#7c3aed" opacity="0.2"/>
-      <circle cx="200" cy="300" r="160" fill="url(#charBg)"/>
-
-      <!-- Body / armor -->
-      <path d="M140 380 Q120 340 118 300 Q116 260 130 230 Q150 200 200 196 Q250 200 270 230 Q284 260 282 300 Q280 340 260 380 Z" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1.5"/>
-      <!-- armor chest plate -->
-      <path d="M162 310 Q175 295 200 290 Q225 295 238 310 L235 355 Q220 365 200 367 Q180 365 165 355 Z" fill="#0d0020" stroke="#06b6d4" stroke-width="1"/>
-      <!-- chest line detail -->
-      <line x1="200" y1="295" x2="200" y2="365" stroke="#06b6d4" stroke-width="0.8" opacity="0.6"/>
-      <line x1="175" y1="325" x2="225" y2="325" stroke="#06b6d4" stroke-width="0.8" opacity="0.6"/>
-      <!-- chest core -->
-      <rect x="190" y="315" width="20" height="20" rx="3" fill="#0d0020" stroke="#06b6d4" stroke-width="1"/>
-      <rect x="194" y="319" width="12" height="12" rx="2" fill="#06b6d4" opacity="0.8" filter="url(#glow)"/>
-      <!-- shoulder armor L -->
-      <path d="M118 260 Q100 255 92 240 Q86 224 96 216 Q108 210 120 220 L130 248 Z" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-      <path d="M96 228 L118 238" stroke="#06b6d4" stroke-width="1.5" opacity="0.7"/>
-      <!-- shoulder armor R -->
-      <path d="M282 260 Q300 255 308 240 Q314 224 304 216 Q292 210 280 220 L270 248 Z" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-      <path d="M304 228 L282 238" stroke="#06b6d4" stroke-width="1.5" opacity="0.7"/>
-      <!-- armor collar -->
-      <rect x="175" y="373" width="50" height="30" rx="4" fill="#0d0020" stroke="#06b6d4" stroke-width="0.8"/>
-      <rect x="180" y="377" width="40" height="8" rx="2" fill="#0a0018" stroke="#7c3aed" stroke-width="0.5"/>
-      <rect x="184" y="379" width="8" height="4" rx="1" fill="#ef4444" opacity="0.9"/>
-      <rect x="196" y="379" width="8" height="4" rx="1" fill="#06b6d4" opacity="0.9"/>
-      <!-- legs -->
-      <path d="M150 420 Q144 460 142 510 Q140 545 148 570 L175 570 Q178 540 180 505 Q182 468 185 435 Z" fill="#0f0520" stroke="#4c1d95" stroke-width="0.8"/>
-      <path d="M250 420 Q256 460 258 510 Q260 545 252 570 L225 570 Q222 540 220 505 Q218 468 215 435 Z" fill="#0f0520" stroke="#4c1d95" stroke-width="0.8"/>
-      <!-- leg detail -->
-      <line x1="154" y1="480" x2="178" y2="478" stroke="#06b6d4" stroke-width="0.8" opacity="0.5"/>
-      <line x1="246" y1="480" x2="222" y2="478" stroke="#06b6d4" stroke-width="0.8" opacity="0.5"/>
-      <!-- boots -->
-      <path d="M142 570 Q138 590 140 605 Q145 615 165 615 Q178 615 180 605 Q182 590 178 570 Z" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-      <path d="M258 570 Q262 590 260 605 Q255 615 235 615 Q222 615 220 605 Q218 590 222 570 Z" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-      <!-- boot accents -->
-      <line x1="145" y1="590" x2="177" y2="590" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
-      <line x1="255" y1="590" x2="223" y2="590" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
-
-      <!-- Neck -->
-      <rect x="182" y="368" width="36" height="15" rx="3" fill="#c8956a"/>
-
-      <!-- HEAD -->
-      <ellipse cx="200" cy="220" rx="68" ry="80" fill="#d4a574"/>
-      <!-- shadow side -->
-      <ellipse cx="178" cy="218" rx="35" ry="40" fill="#b8895a" opacity="0.3"/>
-
-      <!-- HAIR - back -->
-      <path d="M138 185 Q132 155 140 130 Q150 105 165 98 Q155 115 158 140 Q160 160 165 178 Z" fill="#1a1a2e"/>
-      <path d="M262 185 Q268 155 260 130 Q250 105 235 98 Q245 115 242 140 Q240 160 235 178 Z" fill="#1a1a2e"/>
-
-      <!-- HAIR - main spikes -->
-      <path d="M148 160 Q138 130 142 108 Q148 88 160 82 Q152 100 155 122 Q158 142 162 158 Z" fill="#1a1a2e"/>
-      <path d="M165 148 Q158 118 164 95 Q170 74 182 68 Q174 88 176 110 Q178 130 180 148 Z" fill="#1a1a2e"/>
-      <path d="M185 142 Q182 112 188 88 Q194 65 202 58 Q198 80 198 104 Q198 124 200 142 Z" fill="#1a1a2e"/>
-      <path d="M215 142 Q218 112 212 88 Q206 65 198 58 Q202 80 202 104 Q202 124 200 142 Z" fill="#1a1a2e"/>
-      <path d="M232 148 Q242 118 236 95 Q230 74 218 68 Q226 88 224 110 Q222 130 220 148 Z" fill="#1a1a2e"/>
-      <path d="M252 160 Q262 130 258 108 Q252 88 240 82 Q248 100 245 122 Q242 142 238 158 Z" fill="#1a1a2e"/>
-      <!-- white hair highlights -->
-      <path d="M172 150 Q168 125 172 105 Q176 86 184 80" stroke="#e2e8f0" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M200 145 Q200 120 202 98 Q204 78 202 60" stroke="#e2e8f0" stroke-width="1.5" fill="none" opacity="0.5"/>
-      <path d="M228 150 Q232 125 228 105 Q224 86 216 80" stroke="#e2e8f0" stroke-width="2" fill="none" opacity="0.6"/>
-
-      <!-- FACE -->
-      <!-- eyes area -->
-      <path d="M158 228 Q168 222 180 226 L178 238 Q168 234 160 240 Z" fill="#b8895a" opacity="0.5"/>
-      <path d="M242 228 Q232 222 220 226 L222 238 Q232 234 240 240 Z" fill="#b8895a" opacity="0.5"/>
-      <!-- eyes -->
-      <ellipse cx="170" cy="232" rx="12" ry="8" fill="url(#eyeGlow)"/>
-      <ellipse cx="170" cy="232" rx="7" ry="5" fill="#7f1d1d"/>
-      <circle cx="170" cy="232" r="4" fill="#ef4444"/>
-      <circle cx="172" cy="230" r="1.5" fill="#fca5a5"/>
-      <!-- eye glow effect -->
-      <ellipse cx="170" cy="236" rx="14" ry="5" fill="#ef4444" opacity="0.15"/>
-
-      <ellipse cx="230" cy="232" rx="12" ry="8" fill="url(#eyeGlow)"/>
-      <ellipse cx="230" cy="232" rx="7" ry="5" fill="#7f1d1d"/>
-      <circle cx="230" cy="232" r="4" fill="#ef4444"/>
-      <circle cx="232" cy="230" r="1.5" fill="#fca5a5"/>
-      <ellipse cx="230" cy="236" rx="14" ry="5" fill="#ef4444" opacity="0.15"/>
-
-      <!-- eyebrows -->
-      <path d="M158 222 Q170 216 182 220" stroke="#2a1a0a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M242 222 Q230 216 218 220" stroke="#2a1a0a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-
-      <!-- nose -->
-      <ellipse cx="200" cy="255" rx="5" ry="6" fill="#c8956a"/>
-      <path d="M195 258 Q200 262 205 258" stroke="#b8895a" stroke-width="1" fill="none"/>
-
-      <!-- mouth -->
-      <path d="M186 274 Q200 280 214 274" stroke="#8b6344" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-
-      <!-- CURSE / SUPERNATURAL MARK on right side -->
-      <!-- organic blob -->
-      <path d="M248 178 Q268 162 280 144 Q292 126 288 108 Q284 92 272 90 Q260 88 254 102 Q248 116 252 132 Q256 148 252 164 Z" fill="#ec4899" opacity="0.85"/>
-      <path d="M260 150 Q272 138 278 124 Q282 112 276 104" stroke="#f9a8d4" stroke-width="2" fill="none"/>
-      <!-- spiral -->
-      <circle cx="265" cy="148" r="16" fill="#f472b6" opacity="0.8"/>
-      <path d="M265 140 Q272 144 271 152 Q270 160 262 161 Q254 160 253 152 Q253 145 260 142 Q266 140 268 145" stroke="#06b6d4" stroke-width="2" fill="none"/>
-      <circle cx="265" cy="148" r="5" fill="#06b6d4"/>
-      <circle cx="265" cy="148" r="2.5" fill="#e0f2fe"/>
-      <!-- tendrils -->
-      <path d="M276 130 Q288 122 296 110" stroke="#f9a8d4" stroke-width="1.5" fill="none" opacity="0.7"/>
-      <path d="M278 142 Q292 140 302 132" stroke="#f9a8d4" stroke-width="1.2" fill="none" opacity="0.6"/>
-      <path d="M274 158 Q286 164 294 158" stroke="#f9a8d4" stroke-width="1.2" fill="none" opacity="0.6"/>
-      <!-- extra blob top -->
-      <path d="M266 110 Q278 95 284 80 Q288 68 280 62 Q272 56 264 66 Q256 76 260 92 Z" fill="#ec4899" opacity="0.6"/>
-      <!-- glow -->
-      <ellipse cx="265" cy="148" rx="22" ry="22" fill="#ec4899" opacity="0.1" filter="url(#glow)"/>
-
-      <!-- scan lines on face -->
-      <line x1="140" y1="210" x2="260" y2="210" stroke="#06b6d4" stroke-width="0.5" opacity="0.2"/>
-      <line x1="140" y1="250" x2="260" y2="250" stroke="#06b6d4" stroke-width="0.5" opacity="0.2"/>
-
-      <!-- floating particles around char -->
-      <circle cx="100" cy="250" r="3" fill="#7c3aed" opacity="0.7"/>
-      <circle cx="88" cy="320" r="2" fill="#06b6d4" opacity="0.5"/>
-      <circle cx="305" cy="280" r="2.5" fill="#ec4899" opacity="0.6"/>
-      <circle cx="315" cy="350" r="2" fill="#7c3aed" opacity="0.4"/>
-    </svg>
+  <!-- 3D SPINNING LOGO -->
+  <div class="logo-3d-wrap">
+    <div class="logo-rings">
+      <div class="ring ring-1"><div class="ring-dot ring-dot-cyan"></div></div>
+      <div class="ring ring-2"><div class="ring-dot ring-dot-purple"></div></div>
+      <div class="ring ring-3"><div class="ring-dot ring-dot-pink"></div></div>
+    </div>
+    <div class="logo-scene">
+      <div class="logo-cube">
+        <div class="logo-face logo-face-front"><div class="logo-scan"></div><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-back"><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-left"><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-right"><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-top"><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-bottom"><img src="market.png" alt="Market Logo"/></div>
+      </div>
+    </div>
+    <div class="logo-glow-base"></div>
+  </div>
   </div>
 </section>
 
 <!-- EXPLORE -->
-<section id="explore">
-  <div class="section-tag">// 01 — What awaits</div>
-  <h2 class="section-title reveal">Explore<br/><span style="color:var(--cyan)">The Void</span></h2>
-  <div class="cards-grid">
-    <div class="card reveal">
-      <div class="card-icon">⚡</div>
-      <div class="card-title">Cyberpunk Arena</div>
-      <p class="card-desc">Battle in neon-lit arenas where reality bends and every fight reshapes the digital landscape.</p>
-      <span class="card-tag">Combat</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🧬</div>
-      <div class="card-title">Curse System</div>
-      <p class="card-desc">Channel supernatural energy through your character. Each curse mark unlocks a unique ability tree.</p>
-      <span class="card-tag">Abilities</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🌐</div>
-      <div class="card-title">Open World</div>
-      <p class="card-desc">Traverse sprawling digital landscapes — from neon megacities to dark void realms beyond the grid.</p>
-      <span class="card-tag">Exploration</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🎭</div>
-      <div class="card-title">Identity Forge</div>
-      <p class="card-desc">Build your character from scratch. Every choice — armor, ability, curse — defines who you become.</p>
-      <span class="card-tag">Customization</span>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURE -->
-<section id="feature">
-  <div class="feature-inner">
-    <div class="feature-visual reveal">
-      <div class="feature-box">
-        <div class="corner-tl"></div>
-        <div class="corner-br"></div>
-        <div class="feature-box-inner">
-          <div class="hud-ring">
-            <div class="hud-dot"></div>
-            <div class="hud-core">NEXUS<br/>CORE</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="feature-text reveal">
-      <div class="section-tag">// 02 — Core System</div>
-      <h2 class="section-title">Next-Gen<br/><span style="color:var(--pink)">Engine</span></h2>
-      <p style="color:var(--muted);line-height:1.8;margin-bottom:1rem;">Powered by the NEXUS Core — a real-time engine that processes every interaction, ability, and world event simultaneously.</p>
-      <div class="feature-list">
-        <div class="feature-item">
-          <div class="feature-dot"></div>
-          <div class="feature-text">
-            <h4>Real-Time Physics</h4>
-            <p>Every explosion, every curse energy burst rendered in true real-time with zero latency.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-dot"></div>
-          <div class="feature-text">
-            <h4>Adaptive AI Enemies</h4>
-            <p>Enemies learn your fighting style and evolve countermeasures across sessions.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-dot"></div>
-          <div class="feature-text">
-            <h4>Cross-Realm Sync</h4>
-            <p>Your progress, customization, and story carry seamlessly across all dimensions.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CHARACTERS -->
-<section id="characters">
-  <div class="section-tag">// 03 — Roster</div>
-  <h2 class="section-title reveal">Choose Your<br/><span style="color:var(--purple)">Fighter</span></h2>
-  <div class="char-showcase">
-    <div class="char-card active reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <circle cx="50" cy="40" r="28" fill="#d4a574"/>
-          <path d="M28 28 Q24 15 32 8 Q40 2 50 5 Q60 2 68 8 Q76 15 72 28" fill="#1a1a2e"/>
-          <circle cx="40" cy="40" r="5" fill="#ef4444"/><circle cx="60" cy="40" r="5" fill="#ef4444"/>
-          <path d="M58 60 Q68 55 74 45 Q80 35 78 25" fill="#ec4899" opacity="0.8"/>
-          <circle cx="68" cy="42" r="10" fill="#f472b6" opacity="0.7"/>
-          <circle cx="68" cy="42" r="4" fill="#06b6d4"/>
-        </svg>
-      </div>
-      <div class="char-name">RYZE</div>
-      <div class="char-role">Curse Wielder</div>
-      <div class="char-power">SS — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <circle cx="50" cy="42" r="26" fill="#8b6344"/>
-          <path d="M30 30 Q26 16 36 9 Q46 3 50 6 Q54 3 64 9 Q74 16 70 30" fill="#2d1b69"/>
-          <circle cx="40" cy="42" r="5" fill="#a855f7"/><circle cx="60" cy="42" r="5" fill="#a855f7"/>
-          <path d="M42 58 Q50 63 58 58" stroke="#7c5c3a" stroke-width="1.5" fill="none"/>
-          <rect x="36" y="62" width="28" height="22" rx="4" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="char-name">VOIDRA</div>
-      <div class="char-role">Void Mage</div>
-      <div class="char-power">S — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <rect x="20" y="20" width="60" height="65" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
-          <rect x="30" y="30" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <rect x="52" y="30" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <rect x="33" y="32" width="12" height="10" rx="2" fill="#0c4a6e"/>
-          <rect x="55" y="32" width="12" height="10" rx="2" fill="#0c4a6e"/>
-          <circle cx="39" cy="37" r="3" fill="#38bdf8"/>
-          <circle cx="61" cy="37" r="3" fill="#38bdf8"/>
-          <line x1="30" y1="55" x2="70" y2="55" stroke="#06b6d4" stroke-width="0.8" opacity="0.5"/>
-          <rect x="38" y="60" width="24" height="4" rx="2" fill="#1e293b" stroke="#06b6d4" stroke-width="0.5"/>
-          <rect x="40" y="61" width="6" height="2" rx="1" fill="#ef4444"/>
-          <rect x="50" y="61" width="6" height="2" rx="1" fill="#06b6d4"/>
-        </svg>
-      </div>
-      <div class="char-name">CYB-X</div>
-      <div class="char-role">Android Warrior</div>
-      <div class="char-power">A — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <circle cx="50" cy="42" r="26" fill="#c4a882"/>
-          <path d="M28 35 Q22 18 34 8 Q46 0 50 4 Q54 0 66 8 Q78 18 72 35" fill="#4a3728"/>
-          <path d="M22 35 Q15 28 16 20 Q18 13 24 14 Q30 15 30 24" fill="#4a3728"/>
-          <path d="M78 35 Q85 28 84 20 Q82 13 76 14 Q70 15 70 24" fill="#4a3728"/>
-          <circle cx="40" cy="44" r="5" fill="#f97316"/><circle cx="60" cy="44" r="5" fill="#f97316"/>
-          <path d="M42 58 Q50 64 58 58" stroke="#a07850" stroke-width="1.5" fill="none"/>
-          <path d="M25 38 Q20 50 22 62" stroke="#ba8c5a" stroke-width="2" fill="none"/>
-          <path d="M75 38 Q80 50 78 62" stroke="#ba8c5a" stroke-width="2" fill="none"/>
-        </svg>
-      </div>
-      <div class="char-name">KIRA</div>
-      <div class="char-role">Demon Hunter</div>
-      <div class="char-power">A+ Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <ellipse cx="50" cy="44" rx="26" ry="28" fill="#374151"/>
-          <circle cx="40" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="60" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="40" cy="42" r="4" fill="#10b981"/>
-          <circle cx="60" cy="42" r="4" fill="#10b981"/>
-          <path d="M36 58 Q50 65 64 58" stroke="#4b5563" stroke-width="2" fill="none"/>
-          <path d="M24 38 Q18 44 20 52" stroke="#6b7280" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M76 38 Q82 44 80 52" stroke="#6b7280" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <rect x="34" y="68" width="32" height="16" rx="4" fill="#1f2937" stroke="#10b981" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="char-name">GHOST</div>
-      <div class="char-role">Stealth Unit</div>
-      <div class="char-power">A — Rank</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="cta-inner reveal">
-    <div class="section-tag">// Ready?</div>
-    <h2 class="section-title">Step Into<br/><span style="color:var(--cyan)">The Nexus</span></h2>
-    <div class="cta-line"></div>
-    <p class="cta-subtitle">Your dimension awaits. No going back.</p>
-    <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;"><span>Enter Now — Free</span></button>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">NEXUS</div>
-  <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
-  <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="#">Contact</a>
-  </div>
-</footer>
-
-<script>
-// Custom cursor
-const cursor = document.getElementById('cursor');
-const trail = document.getElementById('cursor-trail');
-let mx=0,my=0,tx=0,ty=0;
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cursor.style.left=mx+'px';cursor.style.top=my+'px';
-});
-function animTrail(){
-  tx+=(mx-tx)*0.15;ty+=(my-ty)*0.15;
-  trail.style.left=tx+'px';trail.style.top=ty+'px';
-  requestAnimationFrame(animTrail);
-}
-animTrail();
-document.querySelectorAll('button,a,.char-card,.card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cursor.style.transform='translate(-50%,-50%) scale(2)';cursor.style.background='var(--pink)';});
-  el.addEventListener('mouseleave',()=>{cursor.style.transform='translate(-50%,-50%) scale(1)';cursor.style.background='var(--cyan)';});
-});
-
-// Particles
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
-canvas.width=window.innerWidth;canvas.height=window.innerHeight;
-window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
-const pts=Array.from({length:60},()=>({
-  x:Math.random()*canvas.width,y:Math.random()*canvas.height,
-  vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,
-  r:Math.random()*2+0.5,
-  c:Math.random()>0.5?'rgba(124,58,237,':'rgba(6,182,212,'
-}));
-function drawParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  pts.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;
-    if(p.x<0||p.x>canvas.width)p.vx*=-1;
-    if(p.y<0||p.y>canvas.height)p.vy*=-1;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=p.c+'0.6)';ctx.fill();
-  });
-  pts.forEach((a,i)=>{pts.slice(i+1).forEach(b=>{
-    const d=Math.hypot(a.x-b.x,a.y-b.y);
-    if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
-    ctx.strokeStyle=`rgba(124,58,237,${0.15*(1-d/120)})`;ctx.lineWidth=0.5;ctx.stroke();}
-  });});
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
-
-// Scroll reveal
-const reveals=document.querySelectorAll('.reveal');
-const io=new IntersectionObserver(entries=>{
-  entries.forEach((e,i)=>{
-    if(e.isIntersecting){
-      setTimeout(()=>e.target.classList.add('visible'),i*80);
-    }
-  });
-},{threshold:0.1});
-reveals.forEach(el=>io.observe(el));
-
-// Char card select
-document.querySelectorAll('.char-card').forEach(c=>{
-  c.addEventListener('click',()=>{
-    document.querySelectorAll('.char-card').forEach(x=>x.classList.remove('active'));
-    c.classList.add('active');
-  });
-});
-</script>
-</body>
-</html>
