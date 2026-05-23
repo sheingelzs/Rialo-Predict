@@ -17,7 +17,7 @@
   --text:#e2e8f0;
   --muted:#94a3b8;
 }
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;overflow-y:scroll;}
 body{
   background:var(--dark);
   color:var(--text);
@@ -25,6 +25,7 @@ body{
   overflow-x:hidden;
   cursor:none;
 }
+*{cursor:none;}
 
 /* CURSOR */
 #cursor{
@@ -86,8 +87,9 @@ nav{
 #hero{
   min-height:100vh;
   display:flex;align-items:center;
-  position:relative;overflow:hidden;
+  position:relative;
   padding:0 4rem;
+  overflow:visible;
 }
 .hero-bg{
   position:absolute;inset:0;
@@ -622,12 +624,12 @@ footer{
     </div>
     <div class="logo-scene">
       <div class="logo-cube">
-        <div class="logo-face logo-face-front"><div class="logo-scan"></div><img src="market.png" alt="Market Logo"/></div>
-        <div class="logo-face logo-face-back"><img src="market.png" alt="Market Logo"/></div>
-        <div class="logo-face logo-face-left"><img src="market.png" alt="Market Logo"/></div>
-        <div class="logo-face logo-face-right"><img src="market.png" alt="Market Logo"/></div>
-        <div class="logo-face logo-face-top"><img src="market.png" alt="Market Logo"/></div>
-        <div class="logo-face logo-face-bottom"><img src="market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-front"><div class="logo-scan"></div><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-back"><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-left"><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-right"><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-top"><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
+        <div class="logo-face logo-face-bottom"><img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo"/></div>
       </div>
     </div>
     <div class="logo-glow-base"></div>
