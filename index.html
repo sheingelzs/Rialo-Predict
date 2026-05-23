@@ -199,7 +199,7 @@ nav{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* 3D SPINNING LOGO */
+/* === HOLOGRAPHIC SPHERE === */
 .logo-3d-wrap{
   position:absolute;right:6%;top:50%;
   transform:translateY(-50%);
@@ -238,45 +238,21 @@ nav{
 .dot-purple{background:var(--purple);box-shadow:0 0 10px var(--purple);}
 .dot-pink{background:var(--pink);box-shadow:0 0 8px var(--pink);}
 
-.logo-scene{
-  width:200px;height:200px;
-  perspective:700px;
+/* Rotating PNG logo */
+.logo-muter{
   position:relative;z-index:2;
-}
-.logo-cube{
   width:200px;height:200px;
-  position:relative;
-  transform-style:preserve-3d;
-  animation:rotateCube 10s linear infinite;
-}
-.logo-face{
-  position:absolute;width:200px;height:200px;
-  display:flex;align-items:center;justify-content:center;
-  border:1px solid rgba(124,58,237,0.4);
-  background:rgba(13,0,32,0.75);
-  overflow:hidden;
-}
-.logo-face img{
-  width:140px;height:140px;
   object-fit:contain;
+  animation:putar-terus 10s linear infinite;
+  filter:drop-shadow(0 0 18px rgba(6,182,212,0.6)) drop-shadow(0 0 40px rgba(124,58,237,0.4));
 }
-.face-front {transform:translateZ(100px);}
-.face-back  {transform:rotateY(180deg) translateZ(100px);}
-.face-left  {transform:rotateY(-90deg) translateZ(100px);}
-.face-right {transform:rotateY(90deg)  translateZ(100px);}
-.face-top   {transform:rotateX(90deg)  translateZ(100px);}
-.face-bottom{transform:rotateX(-90deg) translateZ(100px);}
-
-.logo-scan-line{
-  position:absolute;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,rgba(6,182,212,0.7),transparent);
-  animation:scan 2.5s ease-in-out infinite;
-  pointer-events:none;
+@keyframes putar-terus{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
 }
-@keyframes scan{0%{top:0;}100%{top:200px;}}
 
 .logo-glow{
-  position:absolute;bottom:-50px;left:50%;
+  position:absolute;bottom:-30px;left:50%;
   transform:translateX(-50%);
   width:220px;height:30px;
   background:radial-gradient(ellipse,rgba(124,58,237,0.45) 0%,transparent 70%);
@@ -284,12 +260,9 @@ nav{
   animation:glowPulse 3s ease-in-out infinite;
   pointer-events:none;
 }
+
 @keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 @keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
-@keyframes rotateCube{
-  0%  {transform:rotateY(0deg) rotateX(8deg);}
-  100%{transform:rotateY(360deg) rotateX(8deg);}
-}
 @keyframes glowPulse{
   0%,100%{opacity:0.8;transform:translateX(-50%) scale(1);}
   50%{opacity:0.4;transform:translateX(-50%) scale(1.3);}
@@ -540,36 +513,14 @@ footer{
     </div>
   </div>
 
-  <!-- 3D SPINNING LOGO -->
+  <!-- HOLOGRAPHIC SPHERE replaces the cube -->
   <div class="logo-3d-wrap">
     <div class="logo-rings">
       <div class="ring ring-1"><div class="ring-dot dot-cyan"></div></div>
       <div class="ring ring-2"><div class="ring-dot dot-purple"></div></div>
       <div class="ring ring-3"><div class="ring-dot dot-pink"></div></div>
     </div>
-    <div class="logo-scene">
-      <div class="logo-cube">
-        <div class="logo-face face-front">
-          <div class="logo-scan-line"></div>
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none';this.parentElement.innerHTML+='<span style=\'font-family:Orbitron,monospace;color:#06b6d4;font-size:1.2rem;letter-spacing:3px;\'>MARKET</span>'"/>
-        </div>
-        <div class="logo-face face-back">
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none'"/>
-        </div>
-        <div class="logo-face face-left">
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none'"/>
-        </div>
-        <div class="logo-face face-right">
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none'"/>
-        </div>
-        <div class="logo-face face-top">
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none'"/>
-        </div>
-        <div class="logo-face face-bottom">
-          <img src="images/market.png" alt="Market Logo" onerror="this.style.display='none'"/>
-        </div>
-      </div>
-    </div>
+    <img src="images/market.png" alt="Market Logo" class="logo-muter"/>
     <div class="logo-glow"></div>
   </div>
 </section>
@@ -761,86 +712,50 @@ footer{
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
-
 document.addEventListener('mousemove', function(e) {
-  mx = e.clientX;
-  my = e.clientY;
-  cur.style.left = mx + 'px';
-  cur.style.top = my + 'px';
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
 });
-
 (function animateTrail() {
-  tx += (mx - tx) * 0.13;
-  ty += (my - ty) * 0.13;
-  trail.style.left = tx + 'px';
-  trail.style.top = ty + 'px';
+  tx += (mx - tx) * 0.13; ty += (my - ty) * 0.13;
+  trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
   requestAnimationFrame(animateTrail);
 })();
-
 document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
-    cur.style.width = '28px';
-    cur.style.height = '28px';
-    cur.style.background = 'var(--pink)';
-    trail.style.width = '55px';
-    trail.style.height = '55px';
+    cur.style.width='28px';cur.style.height='28px';cur.style.background='var(--pink)';
+    trail.style.width='55px';trail.style.height='55px';
   });
   el.addEventListener('mouseleave', function() {
-    cur.style.width = '14px';
-    cur.style.height = '14px';
-    cur.style.background = 'var(--cyan)';
-    trail.style.width = '36px';
-    trail.style.height = '36px';
+    cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)';
+    trail.style.width='36px';trail.style.height='36px';
   });
 });
 
 /* ---- PARTICLES ---- */
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
+const pcanvas = document.getElementById('particles-canvas');
+const pctx = pcanvas.getContext('2d');
+function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 const pts = [];
 for (var i = 0; i < 55; i++) {
-  pts.push({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    vx: (Math.random() - 0.5) * 0.35,
-    vy: (Math.random() - 0.5) * 0.35,
-    r: Math.random() * 1.8 + 0.4,
-    c: Math.random() > 0.5 ? '124,58,237' : '6,182,212'
-  });
+  pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.35, vy:(Math.random()-0.5)*0.35,
+    r:Math.random()*1.8+0.4, c:Math.random()>0.5?'124,58,237':'6,182,212' });
 }
-
 (function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
   pts.forEach(function(p) {
-    p.x += p.vx; p.y += p.vy;
-    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(' + p.c + ',0.55)';
-    ctx.fill();
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
+    if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+    pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pctx.fillStyle='rgba('+p.c+',0.55)'; pctx.fill();
   });
-  for (var i = 0; i < pts.length; i++) {
-    for (var j = i + 1; j < pts.length; j++) {
-      var dx = pts[i].x - pts[j].x;
-      var dy = pts[i].y - pts[j].y;
-      var d = Math.sqrt(dx*dx + dy*dy);
-      if (d < 115) {
-        ctx.beginPath();
-        ctx.moveTo(pts[i].x, pts[i].y);
-        ctx.lineTo(pts[j].x, pts[j].y);
-        ctx.strokeStyle = 'rgba(124,58,237,' + (0.12 * (1 - d/115)) + ')';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
+  for (var i=0;i<pts.length;i++) for(var j=i+1;j<pts.length;j++){
+    var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+    if(d<115){ pctx.beginPath(); pctx.moveTo(pts[i].x,pts[i].y); pctx.lineTo(pts[j].x,pts[j].y);
+      pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')'; pctx.lineWidth=0.5; pctx.stroke(); }
   }
   requestAnimationFrame(drawParticles);
 })();
@@ -850,9 +765,7 @@ var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry, i) {
     if (entry.isIntersecting) {
-      setTimeout(function() {
-        entry.target.classList.add('visible');
-      }, i * 80);
+      setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
     }
   });
 }, { threshold: 0.1 });
