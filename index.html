@@ -265,10 +265,10 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* STYLING LOGO JALUR LOKAL (cube-logo.png) */
+/* FIX REPOSITORI GITHUB UNTUK MARKET.PNG */
 .logo-muter{
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   object-fit: contain;
   display: block;
   animation: neonPulseAlaRialo 3s ease-in-out infinite;
@@ -345,7 +345,7 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
-  perspective: 1000px; /* Memberikan efek ruang 3D saat menoleh */
+  perspective: 1000px; /* Efek kedalaman 3D saat menoleh */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -356,7 +356,7 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* Container khusus gambar dengan perbaikan CSS agar clip-path tidak memotong bagian atas gambar */
+/* Container khusus gambar agar pas sesuai kotak */
 .card-img-container {
   width: 100%;
   height: 160px;
@@ -373,7 +373,7 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* INTELLIGENT DETEKSI MOUSE-TRACKING PADA POP-AVATAR */
+/* FIX POSISI PAS DI KOTAK & ANIMASI CURSOR DETECT PADA CHARACTERS */
 .pop-avatar {
   width: 85%;
   height: auto;
@@ -629,7 +629,7 @@ footer{
       </div>
       
       <div class="logo-container-fixed">
-        <img src="cube-logo.png" alt="Cube Logo" class="logo-muter"/>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo" class="logo-muter"/>
       </div>
       
       <div class="logo-glow"></div>
@@ -839,7 +839,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- SCRIPTS JAVASCRIPT: DETEKSI CURSOR MOUSE LOOK-AT ---- */
+/* ---- SCRIPTS JAVASCRIPT: DETEKSI INTERAKTIF KURSOR KEPALA MENOLEH (LOOK-AT) ---- */
 const cards = document.querySelectorAll('.card');
 
 cards.forEach(card => {
@@ -853,24 +853,28 @@ cards.forEach(card => {
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
     
-    // Perhitungan matematika koordinat sudut kursor mouse
+    // Menghitung rasio jarak kursor dari pusat geometris kotak kartu
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     
+    // Mengatur sensitivitas rotasi derajat menoleh (Maksimal 28 derajat)
     targetX = angleX * 28; 
     targetY = angleY * -28; 
   });
   
+  // Kepala kembali tegak lurus ke tengah jika kursor mouse keluar area kartu
   card.addEventListener('mouseleave', () => {
     targetX = 0;
     targetY = 0;
   });
 
+  // Fungsi Interpolasi (Lerp) agar gerakan transisi halus tanpa patah-patah
   function updateHeadMovement() {
     currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
     
     if (avatar) {
+      // Memotong paksa transform style untuk menghindari crash/bentrok dengan GSAP Scroll
       avatar.style.transform = `translateY(15px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
     requestAnimationFrame(updateHeadMovement);
