@@ -320,7 +320,7 @@ section{padding:6rem 4rem;}
   line-height:1.1;margin-bottom:1rem;
 }
 
-/* EXPLORE (POPOUT PARALLAX CREATIVE ENGINE) */
+/* EXPLORE (PARALLAX LOGIC MODIFIED) */
 #explore{
   background:var(--dark2);
   position:relative;
@@ -334,74 +334,74 @@ section{padding:6rem 4rem;}
 .cards-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:1.5rem;margin-top:4rem;
+  gap:2.5rem 1.5rem;
+  margin-top:5rem;
 }
 .card{
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(124,58,237,0.2);
-  padding:2rem;position:relative;
-  /* PENTING: overflow: visible agar kepala karakter bisa tembus menonjol keluar kotak */
+  padding:2rem;
+  position:relative;
+  /* PENTING: Jangan gunakan overflow hidden atau clip-path disini agar kepala karakter bisa tembus keluar kotak */
   overflow: visible; 
   transition: border-color 0.4s;
-  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
 }
 .card::before{
   content:'';position:absolute;inset:0;
   background:linear-gradient(135deg,rgba(124,58,237,0.07) 0%,transparent 50%);
   opacity:0;transition:opacity 0.4s;
+  pointer-events: none;
 }
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* Frame Box Khusus Gambar */
+/* Frame Box Khusus Gambar - Di sinilah potongan siber dipasang */
 .card-img-container {
   width: 100%;
-  height: 150px;
+  height: 160px;
   position: relative;
-  margin-bottom: 1.2rem;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(124, 58, 237, 0.15);
-  border-radius: 4px;
+  margin-bottom: 1.2rem;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
 }
 
-/* Gambar Aset Karakter Independen */
-.card-img {
-  width: 100%;
+/* Gambar Aset Karakter dengan class target pop-avatar (WAJIB ADA) */
+.pop-avatar {
+  width: 90%;
   height: auto;
-  max-height: 180px;
+  max-height: 190px;
   position: absolute;
-  bottom: 0; /* Berdiri di dasar frame */
-  left: 50%;
-  transform: translateX(-50%) scale(1); /* Titik tengah awal */
+  bottom: -5px; 
+  left: 5%;
   object-fit: contain;
   z-index: 3;
+  transform: translateY(20px); /* Titik render awal */
   will-change: transform;
 }
 
 .card-icon{
   position: absolute;
-  top: 15px; right: 15px;
+  top: -15px; right: 15px;
   width: 32px; height: 32px;
   border: 1px solid rgba(6,182,212,0.3);
   display: flex; align-items: center; justify-content: center;
   font-size: 1rem;
   clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
-  background: rgba(6,182,212,0.05);
+  background: rgba(5, 0, 16, 0.9);
   z-index: 4;
 }
 .card-title{
   font-family:'Orbitron',monospace;font-size:0.9rem;
   font-weight:700;letter-spacing:2px;margin-bottom:0.8rem;
-  position: relative; z-index: 5;
 }
-.card-desc{color:var(--muted);font-size:0.9rem;line-height:1.7; position: relative; z-index: 5;}
+.card-desc{color:var(--muted);font-size:0.9rem;line-height:1.7;}
 .card-tag{
   display:inline-block;margin-top:1.2rem;
   padding:0.2rem 0.8rem;
   border:1px solid rgba(124,58,237,0.4);
   color:var(--purple);font-size:0.7rem;
   letter-spacing:2px;text-transform:uppercase;
-  position: relative; z-index: 5;
 }
 
 /* FEATURE */
@@ -635,7 +635,7 @@ footer{
   <div class="cards-grid">
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="images/shein.png" alt="Shein Visual" class="card-img pop-avatar"/>
+        <img src="images/shein.png" alt="Shein Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">⚡</div>
       <div class="card-title">Cyberpunk Arena</div>
@@ -645,7 +645,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="images/gelzs.png" alt="Gelzs Visual" class="card-img pop-avatar"/>
+        <img src="images/gelzs.png" alt="Gelzs Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🧬</div>
       <div class="card-title">Curse System</div>
@@ -655,7 +655,7 @@ footer{
     
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="images/sheina.png" alt="Sheina Visual" class="card-img pop-avatar"/>
+        <img src="images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🌐</div>
       <div class="card-title">Open World</div>
@@ -665,7 +665,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="images/gelzs2.png" alt="Gelzs Alternate Visual" class="card-img pop-avatar"/>
+        <img src="images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🎭</div>
       <div class="card-title">Identity Forge</div>
@@ -832,8 +832,8 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- INTERAKTIF PARALLAX + POP-OUT KEPALA (ALA VR BOXXX) ---- */
-// 1. Animasi dasar kotak meluncur masuk kiri-kanan
+/* ---- INTERAKTIF PARALLAX + POP-OUT KEPALA KONTROL JAMINAN JALAN ---- */
+// 1. Kotak meluncur horizontal dari kiri
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -100, opacity: 0 }, 
@@ -848,6 +848,7 @@ gsap.utils.toArray('.slide-left-card').forEach(card => {
   );
 });
 
+// 2. Kotak meluncur horizontal dari kanan
 gsap.utils.toArray('.slide-right-card').forEach(card => {
   gsap.fromTo(card, 
     { x: 100, opacity: 0 }, 
@@ -862,19 +863,19 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-// 2. Kunci Utama: Animasi gambar meluncur ke atas (Pop-Out) tembus kotak secara independen saat di-scroll
+// 3. Efek Pop-out Kepala Karakter Keluar dari Frame (Fixed Targeting Engine)
 gsap.utils.toArray('.pop-avatar').forEach(img => {
   gsap.fromTo(img,
-    { y: 30, scale: 0.95 }, /* Posisi awal di dalam kotak agak turun bawah */
+    { y: 35, scale: 0.95 },
     { 
-      y: -35,               /* Kepala meloncat ke atas menembus border box */
-      scale: 1.15,          /* Memberi efek kedalaman/membesar siber */
+      y: -35, /* Melesat ke atas tembus batas garis */
+      scale: 1.15,
       ease: "none",
       scrollTrigger: {
-        trigger: img.closest('.card'), /* Dipicu oleh scroll kotak induknya */
+        trigger: img.closest('.card'),
         start: "top 90%",
-        end: "bottom 30%",
-        scrub: 1.5           /* Scrub lebih lambat agar ada jeda delay halus ala alpaca VR Boxxx */
+        end: "bottom 20%",
+        scrub: 1.2
       }
     }
   );
