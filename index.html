@@ -86,13 +86,25 @@ nav{
 }
 .nav-btn:hover{background:var(--cyan);color:var(--dark);}
 
-/* HERO */
+/* HERO GRID LAYOUT - FIXED STRATEGIS */
 #hero{
   min-height:100vh;
-  display:flex;align-items:center;
   position:relative;
-  padding:0 4rem;
+  padding: 6rem 4rem 2rem 4rem;
   overflow:hidden;
+  display: flex;
+  align-items: center;
+}
+.hero-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2rem;
+  align-items: center;
 }
 .hero-bg{
   position:absolute;inset:0;pointer-events:none;
@@ -116,7 +128,6 @@ nav{
   );
 }
 .hero-content{
-  position:relative;z-index:2;
   max-width:580px;
 }
 .hero-tag{
@@ -136,7 +147,7 @@ nav{
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 .hero-title{
   font-family:'Orbitron',monospace;
-  font-size:clamp(2.8rem,6vw,5rem);
+  font-size:clamp(2.5rem, 5.5vw, 4.5rem);
   font-weight:900;line-height:0.95;
   text-transform:uppercase;
   margin-bottom:1.5rem;
@@ -199,19 +210,24 @@ nav{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* === HOLOGRAPHIC SPHERE - ARCHITECTURE FIXED === */
+/* === HOLOGRAPHIC SPHERE - STRATEGIC CENTER KUNCI TOTAL === */
 .logo-33d-wrap{
-  position:absolute;right:6%;top:50%;
-  transform:translateY(-50%);
-  width:420px;height:420px;
-  display:flex;align-items:center;justify-content:center;
-  z-index:2;
-  animation:fadeUp 1s 0.4s ease both;
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: center;     /* Mengunci tengah vertikal */
+  justify-content: center;   /* Mengunci tengah horizontal */
+  animation: fadeUp 1s 0.4s ease both;
 }
 .logo-rings{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 .ring{position:absolute;border-radius:50%;border-style:solid;}
 .ring-1{
@@ -238,27 +254,23 @@ nav{
 .dot-purple{background:var(--purple);box-shadow:0 0 10px var(--purple);}
 .dot-pink{background:var(--pink);box-shadow:0 0 8px var(--pink);}
 
-/* Pembungkus Kotak Stabil Beraspek Rasio 1:1 Untuk Kunci Gambar */
+/* Wadah box mandiri yang diletakkan relatif pas di tengah koordinat ring */
 .logo-container-fixed {
-  position: relative;
+  position: absolute;
   z-index: 5;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Menerapkan efek floating naik-turun pada container agar gambar aman */
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
 .logo-muter{
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Memaksa asset mempertahankan skala asli gambar */
-  max-width: 200px;
-  max-height: 200px;
+  object-fit: contain;
   display: block;
-  /* Properti filter neon pulsasi murni tanpa modifikasi pergeseran matriks */
   animation: neonPulseAlaRialo 3s ease-in-out infinite;
 }
 
@@ -267,7 +279,7 @@ nav{
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-15px);
+    transform: translateY(-12px); /* Mengambang seimbang */
   }
 }
 
@@ -281,7 +293,9 @@ nav{
 }
 
 .logo-glow{
-  position:absolute;bottom:-30px;left:50%;
+  position:absolute;
+  bottom: 0px; /* Diatur seimbang di bawah ring */
+  left:50%;
   transform:translateX(-50%);
   width:220px;height:30px;
   background:radial-gradient(ellipse,rgba(124,58,237,0.45) 0%,transparent 70%);
@@ -470,257 +484,6 @@ section{padding:6rem 4rem;}
   margin:1.5rem auto;
 }
 .cta-sub{color:var(--muted);font-size:1rem;letter-spacing:2px;margin-bottom:2.5rem;}
-
-/* FOOTER */
-footer{
-  background:var(--dark2);
-  border-top:1px solid rgba(124,58,237,0.2);
-  padding:2rem 4rem;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
-.footer-copy{color:var(--muted);font-size:0.75rem;letter-spacing:2px;}
-.footer-links{display:flex;gap:1.5rem;}
-.footer-links a{color:var(--muted);font-size:0.75rem;text-decoration:none;transition:color 0.3s;}
-.footer-links a:hover{color:var(--cyan);}
-
-/* REVEAL */
-.reveal{opacity:0;transform:translateY(35px);transition:opacity 0.7s ease,transform 0.7s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
-
-/* PARTICLES */
-#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
-</style>
-</head>
-<body>
-
-<div id="cursor"></div>
-<div id="cursor-trail"></div>
-<canvas id="particles-canvas"></canvas>
-
-<nav>
-  <div class="logo">NEXUS</div>
-  <ul class="nav-links">
-    <li><a href="#explore">Explore</a></li>
-    <li><a href="#feature">Feature</a></li>
-    <li><a href="#characters">Characters</a></li>
-  </ul>
-  <button class="nav-btn">Launch App</button>
-</nav>
-
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="grid-bg"></div>
-  <div class="scanline"></div>
-  <div class="hero-content">
-    <div class="hero-tag">System Online // v2.077</div>
-    <h1 class="hero-title">
-      <span class="title-line1">ENTER</span>
-      <span class="title-line2">THE</span>
-      <span class="title-line3">NEXUS</span>
-    </h1>
-    <p class="hero-sub">A new dimension awaits. Forge your identity, summon your character, and explore the void beyond reality.</p>
-    <div class="hero-btns">
-      <button class="btn-primary">Begin Journey</button>
-      <button class="btn-secondary">Watch Trailer</button>
-    </div>
-    <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-num">128K</div>
-        <div class="stat-label">Active Users</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">40+</div>
-        <div class="stat-label">Characters</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">99.9%</div>
-        <div class="stat-label">Uptime</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="logo-33d-wrap">
-    <div class="logo-rings">
-      <div class="ring ring-1"><div class="ring-dot dot-cyan"></div></div>
-      <div class="ring ring-2"><div class="ring-dot dot-purple"></div></div>
-      <div class="ring ring-3"><div class="ring-dot dot-pink"></div></div>
-    </div>
-    
-    <div class="logo-container-fixed">
-      <img src="images/market.png" alt="Market Logo" class="logo-muter"/>
-    </div>
-    
-    <div class="logo-glow"></div>
-  </div>
-</section>
-
-<section id="explore">
-  <div class="section-tag">// 01 — What awaits</div>
-  <h2 class="section-title reveal">Explore<br/><span style="color:var(--cyan)">The Void</span></h2>
-  <div class="cards-grid">
-    <div class="card reveal">
-      <div class="card-icon">⚡</div>
-      <div class="card-title">Cyberpunk Arena</div>
-      <p class="card-desc">Battle in neon-lit arenas where reality bends and every fight reshapes the digital landscape.</p>
-      <span class="card-tag">Combat</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🧬</div>
-      <div class="card-title">Curse System</div>
-      <p class="card-desc">Channel supernatural energy through your character. Each curse mark unlocks a unique ability tree.</p>
-      <span class="card-tag">Abilities</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🌐</div>
-      <div class="card-title">Open World</div>
-      <p class="card-desc">Traverse sprawling digital landscapes — from neon megacities to dark void realms beyond the grid.</p>
-      <span class="card-tag">Exploration</span>
-    </div>
-    <div class="card reveal">
-      <div class="card-icon">🎭</div>
-      <div class="card-title">Identity Forge</div>
-      <p class="card-desc">Build your character from scratch. Every choice — armor, ability, curse — defines who you become.</p>
-      <span class="card-tag">Customization</span>
-    </div>
-  </div>
-</section>
-
-<section id="feature">
-  <div class="feature-inner">
-    <div class="feature-visual reveal">
-      <div class="feature-box">
-        <div class="corner-tl"></div>
-        <div class="corner-br"></div>
-        <div class="hud-wrap">
-          <div class="hud-ring">
-            <div class="hud-dot2"></div>
-            <div class="hud-core">NEXUS<br/>CORE</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal">
-      <div class="section-tag">// 02 — Core System</div>
-      <h2 class="section-title">Next-Gen<br/><span style="color:var(--pink)">Engine</span></h2>
-      <p style="color:var(--muted);line-height:1.8;margin-bottom:1rem;">Powered by the NEXUS Core — a real-time engine that processes every interaction, ability, and world event simultaneously.</p>
-      <div class="feature-list">
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Real-Time Physics</h4>
-            <p>Every explosion, every curse energy burst rendered in true real-time with zero latency.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Adaptive AI Enemies</h4>
-            <p>Enemies learn your fighting style and evolve countermeasures across sessions.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Cross-Realm Sync</h4>
-            <p>Your progress, customization, and story carry seamlessly across all dimensions.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="characters">
-  <div class="section-tag">// 03 — Roster</div>
-  <h2 class="section-title reveal">Choose Your<br/><span style="color:var(--purple)">Fighter</span></h2>
-  <div class="char-showcase">
-    <div class="char-card active reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="40" r="28" fill="#d4a574"/>
-          <path d="M28 28 Q24 15 32 8 Q40 2 50 5 Q60 2 68 8 Q76 15 72 28" fill="#1a1a2e"/>
-          <circle cx="40" cy="40" r="5" fill="#ef4444"/><circle cx="60" cy="40" r="5" fill="#ef4444"/>
-          <path d="M58 60 Q68 55 74 45 Q80 35 78 25" fill="#ec4899" opacity="0.8"/>
-          <circle cx="68" cy="42" r="10" fill="#f472b6" opacity="0.7"/>
-          <circle cx="68" cy="42" r="4" fill="#06b6d4"/>
-        </svg>
-      </div>
-      <div class="char-name">RYZE</div>
-      <div class="char-role">Curse Wielder</div>
-      <div class="char-power">SS — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="42" r="26" fill="#8b6344"/>
-          <path d="M30 30 Q26 16 36 9 Q46 3 50 6 Q54 3 64 9 Q74 16 70 30" fill="#2d1b69"/>
-          <circle cx="40" cy="42" r="5" fill="#a855f7"/><circle cx="60" cy="42" r="5" fill="#a855f7"/>
-          <rect x="36" y="62" width="28" height="22" rx="4" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="char-name">VOIDRA</div>
-      <div class="char-role">Void Mage</div>
-      <div class="char-power">S — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <rect x="20" y="18" width="60" height="65" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
-          <rect x="30" y="28" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <rect x="52" y="28" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <circle cx="39" cy="35" r="3" fill="#38bdf8"/>
-          <circle cx="61" cy="35" r="3" fill="#38bdf8"/>
-          <rect x="38" y="58" width="24" height="4" rx="2" fill="#1e293b" stroke="#06b6d4" stroke-width="0.5"/>
-          <rect x="40" y="59" width="6" height="2" rx="1" fill="#ef4444"/>
-          <rect x="50" y="59" width="6" height="2" rx="1" fill="#06b6d4"/>
-        </svg>
-      </div>
-      <div class="char-name">CYB-X</div>
-      <div class="char-role">Android Warrior</div>
-      <div class="char-power">A — Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="42" r="26" fill="#c4a882"/>
-          <path d="M28 35 Q22 18 34 8 Q46 0 50 4 Q54 0 66 8 Q78 18 72 35" fill="#4a3728"/>
-          <path d="M22 35 Q15 28 16 20 Q18 13 24 14 Q30 15 30 24" fill="#4a3728"/>
-          <path d="M78 35 Q85 28 84 20 Q82 13 76 14 Q70 15 70 24" fill="#4a3728"/>
-          <circle cx="40" cy="44" r="5" fill="#f97316"/><circle cx="60" cy="44" r="5" fill="#f97316"/>
-        </svg>
-      </div>
-      <div class="char-name">KIRA</div>
-      <div class="char-role">Demon Hunter</div>
-      <div class="char-power">A+ Rank</div>
-    </div>
-    <div class="char-card reveal">
-      <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <ellipse cx="50" cy="44" rx="26" ry="28" fill="#374151"/>
-          <circle cx="40" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="60" cy="42" r="8" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-          <circle cx="40" cy="42" r="4" fill="#10b981"/>
-          <circle cx="60" cy="42" r="4" fill="#10b981"/>
-          <rect x="34" y="68" width="32" height="16" rx="4" fill="#1f2937" stroke="#10b981" stroke-width="1"/>
-        </svg>
-      </div>
-      <div class="char-name">GHOST</div>
-      <div class="char-role">Stealth Unit</div>
-      <div class="char-power">A — Rank</div>
-    </div>
-  </div>
-</section>
-
-<section id="cta">
-  <div class="cta-inner reveal">
-    <div class="section-tag">// Ready?</div>
-    <h2 class="section-title">Step Into<br/><span style="color:var(--cyan)">The Nexus</span></h2>
-    <div class="cta-line"></div>
-    <p class="cta-sub">Your dimension awaits. No going back.</p>
-    <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;">Enter Now — Free</button>
-  </div>
-</section>
 
 <footer>
   <div class="footer-logo">NEXUS</div>
