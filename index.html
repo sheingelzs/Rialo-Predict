@@ -265,7 +265,7 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* FIX PERBAIKAN MARKET.PNG - Menggunakan Gambar Aset Mesh Cube Hologram */
+/* FIX PERBAIKAN MARKET.PNG - Menggunakan link gambar wireframe mesh cube yang aktif & stabil */
 .logo-muter{
   width: 130px;
   height: 130px;
@@ -345,6 +345,7 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
+  perspective: 1000px; /* Memberikan efek kedalaman 3D saat menoleh */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -372,40 +373,20 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* FIX ANIMASI OTOMATIS BERGERAK (IDLE FLOATING & TILTING EFFECT) */
+/* FIX STYLING & INTEGRASI MOUSE-TRACKING INTERAKTIF PADA POP-AVATAR */
 .pop-avatar {
   width: 85%;
   height: auto;
-  max-height: 190px;
+  max-height: 180px;
   position: absolute;
-  bottom: -5px; 
+  bottom: -15px; 
   left: 7.5%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(15px);
+  transform: translateY(15px) rotateX(0deg) rotateY(0deg);
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1); /* Transisi mulus */
   will-change: transform;
-}
-
-/* Memberikan ritme durasi animasi yang berbeda di tiap card supaya terlihat organik tidak serempak */
-.cards-grid .card:nth-child(1) .pop-avatar { animation: nexusHeadFloating 4s ease-in-out infinite; }
-.cards-grid .card:nth-child(2) .pop-avatar { animation: nexusHeadFloating 4.8s ease-in-out infinite; }
-.cards-grid .card:nth-child(3) .pop-avatar { animation: nexusHeadFloating 4.3s ease-in-out infinite; }
-.cards-grid .card:nth-child(4) .pop-avatar { animation: nexusHeadFloating 5.2s ease-in-out infinite; }
-
-/* Timeline Gerakan Kepala Bernapas, Melayang Naik Turun, & Menoleh Sendiri Secara Halus */
-@keyframes nexusHeadFloating {
-  0%, 100% {
-    transform: translateY(15px) rotateY(0deg) rotateX(0deg) scale(1.02);
-  }
-  25% {
-    transform: translateY(6px) rotateY(7deg) rotateX(4deg) scale(1.06);
-  }
-  50% {
-    transform: translateY(18px) rotateY(-5deg) rotateX(-3deg) scale(1.02);
-  }
-  75% {
-    transform: translateY(8px) rotateY(4deg) rotateX(5deg) scale(1.05);
-  }
 }
 
 .card-icon{
@@ -829,7 +810,7 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- PARALLAX EFFECT KARTU UTAMA ---- */
+/* ---- PARALLAX EFFECT KARTU UTAMA VIA GSAP SCROLL ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -100, opacity: 0 }, 
@@ -856,6 +837,50 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
       }
     }
   );
+});
+
+/* ---- SCRIPT DETEKSI INTERAKTIF CURSOR (MOUSE TRACKING 3D LOOK-AT) ---- */
+const cards = document.querySelectorAll('.card');
+
+cards.forEach(card => {
+  const avatar = card.querySelector('.pop-avatar');
+  
+  let currentX = 0, currentY = 0;
+  let targetX = 0, targetY = 0;
+  
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    // Mendapatkan koordinat titik pusat geometris kotak kartu
+    const cardCenterX = rect.left + rect.width / 2;
+    const cardCenterY = rect.top + rect.height / 2;
+    
+    // Hitung jarak kursor dari titik tengah kartu (-1 sampai 1)
+    const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
+    const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
+    
+    // Tentukan batas rotasi menoleh (Maksimum 28 derajat)
+    targetX = angleX * 28; 
+    targetY = angleY * -28; // Dibagi berlawanan arah sumbu agar alami
+  });
+  
+  // Kembalikan posisi kepala ke semula jika kursor mouse pergi
+  card.addEventListener('mouseleave', () => {
+    targetX = 0;
+    targetY = 0;
+  });
+
+  // Engine Rendering Loop (Lerp) untuk menjamin pergerakan kepala sangat halus tanpa lag
+  function updateHeadMovement() {
+    currentX += (targetX - currentX) * 0.1; // Kecepatan pelacakan kursor
+    currentY += (targetY - currentY) * 0.1;
+    
+    if (avatar) {
+      // Memotong paksa properti inline transform agar bypass konflik dari GSAP scroll
+      avatar.style.transform = `translateY(15px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+    }
+    requestAnimationFrame(updateHeadMovement);
+  }
+  updateHeadMovement();
 });
 
 /* ---- CURSOR EFF ---- */
