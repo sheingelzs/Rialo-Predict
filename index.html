@@ -320,7 +320,7 @@ section{padding:6rem 4rem;}
   line-height:1.1;margin-bottom:1rem;
 }
 
-/* EXPLORE (PARALLAX LOGIC MODIFIED) */
+/* EXPLORE */
 #explore{
   background:var(--dark2);
   position:relative;
@@ -342,7 +342,7 @@ section{padding:6rem 4rem;}
   border:1px solid rgba(124,58,237,0.2);
   padding:2rem;
   position:relative;
-  overflow: visible; /* Wajib visible agar kepala karakter bisa menyembul keluar */
+  overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
 }
 .card::before{
@@ -354,7 +354,7 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* [FIXED] Frame Box Khusus Gambar - clip-path dipindah ke pseudo-element background agar tidak memotong gambar */
+/* Container khusus gambar dengan perbaikan CSS agar clip-path tidak memotong bagian atas gambar */
 .card-img-container {
   width: 100%;
   height: 160px;
@@ -371,14 +371,14 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* Gambar Aset Karakter dengan class target pop-avatar (Menggunakan URL Demo Transparan Online) */
+/* Gambar Karakter Ter-target Pop Avatar (Sudah di-link langsung ke GitHub) */
 .pop-avatar {
-  width: 80%;
+  width: 85%;
   height: auto;
   max-height: 190px;
   position: absolute;
   bottom: -15px; 
-  left: 10%;
+  left: 7.5%;
   object-fit: contain;
   z-index: 3;
   transform: translateY(20px);
@@ -640,7 +640,7 @@ footer{
   <div class="cards-grid">
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="https://i.ibb.co/vYg6fC6/alpaca-demo.png" alt="Alpaca Visual" class="pop-avatar"/>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/shein.png" alt="Shein Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">⚡</div>
       <div class="card-title">Cyberpunk Arena</div>
@@ -650,7 +650,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="https://i.ibb.co/68v8wN8/bear-demo.png" alt="Bear Visual" class="pop-avatar"/>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs.png" alt="Gelzs Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🧬</div>
       <div class="card-title">Curse System</div>
@@ -660,7 +660,7 @@ footer{
     
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <img src="https://i.ibb.co/9V4zZdf/cat-demo.png" alt="Cat Visual" class="pop-avatar"/>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🌐</div>
       <div class="card-title">Open World</div>
@@ -670,7 +670,7 @@ footer{
     
     <div class="card slide-right-card">
       <div class="card-img-container">
-        <img src="https://i.ibb.co/VJyv9Sg/mecha-demo.png" alt="Mecha Visual" class="pop-avatar"/>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">🎭</div>
       <div class="card-title">Identity Forge</div>
@@ -806,7 +806,7 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- INTERAKTIF PARALLAX + POP-OUT KEPALA KONTROL JAMINAN JALAN ---- */
+/* ---- PARALLAX EFFECT KARTU DAN POP-AVATAR ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -100, opacity: 0 }, 
@@ -835,13 +835,12 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* [FIXED GSAP PARALLAX ENGINE]
-   Sekarang pergerakan sumbu Y diperhalus (scrub: 1) agar sinkron dengan gerakan scroll mouse */
+// Efek Pop-out Kepala Karakter Keluar dari Frame
 gsap.utils.toArray('.pop-avatar').forEach(img => {
   gsap.fromTo(img,
-    { y: 40, scale: 0.95 },
+    { y: 35, scale: 0.95 },
     { 
-      y: -35, /* Melesat ke atas keluar dari garis border cyber tanpa terpotong */
+      y: -40, /* Menarik gambar ke atas saat di-scroll */
       scale: 1.15,
       ease: "none",
       scrollTrigger: {
@@ -854,7 +853,7 @@ gsap.utils.toArray('.pop-avatar').forEach(img => {
   );
 });
 
-/* ---- CURSOR ---- */
+/* ---- CURSOR EFF ---- */
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
@@ -878,7 +877,7 @@ document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
   });
 });
 
-/* ---- PARTICLES ---- */
+/* ---- BACKGROUND PARTICLES ---- */
 const pcanvas = document.getElementById('particles-canvas');
 const pctx = pcanvas.getContext('2d');
 function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
@@ -906,7 +905,7 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- SCROLL REVEAL STAGGERED ---- */
+/* ---- INTERSECTION OBSERVER FOR REVEALS ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
@@ -931,7 +930,7 @@ var observer = new IntersectionObserver(function(entries) {
 
 reveals.forEach(function(el) { observer.observe(el); });
 
-/* ---- CHAR CARD SELECT ---- */
+/* ---- CHAR SELECT ---- */
 document.querySelectorAll('.char-card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
