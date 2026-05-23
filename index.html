@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -148,6 +148,21 @@ nav{
 
 .nav-links a:hover{color:var(--cyan);}
 
+.nav-links a.infra-link{
+  color:var(--cyan);
+  position:relative;
+}
+.nav-links a.infra-link::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;right:0;
+  height:1px;
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);
+  animation:infraPulse 2s ease-in-out infinite;
+}
+@keyframes infraPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
+
 .nav-btn{
 
   padding:0.5rem 1.5rem;
@@ -190,7 +205,7 @@ nav{
 
   align-items: center;
 
-  perspective: 1200px; /* Memberikan kedalaman optik untuk elemen 3D di dalamnya */
+  perspective: 1200px;
 
 }
 
@@ -260,15 +275,13 @@ nav{
 
 
 
-/* KUSTOMISASI ANIMASI HERO TEXT 3D Keren */
-
 .hero-content{
 
   max-width:680px;
 
   transform-style: preserve-3d;
 
-  transform: rotateY(12deg) rotateX(4deg); /* Efek susunan miring 3D fisik */
+  transform: rotateY(12deg) rotateX(4deg);
 
   animation: intro3D 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
@@ -319,8 +332,6 @@ nav{
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
 
-
-/* Struktur Judul Baru 3D Cyber-Glow */
 
 .hero-title-3d {
 
@@ -744,11 +755,11 @@ section{padding:6rem 4rem;}
 
   position:relative;
 
-  overflow: visible; 
+  overflow: visible;
 
   transition: border-color 0.4s;
 
-  perspective: 1000px; 
+  perspective: 1000px;
 
 }
 
@@ -1010,8 +1021,6 @@ section{padding:6rem 4rem;}
 
 
 
-/* REVEAL STAGGERED */
-
 .char-card.reveal {
 
   opacity: 0;
@@ -1222,9 +1231,11 @@ footer{
 
     <li><a href="#characters">Characters</a></li>
 
+    <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
+
   </ul>
 
-  <button class="nav-btn">Launch App</button>
+  <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
 
 </nav>
 
@@ -1242,8 +1253,6 @@ footer{
 
   <div class="hero-wrapper">
 
-    <!-- HERO CONTENT BARU DENGAN TEKS 3D RIALO ALPHA CORE -->
-
     <div class="hero-content">
 
       <div class="hero-tag">System Online // v2.077</div>
@@ -1258,7 +1267,7 @@ footer{
 
       <div class="hero-btns">
 
-        <button class="btn-primary">Begin Journey</button>
+        <button class="btn-primary" onclick="window.location.href='infrastructure.html'">Begin Journey</button>
 
         <button class="btn-secondary">Watch Trailer</button>
 
@@ -1634,7 +1643,7 @@ footer{
 
     <p class="cta-sub">Your dimension awaits. No going back.</p>
 
-    <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;">Enter Now — Free</button>
+    <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;" onclick="window.location.href='infrastructure.html'">Enter Now — Free</button>
 
   </div>
 
@@ -1654,7 +1663,7 @@ footer{
 
     <a href="#">Terms</a>
 
-    <a href="#">Contact</a>
+    <a href="infrastructure.html">Infrastructure</a>
 
   </div>
 
@@ -1673,8 +1682,6 @@ footer{
 gsap.registerPlugin(ScrollTrigger);
 
 
-
-/* ---- EFECT SCROLL PARALLAX DI-PERHALUS & DI-PERLAMBAT ---- */
 
 gsap.utils.toArray('.slide-left-card').forEach(card => {
 
@@ -1732,7 +1739,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
 
 
 
-/* ---- INTERAKTIF MOUSE PARALLAX UNTUK KARTU ---- */
+/* ---- MOUSE PARALLAX FOR CARDS ---- */
 
 const cards = document.querySelectorAll('.card');
 
@@ -1754,13 +1761,9 @@ cards.forEach((card, index) => {
 
     const cardCenterY = rect.top + rect.height / 2;
 
-    
-
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
 
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
-
-    
 
     targetX = angleX * 28; 
 
@@ -1788,13 +1791,9 @@ cards.forEach((card, index) => {
 
     const floatY = Math.sin(offsetTime) * 12;
 
-
-
     currentX += (targetX - currentX) * 0.1;
 
     currentY += (targetY - currentY) * 0.1;
-
-    
 
     if (avatar) {
 
@@ -1812,7 +1811,7 @@ cards.forEach((card, index) => {
 
 
 
-/* ---- EFREK MOUSE PARALLAX DINAMIS UNTUK TEKS HERO 3D ---- */
+/* ---- HERO 3D MOUSE PARALLAX ---- */
 
 const heroContent = document.querySelector('.hero-content');
 
@@ -1820,9 +1819,9 @@ document.addEventListener('mousemove', (e) => {
 
   if (window.innerWidth > 968 && heroContent) {
 
-    const xAxis = (window.innerWidth / 2 - e.clientX) / 45; // Mengontrol sensitivitas rotasi Y
+    const xAxis = (window.innerWidth / 2 - e.clientX) / 45;
 
-    const yAxis = (window.innerHeight / 2 - e.clientY) / 45; // Mengontrol sensitivitas rotasi X
+    const yAxis = (window.innerHeight / 2 - e.clientY) / 45;
 
     heroContent.style.transform = `rotateY(${12 - xAxis}deg) rotateX(${4 + yAxis}deg)`;
 
@@ -1832,7 +1831,7 @@ document.addEventListener('mousemove', (e) => {
 
 
 
-/* ---- CURSOR EFF ---- */
+/* ---- CURSOR ---- */
 
 const cur = document.getElementById('cursor');
 
@@ -1880,7 +1879,7 @@ document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
 
 
 
-/* ---- BACKGROUND PARTICLES ---- */
+/* ---- PARTICLES ---- */
 
 const pcanvas = document.getElementById('particles-canvas');
 
@@ -1936,7 +1935,7 @@ for (var i = 0; i < 55; i++) {
 
 
 
-/* ---- INTERSECTION OBSERVER FOR REVEALS ---- */
+/* ---- INTERSECTION OBSERVER ---- */
 
 var reveals = document.querySelectorAll('.reveal');
 
