@@ -265,7 +265,6 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* REPOSITORI GITHUB UNTUK MARKET.PNG (SUDAH FIXED KEMBALI MUNCUL) */
 .logo-muter{
   width: 140px;
   height: 140px;
@@ -343,9 +342,9 @@ section{padding:6rem 4rem;}
   border:1px solid rgba(124,58,237,0.2);
   padding:2rem;
   position:relative;
-  overflow: visible; /* Wajib agar kepala bisa keluar box */
+  overflow: visible; 
   transition: border-color 0.4s;
-  perspective: 1000px; /* Kedalaman 3D agar efek menoleh kursor alami */
+  perspective: 1000px; 
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -356,12 +355,15 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* Container gambar disesuaikan agar karakter pas di dalam kotak */
+/* FIX PERBAIKAN WADAH: Menggunakan Flexbox agar gambar otomatis center tengah kotak */
 .card-img-container {
   width: 100%;
-  height: 160px;
+  height: 200px; /* Dinaikkan tingginya agar space lega */
   position: relative;
   margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .card-img-container::before {
   content: '';
@@ -373,17 +375,16 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* STYLE DASAR POP-AVATAR (DIPASKAN DENGAN FRAME KOTAK) */
+/* FIX DETAIL POP-AVATAR: Diposisikan center presisi di tengah-tengah frame */
 .pop-avatar {
-  width: 85%;
-  height: auto;
-  max-height: 180px;
-  position: absolute;
-  bottom: -5px; 
-  left: 7.5%;
+  width: auto;
+  height: 90%; /* Mengisi frame secara proporsional */
+  max-width: 90%;
   object-fit: contain;
   z-index: 3;
+  transform: translateY(0px) rotateX(0deg) rotateY(0deg);
   transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
   will-change: transform;
 }
 
@@ -846,7 +847,6 @@ cards.forEach((card, index) => {
   let currentX = 0, currentY = 0;
   let targetX = 0, targetY = 0;
   
-  // Deteksi pergerakan koordinat kursor mouse dalam area box kartu
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
     const cardCenterX = rect.left + rect.width / 2;
@@ -855,31 +855,27 @@ cards.forEach((card, index) => {
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     
-    targetX = angleX * 28; // Batas sudut menoleh horizontal
-    targetY = angleY * -28; // Batas sudut menoleh vertikal
+    targetX = angleX * 28; 
+    targetY = angleY * -28; 
   });
   
-  // Jika kursor keluar, arah menoleh kepala kembali normal ke tengah (0)
   card.addEventListener('mouseleave', () => {
     targetX = 0;
     targetY = 0;
   });
 
-  // Fungsi loop rendering utama untuk menggabungkan efek melayang (sinus) dan tracking kursor sekaligus
   function renderCombinedMotion(time) {
-    // Membuat rumus gelombang matematis sinus untuk efek melayang naik-turun otomatis
-    // Kecepatan dan ritme ayunan di tiap kotak sengaja dibedakan (index * 400) agar terlihat alami
+    // Efek gelombang sinus konstan naik-turun halus (Basis awal dilepas posisi absolute)
     const speedFactor = 0.0025;
     const offsetTime = time * speedFactor + (index * 0.8);
-    const floatY = Math.sin(offsetTime) * 10 + 15; // Jarak ayunan naik-turun (10px) dengan basis awal (15px)
+    const floatY = Math.sin(offsetTime) * 12; // Jangkauan melayang 12px
 
-    // Rumus interpolasi (Lerp) untuk pergerakan sudut arah kursor yang smooth
     currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
     
     if (avatar) {
-      // Menggabungkan translasi koordinat melayang Y dengan rotasi matriks 3D kursor mouse
-      avatar.style.transform = `translateY(${floatY}px) scale(1.05) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+      // Menggabungkan translasi melayang Y dengan matriks rotasi kursor 3D looked-at
+      avatar.style.transform = `translateY(${floatY}px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
     requestAnimationFrame(renderCombinedMotion);
   }
