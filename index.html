@@ -199,7 +199,7 @@ nav{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* === HOLOGRAPHIC SPHERE === */
+/* === HOLOGRAPHIC SPHERE - ARCHITECTURE FIXED === */
 .logo-33d-wrap{
   position:absolute;right:6%;top:50%;
   transform:translateY(-50%);
@@ -238,31 +238,45 @@ nav{
 .dot-purple{background:var(--purple);box-shadow:0 0 10px var(--purple);}
 .dot-pink{background:var(--pink);box-shadow:0 0 8px var(--pink);}
 
-/* Animasi Mengambang & Denyut Aura ala Rialo Predict (Anti Gepeng) */
-.logo-muter{
-  position:relative;
-  z-index:2;
-  width:200px;
-  height:200px;
-  object-fit:contain;
-  animation:logoFloat 4s ease-in-out infinite, neonPulse 3s ease-in-out infinite;
+/* Pembungkus Kotak Stabil Beraspek Rasio 1:1 Untuk Kunci Gambar */
+.logo-container-fixed {
+  position: relative;
+  z-index: 5;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Menerapkan efek floating naik-turun pada container agar gambar aman */
+  animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-@keyframes logoFloat {
+.logo-muter{
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Memaksa asset mempertahankan skala asli gambar */
+  max-width: 200px;
+  max-height: 200px;
+  display: block;
+  /* Properti filter neon pulsasi murni tanpa modifikasi pergeseran matriks */
+  animation: neonPulseAlaRialo 3s ease-in-out infinite;
+}
+
+@keyframes logoFloatAlaRialo {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-15px);
   }
 }
 
-@keyframes neonPulse {
+@keyframes neonPulseAlaRialo {
   0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5)) drop-shadow(0 0 30px rgba(124, 58, 237, 0.3));
+    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5)) drop-shadow(0 0 35px rgba(124, 58, 237, 0.3));
   }
   50% {
-    filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 50px rgba(124, 58, 237, 0.6));
+    filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 55px rgba(124, 58, 237, 0.6));
   }
 }
 
@@ -532,7 +546,11 @@ footer{
       <div class="ring ring-2"><div class="ring-dot dot-purple"></div></div>
       <div class="ring ring-3"><div class="ring-dot dot-pink"></div></div>
     </div>
-    <img src="images/market.png" alt="Market Logo" class="logo-muter"/>
+    
+    <div class="logo-container-fixed">
+      <img src="images/market.png" alt="Market Logo" class="logo-muter"/>
+    </div>
+    
     <div class="logo-glow"></div>
   </div>
 </section>
