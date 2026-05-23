@@ -265,7 +265,7 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* FIX REPOSITORI GITHUB UNTUK MARKET.PNG */
+/* REPOSITORI GITHUB UNTUK MARKET.PNG (SUDAH FIXED KEMBALI MUNCUL) */
 .logo-muter{
   width: 140px;
   height: 140px;
@@ -345,7 +345,7 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
-  perspective: 1000px; /* Efek kedalaman 3D saat menoleh */
+  perspective: 1000px; /* Kedalaman 3D agar efek menoleh kursor alami */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -356,7 +356,7 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* Container khusus gambar agar pas sesuai kotak */
+/* Container gambar disesuaikan agar karakter pas di dalam kotak */
 .card-img-container {
   width: 100%;
   height: 160px;
@@ -373,19 +373,17 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* FIX POSISI PAS DI KOTAK & ANIMASI CURSOR DETECT PADA CHARACTERS */
+/* STYLE DASAR POP-AVATAR (DIPASKAN DENGAN FRAME KOTAK) */
 .pop-avatar {
   width: 85%;
   height: auto;
   max-height: 180px;
   position: absolute;
-  bottom: -15px; 
+  bottom: -5px; 
   left: 7.5%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(15px) rotateX(0deg) rotateY(0deg);
   transform-style: preserve-3d;
-  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
@@ -839,47 +837,53 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- SCRIPTS JAVASCRIPT: DETEKSI INTERAKTIF KURSOR KEPALA MENOLEH (LOOK-AT) ---- */
+/* ---- SCRIPTS ENGINE GABUNGAN: MELAYANG (IDLE) + TITIK TARGET KURSOR MOUSE ---- */
 const cards = document.querySelectorAll('.card');
 
-cards.forEach(card => {
+cards.forEach((card, index) => {
   const avatar = card.querySelector('.pop-avatar');
   
   let currentX = 0, currentY = 0;
   let targetX = 0, targetY = 0;
   
+  // Deteksi pergerakan koordinat kursor mouse dalam area box kartu
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
     
-    // Menghitung rasio jarak kursor dari pusat geometris kotak kartu
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     
-    // Mengatur sensitivitas rotasi derajat menoleh (Maksimal 28 derajat)
-    targetX = angleX * 28; 
-    targetY = angleY * -28; 
+    targetX = angleX * 28; // Batas sudut menoleh horizontal
+    targetY = angleY * -28; // Batas sudut menoleh vertikal
   });
   
-  // Kepala kembali tegak lurus ke tengah jika kursor mouse keluar area kartu
+  // Jika kursor keluar, arah menoleh kepala kembali normal ke tengah (0)
   card.addEventListener('mouseleave', () => {
     targetX = 0;
     targetY = 0;
   });
 
-  // Fungsi Interpolasi (Lerp) agar gerakan transisi halus tanpa patah-patah
-  function updateHeadMovement() {
+  // Fungsi loop rendering utama untuk menggabungkan efek melayang (sinus) dan tracking kursor sekaligus
+  function renderCombinedMotion(time) {
+    // Membuat rumus gelombang matematis sinus untuk efek melayang naik-turun otomatis
+    // Kecepatan dan ritme ayunan di tiap kotak sengaja dibedakan (index * 400) agar terlihat alami
+    const speedFactor = 0.0025;
+    const offsetTime = time * speedFactor + (index * 0.8);
+    const floatY = Math.sin(offsetTime) * 10 + 15; // Jarak ayunan naik-turun (10px) dengan basis awal (15px)
+
+    // Rumus interpolasi (Lerp) untuk pergerakan sudut arah kursor yang smooth
     currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
     
     if (avatar) {
-      // Memotong paksa transform style untuk menghindari crash/bentrok dengan GSAP Scroll
-      avatar.style.transform = `translateY(15px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+      // Menggabungkan translasi koordinat melayang Y dengan rotasi matriks 3D kursor mouse
+      avatar.style.transform = `translateY(${floatY}px) scale(1.05) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
-    requestAnimationFrame(updateHeadMovement);
+    requestAnimationFrame(renderCombinedMotion);
   }
-  updateHeadMovement();
+  requestAnimationFrame(renderCombinedMotion);
 });
 
 /* ---- CURSOR EFF ---- */
