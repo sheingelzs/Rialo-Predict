@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -312,7 +312,7 @@ select.inp{appearance:none;cursor:pointer}
     <div class="scan-phase" id="scanPhase">Initializing trust layer...</div>
     <div class="scan-addr" id="scanAddr"></div>
     <div class="scan-prog"><div class="sp-bar"><div class="sp-fill" id="spFill"></div></div></div>
-    <div class="sp-pct" id="spPct">0%</div>
+    <div class="scan-pct" id="spPct">0%</div>
     <div class="scan-nodes"><div class="sn" id="sn0"></div><div class="sn" id="sn1"></div><div class="sn" id="sn2"></div><div class="sn" id="sn3"></div><div class="sn" id="sn4"></div><div class="sn" id="sn5"></div><div class="sn" id="sn6"></div></div>
     <button class="scan-cta" id="scanCta">View Identity Profile →</button>
   </div>
@@ -341,7 +341,6 @@ select.inp{appearance:none;cursor:pointer}
     <div class="wallet-bar">
       <div>
         <div class="wb-label">Wallet</div>
-        <!-- FIX 4: wb-addr now syncs with connected wallet -->
         <div class="wb-addr" id="wb-addr">Not connected</div>
       </div>
       <div class="wb-sep"></div>
@@ -360,7 +359,6 @@ select.inp{appearance:none;cursor:pointer}
         <div class="wb-sym">rETH</div>
         <div class="wb-val" id="wb-reth">0.0000</div>
       </div>
-      <!-- FIX 1: faucet gives 2 ETH as starting balance, not just 0.5 -->
       <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()">⚡ Claim Faucet (2 ETH)</button>
     </div>
 
@@ -406,7 +404,6 @@ select.inp{appearance:none;cursor:pointer}
               </div>
             </div>
             <div style="font-size:8px;color:var(--txt2);margin-top:4px">
-              <!-- FIX 6: USD value updates realtime -->
               ≈ <span id="swap-from-usd">$0.00</span> · Balance: <span id="swap-from-bal" style="color:var(--c)">0.0000</span> <span id="swap-from-bal-sym">ETH</span>
             </div>
           </div>
@@ -485,7 +482,6 @@ select.inp{appearance:none;cursor:pointer}
           <div class="field">
             <div class="field-label">Amount to Bridge</div>
             <div class="input-row">
-              <!-- FIX 3: oninput now triggers calcBridge -->
               <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()">
               <button class="token-pill" onclick="bridgeMax()">MAX</button>
             </div>
@@ -549,10 +545,10 @@ select.inp{appearance:none;cursor:pointer}
             <input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()">
           </div>
           <div class="pct-row">
-            <button class="pct-btn" onclick="stakeMax(25)">25%</button>
-            <button class="pct-btn" onclick="stakeMax(50)">50%</button>
-            <button class="pct-btn" onclick="stakeMax(75)">75%</button>
-            <button class="pct-btn" onclick="stakeMax(100)">MAX</button>
+            <button class="pct-btn" onclick="stakeMax(this, 25)">25%</button>
+            <button class="pct-btn" onclick="stakeMax(this, 50)">50%</button>
+            <button class="pct-btn" onclick="stakeMax(this, 75)">75%</button>
+            <button class="pct-btn" onclick="stakeMax(this, 100)">MAX</button>
           </div>
           <div style="font-size:8px;color:var(--txt2);margin-bottom:8px">
             Preview: You get <span id="stake-reth-preview" style="color:var(--gold)">0.0000</span> rETH · Annual: <span id="stake-annual-preview" style="color:var(--green)">0.0000</span> ETH
@@ -594,7 +590,7 @@ select.inp{appearance:none;cursor:pointer}
           </div>
           <div style="margin-top:12px">
             <div class="field-label">Add Liquidity — Select Pair</div>
-            <select class="inp inp-small" id="liq-pair-sel" style="margin-bottom:8px">
+            <select class="inp inp-small" id="liq-pair-sel" style="margin-bottom:8px" onchange="calcLiq()">
               <option value="ETH/MATIC">ETH / MATIC (0.30%)</option>
               <option value="ETH/USDT">ETH / USDT (0.05%)</option>
               <option value="BTC/USDC">BTC / USDC (0.05%)</option>
@@ -621,7 +617,6 @@ select.inp{appearance:none;cursor:pointer}
           <div id="liq-pos-empty" style="text-align:center;color:var(--txt2);font-size:9px;padding:12px">No positions yet.</div>
           <div style="margin-top:16px">
             <div class="card-sub" style="margin-bottom:8px">// pool volume chart</div>
-            <!-- FIX 2: canvas wrapped in relative container, chart rebuilt on tab switch -->
             <div style="position:relative;height:120px">
               <canvas id="liq-chart" role="img" aria-label="Pool volume over 7 days"></canvas>
             </div>
@@ -644,7 +639,6 @@ select.inp{appearance:none;cursor:pointer}
             <div class="gtier"><div class="gtier-lbl">Fast</div><div class="gtier-val" id="gas-fast" style="color:var(--green)">—</div><div class="gtier-t">~15 sec</div></div>
           </div>
           <div style="font-size:7px;color:var(--txt2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">24h Gas History</div>
-          <!-- FIX 7: monitor panel charts also use relative container -->
           <div style="position:relative;height:60px">
             <canvas id="gas-chart" role="img" aria-label="Gas price history over 24 hours"></canvas>
           </div>
@@ -686,7 +680,6 @@ for (var i=0;i<24;i++) gasHistory.push(12+Math.random()*20);
 
 var fromToken = 'ETH', toToken = 'USDC';
 var selectedPoolApy = 0.084, selectedPoolName = 'ETH Liquid Pool';
-// FIX 1: faucetUsed tracks per session, demo mode auto-grants starting balance
 var faucetUsed = false;
 
 var tokenColors = { ETH:'#6f7cff', USDC:'#26a17b', BTC:'#f7931a', SOL:'#ab73ff', MATIC:'#8247e5', USDT:'#26a17b', rETH:'#d4a832' };
@@ -699,9 +692,7 @@ var bridgeFromChain={name:'Ethereum',icon:'🔷'};
 var bridgeToChain={name:'Polygon',icon:'🟣'};
 var bridgeChains=[{name:'Ethereum',icon:'🔷'},{name:'Polygon',icon:'🟣'},{name:'Arbitrum',icon:'🔵'},{name:'Optimism',icon:'🔴'},{name:'Base',icon:'🟦'},{name:'Avalanche',icon:'🔺'}];
 var bridgeFromIdx=0,bridgeToIdx=1;
-// FIX 2: track chart instances so they can be destroyed/rebuilt
 var liqChart=null, gasChartObj=null;
-// FIX 7: track which panels have been initialized
 var monitorInitialized=false, liqChartInitialized=false;
 
 // ═══ UTILS ═══
@@ -713,31 +704,38 @@ function nowTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',
 
 function showResult(id,type,msg){
   var el=document.getElementById(id);
+  if(!el) return;
   el.className='result-box result-'+type;
   if(type==='load'){el.innerHTML='<div class="spinner"></div>'+msg;el.style.display='flex';}
   else{el.innerHTML=msg;el.style.display='block';}
 }
 
 // ═══ TAB SWITCHING ═══
-// FIX 2 & 7: charts are built/rebuilt on tab activation
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
   var tabs=['swap','bridge','stake','liquidity','monitor'];
   var ti=tabs.indexOf(name);
-  document.querySelectorAll('.tab')[ti].classList.add('active');
-  document.getElementById('panel-'+name).classList.add('active');
+  if(ti !== -1) document.querySelectorAll('.tab')[ti].classList.add('active');
+  
+  var panel = document.getElementById('panel-'+name);
+  if(panel) panel.classList.add('active');
+  
   if(name==='monitor'){
-    // FIX 7: always rebuild on switch to keep chart fresh
-    setTimeout(function(){buildGasChart();buildLiveFeed();},60);
+    setTimeout(function(){
+      buildGasChart();
+      buildLiveFeed();
+      if(gasChartObj) gasChartObj.resize();
+    },60);
     monitorInitialized=true;
   }
   if(name==='liquidity'){
-    // FIX 2: destroy and rebuild so canvas resizes correctly
-    setTimeout(function(){buildLiqChart();},60);
+    setTimeout(function(){
+      buildLiqChart();
+      if(liqChart) liqChart.resize();
+    },60);
     liqChartInitialized=true;
   }
-  // FIX 3: recalculate bridge when bridge tab opened
   if(name==='bridge'){
     calcBridge();
     buildBridgeFeed();
@@ -746,20 +744,33 @@ function switchTab(name){
 
 // ═══ WALLET ═══
 function updateWalletBar(){
-  document.getElementById('wb-eth').textContent=fmt(wallet.eth,4);
-  document.getElementById('wb-usdc').textContent=fmt(wallet.usdc,2);
-  document.getElementById('wb-reth').textContent=fmt(wallet.reth,4);
+  var ethValEl = document.getElementById('wb-eth');
+  var usdcValEl = document.getElementById('wb-usdc');
+  var rethValEl = document.getElementById('wb-reth');
+  
+  if(ethValEl) ethValEl.textContent=fmt(wallet.eth,4);
+  if(usdcValEl) usdcValEl.textContent=fmt(wallet.usdc,2);
+  if(rethValEl) rethValEl.textContent=fmt(wallet.reth,4);
+  
   var ethUsd=wallet.eth*(infraPrices.eth||0);
-  document.getElementById('wb-eth-usd').textContent=fmtUSD(ethUsd);
-  document.getElementById('user-staked').textContent=fmt(wallet.stakedEth,4);
-  document.getElementById('user-reth-disp').textContent=fmt(wallet.reth,4);
-  document.getElementById('user-rewards').textContent=fmt(wallet.stakedEth*selectedPoolApy,4);
+  var ethUsdEl = document.getElementById('wb-eth-usd');
+  if(ethUsdEl) ethUsdEl.textContent=fmtUSD(ethUsd);
+  
+  var userStakedEl = document.getElementById('user-staked');
+  var userRethDispEl = document.getElementById('user-reth-disp');
+  var userRewardsEl = document.getElementById('user-rewards');
+  var stakeTotalUsdEl = document.getElementById('stake-total-usd');
+  
+  if(userStakedEl) userStakedEl.textContent=fmt(wallet.stakedEth,4);
+  if(userRethDispEl) userRethDispEl.textContent=fmt(wallet.reth,4);
+  if(userRewardsEl) userRewardsEl.textContent=fmt(wallet.stakedEth*selectedPoolApy,4);
+  
   var stakeUSD=wallet.stakedEth*(infraPrices.eth||0);
-  document.getElementById('stake-total-usd').textContent=fmtUSD(stakeUSD);
+  if(stakeTotalUsdEl) stakeTotalUsdEl.textContent=fmtUSD(stakeUSD);
+  
   updateSwapBals();
 }
 
-// FIX 4: sync wallet address display with connected wallet
 function updateWalletAddr(){
   var el=document.getElementById('wb-addr');
   if(!el)return;
@@ -772,16 +783,15 @@ function updateWalletAddr(){
   }
 }
 
-// FIX 1: faucet now gives 2 ETH as proper starting balance
 function claimFaucet(){
-  if(faucetUsed){toast('Faucet: next claim in 24h');return;}
+  if(faucetUsed){if(typeof toast==='function') toast('Faucet: next claim in 24h');return;}
   wallet.eth+=2;
   wallet.usdc+=500;
   faucetUsed=true;
   var btn=document.getElementById('faucet-btn');
-  btn.textContent='✓ Claimed 2 ETH + 500 USDC';btn.disabled=true;btn.style.opacity='.5';
+  if(btn){btn.textContent='✓ Claimed 2 ETH + 500 USDC';btn.disabled=true;btn.style.opacity='.5';}
   updateWalletBar();
-  toast('✓ 2 ETH + 500 USDC claimed! Ready to trade.');
+  if(typeof toast==='function') toast('✓ 2 ETH + 500 USDC claimed! Ready to trade.');
 }
 
 // ═══ PRICES — sync from shared.js tokenData ═══
@@ -795,7 +805,6 @@ function syncPricesFromShared(){
   if(window.gasPrice) infraGasPrice = window.gasPrice;
   updateTickerUI();
   updatePriceTable();
-  // FIX 6: always recalculate swap USD values on price update
   calcSwap();
   calcBridge();
   updateWalletBar();
@@ -804,11 +813,9 @@ function syncPricesFromShared(){
   if(el) el.textContent=nowTime();
   var tg=document.getElementById('tp-gas');
   if(tg) tg.textContent=infraGasPrice+' gwei';
-  // FIX 7: update gas chart if monitor tab was visited
   if(monitorInitialized) updateGasUI();
 }
 
-// FIX 5: onPricesUpdated called immediately by shared.js — no delay needed
 function onPricesUpdated(){
   syncPricesFromShared();
 }
@@ -828,7 +835,7 @@ function updateTickerUI(){
     var pe=document.getElementById(m.pid),ce=document.getElementById(m.cid);
     if(!pe||!m.p)return;
     pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:m.p<10?4:2,maximumFractionDigits:m.p<10?4:2});
-    var chg=tokenData&&tokenData[m.key]?tokenData[m.key].chg:0;
+    var chg=window.tokenData&&window.tokenData[m.key]?window.tokenData[m.key].chg:0;
     if(ce){ce.textContent=chgStr(chg);ce.className='tick-chg '+chgCls(chg);}
   });
 }
@@ -844,7 +851,7 @@ function updatePriceTable(){
   ];
   var tb=document.getElementById('price-table-body');if(!tb)return;
   tb.innerHTML=assets.map(function(a){
-    var chg=a.key&&tokenData&&tokenData[a.key]?tokenData[a.key].chg:(a.chg||0);
+    var chg=a.key&&window.tokenData&&window.tokenData[a.key]?window.tokenData[a.key].chg:(a.chg||0);
     var cc=chg>=0?'td-g':'';var cs=chg>=0?'+':'';
     return '<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:'+a.col+'"></span>'+a.sym+'</span></td>'
       +'<td style="color:#fff;font-weight:700">$'+(a.p?a.p.toLocaleString(undefined,{minimumFractionDigits:a.p<10?4:2,maximumFractionDigits:a.p<10?4:2}):'—')+'</td>'
@@ -878,27 +885,35 @@ function updateSwapBals(){
   if(tb2)tb2.textContent=fmt(getWalletBal(toToken),4);
 }
 
-// FIX 6: calcSwap recalculates USD values using latest infraPrices every call
 function calcSwap(){
-  var amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
+  var fromAmtEl = document.getElementById('swap-from-amt');
+  if(!fromAmtEl) return;
+  var amt=parseFloat(fromAmtEl.value)||0;
+  if(amt <= 0) {
+     document.getElementById('swap-from-usd').textContent = "$0.00";
+     document.getElementById('swap-to-amt').value = '';
+     document.getElementById('swap-to-usd').textContent = "$0.00";
+     updateSwapBals();
+     return;
+  }
   var fp=getPrice(fromToken),tp=getPrice(toToken);
   var usd=amt*fp,toAmt=tp>0?usd/tp:0;
   var prec=toToken==='USDC'||toToken==='USDT'?2:6;
   document.getElementById('swap-from-usd').textContent=fmtUSD(usd);
-  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,prec):'';
+  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,prec): '';
   document.getElementById('swap-to-usd').textContent=fmtUSD(usd);
   updateSwapBals();
 }
 
 function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenCycle[fromIdx];document.getElementById('from-sym').textContent=fromToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';calcSwap();}
 function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();}
-function flipTokens(){var tmp=fromToken;fromToken=toToken;toToken=tmp;document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();toast('Tokens flipped');}
+function flipTokens(){var tmp=fromToken;fromToken=toToken;toToken=tmp;document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();if(typeof toast==='function') toast('Tokens flipped');}
 
 function doSwap(){
   var amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
   if(amt<=0){showResult('swap-result','err','⚠ Enter an amount to swap');return;}
-  var bal=getWalletBal(fromToken);
-  if(amt>bal){showResult('swap-result','err','⚠ Insufficient '+fromToken+' balance. Claim faucet first!');return;}
+  var pdfBal=getWalletBal(fromToken);
+  if(amt>pdfBal){showResult('swap-result','err','⚠ Insufficient '+fromToken+' balance. Claim faucet first!');return;}
   showResult('swap-result','load','Scanning transaction for trust vectors...');
   document.getElementById('swap-btn').disabled=true;
   setTimeout(function(){
@@ -914,27 +929,27 @@ function doSwap(){
     document.getElementById('swap-btn').disabled=false;
     document.getElementById('swap-from-amt').value='';
     calcSwap();
-    toast('✓ Swap complete! +'+toAmtFmt+' '+toToken);
+    if(typeof toast==='function') toast('✓ Swap complete! +'+toAmtFmt+' '+toToken);
   },1800);
 }
 
 function buildSwapHistory(){
   var tb=document.getElementById('swap-history'),empty=document.getElementById('swap-hist-empty');
-  if(swapHistory.length===0){tb.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
+  if(!tb) return;
+  if(swapHistory.length===0){tb.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty) empty.style.display='none';
   tb.innerHTML=swapHistory.slice(0,8).map(function(h){return'<tr><td class="td-c" style="font-size:8px">'+h.tx+'</td><td>'+h.from+'</td><td class="td-g">'+h.to+'</td><td style="color:var(--txt2)">'+h.rate+'</td><td class="td-g">'+h.status+'</td><td style="color:var(--txt2)">'+h.time+'</td></tr>';}).join('');
 }
 
 // ═══ BRIDGE ═══
-// FIX 3: chain cycling now calls calcBridge automatically
 function cycleBridgeFrom(){
   bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;
   if(bridgeFromIdx===bridgeToIdx)bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;
   bridgeFromChain=bridgeChains[bridgeFromIdx];
   document.getElementById('bridge-from-name').textContent=bridgeFromChain.name;
   document.getElementById('bridge-from-icon').textContent=bridgeFromChain.icon;
-  toast('From: '+bridgeFromChain.name);
-  calcBridge(); // FIX 3
+  if(typeof toast==='function') toast('From: '+bridgeFromChain.name);
+  calcBridge();
 }
 function cycleBridgeTo(){
   bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;
@@ -942,14 +957,15 @@ function cycleBridgeTo(){
   bridgeToChain=bridgeChains[bridgeToIdx];
   document.getElementById('bridge-to-name').textContent=bridgeToChain.name;
   document.getElementById('bridge-to-icon').textContent=bridgeToChain.icon;
-  toast('To: '+bridgeToChain.name);
-  calcBridge(); // FIX 3
+  if(typeof toast==='function') toast('To: '+bridgeToChain.name);
+  calcBridge();
 }
 function bridgeMax(){document.getElementById('bridge-amt').value=fmt(wallet.eth,6);calcBridge();}
 
-// FIX 3: calcBridge uses live infraPrices
 function calcBridge(){
-  var amt=parseFloat(document.getElementById('bridge-amt').value)||0;
+  var bridgeAmtEl = document.getElementById('bridge-amt');
+  if(!bridgeAmtEl) return;
+  var amt=parseFloat(bridgeAmtEl.value)||0;
   var fee=amt*0.0005,receive=amt-fee,gasEst=(infraGasPrice*21000/1e9);
   var ethP=infraPrices.eth||3200;
   document.getElementById('bridge-fee').textContent=fmtUSD(fee*ethP)+' (0.05%)';
@@ -974,7 +990,7 @@ function doBridge(){
     showResult('bridge-result','ok','✓ Bridge → '+bridgeToChain.name+'\nReceived: '+fmt(receive,6)+' ETH · Tx: '+txh);
     document.getElementById('bridge-btn').disabled=false;
     document.getElementById('bridge-amt').value='';
-    toast('✓ Bridge to '+bridgeToChain.name+' sent!');
+    if(typeof toast==='function') toast('✓ Bridge to '+bridgeToChain.name+' sent!');
   },2200);
 }
 
@@ -989,14 +1005,32 @@ function buildBridgeFeed(){
 }
 
 // ═══ STAKE ═══
-function selectPool(el){document.querySelectorAll('.pool-row').forEach(function(p){p.classList.remove('selected')});el.classList.add('selected');selectedPoolApy=parseFloat(el.dataset.apy);selectedPoolName=el.querySelector('.pname').textContent;calcStake();toast('Pool: '+selectedPoolName);}
-function stakeMax(pct){
+function selectPool(el){
+  document.querySelectorAll('.pool-row').forEach(function(p){p.classList.remove('selected')});
+  el.classList.add('selected');
+  selectedPoolApy=parseFloat(el.dataset.apy);
+  selectedPoolName=el.querySelector('.pname').textContent;
+  
+  // Perbaikan: update rewards tahunan global secara proaktif
+  var userRewardsEl = document.getElementById('user-rewards');
+  if(userRewardsEl) userRewardsEl.textContent=fmt(wallet.stakedEth*selectedPoolApy,4);
+  
+  calcStake();
+  if(typeof toast==='function') toast('Pool: '+selectedPoolName);
+}
+
+function stakeMax(btnEl, pct){
   document.querySelectorAll('.pct-btn').forEach(function(b){b.classList.remove('pact')});
-  event.target.classList.add('pact');
+  if(btnEl) btnEl.classList.add('pact');
   document.getElementById('stake-amt').value=fmt(wallet.eth*pct/100,6);
   calcStake();
 }
-function calcStake(){var amt=parseFloat(document.getElementById('stake-amt').value)||0;document.getElementById('stake-reth-preview').textContent=fmt(amt/1.03,4);document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);}
+
+function calcStake(){
+  var amt=parseFloat(document.getElementById('stake-amt').value)||0;
+  document.getElementById('stake-reth-preview').textContent=fmt(amt/1.03,4);
+  document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);
+}
 
 function doStake(){
   var amt=parseFloat(document.getElementById('stake-amt').value)||0;
@@ -1012,20 +1046,22 @@ function doStake(){
     showResult('stake-result','ok','✓ Staked '+fmt(amt,4)+' ETH · Received '+fmt(rethAmt,4)+' rETH\nTx: '+txh);
     document.getElementById('stake-btn').disabled=false;
     document.getElementById('stake-amt').value='';
-    toast('✓ Staking confirmed! +'+fmt(rethAmt,4)+' rETH');
+    if(typeof toast==='function') toast('✓ Staking confirmed! +'+fmt(rethAmt,4)+' rETH');
   },2000);
 }
 
 function updateStakeTable(){
   var pools=[{name:'ETH Liquid Pool',apy:'8.4%',tvl:'$420M',val:420,validators:13200+Math.floor(Math.random()*50)},{name:'Diversified Vault',apy:'6.2%',tvl:'$218M',val:218,validators:6800+Math.floor(Math.random()*30)},{name:'Governance Stake',apy:'4.8%',tvl:'$96M',val:96,validators:3100+Math.floor(Math.random()*20)}];
   var tb=document.getElementById('stake-table');
+  if(!tb) return;
   tb.innerHTML=pools.map(function(p,i){var myShare=i===0&&wallet.stakedEth>0?(wallet.stakedEth/p.val*100).toFixed(4)+'%':'0.0000%';var sel=p.name===selectedPoolName?'style="background:rgba(0,212,232,0.04)"':'';return'<tr '+sel+'><td style="color:#fff">'+p.name+'</td><td class="td-g">'+p.apy+'</td><td class="td-c">'+p.tvl+'</td><td style="color:var(--txt2)">'+p.validators.toLocaleString()+'</td><td class="td-gold">'+myShare+'</td></tr>';}).join('');
 }
 
 function buildStakeHistory(){
   var tb=document.getElementById('stake-history'),empty=document.getElementById('stake-hist-empty');
-  if(stakeHistory.length===0){tb.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
+  if(!tb) return;
+  if(stakeHistory.length===0){tb.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty) empty.style.display='none';
   tb.innerHTML=stakeHistory.slice(0,6).map(function(h){return'<tr><td class="td-c" style="font-size:8px">'+h.tx+'</td><td>'+h.amt+'</td><td style="color:var(--txt2)">'+h.pool+'</td><td class="td-gold">'+h.reth+'</td><td style="color:var(--txt2)">'+h.t+'</td></tr>';}).join('');
 }
 
@@ -1056,14 +1092,15 @@ function doLiquidity(){
     showResult('liq-result','ok','✓ LP Position Created · '+pair+'\nLP Tokens: '+fmt(lpAmt,4));
     document.getElementById('liq-btn').disabled=false;
     document.getElementById('liq-amt').value='';
-    toast('✓ LP position added for '+pair);
+    if(typeof toast==='function') toast('✓ LP position added for '+pair);
   },1900);
 }
 
 function buildLiqPositions(){
   var tb=document.getElementById('liq-positions'),empty=document.getElementById('liq-pos-empty');
-  if(liqPositions.length===0){tb.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
+  if(!tb) return;
+  if(liqPositions.length===0){tb.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty) empty.style.display='none';
   tb.innerHTML=liqPositions.map(function(p){return'<tr><td style="color:#fff">'+p.pair+'</td><td class="td-gold">'+p.lp+'</td><td class="td-c">'+p.val+'</td><td class="td-g">'+p.fees+'</td></tr>';}).join('');
 }
 
@@ -1073,7 +1110,6 @@ function updateLiqVols(){
 }
 
 // ═══ CHARTS ═══
-// FIX 2: destroy old chart instance before rebuilding
 function buildLiqChart(){
   var el=document.getElementById('liq-chart');if(!el)return;
   if(liqChart){liqChart.destroy();liqChart=null;}
@@ -1082,7 +1118,6 @@ function buildLiqChart(){
   liqChart=new Chart(el,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Vol ($M)',data:vols,backgroundColor:'rgba(0,212,232,0.4)',borderColor:'rgba(0,212,232,0.8)',borderWidth:1,borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,0.38)',font:{size:10}},grid:{color:'rgba(0,212,232,0.06)'}},y:{ticks:{color:'rgba(255,255,255,0.38)',font:{size:10}},grid:{color:'rgba(0,212,232,0.06)'}}}}});
 }
 
-// FIX 7: destroy old gas chart before rebuilding
 function buildGasChart(){
   var el=document.getElementById('gas-chart');if(!el)return;
   if(gasChartObj){gasChartObj.destroy();gasChartObj=null;}
@@ -1091,7 +1126,8 @@ function buildGasChart(){
 }
 
 function updateGasUI(){
-  document.getElementById('tp-gas').textContent=infraGasPrice+' gwei';
+  var tg = document.getElementById('tp-gas');
+  if(tg) tg.textContent=infraGasPrice+' gwei';
   var gd=document.getElementById('gas-display');if(gd)gd.textContent=infraGasPrice;
   var gs=document.getElementById('gas-slow'),ga=document.getElementById('gas-avg'),gf=document.getElementById('gas-fast');
   if(gs)gs.textContent=Math.max(1,infraGasPrice-3);
@@ -1126,41 +1162,30 @@ function updateNetTPS(){
   });
 }
 
-// FIX 4: override onWalletConnected to also sync wallet address display
-var _origOnWalletConnected = null;
-function _hookWalletSync(){
-  // Called after shared.js loads — wrap onWalletConnected
-  var origOnPricesUpdated = window.onPricesUpdated;
-  // We call updateWalletAddr on every price tick as well
-}
-
 // ═══ BOOT ═══
 document.addEventListener('DOMContentLoaded', function(){
-  initLoader();
-  initBgCanvas();
-  initGridPattern();
-  initCursor();
-  initHexCanvas();
-  initRipple();
-  initNav('infra');
-  bindWalletModal();
-  bindDiscButton();
+  if(typeof initLoader==='function') initLoader();
+  if(typeof initBgCanvas==='function') initBgCanvas();
+  if(typeof initGridPattern==='function') initGridPattern();
+  if(typeof initCursor==='function') initCursor();
+  if(typeof initHexCanvas==='function') initHexCanvas();
+  if(typeof initRipple==='function') initRipple();
+  if(typeof initNav==='function') initNav('infra');
+  if(typeof bindWalletModal==='function') bindWalletModal();
+  if(typeof bindDiscButton==='function') bindDiscButton();
 
-  // FIX 5: apply fallback prices immediately — no 1500ms delay
-  applyFallbackPrices();
+  if(typeof applyFallbackPrices==='function') applyFallbackPrices();
   syncPricesFromShared();
-  initPriceStreams();
-  fetchPrices();
-  setInterval(fetchPrices, 30000);
+  if(typeof initPriceStreams==='function') initPriceStreams();
+  if(typeof fetchPrices==='function') {
+    fetchPrices();
+    setInterval(fetchPrices, 30000);
+  }
 
-  // FIX 4: sync address immediately and on any future connection
   updateWalletAddr();
-  // Poll for wallet address change (shared.js sets connAddr on connect)
   setInterval(function(){
     updateWalletAddr();
-    // FIX 1: if demo mode connected and faucet not yet used, auto-grant balance
     if(window.connAddr && wallet.eth === 0 && !faucetUsed){
-      // Only auto-grant for demo mode
       if(window.connWallet === 'Demo Mode'){
         wallet.eth = 2;
         wallet.usdc = 500;
@@ -1172,14 +1197,13 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }, 800);
 
-  // FIX 7: pre-build monitor charts in background so they're ready
+  // Inisialisasi Chart secara aman setelah UI dirender sepenuhnya
   setTimeout(function(){
     buildGasChart();
     buildLiveFeed();
     monitorInitialized=true;
   }, 500);
 
-  // FIX 2: pre-build liquidity chart in background
   setTimeout(function(){
     buildLiqChart();
     liqChartInitialized=true;
@@ -1195,22 +1219,24 @@ document.addEventListener('DOMContentLoaded', function(){
   setInterval(function(){
     infraGasPrice=Math.max(8,Math.round(infraGasPrice+(Math.random()-0.5)*4));
     updateGasUI();
-    // FIX 6: recalc swap USD on gas/price drift
     calcSwap();
   },8000);
+  
   setInterval(updateNetTPS,4000);
+  
   setInterval(function(){
     updateLiqVols();
     var st=document.getElementById('st-vol');
     if(st){var v=2.4+(Math.random()-0.5)*0.2;st.textContent='$'+v.toFixed(1)+'B';}
   },5000);
+  
   setInterval(function(){
     var act=feedActs[Math.floor(Math.random()*feedActs.length)];
     feedItems.unshift({act:act,chain:feedChains[Math.floor(Math.random()*feedChains.length)],pair:feedPairs[Math.floor(Math.random()*feedPairs.length)],amt:'$'+(Math.random()*50000+500).toFixed(0),addr:randAddr(),ago:'just now'});
     feedItems=feedItems.slice(0,8);
     feedItems.forEach(function(f,i){if(i>0)f.ago=(i*3)+'s ago';});
-    // FIX 7: only update live feed DOM if monitor panel is active
-    if(document.getElementById('panel-monitor').classList.contains('active')){
+    var pm = document.getElementById('panel-monitor');
+    if(pm && pm.classList.contains('active')){
       buildLiveFeed();
     }
   },3500);
@@ -1218,10 +1244,13 @@ document.addEventListener('DOMContentLoaded', function(){
   updateNetTPS();
 });
 
-// Render loop for shared canvas
 var lastFrameTime=0;
 function loop(t){
-  if(t-lastFrameTime>=16){lastFrameTime=t;drawBg();drawHex(t);}
+  if(t-lastFrameTime>=16){
+    lastFrameTime=t;
+    if(typeof drawBg==='function') drawBg();
+    if(typeof drawHex==='function') drawHex(t);
+  }
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
