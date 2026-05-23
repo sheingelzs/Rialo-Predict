@@ -265,13 +265,13 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* PERBAIKAN LOGO: Membuat Pengganti market.png dengan Kubus Vektor Berputar */
+/* FIX PERBAIKAN MARKET.PNG - Gambar Diambil dari Link Gambar Kubus Virtual Baru */
 .logo-muter{
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
   display: block;
-  transform-style: preserve-3d;
-  animation: spinCW 6s linear infinite, neonPulseAlaRialo 3s ease-in-out infinite;
+  animation: neonPulseAlaRialo 3s ease-in-out infinite;
 }
 
 @keyframes logoFloatAlaRialo {
@@ -379,12 +379,11 @@ section{padding:6rem 4rem;}
   height: auto;
   max-height: 190px;
   position: absolute;
-  bottom: -15px; 
+  bottom: -5px; 
   left: 7.5%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(20px) rotateX(0deg) rotateY(0deg);
-  transition: transform 0.1s ease-out; /* Agar transisi gerakan mouse smooth */
+  transform: translateY(15px); /* Letak default */
   will-change: transform;
 }
 
@@ -628,13 +627,7 @@ footer{
       </div>
       
       <div class="logo-container-fixed">
-        <svg class="logo-muter" viewBox="0 0 100 100">
-          <polygon points="50,15 90,35 90,75 50,95 10,75 10,35" fill="none" stroke="#06b6d4" stroke-width="3"/>
-          <line x1="50" y1="15" x2="50" y2="95" stroke="#06b6d4" stroke-width="2" stroke-dasharray="2 2"/>
-          <line x1="10" y1="35" x2="90" y2="75" stroke="#06b6d4" stroke-width="1"/>
-          <line x1="90" y1="35" x2="10" y2="75" stroke="#06b6d4" stroke-width="1"/>
-          <circle cx="50" cy="55" r="15" fill="rgba(124,58,237,0.6)" stroke="#ec4899" stroke-width="2" />
-        </svg>
+        <img src="https://assets.codepen.io/t-1003/mesh-cube.png" alt="Market Hologram" class="logo-muter"/>
       </div>
       
       <div class="logo-glow"></div>
@@ -815,7 +808,7 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- PARALLAX EFFECT KARTU DAN POP-AVATAR ---- */
+/* ---- PARALLAX EFFECT KARTU UTAMA ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -100, opacity: 0 }, 
@@ -844,46 +837,42 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- MOUSE TRACKING INTERACTIVE HEADS (MORT INTERPOLATION / LERP) ---- */
-// Target semua elemen kartu yang berisi avatar karakter
+/* ---- FIX INTERAKTIF MOUSE TRACKING HEADS YANG SEBENARNYA ---- */
 const cards = document.querySelectorAll('.card');
 
 cards.forEach(card => {
   const avatar = card.querySelector('.pop-avatar');
-  
-  // Inisialisasi posisi mouse saat ini dan posisi target animasi halus (Lerp)
   let currentX = 0, currentY = 0;
   let targetX = 0, targetY = 0;
   
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
-    // Mendapatkan titik tengah kartu
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
     
-    // Menghitung jarak kursor dari titik tengah kartu (-1 sampai 1)
+    // Menghitung rasio jarak kursor dari titik tengah kotak
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     
-    // Mengatur rotasi maksimum derajat pergerakan kepala (Maks 25 derajat)
-    targetX = angleX * 25; 
-    targetY = angleY * -25; // Minus untuk membalik arah sumbu vertikal agar alami
+    // Nilai derajat rotasi 3D maksimal kepala menoleh
+    targetX = angleX * 30; 
+    targetY = angleY * -30; 
   });
   
-  // Kembalikan ke posisi awal saat kursor keluar kartu
+  // Reset posisi kepala jika kursor keluar dari batas area kartu
   card.addEventListener('mouseleave', () => {
     targetX = 0;
     targetY = 0;
   });
 
-  // Fungsi animasi berulang (Looping Lerp) untuk transisi super halus
+  // Fungsi loop rendering interpolasi (Lerp) agar mulus tanpa lag patah-patah
   function updateHeadMovement() {
-    currentX += (targetX - currentX) * 0.1; // Kecepatan interpolasi (0.1)
-    currentY += (targetY - currentY) * 0.1;
+    currentX += (targetX - currentX) * 0.08;
+    currentY += (targetY - currentY) * 0.08;
     
-    // Terapkan translasi bawaan GSAP dikombinasikan dengan rotasi 3D kursor
-    if(avatar) {
-      avatar.style.transform = `translateY(0px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+    if (avatar) {
+      // Mengubah inline style langsung bypass bentrokan framework GSAP scroll
+      avatar.style.transform = `translateY(15px) scale(1.15) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
     requestAnimationFrame(updateHeadMovement);
   }
