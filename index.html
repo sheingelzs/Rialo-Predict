@@ -355,10 +355,9 @@ section{padding:6rem 4rem;}
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* FIX PERBAIKAN WADAH: Menggunakan Flexbox agar gambar otomatis center tengah kotak */
 .card-img-container {
   width: 100%;
-  height: 200px; /* Dinaikkan tingginya agar space lega */
+  height: 200px;
   position: relative;
   margin-bottom: 1.2rem;
   display: flex;
@@ -375,10 +374,9 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* FIX DETAIL POP-AVATAR: Diposisikan center presisi di tengah-tengah frame */
 .pop-avatar {
   width: auto;
-  height: 90%; /* Mengisi frame secara proporsional */
+  height: 90%;
   max-width: 90%;
   object-fit: contain;
   z-index: 3;
@@ -809,16 +807,16 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- PARALLAX EFFECT KARTU UTAMA VIA GSAP SCROLL ---- */
+/* ---- FIX: EFECT SCROLL PARALLAX DI-PERHALUS & DI-PERLAMBAT ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
-    { x: -100, opacity: 0 }, 
-    { x: 0, opacity: 1, ease: "power2.out",
+    { x: -50, opacity: 0 }, // Jarak geser dikurangi agar pergerakan tidak terlalu kasar/jauh
+    { x: 0, opacity: 1, ease: "none", // Menggunakan "none" agar gerakan linear presisi mengikuti putaran roda mouse
       scrollTrigger: {
         trigger: card,
-        start: "top 85%",
-        end: "top 55%",
-        scrub: 1
+        start: "top 92%", // Animasi dimulai lebih awal saat tepi atas kartu mulai terlihat di bawah layar
+        end: "top 35%",   // Durasi scroll diperpanjang, animasi baru selesai saat kartu naik tinggi
+        scrub: 2.5        // Menaikkan nilai scrub ke 2.5 detik memberi efek redaman (damping) yang lambat dan super smooth
       }
     }
   );
@@ -826,13 +824,13 @@ gsap.utils.toArray('.slide-left-card').forEach(card => {
 
 gsap.utils.toArray('.slide-right-card').forEach(card => {
   gsap.fromTo(card, 
-    { x: 100, opacity: 0 }, 
-    { x: 0, opacity: 1, ease: "power2.out",
+    { x: 50, opacity: 0 }, 
+    { x: 0, opacity: 1, ease: "none",
       scrollTrigger: {
         trigger: card,
-        start: "top 85%",
-        end: "top 55%",
-        scrub: 1
+        start: "top 92%",
+        end: "top 35%",
+        scrub: 2.5        // Dibuat seimbang dengan kartu kiri (2.5 detik)
       }
     }
   );
@@ -865,16 +863,14 @@ cards.forEach((card, index) => {
   });
 
   function renderCombinedMotion(time) {
-    // Efek gelombang sinus konstan naik-turun halus (Basis awal dilepas posisi absolute)
     const speedFactor = 0.0025;
     const offsetTime = time * speedFactor + (index * 0.8);
-    const floatY = Math.sin(offsetTime) * 12; // Jangkauan melayang 12px
+    const floatY = Math.sin(offsetTime) * 12;
 
     currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
     
     if (avatar) {
-      // Menggabungkan translasi melayang Y dengan matriks rotasi kursor 3D looked-at
       avatar.style.transform = `translateY(${floatY}px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
     requestAnimationFrame(renderCombinedMotion);
