@@ -265,7 +265,7 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
-/* FIX PERBAIKAN MARKET.PNG - Menggunakan link gambar wireframe mesh cube yang aktif & stabil */
+/* STYLING LOGO JALUR LOKAL (cube-logo.png) */
 .logo-muter{
   width: 130px;
   height: 130px;
@@ -345,7 +345,7 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
-  perspective: 1000px; /* Memberikan efek kedalaman 3D saat menoleh */
+  perspective: 1000px; /* Memberikan efek ruang 3D saat menoleh */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -373,7 +373,7 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* FIX STYLING & INTEGRASI MOUSE-TRACKING INTERAKTIF PADA POP-AVATAR */
+/* INTELLIGENT DETEKSI MOUSE-TRACKING PADA POP-AVATAR */
 .pop-avatar {
   width: 85%;
   height: auto;
@@ -385,7 +385,7 @@ section{padding:6rem 4rem;}
   z-index: 3;
   transform: translateY(15px) rotateX(0deg) rotateY(0deg);
   transform-style: preserve-3d;
-  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1); /* Transisi mulus */
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
@@ -629,7 +629,7 @@ footer{
       </div>
       
       <div class="logo-container-fixed">
-        <img src="https://assets.codepen.io/t-1003/mesh-cube.png" alt="Market Hologram" class="logo-muter"/>
+        <img src="cube-logo.png" alt="Cube Logo" class="logo-muter"/>
       </div>
       
       <div class="logo-glow"></div>
@@ -839,7 +839,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- SCRIPT DETEKSI INTERAKTIF CURSOR (MOUSE TRACKING 3D LOOK-AT) ---- */
+/* ---- SCRIPTS JAVASCRIPT: DETEKSI CURSOR MOUSE LOOK-AT ---- */
 const cards = document.querySelectorAll('.card');
 
 cards.forEach(card => {
@@ -850,32 +850,27 @@ cards.forEach(card => {
   
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
-    // Mendapatkan koordinat titik pusat geometris kotak kartu
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
     
-    // Hitung jarak kursor dari titik tengah kartu (-1 sampai 1)
+    // Perhitungan matematika koordinat sudut kursor mouse
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     
-    // Tentukan batas rotasi menoleh (Maksimum 28 derajat)
     targetX = angleX * 28; 
-    targetY = angleY * -28; // Dibagi berlawanan arah sumbu agar alami
+    targetY = angleY * -28; 
   });
   
-  // Kembalikan posisi kepala ke semula jika kursor mouse pergi
   card.addEventListener('mouseleave', () => {
     targetX = 0;
     targetY = 0;
   });
 
-  // Engine Rendering Loop (Lerp) untuk menjamin pergerakan kepala sangat halus tanpa lag
   function updateHeadMovement() {
-    currentX += (targetX - currentX) * 0.1; // Kecepatan pelacakan kursor
+    currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
     
     if (avatar) {
-      // Memotong paksa properti inline transform agar bypass konflik dari GSAP scroll
       avatar.style.transform = `translateY(15px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
     requestAnimationFrame(updateHeadMovement);
