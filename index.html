@@ -265,12 +265,13 @@ nav{
   animation: logoFloatAlaRialo 4s ease-in-out infinite;
 }
 
+/* PERBAIKAN LOGO: Membuat Pengganti market.png dengan Kubus Vektor Berputar */
 .logo-muter{
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 100px;
+  height: 100px;
   display: block;
-  animation: neonPulseAlaRialo 3s ease-in-out infinite;
+  transform-style: preserve-3d;
+  animation: spinCW 6s linear infinite, neonPulseAlaRialo 3s ease-in-out infinite;
 }
 
 @keyframes logoFloatAlaRialo {
@@ -280,10 +281,10 @@ nav{
 
 @keyframes neonPulseAlaRialo {
   0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5)) drop-shadow(0 0 35px rgba(124, 58, 237, 0.3));
+    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 35px rgba(124, 58, 237, 0.4));
   }
   50% {
-    filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 55px rgba(124, 58, 237, 0.6));
+    filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.9)) drop-shadow(0 0 55px rgba(124, 58, 237, 0.7));
   }
 }
 
@@ -344,6 +345,7 @@ section{padding:6rem 4rem;}
   position:relative;
   overflow: visible; /* Wajib agar kepala bisa keluar box */
   transition: border-color 0.4s;
+  perspective: 1000px; /* Untuk efek kedalaman 3D kepala */
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -371,7 +373,7 @@ section{padding:6rem 4rem;}
   z-index: 1;
 }
 
-/* Gambar Karakter Ter-target Pop Avatar (Sudah di-link langsung ke GitHub) */
+/* GAMBAR KARAKTER DENGAN REAL-TIME INTERACTION HEADS */
 .pop-avatar {
   width: 85%;
   height: auto;
@@ -381,7 +383,8 @@ section{padding:6rem 4rem;}
   left: 7.5%;
   object-fit: contain;
   z-index: 3;
-  transform: translateY(20px);
+  transform: translateY(20px) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.1s ease-out; /* Agar transisi gerakan mouse smooth */
   will-change: transform;
 }
 
@@ -625,7 +628,13 @@ footer{
       </div>
       
       <div class="logo-container-fixed">
-        <img src="https://i.ibb.co/VWVgS9Y/cube-logo.png" alt="market.png" class="logo-muter"/>
+        <svg class="logo-muter" viewBox="0 0 100 100">
+          <polygon points="50,15 90,35 90,75 50,95 10,75 10,35" fill="none" stroke="#06b6d4" stroke-width="3"/>
+          <line x1="50" y1="15" x2="50" y2="95" stroke="#06b6d4" stroke-width="2" stroke-dasharray="2 2"/>
+          <line x1="10" y1="35" x2="90" y2="75" stroke="#06b6d4" stroke-width="1"/>
+          <line x1="90" y1="35" x2="10" y2="75" stroke="#06b6d4" stroke-width="1"/>
+          <circle cx="50" cy="55" r="15" fill="rgba(124,58,237,0.6)" stroke="#ec4899" stroke-width="2" />
+        </svg>
       </div>
       
       <div class="logo-glow"></div>
@@ -835,22 +844,50 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-// Efek Pop-out Kepala Karakter Keluar dari Frame
-gsap.utils.toArray('.pop-avatar').forEach(img => {
-  gsap.fromTo(img,
-    { y: 35, scale: 0.95 },
-    { 
-      y: -40, /* Menarik gambar ke atas saat di-scroll */
-      scale: 1.15,
-      ease: "none",
-      scrollTrigger: {
-        trigger: img.closest('.card'),
-        start: "top 95%",
-        end: "bottom 15%",
-        scrub: 1
-      }
+/* ---- MOUSE TRACKING INTERACTIVE HEADS (MORT INTERPOLATION / LERP) ---- */
+// Target semua elemen kartu yang berisi avatar karakter
+const cards = document.querySelectorAll('.card');
+
+cards.forEach(card => {
+  const avatar = card.querySelector('.pop-avatar');
+  
+  // Inisialisasi posisi mouse saat ini dan posisi target animasi halus (Lerp)
+  let currentX = 0, currentY = 0;
+  let targetX = 0, targetY = 0;
+  
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    // Mendapatkan titik tengah kartu
+    const cardCenterX = rect.left + rect.width / 2;
+    const cardCenterY = rect.top + rect.height / 2;
+    
+    // Menghitung jarak kursor dari titik tengah kartu (-1 sampai 1)
+    const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
+    const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
+    
+    // Mengatur rotasi maksimum derajat pergerakan kepala (Maks 25 derajat)
+    targetX = angleX * 25; 
+    targetY = angleY * -25; // Minus untuk membalik arah sumbu vertikal agar alami
+  });
+  
+  // Kembalikan ke posisi awal saat kursor keluar kartu
+  card.addEventListener('mouseleave', () => {
+    targetX = 0;
+    targetY = 0;
+  });
+
+  // Fungsi animasi berulang (Looping Lerp) untuk transisi super halus
+  function updateHeadMovement() {
+    currentX += (targetX - currentX) * 0.1; // Kecepatan interpolasi (0.1)
+    currentY += (targetY - currentY) * 0.1;
+    
+    // Terapkan translasi bawaan GSAP dikombinasikan dengan rotasi 3D kursor
+    if(avatar) {
+      avatar.style.transform = `translateY(0px) scale(1.1) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
     }
-  );
+    requestAnimationFrame(updateHeadMovement);
+  }
+  updateHeadMovement();
 });
 
 /* ---- CURSOR EFF ---- */
