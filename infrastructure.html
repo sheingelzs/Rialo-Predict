@@ -15,7 +15,6 @@
 }
 html{scroll-behavior:smooth;}
 body{
-  /* DIUBAH: Menggunakan warna dasar dark purple gelap agar serasi dengan Void Core */
   background:var(--dark2);color:var(--text);
   font-family:'Rajdhani',sans-serif;
   overflow-x:hidden;cursor:none !important;
@@ -99,13 +98,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 
 /* ── PAGE HERO ── */
 .page-hero{position:relative;min-height:38vh;display:flex;align-items:flex-end;padding:7rem 4rem 3rem;overflow:hidden;}
-/* DIUBAH: Gradasi background disesuaikan agar lebih dominan ungu/cyan kosmik (void core theme) */
 .page-hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 60% at 20% 50%,rgba(124,58,237,.16) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 30%,rgba(6,182,212,.12) 0%,transparent 60%);}
 .grid-bg{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(124,58,237,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.06) 1px,transparent 1px);background-size:60px 60px;}
 .scanline{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px);}
 .page-hero-content{position:relative;z-index:2;}
-.hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.3rem 1rem;border:1px solid rgba(124,58,237,.4);color:var(--purple);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:1rem;background:rgba(124,58,237,.05);color: #fff; border-color: var(--purple);}
-.hero-tag::before{content:'';width:6px;height:6px;background:var(--pink);border-radius:50%;animation:blink 1.5s infinite;box-shadow: 0 0 6px var(--pink);}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.3rem 1rem;border:1px solid rgba(124,58,237,.4);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:1rem;background:rgba(124,58,237,.05);color:#fff;border-color:var(--purple);}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--pink);border-radius:50%;animation:blink 1.5s infinite;box-shadow:0 0 6px var(--pink);}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 .page-title{font-family:'Orbitron',monospace;font-size:clamp(2.2rem,5vw,4.5rem);font-weight:900;text-transform:uppercase;line-height:1.05;background:linear-gradient(90deg,#fff 0%,var(--cyan) 50%,var(--purple) 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shineGlint 5s linear infinite;}
 @keyframes shineGlint{0%{background-position:0% center;}100%{background-position:200% center;}}
@@ -114,23 +112,42 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
 .breadcrumb a:hover{color:var(--cyan);}
 .breadcrumb span{color:var(--cyan);}
-.holo-ring-wrap{position:absolute;top:50%;right:-120px;transform:translateY(-50%);width:350px;height:350px;pointer-events:none;z-index:0;opacity:.25;}
-.holo-ring{position:absolute;border-radius:50%;border-style:solid;}
-.holo-ring-1{inset:0;border-width:1px;border-color:rgba(6,182,212,.5);animation:spinCW 20s linear infinite;}
-.holo-ring-2{inset:30px;border-width:1px;border-color:rgba(124,58,237,.5);border-style:dashed;animation:spinCCW 14s linear infinite;}
-.holo-ring-3{inset:60px;border-width:1px;border-color:rgba(236,72,153,.4);animation:spinCW 9s linear infinite;}
-.holo-dot{position:absolute;width:7px;height:7px;border-radius:50%;top:-3.5px;left:50%;transform:translateX(-50%);}
-.holo-dot-c{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
-.holo-dot-p{background:var(--purple);box-shadow:0 0 8px var(--purple);}
-.holo-dot-k{background:var(--pink);}
-@keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+
+/* ── JUPITER SPLINE WRAPPER ── */
+/* Posisi di kanan hero, menggantikan holo-ring-wrap */
+.jupiter-wrap{
+  position:absolute;
+  top:50%;
+  right:-60px;
+  transform:translateY(-50%) scale(1);
+  width:420px;
+  height:420px;
+  pointer-events:none;
+  z-index:1;
+  /* Transisi zoom: scale + filter glow */
+  transition:transform 0.55s cubic-bezier(0.34,1.56,0.64,1), filter 0.55s ease;
+  filter:drop-shadow(0 0 0px rgba(6,182,212,0));
+  /* Slight fade di tepi agar menyatu */
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 55% 50%,#000 55%,transparent 100%);
+  mask-image:radial-gradient(ellipse 80% 80% at 55% 50%,#000 55%,transparent 100%);
+}
+.jupiter-wrap.zoom-pulse{
+  transform:translateY(-50%) scale(1.12);
+  filter:drop-shadow(0 0 28px rgba(6,182,212,.55));
+}
+.jupiter-wrap iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  pointer-events:none;
+  /* Slight opacity so it feels ambient */
+  opacity:0.82;
+}
 
 /* ── CONTAINER ── */
 .container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:2rem 4rem 5rem;}
 
 /* ── WALLET BAR ── */
-/* DIUBAH: Background diubah menjadi variasi dark3 yang bercorak deep purple transparan */
 .wallet-bar{display:flex;align-items:center;gap:1.5rem;padding:1rem 1.5rem;background:rgba(17,0,40,.35);border:1px solid rgba(124,58,237,.2);margin-bottom:2rem;flex-wrap:wrap;position:relative;overflow:hidden;transition:border-color .4s;}
 .wallet-bar.connected-state{border-color:rgba(0,232,122,.2);}
 .wallet-bar::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);animation:wbScan 4s linear infinite;}
@@ -152,7 +169,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .ticker-strip{display:flex;gap:8px;margin-bottom:2rem;overflow-x:auto;padding-bottom:4px;}
 .ticker-strip::-webkit-scrollbar{height:2px;}
 .ticker-strip::-webkit-scrollbar-thumb{background:var(--purple);}
-/* DIUBAH: Background tick menggunakan deep dark purple */
 .tick{flex-shrink:0;padding:12px 16px;background:rgba(13,0,32,.4);border:1px solid rgba(124,58,237,.2);min-width:130px;transition:border-color .3s;}
 .tick:hover{border-color:rgba(6,182,212,.4);}
 .tick-sym{font-size:.65rem;color:var(--muted);letter-spacing:.1em;margin-bottom:4px;}
@@ -175,7 +191,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 @media(max-width:768px){.grid2{grid-template-columns:1fr;}}
 
 /* ── CARDS ── */
-/* DIUBAH: Background infra-card diubah ke deep nebula purple (`var(--dark3)`) transparan */
 .infra-card{background:rgba(17,0,40,.55);border:1px solid rgba(124,58,237,.2);padding:2rem;position:relative;overflow:hidden;opacity:0;transform:translateY(25px);transition:opacity .7s ease,transform .7s ease,border-color .4s;}
 .infra-card.visible{opacity:1;transform:translateY(0);}
 .infra-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none;}
@@ -185,7 +200,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .card-corner.tl{top:0;left:0;width:16px;height:16px;border-top:2px solid var(--purple);border-left:2px solid var(--purple);}
 .card-corner.br{bottom:0;right:0;width:16px;height:16px;border-bottom:2px solid var(--purple);border-right:2px solid var(--purple);}
 .card-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:.4rem;color:var(--text);}
-.card-sub{font-size:.75rem;color:var(--purple);letter-spacing:.08em;margin-bottom:1.5rem;opacity:.8; color: var(--pink);}
+.card-sub{font-size:.75rem;color:var(--pink);letter-spacing:.08em;margin-bottom:1.5rem;opacity:.8;}
 
 /* ── TABLE ── */
 .table-wrap{overflow-x:auto;border:1px solid rgba(124,58,237,.2);background:rgba(5,0,16,.3);margin-top:10px;}
@@ -201,7 +216,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .field-label{font-size:.65rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;}
 .input-row{display:flex;gap:8px;align-items:stretch;}
 .inp{flex:1;background:rgba(5,0,16,.6);border:1px solid rgba(124,58,237,.25);border-radius:2px;padding:10px 14px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;}
-.inp:focus{border-color:var(--purple); box-shadow: 0 0 8px rgba(124,58,237,.3);}
+.inp:focus{border-color:var(--purple);box-shadow:0 0 8px rgba(124,58,237,.3);}
 .inp::placeholder{color:rgba(255,255,255,.15);}
 .token-pill{display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(5,0,16,.5);border:1px solid rgba(124,58,237,.2);white-space:nowrap;transition:all .2s;font-family:'Orbitron',monospace;font-size:.7rem;color:var(--text);}
 .token-pill:hover{border-color:var(--purple);color:var(--purple);}
@@ -211,25 +226,25 @@ select.inp{appearance:none;}
 /* ── BUTTONS ── */
 .btn-main{width:100%;margin-top:1rem;padding:14px;border:none;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .3s;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);}
 .btn-cyan{background:var(--cyan);color:var(--dark);}
-.btn-cyan:hover{opacity:.85;transform:translateY(-1px); box-shadow: 0 0 12px rgba(6,182,212,.4);}
+.btn-cyan:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 0 12px rgba(6,182,212,.4);}
 .btn-green{background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.35);color:var(--green);}
 .btn-green:hover{background:rgba(0,232,122,.2);}
 .btn-gold{background:rgba(212,168,50,.12);border:1px solid rgba(212,168,50,.35);color:var(--gold);}
 .btn-gold:hover{background:rgba(212,168,50,.2);}
 .btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
-.btn-purple:hover{opacity:.85; box-shadow: 0 0 15px rgba(236,72,153,.35);}
+.btn-purple:hover{opacity:.85;box-shadow:0 0 15px rgba(236,72,153,.35);}
 .btn-main:disabled{opacity:.38;}
 
 /* ── RESULT BOX ── */
 .result-box{margin-top:.8rem;padding:10px 14px;font-size:.8rem;line-height:1.8;display:none;font-family:'Orbitron',monospace;white-space:pre-wrap;}
 .result-ok{background:rgba(0,232,122,.05);border:1px solid rgba(0,232,122,.25);color:var(--green);}
 .result-err{background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.25);color:var(--red);}
-.result-load{background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.25);color:var(--purple);display:flex!important;align-items:center;gap:8px; color: #fff;}
+.result-load{background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.25);color:#fff;display:flex!important;align-items:center;gap:8px;}
 .spinner{width:12px;height:12px;flex-shrink:0;border:1.5px solid rgba(124,58,237,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
 
 /* ── SWAP ── */
 .swap-div{display:flex;justify-content:center;margin:6px 0;}
-.flip-btn{width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:var(--purple);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .3s; color: var(--pink); border-color: var(--pink);}
+.flip-btn{width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.08);border:1px solid var(--pink);color:var(--pink);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .3s;}
 .flip-btn:hover{background:rgba(236,72,153,.15);transform:rotate(180deg);}
 
 /* ── POOL ── */
@@ -244,7 +259,7 @@ select.inp{appearance:none;}
 /* ── PCT BTN ── */
 .pct-row{display:flex;gap:4px;margin:.6rem 0;}
 .pct-btn{flex:1;padding:7px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.12);color:var(--muted);font-family:'Orbitron',monospace;font-size:.6rem;transition:all .18s;}
-.pct-btn:hover,.pct-btn.pact{background:rgba(124,58,237,.14);border-color:var(--purple);color:var(--purple); color: #fff;}
+.pct-btn:hover,.pct-btn.pact{background:rgba(124,58,237,.14);border-color:var(--purple);color:#fff;}
 
 /* ── BRIDGE ── */
 .chain-row{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;}
@@ -253,7 +268,7 @@ select.inp{appearance:none;}
 .chain-icon{font-size:1.2rem;}
 .chain-name{font-size:.85rem;font-weight:600;}
 .chain-net{font-size:.65rem;color:var(--muted);}
-.chain-arr{color:var(--purple);font-size:1.2rem;animation:arrPulse 1.8s ease infinite; color: var(--pink);}
+.chain-arr{color:var(--pink);font-size:1.2rem;animation:arrPulse 1.8s ease infinite;}
 @keyframes arrPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
 
 /* ── STAKE METRICS ── */
@@ -264,7 +279,7 @@ select.inp{appearance:none;}
 .s-msub{font-size:.6rem;color:var(--muted);margin-top:2px;}
 
 /* ── GAS MONITOR ── */
-.gas-big{font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;color:var(--purple);text-align:center;margin:1rem 0 .5rem;text-shadow:0 0 30px rgba(124,58,237,.4); color: var(--cyan); text-shadow:0 0 30px rgba(6,182,212,.4);}
+.gas-big{font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;text-align:center;margin:1rem 0 .5rem;color:var(--cyan);text-shadow:0 0 30px rgba(6,182,212,.4);}
 .gas-tiers{display:flex;gap:12px;margin-bottom:1.2rem;}
 .gtier{flex:1;text-align:center;padding:10px;background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.12);}
 .gtier-lbl{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
@@ -294,6 +309,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
   nav{padding:1.2rem 2rem;}
   .nav-links{display:none;}
   .container{padding:2rem 1.5rem 4rem;}
+  .jupiter-wrap{width:280px;height:280px;right:-40px;opacity:.5;}
 }
 </style>
 </head>
@@ -304,6 +320,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
 <canvas id="particles-canvas"></canvas>
 <div id="nexus-toast"></div>
 
+<!-- WALLET MODAL -->
 <div id="wallet-modal-ovl" role="dialog" aria-modal="true" aria-label="Connect Wallet">
   <div class="wm-box">
     <div class="wm-header">
@@ -347,6 +364,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
   </div>
 </div>
 
+<!-- SCAN OVERLAY -->
 <div id="scan-ovl">
   <div class="scan-box">
     <button class="scan-cancel-btn" id="scan-cancel-btn">✕ Cancel</button>
@@ -358,14 +376,15 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
   </div>
 </div>
 
+<!-- NAVBAR -->
 <nav>
   <a href="https://rialo-alpha-core.vercel.app/" class="logo">NEXUS</a>
   <ul class="nav-links">
     <li><a href="https://rialo-alpha-core.vercel.app/#explore">Explore</a></li>
     <li><a href="https://rialo-alpha-core.vercel.app/#feature">Contributor</a></li>
     <li><a href="https://rialo-alpha-core.vercel.app/#characters">ACCOUNT X</a></li>
-    <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
-    <li><a href="flashloan.html" class="flash-link">Flash Loan</a></li>
+    <li><a href="infrastructure.html" class="active-link" id="nav-infra-link">Infrastructure</a></li>
+    <li><a href="flashloan.html" class="flash-link" id="nav-flash-link">Flash Loan</a></li>
   </ul>
   <button id="nav-wallet-btn">
     <span class="nav-wallet-dot"></span>
@@ -373,15 +392,24 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
   </button>
 </nav>
 
+<!-- PAGE HERO -->
 <section class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="grid-bg"></div>
   <div class="scanline"></div>
-  <div class="holo-ring-wrap">
-    <div class="holo-ring holo-ring-1"><div class="holo-dot holo-dot-c"></div></div>
-    <div class="holo-ring holo-ring-2"><div class="holo-dot holo-dot-p"></div></div>
-    <div class="holo-ring holo-ring-3"><div class="holo-dot holo-dot-k"></div></div>
+
+  <!-- JUPITER SPLINE — menggantikan holo-ring-wrap -->
+  <div class="jupiter-wrap" id="jupiter-wrap">
+    <iframe
+      src="https://my.spline.design/photorealisticjupiter10-m1sN4qhWeTMXLAnBjbmA9e8w/"
+      frameborder="0"
+      width="100%"
+      height="100%"
+      allow="autoplay"
+      loading="lazy"
+    ></iframe>
   </div>
+
   <div class="page-hero-content">
     <div class="breadcrumb"><a href="https://rialo-alpha-core.vercel.app/">← Home</a><span>// Infrastructure</span></div>
     <div class="hero-tag">Network Status // Ethereum Sepolia Testnet</div>
@@ -390,8 +418,10 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
   </div>
 </section>
 
+<!-- MAIN CONTAINER -->
 <div class="container">
 
+  <!-- WALLET BAR -->
   <div class="wallet-bar reveal" id="wallet-bar">
     <div id="wb-disconnected" style="display:flex;align-items:center;gap:14px;width:100%">
       <div style="font-size:.7rem;color:var(--muted);letter-spacing:.1em">
@@ -420,6 +450,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- TICKER -->
   <div class="ticker-strip reveal">
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia ETH/USD</div><div class="tick-price" id="tp-eth">$3,248.00</div><div class="tick-chg up" id="tc-eth">+0.00%</div></div>
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>BTC/USD</div><div class="tick-price" id="tp-btc">$67,420.00</div><div class="tick-chg up" id="tc-btc">+0.00%</div></div>
@@ -427,6 +458,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia Gas</div><div class="tick-price" id="tp-gas" style="color:var(--gold)">18</div><div class="tick-chg" style="color:var(--muted);font-size:.6rem">BASE GWEI</div></div>
   </div>
 
+  <!-- TABS -->
   <div class="tabs-wrap reveal">
     <button class="tab-btn active" data-tab="swap">⇄ Token Swap</button>
     <button class="tab-btn" data-tab="bridge">⬡ Testnet Bridge</button>
@@ -436,6 +468,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     <button class="tab-btn" data-tab="analytics" style="color:var(--pink)">📊 Slippage Analytics</button>
   </div>
 
+  <!-- SWAP PANEL -->
   <div class="panel active" id="panel-swap">
     <div class="grid2">
       <div class="infra-card">
@@ -489,6 +522,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- BRIDGE PANEL -->
   <div class="panel" id="panel-bridge">
     <div class="grid2">
       <div class="infra-card">
@@ -535,6 +569,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- STAKE PANEL -->
   <div class="panel" id="panel-stake">
     <div class="grid2">
       <div class="infra-card">
@@ -586,6 +621,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- LIQUIDITY PANEL -->
   <div class="panel" id="panel-liquidity">
     <div class="grid2">
       <div class="infra-card">
@@ -622,6 +658,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- MONITOR PANEL -->
   <div class="panel" id="panel-monitor">
     <div class="grid2">
       <div class="infra-card">
@@ -646,6 +683,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
     </div>
   </div>
 
+  <!-- ANALYTICS PANEL -->
   <div class="panel" id="panel-analytics">
     <div class="grid2">
       <div class="infra-card">
@@ -695,6 +733,40 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ══════════════════════════════════════════
+//  JUPITER ZOOM ANIMATION
+//  Dipicu saat nav link Infrastructure diklik
+//  (atau saat link apapun di nav diklik sebagai efek transisi)
+// ══════════════════════════════════════════
+(function(){
+  var jupiterWrap = document.getElementById('jupiter-wrap');
+  var _zoomTimeout = null;
+
+  function triggerJupiterZoom(){
+    if(!jupiterWrap) return;
+    // Tambah class zoom
+    jupiterWrap.classList.add('zoom-pulse');
+    clearTimeout(_zoomTimeout);
+    // Setelah 520ms (durasi zoom in + sedikit hold), balik ke ukuran semula
+    _zoomTimeout = setTimeout(function(){
+      jupiterWrap.classList.remove('zoom-pulse');
+    }, 520);
+  }
+
+  // Pasang event ke semua link di navbar
+  var navLinks = document.querySelectorAll('.nav-links a');
+  navLinks.forEach(function(link){
+    link.addEventListener('click', function(e){
+      // Hanya trigger zoom jika link tujuan sama-sama di-site (bukan hash atau external)
+      triggerJupiterZoom();
+      // Biarkan navigasi berjalan normal — tidak di-preventDefault
+    });
+  });
+
+  // Expose agar bisa dipanggil dari luar jika perlu
+  window.triggerJupiterZoom = triggerJupiterZoom;
+})();
+
+// ══════════════════════════════════════════
 //  UTILITY
 // ══════════════════════════════════════════
 function fmt(n,d){if(isNaN(n)||n===null||n===undefined)return'0';return parseFloat(n).toFixed(d!==undefined?d:4);}
@@ -743,7 +815,7 @@ var pts=[];for(var pi=0;pi<60;pi++){pts.push({x:Math.random()*window.innerWidth,
 (function drawParticles(){
   pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
   pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>pcanvas.width)p.vx*=-1;if(p.y<0||p.y>pcanvas.height)p.vy*=-1;pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle='rgba(6,182,212,.45)';pctx.fill();});
-  for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){pctx.beginPath();pctx.moveTo(pts[i].x,pts[i].y);pctx.lineTo(pts[j].x,pts[j].y);pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')';pctx.lineWidth=.5;pctx.stroke();}/* DIUBAH: Warna garis antar partikel menggunakan aksen ungu transparan agar selaras */}
+  for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){pctx.beginPath();pctx.moveTo(pts[i].x,pts[i].y);pctx.lineTo(pts[j].x,pts[j].y);pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')';pctx.lineWidth=.5;pctx.stroke();}}
   requestAnimationFrame(drawParticles);
 })();
 
@@ -864,12 +936,10 @@ function closeScanAnimation(){
 }
 document.getElementById('scan-cancel-btn').addEventListener('click',function(){closeScanAnimation();showToast('Connection cancelled');});
 
-// ── FINALIZE CONNECTION (with sessionStorage sync) ──
+// ── FINALIZE CONNECTION ──
 async function finalizeConnection(addr,walletName,chainId,isDemo,provider){
   isWalletConnected=true;
   connectedWallet={address:addr,shortAddr:shortAddr(addr),providerName:walletName,chainId:chainId,chainName:'Ethereum Sepolia',provider:provider,isDemo:isDemo};
-
-  // Sync sessionStorage — same keys as flashloan.html
   sessionStorage.setItem('rialo_addr',addr);
   sessionStorage.setItem('rialo_wallet',walletName);
   sessionStorage.setItem('rialo_demo',isDemo?'1':'0');
@@ -929,7 +999,6 @@ function disconnectWallet(){
   connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,provider:null,isDemo:false};
   walletState={eth:0,usdc:0,reth:0,stakedEth:0};
   faucetUsed=false;swapHistory=[];stakeHistory=[];liqPositions=[];bridgeFeedData=[];
-  // Clear shared session
   sessionStorage.removeItem('rialo_addr');
   sessionStorage.removeItem('rialo_wallet');
   sessionStorage.removeItem('rialo_demo');
@@ -950,14 +1019,12 @@ function disconnectWallet(){
   showToast('Node disconnected');
 }
 
-// ── SESSION RESTORE (synced with flashloan.html) ──
+// ── SESSION RESTORE ──
 function checkSessionWallet(){
   var savedAddr=sessionStorage.getItem('rialo_addr');
   var savedWallet=sessionStorage.getItem('rialo_wallet');
   var savedDemo=sessionStorage.getItem('rialo_demo');
-  if(savedAddr){
-    startScanAnimation(savedAddr,savedWallet||'Wallet',11155111,savedDemo==='1',null);
-  }
+  if(savedAddr){startScanAnimation(savedAddr,savedWallet||'Wallet',11155111,savedDemo==='1',null);}
 }
 
 // ── FAUCET ──
@@ -981,7 +1048,6 @@ function updateWalletBar(){
   updateSwapBals();
 }
 
-// ── NAV & WALLET BAR BINDINGS ──
 document.getElementById('nav-wallet-btn').addEventListener('click',function(){
   if(!isWalletConnected)openWalletModal();else disconnectWallet();
 });
@@ -1253,13 +1319,11 @@ function buildLiqPositions(){
 function buildLiqChart(){
   var el=document.getElementById('liq-chart');if(!el)return;
   if(liqChartObj)liqChartObj.destroy();
-  /* DIUBAH: Menggunakan warna ungu neon transparan pada grafik agar menyatu dengan latar belakang */
   liqChartObj=new Chart(el,{type:'bar',data:{labels:['M','T','W','T','F','S','S'],datasets:[{data:[12,15,8,22,31,14,45],backgroundColor:'rgba(124,58,237,.4)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
 }
 function buildGasChart(){
   var el=document.getElementById('gas-chart');if(!el)return;
   if(gasChartObj)gasChartObj.destroy();
-  /* DIUBAH: Menggunakan perpaduan warna cyan/ungu pada riwayat grafik gas */
   gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map(function(_,i){return i+'h';}),datasets:[{data:gasHistory,backgroundColor:'rgba(6,182,212,.3)',borderRadius:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
 }
 function updateGasUI(){
@@ -1332,7 +1396,6 @@ window.addEventListener('DOMContentLoaded',function(){
   setTimeout(function(){buildGasChart();buildLiqChart();},600);
   setTimeout(function(){document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible');});},100);
 
-  // Restore session from flashloan.html or previous visit
   checkSessionWallet();
 });
 </script>
