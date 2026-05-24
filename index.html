@@ -22,11 +22,11 @@
 }
 html{scroll-behavior:smooth;}
 body{
-  background:var(--dark);
+  background:#000; /* Dasar hitam pekat agar menyatu dengan video logo */
   color:var(--text);
   font-family:'Rajdhani',sans-serif;
   overflow-x:hidden;
-  overflow-y:hidden; /* Dikunci dulu saat intro berjalan, nanti dibuka lewat JS */
+  overflow-y:hidden; /* Dikunci selama video intro berjalan */
 }
 
 /* INTRO VIDEO PRELOADER OVERLAY */
@@ -34,7 +34,7 @@ body{
   position: fixed;
   inset: 0;
   background: #000;
-  z-index: 999999; /* Berada di atas segalanya termasuk kursor kustom */
+  z-index: 999999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,10 +66,11 @@ body{
   box-shadow: 0 0 15px var(--cyan);
 }
 
-/* Menyembunyikan konten utama di awal agar tidak bocor di belakang video intro */
-main-wrapper {
+/* FIX: Perbaikan selektor ID wrapper utama */
+#main-wrapper {
   opacity: 0;
   display: block;
+  background: var(--dark);
 }
 
 spline-viewer::part(logo),
@@ -428,7 +429,7 @@ section{padding:6rem 4rem; position: relative; z-index: 10;}
 }
 
 .card:hover .pop-avatar {
-  transform: translateZ(60px) scale(1.1) translateY(-10px);
+  transform: translateZ(70px) scale(1.12) translateY(-10px);
   filter: drop-shadow(15px 25px 20px rgba(0, 0, 0, 0.8)) 
           drop-shadow(0px 0px 25px rgba(6, 182, 212, 0.4));
 }
@@ -924,47 +925,44 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// LOGIKA INTRO PRELOADER TRANSITION
 const introOverlay = document.getElementById('intro-overlay');
 const introVideo = document.getElementById('intro-video');
 const skipBtn = document.getElementById('skip-intro');
 const mainWrapper = document.getElementById('main-wrapper');
 
+// Unmute audio begitu user berinteraksi dengan halaman agar sound fx-nya keluar sempurna
+document.addEventListener('click', () => {
+  if (introVideo) introVideo.muted = false;
+}, { once: true });
+
 function initiateMainSite() {
-  // Cegah eksekusi ganda jika video beres berbarengan dengan tombol skip diklik
   if (introOverlay.style.display === 'none') return;
 
   const exitTl = gsap.timeline({
     onComplete: () => {
       introOverlay.style.display = 'none';
-      document.body.style.overflowY = 'auto'; // Aktifkan scroll halaman utama kembali
+      document.body.style.overflowY = 'auto';
     }
   });
 
-  // Animasi transisi penutup intro
   exitTl.to(introOverlay, {
     opacity: 0,
-    duration: 0.8,
+    duration: 0.6,
     ease: "power2.out"
   });
 
-  // Munculkan container website utama bersamaan dengan masuknya animasi Hero
   exitTl.to(mainWrapper, {
     opacity: 1,
     duration: 0.4,
     onStart: startHomeAnimations
-  }, "-=0.6");
+  }, "-=0.4");
 }
 
-// Trigger ketika video intro selesai terputar alami
 introVideo.addEventListener('ended', initiateMainSite);
-
-// Trigger ketika user menekan tombol "SKIP INTRO"
 skipBtn.addEventListener('click', () => {
   introVideo.pause();
   initiateMainSite();
 });
-
 
 function clearSplineUI() {
   const splineViewer = document.querySelector('spline-viewer');
@@ -988,7 +986,6 @@ window.addEventListener('load', () => {
   setTimeout(clearSplineUI, 1500);
 });
 
-// Bungkus animasi masuk utama ke dalam fungsi agar jalan TEPAT setelah intro beres
 function startHomeAnimations() {
   const introTl = gsap.timeline();
 
@@ -1030,7 +1027,6 @@ function startHomeAnimations() {
   );
 }
 
-// Sisa script scroll & efek interaktif tetap dipertahankan utuh
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card,
     { x: -50, opacity: 0 },
@@ -1063,16 +1059,8 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
 
 gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
   gsap.fromTo(card,
-    {
-      opacity: 0,
-      scale: 0.6,
-      y: 50
-    },
-    {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      ease: "none",
+    { opacity: 0, scale: 0.6, y: 50 },
+    { opacity: 1, scale: 1, y: 0, ease: "none",
       scrollTrigger: {
         trigger: card,
         start: "top 95%",
