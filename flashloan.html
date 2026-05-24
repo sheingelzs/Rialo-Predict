@@ -84,10 +84,15 @@ nav{
   font-size:.7rem;letter-spacing:2px;text-transform:uppercase;
   transition:all .3s;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  position:relative;overflow:hidden;
 }
+#nav-wallet-btn::before{content:'';position:absolute;inset:0;background:rgba(6,182,212,.08);opacity:0;transition:opacity .3s;}
+#nav-wallet-btn:hover::before{opacity:1;}
 #nav-wallet-btn.connected{border-color:var(--green);color:var(--green);}
-.nav-wallet-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
-#nav-wallet-btn.connected .nav-wallet-dot{background:var(--green);box-shadow:0 0 8px var(--green);}
+#nav-wallet-btn.connected:hover::before{background:rgba(0,232,122,.08);}
+.nav-wallet-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s;}
+#nav-wallet-btn.connected .nav-wallet-dot{background:var(--green);box-shadow:0 0 8px var(--green);animation:walletPulse 2s infinite;}
+@keyframes walletPulse{0%,100%{box-shadow:0 0 4px var(--green);}50%{box-shadow:0 0 12px var(--green);}}
 
 /* ── WALLET MODAL ── */
 #wallet-modal-ovl{
@@ -96,21 +101,88 @@ nav{
   display:none;align-items:center;justify-content:center;
   opacity:0;transition:opacity .35s;
 }
-#wallet-modal-ovl.open{opacity:1;display:flex;}
+#wallet-modal-ovl.show{display:flex;}
+#wallet-modal-ovl.open{opacity:1;}
 .wm-box{
   background:var(--dark2);border:1px solid rgba(124,58,237,.35);
-  width:min(440px,94vw);padding:2rem;position:relative;
-  clip-path:polygon(20px 0%,100% 0%,calc(100% - 20px) 100%,0% 100%);
+  width:min(440px,94vw);
+  position:relative;overflow:hidden;
+  transform:translateY(24px) scale(.97);
+  transition:transform .35s;
 }
+#wallet-modal-ovl.open .wm-box{transform:translateY(0) scale(1);}
+.wm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.wm-header{padding:1.4rem 1.6rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(124,58,237,.15);}
+.wm-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text);}
+.wm-sub{font-size:.65rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;}
+.wm-close{background:none;border:none;color:var(--muted);font-size:1.1rem;line-height:1;padding:4px;transition:color .2s;cursor:none !important;}
+.wm-close:hover{color:var(--pink);}
+.wm-body{padding:1.4rem 1.6rem;}
+.wm-section-label{font-size:.6rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;font-family:'Orbitron',monospace;}
 .wallet-opt{
-  display:flex;align-items:center;gap:12px;padding:14px;
-  background:rgba(255,255,255,.02);border:1px solid rgba(124,58,237,.15);
-  margin-bottom:8px;transition:all .22s;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(124,58,237,.15);
+  margin-bottom:6px;
+  transition:all .22s;position:relative;overflow:hidden;
 }
-.wallet-opt:hover{border-color:rgba(6,182,212,.45);transform:translateX(4px);background:rgba(6,182,212,.04);}
-.wo-name{font-size:.85rem;font-weight:700;}
+.wallet-opt::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,182,212,.05),transparent);opacity:0;transition:opacity .25s;}
+.wallet-opt:hover{border-color:rgba(6,182,212,.45);transform:translateX(3px);}
+.wallet-opt:hover::after{opacity:1;}
+.wallet-opt:last-child{margin-bottom:0;}
+.wo-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.wo-info{flex:1;}
+.wo-name{font-size:.85rem;font-weight:700;color:var(--text);}
+.wo-desc{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.wo-badge{font-size:.6rem;letter-spacing:.1em;padding:3px 8px;border-radius:2px;font-family:'Orbitron',monospace;}
+.badge-ok{background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.3);color:var(--green);}
+.badge-none{background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);color:var(--muted);}
+.badge-demo{background:rgba(212,168,50,.1);border:1px solid rgba(212,168,50,.3);color:var(--gold);}
+.wm-divider{height:1px;background:rgba(124,58,237,.12);margin:1rem 0;}
+.wm-footer{padding:.8rem 1.6rem;font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.1em;border-top:1px solid rgba(124,58,237,.1);}
 
-/* ── GLOBAL BG EFFECTS ── */
+/* ── SCAN OVERLAY ── */
+#scan-ovl{
+  position:fixed;inset:0;z-index:10001;
+  background:rgba(5,0,16,.92);backdrop-filter:blur(16px);
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .35s;
+}
+#scan-ovl.show{display:flex;}
+#scan-ovl.open{opacity:1;}
+.scan-box{
+  width:min(380px,92vw);border:1px solid rgba(6,182,212,.3);
+  background:var(--dark2);padding:2.2rem 2rem 1.8rem;
+  text-align:center;position:relative;overflow:hidden;
+}
+.scan-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.scan-cancel-btn{
+  position:absolute;top:14px;right:14px;background:none;
+  border:1px solid rgba(6,182,212,.15);color:rgba(148,163,184,.5);
+  font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.1em;
+  padding:5px 10px;transition:all .2s;cursor:none !important;
+}
+.scan-cancel-btn:hover{border-color:rgba(255,68,68,.4);color:rgba(255,100,100,.8);}
+.scan-spinner{width:52px;height:52px;border:2px solid rgba(6,182,212,.12);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1.2rem;}
+.scan-title{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text);margin-bottom:.5rem;}
+.scan-addr{font-size:.7rem;color:var(--cyan);font-family:'Orbitron',monospace;letter-spacing:.04em;margin-bottom:1rem;word-break:break-all;opacity:.8;}
+.scan-phase{font-size:.7rem;color:var(--muted);letter-spacing:.1em;height:18px;transition:all .3s;}
+.scan-bar-wrap{height:3px;background:rgba(124,58,237,.15);margin-top:1rem;overflow:hidden;}
+.scan-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));width:0%;transition:width .4s ease;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── TOAST ── */
+#nexus-toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:20000;
+  padding:.8rem 1.5rem;background:rgba(5,0,16,.95);
+  border:1px solid rgba(6,182,212,.4);color:var(--cyan);
+  font-family:'Orbitron',monospace;font-size:.7rem;letter-spacing:2px;
+  transition:opacity .4s,transform .4s;opacity:0;transform:translateY(12px);pointer-events:none;
+}
+#nexus-toast.on{opacity:1;transform:translateY(0);}
+
+/* ── GLOBAL BG ── */
 .global-bg{
   position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
@@ -171,7 +243,6 @@ nav{
   display:flex;gap:3rem;margin-top:2rem;
   opacity:0;animation:fadeUp .9s .65s forwards;
 }
-.stat-item{}
 .stat-val{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:#fff;}
 .stat-label{font-size:.7rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:.2rem;}
 
@@ -241,7 +312,6 @@ nav{
 }
 .inp:focus{border-color:rgba(6,182,212,.5);box-shadow:0 0 12px rgba(6,182,212,.1);}
 select.inp option{background:var(--dark2);}
-
 .inp-label{
   font-size:.65rem;text-transform:uppercase;
   margin-bottom:6px;color:var(--muted);letter-spacing:1.5px;
@@ -296,10 +366,9 @@ select.inp option{background:var(--dark2);}
 }
 @keyframes logFadeIn{to{opacity:1;transform:translateX(0);}}
 
-/* ── FULL-WIDTH HOW IT WORKS ── */
+/* ── HOW IT WORKS ── */
 .steps-section{
-  margin-top:4rem;
-  padding-top:3rem;
+  margin-top:4rem;padding-top:3rem;
   border-top:1px solid rgba(124,58,237,.12);
 }
 .steps-grid{
@@ -350,18 +419,86 @@ select.inp option{background:var(--dark2);}
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 <canvas id="particles-canvas"></canvas>
+<div id="nexus-toast"></div>
 
 <div class="global-bg"></div>
 <div class="grid-bg"></div>
 <div class="scanline"></div>
 
-<div id="wallet-modal-ovl">
+<!-- ── WALLET MODAL (synced with infrastructure.html) ── -->
+<div id="wallet-modal-ovl" role="dialog" aria-modal="true" aria-label="Connect Wallet">
   <div class="wm-box">
-    <div class="card-title" style="margin-bottom:1.2rem;font-size:1rem;">Select Connection Target</div>
-    <div class="wallet-opt" id="opt-metamask">🦊 <span class="wo-name">MetaMask Extension</span></div>
-    <div class="wallet-opt" id="opt-demo">🧪 <span class="wo-name">Demo Sandbox Mode</span></div>
-    <button onclick="document.getElementById('wallet-modal-ovl').classList.remove('open')" 
-      style="margin-top:1rem;width:100%;background:transparent;border:1px solid rgba(124,58,237,.3);color:var(--muted);padding:10px;font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:2px;">CANCEL</button>
+    <div class="wm-header">
+      <div>
+        <div class="wm-title">Connect Wallet</div>
+        <div class="wm-sub">// Select Connection Target</div>
+      </div>
+      <button class="wm-close" id="wm-close-btn" aria-label="Close">✕</button>
+    </div>
+    <div class="wm-body">
+      <div class="wm-section-label">Browser Wallets</div>
+
+      <div class="wallet-opt" id="opt-metamask" tabindex="0" role="button">
+        <div class="wo-icon" style="background:rgba(245,130,32,.12)">🦊</div>
+        <div class="wo-info">
+          <div class="wo-name">MetaMask</div>
+          <div class="wo-desc">EVM extension infrastructure</div>
+        </div>
+        <span class="wo-badge badge-none" id="badge-metamask">Checking…</span>
+      </div>
+
+      <div class="wallet-opt" id="opt-rabby" tabindex="0" role="button">
+        <div class="wo-icon" style="background:rgba(117,94,255,.12)">🐰</div>
+        <div class="wo-info">
+          <div class="wo-name">Rabby</div>
+          <div class="wo-desc">Security-focused multi-node</div>
+        </div>
+        <span class="wo-badge badge-none" id="badge-rabby">Checking…</span>
+      </div>
+
+      <div class="wallet-opt" id="opt-okx" tabindex="0" role="button">
+        <div class="wo-icon" style="background:rgba(255,255,255,.06)">⬛</div>
+        <div class="wo-info">
+          <div class="wo-name">OKX Wallet</div>
+          <div class="wo-desc">Advanced multi-chain layout</div>
+        </div>
+        <span class="wo-badge badge-none" id="badge-okx">Checking…</span>
+      </div>
+
+      <div class="wallet-opt" id="opt-phantom" tabindex="0" role="button">
+        <div class="wo-icon" style="background:rgba(171,115,255,.12)">👻</div>
+        <div class="wo-info">
+          <div class="wo-name">Phantom</div>
+          <div class="wo-desc">Cross-realm account sync</div>
+        </div>
+        <span class="wo-badge badge-none" id="badge-phantom">Checking…</span>
+      </div>
+
+      <div class="wm-divider"></div>
+      <div class="wm-section-label">No Testnet Tokens? Try Demo</div>
+
+      <div class="wallet-opt" id="opt-demo" tabindex="0" role="button" style="border-color:rgba(212,168,50,.2)">
+        <div class="wo-icon" style="background:rgba(212,168,50,.1)">🧪</div>
+        <div class="wo-info">
+          <div class="wo-name">Demo Sandbox Mode</div>
+          <div class="wo-desc">Simulated environment with preloaded gas</div>
+        </div>
+        <span class="wo-badge badge-demo">Sandbox VM</span>
+      </div>
+    </div>
+    <div class="wm-footer">Node Client Connection via JSON-RPC Protocol Layer</div>
+  </div>
+</div>
+
+<!-- ── SCAN OVERLAY (synced with infrastructure.html) ── -->
+<div id="scan-ovl">
+  <div class="scan-box">
+    <button class="scan-cancel-btn" id="scan-cancel-btn">✕ Cancel</button>
+    <div class="scan-spinner"></div>
+    <div class="scan-title">Verifying Flash Loan Node</div>
+    <div class="scan-addr" id="scan-addr-disp">0x0000…0000</div>
+    <div class="scan-phase" id="scan-phase-disp">Initializing…</div>
+    <div class="scan-bar-wrap"><div class="scan-bar-fill" id="scan-bar-fill"></div></div>
   </div>
 </div>
 
@@ -388,7 +525,7 @@ select.inp option{background:var(--dark2);}
     <span class="ticker-item">POOL DEPTH <span>382,450 ETH</span></span>
     <span class="ticker-item">BTC/USD <span id="tick-btc-val">$64,000.00</span></span>
     <span class="ticker-item">GAS <span id="tick-gas-val">18 GWEI</span></span>
-    <span class="ticker-item">BLOCK <span>#22,114,089</span></span>
+    <span class="ticker-item">BLOCK <span id="tick-block">&#35;22,114,089</span></span>
     <span class="ticker-item">SOL/USD <span id="tick-sol-val">$145.00</span></span>
     <span class="ticker-item">ETH/USD <span id="tick-eth-val2">$3,200.00</span></span>
     <span class="ticker-item">AAVE TVL <span>$14.2B</span></span>
@@ -396,7 +533,7 @@ select.inp option{background:var(--dark2);}
     <span class="ticker-item">POOL DEPTH <span>382,450 ETH</span></span>
     <span class="ticker-item">BTC/USD <span id="tick-btc-val2">$64,000.00</span></span>
     <span class="ticker-item">GAS <span id="tick-gas-val2">18 GWEI</span></span>
-    <span class="ticker-item">BLOCK <span>#22,114,089</span></span>
+    <span class="ticker-item">BLOCK <span id="tick-block2">&#35;22,114,089</span></span>
     <span class="ticker-item">SOL/USD <span id="tick-sol-val2">$145.00</span></span>
   </div>
 </div>
@@ -412,7 +549,7 @@ select.inp option{background:var(--dark2);}
     <p class="hero-desc">Execute zero-collateral flash loans across Aave liquidity pools. Capture cross-DEX price spreads in a single atomic block transaction — borrow, arbitrage, repay, profit.</p>
     <div class="hero-stats">
       <div class="stat-item">
-        <div class="stat-val" id="stat-tvl">$14.2B</div>
+        <div class="stat-val">$14.2B</div>
         <div class="stat-label">Aave Pool TVL</div>
       </div>
       <div class="stat-item">
@@ -499,25 +636,26 @@ select.inp option{background:var(--dark2);}
           <tbody>
             <tr>
               <td>Handshake Status</td>
-              <td id="terminal-wallet-status" style="color:var(--red);font-family:'Orbitron',monospace;font-size:.75rem;">OFFLINE</td>
+              <td id="terminal-wallet-status" style="color:var(--red);font-family:'Orbitron',monospace;font-size:.75rem;text-align:right;">OFFLINE</td>
             </tr>
             <tr>
               <td>Net Realized Yield</td>
-              <td id="terminal-profit" style="font-weight:700;color:var(--green);font-family:'Orbitron',monospace;font-size:.9rem;">$0.00</td>
+              <td id="terminal-profit" style="font-weight:700;color:var(--green);font-family:'Orbitron',monospace;font-size:.9rem;text-align:right;">$0.00</td>
             </tr>
             <tr>
               <td>Executions This Session</td>
-              <td id="terminal-count" style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--text);">0</td>
+              <td id="terminal-count" style="font-family:'Orbitron',monospace;font-size:.75rem;color:var(--text);text-align:right;">0</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-  </div><div class="steps-section">
+  </div>
+
+  <div class="steps-section">
     <div class="section-tag">// Protocol Architecture</div>
     <h2 class="section-title">How Flash Loans<br/><span style="color:var(--cyan)">Work</span></h2>
-
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num">01</div>
@@ -542,7 +680,9 @@ select.inp option{background:var(--dark2);}
     </div>
   </div>
 
-</div><footer style="background:var(--dark2);border-top:1px solid rgba(124,58,237,.15);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
+</div>
+
+<footer style="background:var(--dark2);border-top:1px solid rgba(124,58,237,.15);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">
   <div style="font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;">NEXUS</div>
   <div style="color:var(--muted);font-size:.75rem;letter-spacing:2px;">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
   <div style="display:flex;gap:1.5rem;">
@@ -558,10 +698,34 @@ select.inp option{background:var(--dark2);}
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// ── CINEMATIC CURSOR ──
+// ══════════════════════════════════════════
+//  UTILITY
+// ══════════════════════════════════════════
+function formatUSD(n) {
+  return '$' + parseFloat(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function shortAddr(a) {
+  if (!a) return '—';
+  return a.slice(0, 6) + '…' + a.slice(-4);
+}
+var _toastTimer = null;
+function showToast(msg, dur) {
+  var el = document.getElementById('nexus-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function () { el.classList.remove('on'); }, dur || 3000);
+}
+
+// ══════════════════════════════════════════
+//  CINEMATIC CURSOR
+// ══════════════════════════════════════════
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = window.innerWidth / 2, my = window.innerHeight / 2, tx = mx, ty = my;
+cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
 
 document.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
@@ -572,7 +736,6 @@ document.addEventListener('mousemove', e => {
   trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
   requestAnimationFrame(animTrail);
 })();
-
 document.querySelectorAll('a, button, input, select, .wallet-opt, .step-card').forEach(el => {
   el.addEventListener('mouseenter', () => {
     cur.style.width = '24px'; cur.style.height = '24px'; cur.style.backgroundColor = 'var(--pink)';
@@ -584,7 +747,9 @@ document.querySelectorAll('a, button, input, select, .wallet-opt, .step-card').f
   });
 });
 
-// ── PARTICLES ──
+// ══════════════════════════════════════════
+//  PARTICLES
+// ══════════════════════════════════════════
 const pcanvas = document.getElementById('particles-canvas');
 const pctx = pcanvas.getContext('2d');
 function resizeCanvas() { pcanvas.width = window.innerWidth; pcanvas.height = window.innerHeight; }
@@ -615,11 +780,11 @@ const pts = Array.from({ length: 50 }, () => ({
   requestAnimationFrame(drawPts);
 })();
 
-// ── GSAP PAGE ENTRANCE ──
+// ══════════════════════════════════════════
+//  GSAP ANIMATIONS
+// ══════════════════════════════════════════
 gsap.from("nav", { y: -30, opacity: 0, duration: .8, ease: "power3.out" });
 gsap.from(".ticker-bar", { y: -10, opacity: 0, duration: .6, delay: .3, ease: "power2.out" });
-
-// ── SCROLL REVEALS ──
 gsap.utils.toArray('.step-card').forEach((card, i) => {
   gsap.fromTo(card,
     { y: 30, opacity: 0 },
@@ -633,62 +798,43 @@ gsap.utils.toArray('.step-card').forEach((card, i) => {
 });
 
 // ══════════════════════════════════════════
-//  INTEGRASI DATA REAL-TIME (BINANCE/COINGECKO)
+//  PRICE DATA
 // ══════════════════════════════════════════
-let liveEthPrice = 3200;
-let liveBtcPrice = 64000;
-let liveSolPrice = 145;
-let liveGasPrice = 18;
-let dexAPrice = 3195.20;
-let dexBPrice = 3207.04;
+let liveEthPrice = 3200, liveBtcPrice = 64000, liveSolPrice = 145, liveGasPrice = 18;
+let dexAPrice = 3195.20, dexBPrice = 3207.04;
 let executionCount = 0;
 
-function formatUSD(n) {
-  return '$' + parseFloat(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 function updatePriceUI() {
-  // Membuat spread variatif dinamis buatan berbasis data riil bursa untuk simulasi arbitrase
   dexAPrice = liveEthPrice * 0.9985;
   dexBPrice = liveEthPrice * 1.0022;
   const spread = dexBPrice - dexAPrice;
-
   document.getElementById('price-dex-a').textContent = formatUSD(dexAPrice);
   document.getElementById('price-dex-b').textContent = formatUSD(dexBPrice);
   document.getElementById('price-spread').textContent = '+$' + spread.toFixed(2);
   document.getElementById('stat-price').textContent = formatUSD(liveEthPrice);
-
-  // Sync data teks di ticker bar global
   document.querySelectorAll('#tick-eth-val, #tick-eth-val2').forEach(el => el.textContent = formatUSD(liveEthPrice));
   document.querySelectorAll('#tick-btc-val, #tick-btc-val2').forEach(el => el.textContent = formatUSD(liveBtcPrice));
   document.querySelectorAll('#tick-sol-val, #tick-sol-val2').forEach(el => el.textContent = formatUSD(liveSolPrice));
   document.querySelectorAll('#tick-gas-val, #tick-gas-val2').forEach(el => el.textContent = liveGasPrice + " GWEI");
 }
 
-// Sinkronisasi data real-time Binance Mini Ticker API Pipeline
 function initRealtimeFeed() {
   const symbols = ['ethusdt', 'btcusdt', 'solusdt'];
   const streams = symbols.map(s => s + '@miniTicker').join('/');
-  const wsUrl = 'wss://stream.binance.com:9443/stream?streams=' + streams;
-
   try {
-    const ws = new WebSocket(wsUrl);
+    const ws = new WebSocket('wss://stream.binance.com:9443/stream?streams=' + streams);
     ws.onmessage = function (e) {
       const msg = JSON.parse(e.data);
       const data = msg.data || msg;
       const sym = (data.s || '').toLowerCase();
       const closePrice = parseFloat(data.c);
-
       if (sym === 'ethusdt') liveEthPrice = closePrice;
       if (sym === 'btcusdt') liveBtcPrice = closePrice;
       if (sym === 'solusdt') liveSolPrice = closePrice;
-
       updatePriceUI();
     };
     ws.onerror = function () { fallbackPriceFetch(); };
-  } catch (err) {
-    fallbackPriceFetch();
-  }
+  } catch (err) { fallbackPriceFetch(); }
 }
 
 function fallbackPriceFetch() {
@@ -700,96 +846,238 @@ function fallbackPriceFetch() {
       if (d.solana) liveSolPrice = d.solana.usd;
       updatePriceUI();
     }).catch(() => {
-      // Hard fallback jika jaringan terputus
       liveEthPrice = 3250.40; liveBtcPrice = 67420.00; liveSolPrice = 148.30;
       updatePriceUI();
     });
 }
 
-// Simulasi variasi Gas Gwei acak adaptif
 setInterval(() => {
   liveGasPrice = Math.floor(12 + Math.random() * 26);
   updatePriceUI();
 }, 8000);
 
+// Block number ticker
+setInterval(() => {
+  const block = (22114089 + Math.floor(Date.now() / 12000)).toLocaleString();
+  document.querySelectorAll('#tick-block, #tick-block2').forEach(el => el.textContent = '#' + block);
+}, 12000);
+
 // ══════════════════════════════════════════
-//  AUTOMATIC SYNC & DOM-SIGNATURE STATE DETECTOR
+//  WALLET SYSTEM (synced with infrastructure.html)
 // ══════════════════════════════════════════
-let isConnected = false;
+var isConnected = false;
+var connectedWallet = { address: null, shortAddr: null, providerName: null, isDemo: false, provider: null };
+const SEPOLIA_CHAIN_ID_HEX = '0xaa36a7';
 const modal = document.getElementById('wallet-modal-ovl');
 const navBtn = document.getElementById('nav-wallet-btn');
 
-function checkSessionWallet() {
-  const savedAddr = sessionStorage.getItem('rialo_addr');
-  const savedWallet = sessionStorage.getItem('rialo_wallet');
-  
-  if (savedAddr) {
-    // Inject status wallet terhubung secara otomatis terstruktur jika sesi aktif terdeteksi
-    const sanitizedAddr = savedAddr.replace(/[^0-9a-zA-Z.]/g, '').slice(0, 42);
-    const short = sanitizedAddr.slice(0, 6) + '…' + sanitizedAddr.slice(-4);
-    
-    isConnected = true;
-    navBtn.classList.add('connected');
-    document.getElementById('nav-wallet-label').textContent = short;
-    document.getElementById('terminal-wallet-status').textContent = "SECURE NODE ACTIVE";
-    document.getElementById('terminal-wallet-status').style.color = 'var(--green)';
-    
-    const navDot = navBtn.querySelector('.nav-wallet-dot');
-    if (navDot) { navDot.style.background = 'var(--green)'; navDot.style.boxShadow = '0 0 8px var(--green)'; }
-    
-    document.getElementById('terminal-log').innerHTML = `<div style="color:var(--green);">[SYSTEM] Web3 handshake confirmed. Auto-restored identity session link.</div>
-<div style="color:var(--cyan);margin-top:6px;">[AAVE V3] Non-custodial flash loan core operational framework loaded. Address: ${sanitizedAddr}</div>`;
-  } else {
-    disconnect();
+function openWalletModal() {
+  modal.style.display = 'flex';
+  detectInstalledWallets();
+  requestAnimationFrame(() => modal.classList.add('open'));
+}
+function closeWalletModal() {
+  modal.classList.remove('open');
+  setTimeout(() => { modal.style.display = 'none'; }, 400);
+}
+function detectInstalledWallets() {
+  const eth = window.ethereum;
+  const hasMM = !!(eth && (eth.isMetaMask || (eth.providers && eth.providers.some(p => p.isMetaMask))));
+  setBadge('badge-metamask', hasMM ? 'Detected' : 'Not installed', hasMM);
+  setBadge('badge-rabby', !!(eth && eth.isRabby) ? 'Detected' : 'Extension missing', !!(eth && eth.isRabby));
+  setBadge('badge-okx', !!window.okxwallet ? 'Detected' : 'Extension missing', !!window.okxwallet);
+  setBadge('badge-phantom', !!(window.phantom && window.phantom.ethereum) ? 'Detected' : 'Extension missing', !!(window.phantom && window.phantom.ethereum));
+}
+function setBadge(id, text, ok) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = text;
+  el.className = 'wo-badge ' + (ok ? 'badge-ok' : 'badge-none');
+}
+
+// Modal bindings
+document.getElementById('wm-close-btn').addEventListener('click', closeWalletModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeWalletModal(); });
+
+document.getElementById('opt-metamask').addEventListener('click', () => {
+  const eth = window.ethereum; if (!eth) { showToast('Install MetaMask Extension'); return; }
+  const provider = (eth.providers && eth.providers.find(p => p.isMetaMask)) || eth;
+  connectSepoliaEVM(provider, 'MetaMask');
+});
+document.getElementById('opt-rabby').addEventListener('click', () => {
+  if (!window.ethereum || !window.ethereum.isRabby) { showToast('Rabby Node undetected'); return; }
+  connectSepoliaEVM(window.ethereum, 'Rabby');
+});
+document.getElementById('opt-okx').addEventListener('click', () => {
+  if (!window.okxwallet) { showToast('OKX Component absent'); return; }
+  connectSepoliaEVM(window.okxwallet, 'OKX');
+});
+document.getElementById('opt-phantom').addEventListener('click', () => {
+  if (!window.phantom || !window.phantom.ethereum) { showToast('Phantom layer missing'); return; }
+  connectSepoliaEVM(window.phantom.ethereum, 'Phantom');
+});
+document.getElementById('opt-demo').addEventListener('click', () => {
+  closeWalletModal();
+  startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96', 'Demo Sandbox', true, null);
+});
+document.querySelectorAll('.wallet-opt').forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') el.click(); });
+});
+
+// ── EVM CONNECT ──
+async function connectSepoliaEVM(provider, name) {
+  closeWalletModal();
+  try {
+    showToast('Triggering Web3 authentication…');
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (!accounts || !accounts.length) { showToast('No accounts returned'); return; }
+    try {
+      await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }] });
+    } catch (switchErr) {
+      if (switchErr.code === 4902) {
+        try {
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{ chainId: SEPOLIA_CHAIN_ID_HEX, chainName: 'Sepolia Test Network',
+              nativeCurrency: { name: 'Sepolia ETH', symbol: 'ETH', decimals: 18 },
+              rpcUrls: ['https://rpc.ankr.com/eth_sepolia'],
+              blockExplorerUrls: ['https://sepolia.etherscan.io'] }]
+          });
+        } catch { showToast('⚠ Failed to add Sepolia node'); return; }
+      } else if (switchErr.code === 4001) { showToast('⚠ Switch to Sepolia rejected'); return; }
+    }
+    startScanAnimation(accounts[0], name, false, provider);
+  } catch (err) {
+    if (err.code === 4001) showToast('Connection cancelled');
+    else showToast('JSON-RPC handshake failed');
   }
 }
 
-navBtn.addEventListener('click', () => { 
-  if (!isConnected) modal.classList.add('open'); 
-  else {
-    sessionStorage.removeItem('rialo_addr');
-    sessionStorage.removeItem('rialo_wallet');
-    disconnect(); 
-  } 
+// ── SCAN OVERLAY ──
+var _scanTimer = null;
+const SCAN_PHASES = ['Decrypting node parameters…', 'Checking Aave Pool liquidity…', 'Synchronizing flash loan module…', 'Connection Stable ✓'];
+
+function startScanAnimation(addr, walletName, isDemo, provider) {
+  const ovl = document.getElementById('scan-ovl');
+  const addrEl = document.getElementById('scan-addr-disp');
+  const phaseEl = document.getElementById('scan-phase-disp');
+  const barEl = document.getElementById('scan-bar-fill');
+  ovl.style.display = 'flex';
+  requestAnimationFrame(() => ovl.classList.add('open'));
+  if (addrEl) addrEl.textContent = shortAddr(addr);
+  let idx = 0;
+  function nextPhase() {
+    if (idx >= SCAN_PHASES.length) {
+      setTimeout(() => { closeScanAnimation(); finalizeConnection(addr, walletName, isDemo, provider); }, 300);
+      return;
+    }
+    if (phaseEl) phaseEl.textContent = SCAN_PHASES[idx];
+    if (barEl) barEl.style.width = Math.round((idx + 1) / SCAN_PHASES.length * 100) + '%';
+    idx++;
+    _scanTimer = setTimeout(nextPhase, 420);
+  }
+  nextPhase();
+}
+function closeScanAnimation() {
+  const ovl = document.getElementById('scan-ovl');
+  ovl.classList.remove('open');
+  setTimeout(() => { ovl.style.display = 'none'; }, 400);
+  clearTimeout(_scanTimer);
+  const barEl = document.getElementById('scan-bar-fill');
+  if (barEl) barEl.style.width = '0%';
+}
+document.getElementById('scan-cancel-btn').addEventListener('click', () => {
+  closeScanAnimation(); showToast('Connection cancelled');
 });
 
-document.getElementById('opt-metamask').addEventListener('click', () => triggerConnect('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA9645', 'MetaMask'));
-document.getElementById('opt-demo').addEventListener('click', () => triggerConnect('0x7777777F928373bCc9dDeDdEb03E53415D37aA96', 'Demo Mode'));
+// ── FINALIZE CONNECTION ──
+function finalizeConnection(addr, walletName, isDemo, provider) {
+  isConnected = true;
+  connectedWallet = { address: addr, shortAddr: shortAddr(addr), providerName: walletName, isDemo: isDemo, provider: provider };
 
-function triggerConnect(addr, clientName) {
+  // Sync to sessionStorage for cross-page state
   sessionStorage.setItem('rialo_addr', addr);
-  sessionStorage.setItem('rialo_wallet', clientName);
-  modal.classList.remove('open');
-  checkSessionWallet();
+  sessionStorage.setItem('rialo_wallet', walletName);
+  sessionStorage.setItem('rialo_demo', isDemo ? '1' : '0');
+
+  navBtn.classList.add('connected');
+  document.getElementById('nav-wallet-label').textContent = connectedWallet.shortAddr;
+  const dot = navBtn.querySelector('.nav-wallet-dot');
+  if (dot) { dot.style.background = 'var(--green)'; dot.style.boxShadow = '0 0 8px var(--green)'; }
+
+  document.getElementById('terminal-wallet-status').textContent = 'SECURE NODE ACTIVE';
+  document.getElementById('terminal-wallet-status').style.color = 'var(--green)';
+  document.getElementById('terminal-log').innerHTML =
+    `<div style="color:var(--green);">[SYSTEM] Web3 handshake confirmed. Flash Loan module loaded.</div>
+<div style="color:var(--cyan);margin-top:6px;">[AAVE V3] Non-custodial flash loan core operational. Address: ${addr}</div>`;
+
+  showToast('✓ ' + walletName + ' connected');
+
+  if (provider && !isDemo) {
+    if (provider.on) {
+      provider.on('accountsChanged', accounts => {
+        if (!accounts || !accounts.length) { disconnectWallet(); return; }
+        connectedWallet.address = accounts[0];
+        connectedWallet.shortAddr = shortAddr(accounts[0]);
+        sessionStorage.setItem('rialo_addr', accounts[0]);
+        navBtn.querySelector('#nav-wallet-label') && (document.getElementById('nav-wallet-label').textContent = connectedWallet.shortAddr);
+      });
+      provider.on('chainChanged', () => {});
+    }
+  }
 }
 
-function disconnect() {
+function disconnectWallet() {
   isConnected = false;
+  connectedWallet = { address: null, shortAddr: null, providerName: null, isDemo: false, provider: null };
+  sessionStorage.removeItem('rialo_addr');
+  sessionStorage.removeItem('rialo_wallet');
+  sessionStorage.removeItem('rialo_demo');
+
   navBtn.classList.remove('connected');
-  document.getElementById('nav-wallet-label').textContent = "Connect Wallet";
-  document.getElementById('terminal-wallet-status').textContent = "OFFLINE";
+  document.getElementById('nav-wallet-label').textContent = 'Connect Wallet';
+  const dot = navBtn.querySelector('.nav-wallet-dot');
+  if (dot) { dot.style.background = 'var(--muted)'; dot.style.boxShadow = 'none'; }
+
+  document.getElementById('terminal-wallet-status').textContent = 'OFFLINE';
   document.getElementById('terminal-wallet-status').style.color = 'var(--red)';
-  document.getElementById('terminal-log').innerHTML = `<div style="color:var(--muted);">[SYSTEM] Terminal offline. Waiting for Web3 network quorum handshake...</div>`;
-  document.getElementById('terminal-profit').textContent = "$0.00";
-  const navDot = navBtn.querySelector('.nav-wallet-dot');
-  if (navDot) { navDot.style.background = 'var(--muted)'; navDot.style.boxShadow = 'none'; }
+  document.getElementById('terminal-log').innerHTML = '<div style="color:var(--muted);">[SYSTEM] Terminal offline. Waiting for Web3 network quorum handshake...</div>';
+  document.getElementById('terminal-profit').textContent = '$0.00';
+  executionCount = 0;
+  document.getElementById('terminal-count').textContent = '0';
+  showToast('Node disconnected');
 }
+
+// Check session on load
+function checkSessionWallet() {
+  const savedAddr = sessionStorage.getItem('rialo_addr');
+  const savedWallet = sessionStorage.getItem('rialo_wallet');
+  const savedDemo = sessionStorage.getItem('rialo_demo');
+  if (savedAddr) {
+    finalizeConnection(savedAddr, savedWallet || 'Wallet', savedDemo === '1', null);
+  }
+}
+
+navBtn.addEventListener('click', () => {
+  if (!isConnected) openWalletModal();
+  else disconnectWallet();
+});
 
 // ══════════════════════════════════════════
-//  FLASH LOAN SIMULATION ENGINE (LIVE COMPUTATION)
+//  FLASH LOAN ENGINE
 // ══════════════════════════════════════════
 const exeBtn = document.getElementById('execute-flash-btn');
 const term = document.getElementById('terminal-log');
 
 exeBtn.addEventListener('click', () => {
   if (!isConnected) {
-    term.innerHTML = `<div class="log-line" style="color:var(--red);font-weight:700;">[ERROR] Security Exception: Wallet client authentication required. Connect wallet signature layer first.</div>`;
+    term.innerHTML = '<div class="log-line" style="color:var(--red);font-weight:700;">[ERROR] Security Exception: Wallet client authentication required. Connect wallet signature layer first.</div>';
+    showToast('⚠ Connect wallet first!');
     return;
   }
   exeBtn.disabled = true;
   const loanSize = parseInt(document.getElementById('loan-size-select').value);
   const pool = document.getElementById('pool-select').value.split('—')[0].trim();
-  term.innerHTML = "";
+  term.innerHTML = '';
   executionCount++;
 
   const txHash = '0x' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
@@ -816,28 +1104,24 @@ exeBtn.addEventListener('click', () => {
       idx++;
       setTimeout(printLog, 750);
     } else {
-      // Kalkulasi profitabilitas real-time eksak berdasar data bursa dikurangi gas gwei terupdate
       let spread = dexBPrice - dexAPrice;
-      let gasCostUsd = (liveGasPrice * 180000 / 1e9) * liveEthPrice; // Estimasi gas fee eksekusi smart contract swap
+      let gasCostUsd = (liveGasPrice * 180000 / 1e9) * liveEthPrice;
       let totalProfit = (loanSize * spread) - (loanSize * liveEthPrice * .0009) - gasCostUsd;
-      
-      if (totalProfit < 0) totalProfit = 118.65; // Proteksi nilai negatif
-      
+      if (totalProfit < 0) totalProfit = 118.65;
       document.getElementById('terminal-profit').textContent = '+$' + totalProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       document.getElementById('terminal-count').textContent = executionCount;
       exeBtn.disabled = false;
-
-      // Profit flash neon glow animation
       const profitEl = document.getElementById('terminal-profit');
       profitEl.style.textShadow = '0 0 20px var(--green)';
       setTimeout(() => { profitEl.style.textShadow = 'none'; }, 1500);
+      showToast('✓ Flash Loan Executed!');
     }
   }
   printLog();
 });
 
 // ══════════════════════════════════════════
-//  INITIALIZATION
+//  INIT
 // ══════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   initRealtimeFeed();
