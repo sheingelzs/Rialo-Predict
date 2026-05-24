@@ -1,3 +1,4 @@
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +29,20 @@ body{
   font-family:'Rajdhani',sans-serif;
   overflow-x:hidden;
   overflow-y:auto;
+}
+
+/* ==========================================================================
+   TRIK AMPUH: Menghapus Logo "Built with Spline" dan Teks bawaan Spline
+   ========================================================================== */
+spline-viewer::part(logo),
+spline-viewer::part(watermark),
+#spline-logo,
+.spline-watermark,
+a[href*="spline.design"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* CURSOR */
@@ -124,7 +139,7 @@ nav{
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr; /* Sedikit disesuaikan agar ruang Spline lebih luas */
+  grid-template-columns: 1.1fr 0.9fr; 
   gap: 2rem;
   align-items: center;
 }
@@ -224,11 +239,11 @@ nav{
 }
 .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
 
-/* === BAGIAN UPDATE: SPLINE CONTAINER CONTAINER === */
+/* SPLINE CONTAINER CONTAINER */
 .spline-container-wrap {
   position: relative;
   width: 100%;
-  height: 500px; /* Ditambahkan tinggi agar canvas 3D leluasa */
+  height: 500px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,7 +274,7 @@ nav{
 
 /* SECTIONS */
 section{padding:6rem 4rem;}
-.section-tag{// 01 — Core Terminal
+.section-tag{
   font-family:'Orbitron',monospace;
   font-size:0.7rem;letter-spacing:4px;
   color:var(--cyan);text-transform:uppercase;margin-bottom:0.8rem;
@@ -556,8 +571,6 @@ footer{
   #hero { padding: 7rem 2rem 3rem 2rem; }
   .hero-wrapper { grid-template-columns: 1fr; text-align: center; }
   .hero-content { max-width: 100%; order: 2; transform: none !important; animation: none; }
-  
-  /* Update responsivitas untuk area Spline di mobile */
   .spline-container-wrap { order: 1; height: 350px; }
   .hero-btns { justify-content: center; }
   nav { padding: 1.2rem 2rem; }
@@ -590,7 +603,7 @@ footer{
    
   <div class="hero-wrapper">
     <div class="hero-content">
-      <h1 class="hero-title-3d">
+      <h1 class="hero-title-33d">
         <span class="title-welcome">WELCOME TO THE</span>
         <span class="title-core-focus">RIALO ALPHA CORE</span>
       </h1>
@@ -601,7 +614,6 @@ footer{
     </div>
 
     <!-- STRATEGIS: Peletakan Utama Elemen Spline 3D -->
-    <!-- Menggantikan logo statis lama agar menjadi pusat perhatian visual di Hero Section -->
     <div class="spline-container-wrap">
       <div class="spline-shadow-glow"></div>
       <spline-viewer class="spline-viewport" url="https://prod.spline.design/CIwPE-LdJyWbHWab/scene.splinecode"></spline-viewer>
@@ -668,7 +680,6 @@ footer{
   </div>
   
   <div class="contributor-grid">
-    <!-- 1. Meta -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/meta.png" alt="Meta" class="contributor-logo"/>
@@ -677,7 +688,6 @@ footer{
       <div class="contributor-status">Node Partner</div>
     </div>
 
-    <!-- 2. Apple -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/apple.png" alt="Apple" class="contributor-logo"/>
@@ -686,7 +696,6 @@ footer{
       <div class="contributor-status">Hardware Integrator</div>
     </div>
 
-    <!-- 3. Amazon -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/amazon.png" alt="Amazon" class="contributor-logo"/>
@@ -695,7 +704,6 @@ footer{
       <div class="contributor-status">Cloud Infrastructure</div>
     </div>
 
-    <!-- 4. Netflix -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/netflix.png" alt="Netflix" class="contributor-logo"/>
@@ -704,7 +712,6 @@ footer{
       <div class="contributor-status">Data Relay</div>
     </div>
 
-    <!-- 5. Google -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/google.png" alt="Google" class="contributor-logo"/>
@@ -713,7 +720,6 @@ footer{
       <div class="contributor-status">RPC Provider</div>
     </div>
 
-    <!-- 6. TikTok -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/tiktok.png" alt="TikTok" class="contributor-logo"/>
@@ -722,7 +728,6 @@ footer{
       <div class="contributor-status">Network Node</div>
     </div>
 
-    <!-- 7. Citadel -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/citadel.png" alt="Citadel" class="contributor-logo"/>
@@ -731,7 +736,6 @@ footer{
       <div class="contributor-status">Liquidity Provider</div>
     </div>
 
-    <!-- 8. Mysten Labs -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/mystenlabs.png" alt="Mysten Labs" class="contributor-logo"/>
@@ -740,7 +744,6 @@ footer{
       <div class="contributor-status">Cryptography</div>
     </div>
 
-    <!-- 9. Solana -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/solana.png" alt="Solana" class="contributor-logo"/>
@@ -749,7 +752,6 @@ footer{
       <div class="contributor-status">Consensus Protocol</div>
     </div>
 
-    <!-- 10. EigenLayer -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/eigenlayer.png" alt="EigenLayer" class="contributor-logo"/>
@@ -758,7 +760,6 @@ footer{
       <div class="contributor-status">Restaking Layer</div>
     </div>
 
-    <!-- 11. Coinbase -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/coinbase.png" alt="Coinbase" class="contributor-logo"/>
@@ -767,7 +768,6 @@ footer{
       <div class="contributor-status">Institutional Gateway</div>
     </div>
 
-    <!-- 12. NEAR Protocol -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/near.png" alt="NEAR Protocol" class="contributor-logo"/>
@@ -776,7 +776,6 @@ footer{
       <div class="contributor-status">Sharding Client</div>
     </div>
 
-    <!-- 13. VMware -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/vmware.png" alt="VMware" class="contributor-logo"/>
@@ -785,7 +784,6 @@ footer{
       <div class="contributor-status">Virtual Machine</div>
     </div>
 
-    <!-- 14. Diem -->
     <div class="contributor-card">
       <div class="contributor-logo-wrap">
         <img src="images/diem.png" alt="Diem" class="contributor-logo"/>
@@ -902,7 +900,6 @@ window.addEventListener('DOMContentLoaded', () => {
     "-=0.7"
   );
 
-  /* UPDATE: Target animasi intro disesuaikan ke pembungkus Spline baru */
   introTl.fromTo(".spline-container-wrap",
     {
       opacity: 0,
@@ -949,7 +946,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- UPDATE: ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE ---- */
+/* ---- ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE ---- */
 gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
   gsap.fromTo(card,
     { 
