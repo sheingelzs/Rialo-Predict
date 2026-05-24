@@ -135,7 +135,7 @@ nav{
 }
 .hero-wrapper {
   position: relative;
-  z-index: 2;
+  z-index: 5; /* Di atas video dan overlay background */
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -144,8 +144,24 @@ nav{
   gap: 2rem;
   align-items: center;
 }
+
+/* VIDEO BACKGROUND STYLING */
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.23; /* Tetap gelap agar teks menyala tajam */
+  filter: hue-rotate(240deg) saturate(1.4) contrast(1.1); /* Nge-blend warna video ke arah purple/cyan */
+}
+
 .hero-bg{
   position:absolute;inset:0;pointer-events:none;
+  z-index: 1;
   background:
     radial-gradient(ellipse 60% 60% at 70% 50%, rgba(124,58,237,0.15) 0%, transparent 70%),
     radial-gradient(ellipse 40% 40% at 30% 80%, rgba(236,72,153,0.08) 0%, transparent 60%),
@@ -153,6 +169,7 @@ nav{
 }
 .grid-bg{
   position:absolute;inset:0;pointer-events:none;
+  z-index: 2;
   background-image:
     linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
@@ -160,6 +177,7 @@ nav{
 }
 .scanline{
   position:absolute;inset:0;pointer-events:none;
+  z-index: 3;
   background:repeating-linear-gradient(
     0deg,transparent,transparent 2px,
     rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px
@@ -285,7 +303,7 @@ nav{
 }
 
 /* SECTIONS */
-section{padding:6rem 4rem;}
+section{padding:6rem 4rem; position: relative; z-index: 10;}
 .section-tag{
   font-family:'Orbitron',monospace;
   font-size:0.7rem;letter-spacing:4px;
@@ -572,6 +590,8 @@ footer{
   border-top:1px solid rgba(124,58,237,0.2);
   padding:2rem 4rem;
   display:flex;align-items:center;justify-content:space-between;
+  position: relative;
+  z-index: 10;
 }
 .footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
 .footer-copy{color:var(--muted);font-size:0.75rem;letter-spacing:2px;}
@@ -584,7 +604,7 @@ footer{
 .reveal.visible{opacity:1;transform:translateY(0);}
 
 /* PARTICLES */
-#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:4;}
 
 @media (max-width: 968px) {
   #hero { padding: 7rem 2rem 3rem 2rem; }
@@ -616,6 +636,10 @@ footer{
 </nav>
 
 <section id="hero">
+  <video autoplay muted loop playsinline class="hero-video-bg">
+    <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
+  </video>
+
   <div class="hero-bg"></div>
   <div class="grid-bg"></div>
   <div class="scanline"></div>
