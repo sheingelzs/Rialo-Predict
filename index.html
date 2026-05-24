@@ -157,23 +157,6 @@ nav{
   to { opacity: 1; transform: rotateY(12deg) rotateX(4deg) translateZ(0); }
 }
 
-.hero-tag{
-  display:inline-flex;align-items:center;gap:0.5rem;
-  padding:0.3rem 1rem;
-  border:1px solid rgba(6,182,212,0.4);
-  color:var(--cyan);font-size:0.75rem;
-  letter-spacing:3px;text-transform:uppercase;
-  margin-bottom:1.5rem;
-  background: rgba(6, 182, 212, 0.05);
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-}
-.hero-tag::before{
-  content:'';width:6px;height:6px;
-  background:var(--cyan);border-radius:50%;
-  animation:blink 1.5s infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
-
 .hero-title-3d {
   font-family: 'Orbitron', monospace;
   font-size: clamp(2.2rem, 4.8vw, 4rem);
@@ -692,7 +675,6 @@ footer{
    
   <div class="hero-wrapper">
     <div class="hero-content">
-      <div class="hero-tag">System Online // v2.077</div>
       <h1 class="hero-title-3d">
         <span class="title-welcome">WELCOME TO THE</span>
         <span class="title-core-focus">RIALO ALPHA CORE</span>
