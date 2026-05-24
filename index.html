@@ -141,14 +141,14 @@ a[href*="spline.design"],
   pointer-events: none !important;
 }
 
-/* CINEMATIC CURSOR - FIX: Tambah pointer-events none agar klik menembus ke teks navbar */
+/* CINEMATIC CURSOR */
 #cursor{
   position:fixed;
   width:10px;height:10px;
   background:var(--cyan);
   border-radius:50%;
-  pointer-events:none !important; /* Paksa klik menembus elemen kursor */
-  z-index:100000005; 
+  pointer-events:none;
+  z-index:100000005; /* Ditinggikan maksimal agar berada di atas layer apapun */
   transform:translate(-50%,-50%);
   mix-blend-mode: screen;
   box-shadow: 0 0 8px var(--cyan);
@@ -159,16 +159,16 @@ a[href*="spline.design"],
   width:32px;height:32px;
   border:1px solid rgba(124,58,237,0.6);
   border-radius:50%;
-  pointer-events:none !important; /* Paksa klik menembus elemen trail */
+  pointer-events:none;
   z-index:100000004;
   transform:translate(-50%,-50%);
   mix-blend-mode: screen;
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
 }
 
-/* NAVBAR - FIX: Naikkan z-index agar berada tepat di bawah kursor namun di atas konten */
+/* NAVBAR */
 nav{
-  position:fixed;top:0;left:0;right:0;z-index:999999;
+  position:fixed;top:0;left:0;right:0;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
   padding:1.2rem 4rem;
   background:rgba(5,0,16,0.85);
@@ -188,8 +188,6 @@ nav{
   color:var(--muted);font-size:0.85rem;
   letter-spacing:2px;text-decoration:none;
   text-transform:uppercase;font-weight:600;
-  position: relative;
-  z-index: 1000000; /* Mengunci fokus klik browser */
   transition:color 0.3s, text-shadow 0.3s;
 }
 .nav-links a:hover{
@@ -219,8 +217,6 @@ nav{
   font-family:'Rajdhani',sans-serif;
   font-size:0.85rem;letter-spacing:2px;
   text-transform:uppercase;font-weight:600;
-  position: relative;
-  z-index: 1000000;
   transition:all 0.3s;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
 }
@@ -912,6 +908,13 @@ footer{
   </footer>
 </div>
 
+<div id="trailer-modal">
+  <div class="modal-content">
+    <button class="modal-close" id="close-trailer-btn">✕ CLOSE</button>
+    <iframe id="trailer-frame" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
@@ -987,7 +990,10 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-// INITIAL CINEMATIC CURSOR TRACKING ENGINE
+// INITIAL CINEMATIC CURSOR TRACKING ENGINE (DIKONSTRUKSI DI LUAR WRAPPER UTAMA)
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+
 let mx = window.innerWidth / 2;
 let my = window.innerHeight / 2;
 let tx = mx;
