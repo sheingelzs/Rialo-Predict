@@ -148,12 +148,11 @@ a[href*="spline.design"],
   background:var(--cyan);
   border-radius:50%;
   pointer-events:none;
-  z-index:100000002; /* Di atas segalanya termasuk gate overlay */
+  z-index:100000005; /* Ditinggikan maksimal agar berada di atas layer apapun */
   transform:translate(-50%,-50%);
   mix-blend-mode: screen;
   box-shadow: 0 0 8px var(--cyan);
   transition: width 0.2s, height 0.2s, background-color 0.2s;
-  opacity: 1; /* FIX: Langsung dipaksa nyala di awal */
 }
 #cursor-trail{
   position:fixed;
@@ -161,11 +160,10 @@ a[href*="spline.design"],
   border:1px solid rgba(124,58,237,0.6);
   border-radius:50%;
   pointer-events:none;
-  z-index:100000001;
+  z-index:100000004;
   transform:translate(-50%,-50%);
   mix-blend-mode: screen;
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
-  opacity: 1; /* FIX: Langsung dipaksa nyala di awal */
 }
 
 /* NAVBAR */
@@ -749,6 +747,9 @@ footer{
 </head>
 <body>
 
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
 <div id="gate-container">
   <div class="gate-glow"></div>
   <button class="gate-btn" id="enter-btn">ENTER THE VOID</button>
@@ -762,8 +763,6 @@ footer{
 </div>
 
 <div id="main-wrapper">
-  <div id="cursor"></div>
-  <div id="cursor-trail"></div>
   <canvas id="particles-canvas"></canvas>
 
   <nav>
@@ -991,22 +990,10 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-function animateHeroParallax() {
-  if (window.innerWidth > 968 && heroContent && mainWrapper.style.visibility === 'visible') {
-    currentMouseX += (targetMouseX - currentMouseX) * 0.08;
-    currentMouseY += (targetMouseY - currentMouseY) * 0.08;
-    heroContent.style.transform = `rotateY(${12 - currentMouseX}deg) rotateX(${4 + currentMouseY}deg)`;
-  }
-  requestAnimationFrame(animateHeroParallax);
-}
-requestAnimationFrame(animateHeroParallax);
-
-
-// FIX: AUTO INITIALIZE POSITION ON PAGE LOAD
+// INITIAL CINEMATIC CURSOR TRACKING ENGINE (DIKONSTRUKSI DI LUAR WRAPPER UTAMA)
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 
-// Set posisi kursor otomatis pas di tengah layar saat web pertama dibuka (Sebelum mouse digerakkan)
 let mx = window.innerWidth / 2;
 let my = window.innerHeight / 2;
 let tx = mx;
@@ -1032,7 +1019,17 @@ document.addEventListener('mousemove', function(e) {
   requestAnimationFrame(animateTrail);
 })();
 
-// Penanganan Hover Fleksibel & Perubah Warna Sempurna
+function animateHeroParallax() {
+  if (window.innerWidth > 968 && heroContent && mainWrapper.style.visibility === 'visible') {
+    currentMouseX += (targetMouseX - currentMouseX) * 0.08;
+    currentMouseY += (targetMouseY - currentMouseY) * 0.08;
+    heroContent.style.transform = `rotateY(${12 - currentMouseX}deg) rotateX(${4 + currentMouseY}deg)`;
+  }
+  requestAnimationFrame(animateHeroParallax);
+}
+requestAnimationFrame(animateHeroParallax);
+
+// Penanganan Hover Fleksibel & Perubah Warna Sempurna (Mendukung Tombol Pintu Masuk Awal)
 document.querySelectorAll('a, button, .char-card, .card, .contributor-card, #enter-btn').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
     cur.style.width='24px'; cur.style.height='24px'; cur.style.backgroundColor='var(--pink)';
