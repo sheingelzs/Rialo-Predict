@@ -366,6 +366,8 @@ nav{
   gap:2.5rem 1.5rem;
   margin-top:5rem;
 }
+
+/* PERBAIKAN: Menambahkan tingkat kedalaman perspektif pada Card induk */
 .card{
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(124,58,237,0.2);
@@ -373,6 +375,8 @@ nav{
   position:relative;
   overflow: visible;
   transition: border-color 0.4s;
+  perspective: 1200px; 
+  transform-style: preserve-3d;
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -383,7 +387,7 @@ nav{
 .card:hover{border-color:rgba(6,182,212,0.5);}
 .card:hover::before{opacity:1;}
 
-/* KONTEN UTAMA: Bingkai gambar 3D */
+/* PERBAIKAN: Kontainer gambar WAJIB preserve-3d agar anak elemennya bisa keluar secara volume */
 .card-img-container {
   width: 100%;
   height: 200px;
@@ -392,6 +396,7 @@ nav{
   display: flex;
   align-items: center;
   justify-content: center;
+  transform-style: preserve-3d;
 }
 .card-img-container::before {
   content: '';
@@ -403,22 +408,17 @@ nav{
   z-index: 1;
 }
 
-/* Mengatur wadah komponen interaktif 3D Spline */
-spline-viewer {
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  border-radius: 8px;
-}
-
-/* Gambar 2D bawaan sisa card lain (diberikan efek shadow tipbal) */
+/* PERBAIKAN: Menambahkan transisi transform yang halus & filter bayangan untuk efek tebal */
 .pop-avatar {
   width: auto;
   height: 90%;
   max-width: 90%;
   object-fit: contain;
   z-index: 3;
-  filter: drop-shadow(5px 10px 10px rgba(0,0,0,0.5));
+  transform-style: preserve-3d;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+  filter: drop-shadow(5px 10px 15px rgba(0, 0, 0, 0.5));
 }
 
 .card-icon{
@@ -608,9 +608,6 @@ footer{
   .title-core-focus { animation: shineGlint 4s linear infinite; transform: none !important; }
 }
 </style>
-
-<script type="module" src="https://unpkg.com/@splinetool/viewer@1.3.1/build/spline-viewer.js"></script>
-
 </head>
 <body>
 
@@ -684,7 +681,7 @@ footer{
   <div class="cards-grid">
     <div class="card slide-left-card">
       <div class="card-img-container">
-        <spline-viewer url="https://prod.spline.design/97Xg1-UkiX06g0B8/scene.splinecode"></spline-viewer>
+        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/shein.png" alt="Shein Visual" class="pop-avatar"/>
       </div>
       <div class="card-icon">⬡</div>
       <div class="card-title">Multi-Route Token Swap</div>
@@ -854,20 +851,38 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// GSAP Scroll Animation
 gsap.utils.toArray('.slide-left-card').forEach(card => {
-  gsap.fromTo(card, { x: -50, opacity: 0 }, { x: 0, opacity: 1, ease: "none", scrollTrigger: { trigger: card, start: "top 92%", end: "top 35%", scrub: 2.5 } });
-});
-gsap.utils.toArray('.slide-right-card').forEach(card => {
-  gsap.fromTo(card, { x: 50, opacity: 0 }, { x: 0, opacity: 1, ease: "none", scrollTrigger: { trigger: card, start: "top 92%", end: "top 35%", scrub: 2.5 } });
+  gsap.fromTo(card, 
+    { x: -50, opacity: 0 }, 
+    { x: 0, opacity: 1, ease: "none", 
+      scrollTrigger: {
+        trigger: card,
+        start: "top 92%", 
+        end: "top 35%",   
+        scrub: 2.5        
+      }
+    }
+  );
 });
 
-/* ---- LOGIKA BARU MOUSE PARALLAX UNTUK GAMBAR 2D SISA ---- */
+gsap.utils.toArray('.slide-right-card').forEach(card => {
+  gsap.fromTo(card, 
+    { x: 50, opacity: 0 }, 
+    { x: 0, opacity: 1, ease: "none",
+      scrollTrigger: {
+        trigger: card,
+        start: "top 92%",
+        end: "top 35%",
+        scrub: 2.5        
+      }
+    }
+  );
+});
+
+/* ---- MOUSE PARALLAX FOR CARDS ---- */
 const cards = document.querySelectorAll('.card');
 cards.forEach((card, index) => {
   const avatar = card.querySelector('.pop-avatar');
-  if(!avatar) return; // Skip card yang menggunakan model Spline 3D langsung
-
   let currentX = 0, currentY = 0;
   let targetX = 0, targetY = 0;
   
@@ -875,17 +890,30 @@ cards.forEach((card, index) => {
     const rect = card.getBoundingClientRect();
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
-    targetX = ((e.clientX - cardCenterX) / (rect.width / 2)) * 15; 
-    targetY = ((e.clientY - cardCenterY) / (rect.height / 2)) * -15; 
+    const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
+    const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
+    
+    // Membatasi sudut rotasi maksimal agar proporsional
+    targetX = angleX * 20; 
+    targetY = angleY * -20; 
   });
   
-  card.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+  card.addEventListener('mouseleave', () => {
+    targetX = 0;
+    targetY = 0;
+  });
 
   function renderCombinedMotion(time) {
-    const floatY = Math.sin(time * 0.0025 + (index * 0.8)) * 12;
+    const speedFactor = 0.0025;
+    const offsetTime = time * speedFactor + (index * 0.8);
+    const floatY = Math.sin(offsetTime) * 12;
     currentX += (targetX - currentX) * 0.1;
     currentY += (targetY - currentY) * 0.1;
-    avatar.style.transform = `translateY(${floatY}px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
+    
+    if (avatar) {
+      // PERBAIKAN: Menambahkan translateZ(40px) agar gambar terdorong ke depan ruang 3D (tidak gepeng)
+      avatar.style.transform = `translateY(${floatY}px) rotateY(${currentX}deg) rotateX(${currentY}deg) translateZ(40px)`;
+    }
     requestAnimationFrame(renderCombinedMotion);
   }
   requestAnimationFrame(renderCombinedMotion);
@@ -901,22 +929,90 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-/* ---- CURSOR & PARTICLES ---- */
+/* ---- CURSOR ---- */
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
-(function animateTrail() { tx += (mx - tx) * 0.13; ty += (my - ty) * 0.13; trail.style.left = tx + 'px'; trail.style.top = ty + 'px'; requestAnimationFrame(animateTrail); })();
-document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
-  el.addEventListener('mouseenter', function() { cur.style.width='28px';cur.style.height='28px';cur.style.background='var(--pink)'; trail.style.width='55px';trail.style.height='55px'; });
-  el.addEventListener('mouseleave', function() { cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)'; trail.style.width='36px';trail.style.height='36px'; });
+document.addEventListener('mousemove', function(e) {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
 });
-const pcanvas = document.getElementById('particles-canvas'); const pctx = pcanvas.getContext('2d');
-function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; } resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-const pts = []; for (var i = 0; i < 55; i++) { pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight, vx:(Math.random()-0.5)*0.35, vy:(Math.random()-0.5)*0.35, r:Math.random()*1.8+0.4, c:Math.random()>0.5?'124,58,237':'6,182,212' }); }
-(function drawParticles() { pctx.clearRect(0,0,pcanvas.width,pcanvas.height); pts.forEach(function(p) { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>pcanvas.width) p.vx*=-1; if(p.y<0||p.y>pcanvas.height) p.vy*=-1; pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2); pctx.fillStyle='rgba('+p.c+',0.55)'; pctx.fill(); }); for (var i=0;i<pts.length;i++) for(var j=i+1;j<pts.length;j++){ var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy); if(d<115){ pctx.beginPath(); pctx.moveTo(pts[i].x,pts[i].y); pctx.lineTo(pts[j].x,pts[j].y); pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')'; pctx.lineWidth=0.5; pctx.stroke(); } } requestAnimationFrame(drawParticles); })();
-var reveals = document.querySelectorAll('.reveal'); var observer = new IntersectionObserver(function(entries) { let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card')); let otherEntries = Array.from(entries).filter(e => !e.target.classList.contains('char-card')); let visibleCount = 0; charCards.forEach(function(entry) { if (entry.isIntersecting && !entry.target.classList.contains('visible')) { setTimeout(function() { entry.target.classList.add('visible'); }, visibleCount * 180); visibleCount++; } }); otherEntries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.15 }); reveals.forEach(function(el) { observer.observe(el); });
-document.querySelectorAll('.char-card').forEach(function(card) { card.addEventListener('click', function() { document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); }); card.classList.add('active'); }); });
+(function animateTrail() {
+  tx += (mx - tx) * 0.13; ty += (my - ty) * 0.13;
+  trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
+  requestAnimationFrame(animateTrail);
+})();
+document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
+  el.addEventListener('mouseenter', function() {
+    cur.style.width='28px';cur.style.height='28px';cur.style.background='var(--pink)';
+    trail.style.width='55px';trail.style.height='55px';
+  });
+  el.addEventListener('mouseleave', function() {
+    cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)';
+    trail.style.width='36px';trail.style.height='36px';
+  });
+});
+
+/* ---- PARTICLES ---- */
+const pcanvas = document.getElementById('particles-canvas');
+const pctx = pcanvas.getContext('2d');
+function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+const pts = [];
+for (var i = 0; i < 55; i++) {
+  pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.35, vy:(Math.random()-0.5)*0.35,
+    r:Math.random()*1.8+0.4, c:Math.random()>0.5?'124,58,237':'6,182,212' });
+}
+(function drawParticles() {
+  pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
+  pts.forEach(function(p) {
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
+    if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+    pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pctx.fillStyle='rgba('+p.c+',0.55)'; pctx.fill();
+  });
+  for (var i=0;i<pts.length;i++) for(var j=i+1;j<pts.length;j++){
+    var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+    if(d<115){ pctx.beginPath(); pctx.moveTo(pts[i].x,pts[i].y); pctx.lineTo(pts[j].x,pts[j].y);
+      pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')'; pctx.lineWidth=0.5; pctx.stroke(); }
+  }
+  requestAnimationFrame(drawParticles);
+})();
+
+/* ---- INTERSECTION OBSERVER ---- */
+var reveals = document.querySelectorAll('.reveal');
+var observer = new IntersectionObserver(function(entries) {
+  let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
+  let otherEntries = Array.from(entries).filter(e => !e.target.classList.contains('char-card'));
+  
+  let visibleCount = 0;
+  charCards.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+      setTimeout(function() {
+        entry.target.classList.add('visible');
+      }, visibleCount * 180);
+      visibleCount++;
+    }
+  });
+
+  otherEntries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+reveals.forEach(function(el) { observer.observe(el); });
+
+/* ---- CHAR SELECT ---- */
+document.querySelectorAll('.char-card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
+    card.classList.add('active');
+  });
+});
 </script>
 </body>
 </html>
