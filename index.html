@@ -492,7 +492,7 @@ section{padding:6rem 4rem;}
   text-transform: uppercase;
 }
 
-/* CHARACTERS */
+/* CHARACTERS (NODE VALIDATORS) */
 #characters{background:var(--dark3);}
 .char-showcase{
   display:flex;gap:1.5rem;margin-top:3rem;
@@ -521,6 +521,7 @@ section{padding:6rem 4rem;}
 }
 .char-card:hover{border-color:var(--pink);transform:translateY(-6px) !important;}
 .char-card.active{border-color:var(--cyan);background: rgba(6, 182, 212, 0.04);}
+
 .char-avatar{
   width:90px;height:90px;border-radius:50%;
   margin:0 auto 1rem;
@@ -529,6 +530,19 @@ section{padding:6rem 4rem;}
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
 }
+
+/* Tambahan Style Khusus untuk Image Avatar Validator */
+.char-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.char-card:hover .char-avatar img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px var(--cyan));
+}
+
 .char-name{
   font-family:'Orbitron',monospace;font-size:0.8rem;
   letter-spacing:2px;margin-bottom:0.3rem;
@@ -797,48 +811,30 @@ footer{
   <h2 class="section-title reveal">Select Consensus<br/><span style="color:var(--purple)">Client</span></h2>
 
   <div class="char-showcase">
+    <!-- VALIDATOR 1 (x.png) -->
     <div class="char-card active reveal">
       <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="40" r="28" fill="#d4a574"/>
-          <path d="M28 28 Q24 15 32 8 Q40 2 50 5 Q60 2 68 8 Q76 15 72 28" fill="#1a1a2e"/>
-          <circle cx="40" cy="40" r="5" fill="#ef4444"/><circle cx="60" cy="40" r="5" fill="#ef4444"/>
-          <path d="M58 60 Q68 55 74 45 Q80 35 78 25" fill="#ec4899" opacity="0.8"/>
-          <circle cx="68" cy="42" r="10" fill="#f472b6" opacity="0.7"/>
-          <circle cx="68" cy="42" r="4" fill="#06b6d4"/>
-        </svg>
+        <img src="images/x.png" alt="Ryze-Net Avatar" />
       </div>
       <div class="char-name">RYZE-NET</div>
       <div class="char-role">Relay Validator</div>
       <div class="char-power">Tier — 1</div>
     </div>
 
+    <!-- VALIDATOR 2 (x2.png) -->
     <div class="char-card reveal">
       <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <circle cx="50" cy="42" r="26" fill="#8b6344"/>
-          <path d="M30 30 Q26 16 36 9 Q46 3 50 6 Q54 3 64 9 Q74 16 70 30" fill="#2d1b69"/>
-          <circle cx="40" cy="42" r="5" fill="#a855f7"/><circle cx="60" cy="42" r="5" fill="#a855f7"/>
-          <rect x="36" y="62" width="28" height="22" rx="4" fill="#1e0a3c" stroke="#7c3aed" stroke-width="1"/>
-        </svg>
+        <img src="images/x2.png" alt="Voidra-EVM Avatar" />
       </div>
       <div class="char-name">VOIDRA-EVM</div>
       <div class="char-role">ZK-Rollup Node</div>
       <div class="char-power">Tier — 1</div>
     </div>
 
+    <!-- VALIDATOR 3 (x3.png) -->
     <div class="char-card reveal">
       <div class="char-avatar">
-        <svg viewBox="0 0 100 100" width="70" height="70">
-          <rect x="20" y="18" width="60" height="65" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5"/>
-          <rect x="30" y="28" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <rect x="52" y="28" width="18" height="14" rx="3" fill="#06b6d4" opacity="0.8"/>
-          <circle cx="39" cy="35" r="3" fill="#38bdf8"/>
-          <circle cx="61" cy="35" r="3" fill="#38bdf8"/>
-          <rect x="38" y="58" width="24" height="4" rx="2" fill="#1e293b" stroke="#06b6d4" stroke-width="0.5"/>
-          <rect x="40" y="59" width="6" height="2" rx="1" fill="#ef4444"/>
-          <rect x="50" y="59" width="6" height="2" rx="1" fill="#06b6d4"/>
-        </svg>
+        <img src="images/x3.png" alt="Cyb-RPC Avatar" />
       </div>
       <div class="char-name">CYB-RPC</div>
       <div class="char-role">Data Availability</div>
