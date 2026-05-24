@@ -225,17 +225,6 @@ nav{
 }
 .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
 
-.stats-bar{
-  display:flex;gap:3rem;margin-top:3rem;
-  padding-top:2rem;
-  border-top:1px solid rgba(124,58,237,0.2);
-}
-.stat-num{
-  font-family:'Orbitron',monospace;
-  font-size:1.8rem;font-weight:900;color:var(--cyan);
-}
-.stat-label{font-size:0.7rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-
 /* === HOLOGRAPHIC SPHERE === */
 .logo-33d-wrap{
   position: relative;
@@ -644,7 +633,7 @@ footer{
   .ring-1 { width: 300px; height: 300px; }
   .ring-2 { width: 240px; height: 240px; }
   .ring-3 { width: 180px; height: 180px; }
-  .hero-btns, .stats-bar { justify-content: center; }
+  .hero-btns { justify-content: center; }
   nav { padding: 1.2rem 2rem; }
   .nav-links { display: none; }
   .title-core-focus { animation: shineGlint 4s linear infinite; transform: none !important; }
@@ -675,27 +664,13 @@ footer{
    
   <div class="hero-wrapper">
     <div class="hero-content">
-      <h1 class="hero-title-3d">
+      <h1 class="hero-title-33d">
         <span class="title-welcome">WELCOME TO THE</span>
         <span class="title-core-focus">RIALO ALPHA CORE</span>
       </h1>
       <div class="hero-btns">
         <button class="btn-primary" onclick="window.location.href='infrastructure.html'">Begin Journey</button>
         <button class="btn-secondary">Watch Trailer</button>
-      </div>
-      <div class="stats-bar">
-        <div class="stat-item">
-          <div class="stat-num">128K</div>
-          <div class="stat-label">Active Users</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">40+</div>
-          <div class="stat-label">Protocols</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">99.9%</div>
-          <div class="stat-label">Uptime</div>
-        </div>
       </div>
     </div>
 
