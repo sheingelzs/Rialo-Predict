@@ -6,7 +6,6 @@
 <title>NEXUS — Enter The Void</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
 
-<!-- STRATEGIS: Script Spline diletakkan di head dengan type="module" agar di-load secara asinkronus tanpa memblokir render halaman -->
 <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
 
 <style>
@@ -30,9 +29,6 @@ body{
   overflow-y:auto;
 }
 
-/* ==========================================================================
-   SISTEM PEMBERSIH AGRESIF: Menghilangkan sisa logo & teks bawaan Spline
-   ========================================================================== */
 spline-viewer::part(logo),
 spline-viewer::part(watermark),
 spline-viewer::part(shadow-root) #shadow-root-container #logo,
@@ -244,7 +240,7 @@ nav{
 }
 .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
 
-/* SPLINE CONTAINER CONTAINER */
+/* SPLINE CONTAINER */
 .spline-container-wrap {
   position: relative;
   width: 100%;
@@ -274,6 +270,18 @@ nav{
   background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 60%);
   pointer-events: none;
   z-index: 1;
+}
+
+/* Overlay untuk menyembunyikan tombol "Get in touch" bawaan Spline */
+.spline-bottom-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, transparent, #050010 85%);
+  pointer-events: none;
+  z-index: 10;
 }
 
 /* SECTIONS */
@@ -617,10 +625,11 @@ footer{
       </div>
     </div>
 
-    <!-- STRATEGIS: Peletakan Utama Elemen Spline 3D -->
     <div class="spline-container-wrap">
       <div class="spline-shadow-glow"></div>
       <spline-viewer class="spline-viewport" url="https://prod.spline.design/CIwPE-LdJyWbHWab/scene.splinecode"></spline-viewer>
+      <!-- Overlay untuk menyembunyikan tombol "Get in touch" bawaan Spline -->
+      <div class="spline-bottom-overlay"></div>
     </div>
   </div>
 </section>
@@ -879,18 +888,12 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-/* ---- SCRIPT FIX: Force membersihkan teks/elemen ui eksternal bawaan Spline yang membandel ---- */
 function clearSplineUI() {
   const splineViewer = document.querySelector('spline-viewer');
   if (splineViewer && splineViewer.shadowRoot) {
-    // Cari shadow root container internal
     const shadow = splineViewer.shadowRoot;
-    
-    // Target selector elemen UI teks bawaan Spline
     const uiElements = shadow.querySelectorAll('[id*="logo"], [class*="logo"], [id*="watermark"], [class*="watermark"], a, button, div[style*="position: absolute"]');
-    
     uiElements.forEach(el => {
-      // Validasi agar tidak salah menghapus canvas utama
       if (el.tagName !== 'CANVAS') {
         el.style.setProperty('display', 'none', 'important');
         el.style.setProperty('opacity', '0', 'important');
@@ -901,15 +904,12 @@ function clearSplineUI() {
   }
 }
 
-// Jalankan berkala saat aset ter-load sepenuhnya
 window.addEventListener('load', () => {
   clearSplineUI();
-  // Jalankan interval pendek untuk mengantisipasi lazy-load ui spline
   setTimeout(clearSplineUI, 500);
   setTimeout(clearSplineUI, 1500);
 });
 
-/* ---- ANIMASI SAAT MEMBUKA LINK (LOADING INTRO) ---- */
 window.addEventListener('DOMContentLoaded', () => {
   const introTl = gsap.timeline();
   
@@ -951,7 +951,6 @@ window.addEventListener('DOMContentLoaded', () => {
   );
 });
 
-/* ---- CARDS SCRUB TRIGGERS (EXPLORE SECTION) ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -50, opacity: 0 }, 
@@ -980,7 +979,6 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE ---- */
 gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
   gsap.fromTo(card,
     { 
@@ -1003,7 +1001,6 @@ gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
   );
 });
 
-/* ---- MOUSE PARALLAX FOR CARDS ---- */
 const cards = document.querySelectorAll('.card');
 cards.forEach((card, index) => {
   const avatar = card.querySelector('.pop-avatar');
@@ -1050,7 +1047,6 @@ cards.forEach((card, index) => {
   requestAnimationFrame(renderCombinedMotion);
 });
 
-/* ---- HERO 3D MOUSE PARALLAX ---- */
 const heroContent = document.querySelector('.hero-content');
 document.addEventListener('mousemove', (e) => {
   if (window.innerWidth > 968 && heroContent) {
@@ -1060,7 +1056,6 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-/* ---- CURSOR TRAIL ---- */
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
@@ -1084,7 +1079,6 @@ document.querySelectorAll('a, button, .char-card, .card, .contributor-card').for
   });
 });
 
-/* ---- BACKGROUND PARTICLES ---- */
 const pcanvas = document.getElementById('particles-canvas');
 const pctx = pcanvas.getContext('2d');
 function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
@@ -1112,7 +1106,6 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- INTERSECTION OBSERVER FOR GENERIC REVEAL (CHARACTERS) ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
@@ -1137,7 +1130,6 @@ var observer = new IntersectionObserver(function(entries) {
 
 reveals.forEach(function(el) { observer.observe(el); });
 
-/* ---- CHAR SELECT ---- */
 document.querySelectorAll('.char-card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
