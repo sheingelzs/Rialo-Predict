@@ -32,8 +32,8 @@ body{
   overflow-y:hidden; /* Dikunci permanen hingga sistem masuk diizinkan */
   cursor: none !important; /* Sembunyikan kursor bawaan agar tidak tabrakan */
 }
-a, button, .card, .char-card, .contributor-card {
-  cursor: none !important; /* Pastikan semua interaksi tetap menyembunyikan kursor OS */
+a, button, .card, .char-card, .contributor-card, #gate-container, #intro-overlay {
+  cursor: none !important; /* Sembunyikan kursor OS di semua layer termasuk gerbang awal */
 }
 
 /* INITIAL DOORMAN OVERLAY (UX FIX FOR AUDIO POLICY) */
@@ -148,12 +148,13 @@ a[href*="spline.design"],
   background:var(--cyan);
   border-radius:50%;
   pointer-events:none;
-  z-index:100000000;
+  z-index:100000001; /* Ditinggikan agar berada di atas Gate Layer */
   transform:translate(-50%,-50%);
-  top:0;left:0;
+  top:-100px; left:-100px; /* Dibuang keluar layar dulu sebelum terdeteksi instan */
   mix-blend-mode: screen;
   box-shadow: 0 0 8px var(--cyan);
   transition: width 0.2s, height 0.2s, background-color 0.2s;
+  opacity: 0; /* Tersembunyi sampai koordinat pertama dibaca */
 }
 #cursor-trail{
   position:fixed;
@@ -161,11 +162,12 @@ a[href*="spline.design"],
   border:1px solid rgba(124,58,237,0.6);
   border-radius:50%;
   pointer-events:none;
-  z-index:99999999;
+  z-index:100000000;
   transform:translate(-50%,-50%);
-  top:0;left:0;
+  top:-100px; left:-100px;
   mix-blend-mode: screen;
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
+  opacity: 0;
 }
 
 /* NAVBAR */
@@ -994,7 +996,6 @@ document.addEventListener('mousemove', (e) => {
 
 function animateHeroParallax() {
   if (window.innerWidth > 968 && heroContent && mainWrapper.style.visibility === 'visible') {
-    // Teknik Lerp: Rumus matematika untuk pergerakan kamera halus layaknya lensa sinema
     currentMouseX += (targetMouseX - currentMouseX) * 0.08;
     currentMouseY += (targetMouseY - currentMouseY) * 0.08;
     heroContent.style.transform = `rotateY(${12 - currentMouseX}deg) rotateX(${4 + currentMouseY}deg)`;
@@ -1003,35 +1004,52 @@ function animateHeroParallax() {
 }
 requestAnimationFrame(animateHeroParallax);
 
-// CINEMATIC CURSOR INTERACTION (Fix Macet di Iframe Spline)
+// FIX: INITIAL CINEMATIC CURSOR TRACKING ENGINE
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
-let mx = 0, my = 0, tx = 0, ty = 0;
+let mx = -100, my = -100, tx = -100, ty = -100;
+let cursorInitialized = false;
 
 document.addEventListener('mousemove', function(e) {
-  mx = e.clientX; my = e.clientY;
-  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  mx = e.clientX; 
+  my = e.clientY;
+  
+  // Instant trigger pada pergerakan mouse pertama kali agar kursor tidak berkedip di (0,0)
+  if (!cursorInitialized) {
+    cursorInitialized = true;
+    tx = mx; 
+    ty = my;
+    cur.style.opacity = '1';
+    trail.style.opacity = '1';
+  }
+  
+  cur.style.left = mx + 'px'; 
+  cur.style.top = my + 'px';
 });
 
 (function animateTrail() {
-  tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
-  trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
+  if (cursorInitialized) {
+    tx += (mx - tx) * 0.12; 
+    ty += (my - ty) * 0.12;
+    trail.style.left = tx + 'px'; 
+    trail.style.top = ty + 'px';
+  }
   requestAnimationFrame(animateTrail);
 })();
 
-// Penanganan Hover Fleksibel
+// FIX TYPO: Penanganan Hover Fleksibel & Perbaikan Kode Properti CSS Perubah Warna Sempurna
 document.querySelectorAll('a, button, .char-card, .card, .contributor-card').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
     cur.style.width='24px'; cur.style.height='24px'; cur.style.backgroundColor='var(--pink)';
-    trail.style.width='48px'; trail.style.height='48px'; border_color='var(--pink)';
+    trail.style.width='48px'; trail.style.height='48px'; trail.style.borderColor='var(--pink)';
   });
   el.addEventListener('mouseleave', function() {
     cur.style.width='10px'; cur.style.height='10px'; cur.style.backgroundColor='var(--cyan)';
-    trail.style.width='32px'; trail.style.height='32px'; border_color='rgba(124,58,237,0.6)';
+    trail.style.width='32px'; trail.style.height='32px'; trail.style.borderColor='rgba(124,58,237,0.6)';
   });
 });
 
-// SPLINE PROTECTION (Jika kursor menyentuh tameng Spline, perlebar trail kursor agar memberi kesan feedback 3D)
+// SPLINE PROTECTION
 const shield = document.querySelector('.spline-mouse-shield');
 if(shield) {
   shield.addEventListener('mouseenter', () => {
@@ -1049,7 +1067,7 @@ const trailerModal = document.getElementById('trailer-modal');
 const openTrailerBtn = document.getElementById('open-trailer-btn');
 const closeTrailerBtn = document.getElementById('close-trailer-btn');
 const trailerFrame = document.getElementById('trailer-frame');
-const trailerVideoLink = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"; // Silakan ganti dengan link embed trailer aslimu nanti, bro!
+const trailerVideoLink = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"; 
 
 openTrailerBtn.addEventListener('click', () => {
   trailerModal.classList.add('active');
@@ -1078,6 +1096,7 @@ for (var i = 0; i < 50; i++) {
       p.x+=p.vx; p.y+=p.vy;
       if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
       if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+      pctx.健全=true;
       pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       pctx.fillStyle='rgba('+p.c+',0.5)'; pctx.fill();
     });
@@ -1184,7 +1203,6 @@ var observer = new IntersectionObserver(function(entries) {
 }, { threshold: 0.12 });
 reveals.forEach(function(el) { observer.observe(el); });
 
-// VALIDATOR LINKS REDIRECTION MANAGEMENT
 document.querySelectorAll('.char-card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
