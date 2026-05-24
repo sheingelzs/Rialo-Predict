@@ -57,7 +57,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   opacity:0;transition:opacity .35s;
 }
 #wallet-modal-ovl.show{display:flex;}
-#wallet-modal-ovl.open { opacity:1; }
+#wallet-modal-ovl.open{opacity:1;}
 .wm-box{
   background:var(--dark2);
   border:1px solid rgba(124,58,237,.35);
@@ -182,7 +182,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .wb-token{display:flex;flex-direction:column;gap:2px;}
 .wb-sym{font-size:.65rem;color:var(--muted);letter-spacing:.1em;}
 
-/* Wallet status area inside bar */
 .wb-status-area{display:flex;align-items:center;gap:10px;}
 .wb-connect-prompt{
   padding:.45rem 1.2rem;
@@ -194,7 +193,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 }
 .wb-connect-prompt:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.6);color:#fff;}
 
-/* Faucet & Disconnect */
 .faucet-btn{
   padding:.5rem 1.2rem;
   background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.3);
@@ -204,6 +202,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
 }
 .faucet-btn:hover{background:rgba(0,232,122,.16);border-color:rgba(0,232,122,.5);}
+.faucet-btn:disabled{opacity:.4;cursor:not-allowed;}
 .disconnect-btn{
   padding:.45rem 1rem;
   background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);
@@ -225,12 +224,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .tick-chg{font-size:.7rem;margin-top:2px;}
 .up{color:var(--green);}.dn{color:var(--red);}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:livePulse 1.4s infinite;margin-right:4px;vertical-align:middle;}
+@keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
 /* ── STATS ── */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.2);margin-bottom:3rem;opacity:0;transform:translateY(30px);transition:all .8s ease;}
 .stats-grid.visible{opacity:1;transform:translateY(0);}
 .stat-box{background:var(--dark);padding:1.8rem 1.5rem;position:relative;overflow:hidden;}
 .stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:translateX(-100%);animation:scanLine 3s ease-in-out infinite;}
+@keyframes scanLine{0%,100%{transform:translateX(-100%);}50%{transform:translateX(100%);}}
 .stat-box:nth-child(2)::before{animation-delay:.5s;}
 .stat-box:nth-child(3)::before{animation-delay:1s;}
 .stat-box:nth-child(4)::before{animation-delay:1.5s;}
@@ -333,6 +334,31 @@ select.inp{appearance:none;cursor:pointer;}
 .chain-name{font-size:.85rem;font-weight:600;}
 .chain-net{font-size:.65rem;color:var(--muted);}
 .chain-arr{color:var(--cyan);font-size:1.2rem;animation:arrPulse 1.8s ease infinite;}
+@keyframes arrPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+/* ── STAKE METRICS ── */
+.s-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.2rem;}
+.s-metric{background:rgba(0,0,0,.3);border:1px solid rgba(124,58,237,.12);padding:12px 14px;}
+.s-mlabel{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.s-mval{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;}
+.s-msub{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+/* ── MONITOR / GAS ── */
+.gas-big{font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;color:var(--cyan);text-align:center;margin:1rem 0 .5rem;text-shadow:0 0 30px rgba(6,182,212,.4);}
+.gas-tiers{display:flex;gap:12px;margin-bottom:1.2rem;}
+.gtier{flex:1;text-align:center;padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(124,58,237,.12);}
+.gtier-lbl{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.gtier-val{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;}
+.gtier-t{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+/* ── LIVE FEED ── */
+.feed-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(124,58,237,.08);font-size:.78rem;}
+.feed-item:last-child{border-bottom:none;}
+.fd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fd-action{flex:1;color:var(--text);}
+.fd-chain{font-size:.65rem;color:var(--muted);white-space:nowrap;}
+.fd-amt{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;white-space:nowrap;}
+.fd-ago{font-size:.65rem;color:var(--muted);white-space:nowrap;}
 
 /* ── NETWORK GRID ── */
 .net-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
@@ -343,7 +369,15 @@ select.inp{appearance:none;cursor:pointer;}
 .net-tps{font-size:.6rem;color:var(--muted);margin-top:2px;font-family:'Orbitron',monospace;}
 
 /* ── TOAST ── */
-.nexus-toast{position:fixed;bottom:2rem;right:2rem;z-index:20000;padding:.8rem 1.5rem;background:rgba(5,0,16,.95);border:1px solid rgba(6,182,212,.4);color:var(--cyan);font-family:'Orbitron',monospace;font-size: 0.7rem;letter-spacing:2px;transition:opacity .4s;}
+#nexus-toast{
+  position:fixed;bottom:2rem;right:2rem;z-index:20000;
+  padding:.8rem 1.5rem;
+  background:rgba(5,0,16,.95);border:1px solid rgba(6,182,212,.4);
+  color:var(--cyan);font-family:'Orbitron',monospace;font-size:.7rem;
+  letter-spacing:2px;transition:opacity .4s,transform .4s;
+  opacity:0;transform:translateY(12px);pointer-events:none;
+}
+#nexus-toast.on{opacity:1;transform:translateY(0);}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
@@ -359,6 +393,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 <canvas id="particles-canvas"></canvas>
+<div id="nexus-toast"></div>
 
 <!-- ═══════════════ WALLET MODAL ═══════════════ -->
 <div id="wallet-modal-ovl" role="dialog" aria-modal="true" aria-label="Connect Wallet">
@@ -446,7 +481,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <li><a href="index.html#characters">Characters</a></li>
     <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
   </ul>
-  <button id="nav-wallet-btn" onclick="openWalletModal()">
+  <button id="nav-wallet-btn">
     <span class="nav-wallet-dot"></span>
     <span id="nav-wallet-label">Connect Wallet</span>
   </button>
@@ -475,7 +510,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 
   <!-- WALLET BAR -->
   <div class="wallet-bar reveal" id="wallet-bar">
-    <!-- Disconnected View -->
     <div id="wb-disconnected" style="display:flex;align-items:center;gap:14px;width:100%">
       <div style="font-size:.7rem;color:var(--muted);letter-spacing:.1em">
         <span style="font-family:'Orbitron',monospace;color:var(--muted);font-size:.65rem">NODE STATUS</span><br>
@@ -483,19 +517,18 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
       </div>
       <div class="wb-sep"></div>
       <div style="font-size:.75rem;color:var(--muted);letter-spacing:.05em">Hubungkan Web3 Extension kamu untuk membaca data saldo asli di Ethereum Sepolia Testnet.</div>
-      <button class="wb-connect-prompt" onclick="openWalletModal()" style="margin-left:auto">
+      <button class="wb-connect-prompt" id="wb-connect-btn" style="margin-left:auto">
         ⚡ Connect to Sepolia
       </button>
     </div>
-    <!-- Connected View -->
     <div id="wb-connected" style="display:none;align-items:center;gap:1.5rem;width:100%;flex-wrap:wrap">
       <div class="wb-token">
-        <div class="wb-label">Validator Account</div>
+        <div class="wb-sym" style="font-family:'Orbitron',monospace;font-size:.65rem;color:var(--muted)">VALIDATOR ACCOUNT</div>
         <div class="wb-val" id="wb-addr" style="font-size:.7rem;letter-spacing:.04em;color:var(--muted)">—</div>
       </div>
       <div class="wb-sep"></div>
       <div class="wb-token">
-        <div class="wb-sym" id="wb-native-label">Sepolia ETH</div>
+        <div class="wb-sym">Sepolia ETH</div>
         <div class="wb-val" id="wb-eth" style="color:var(--cyan)">0.0000</div>
       </div>
       <div class="wb-sep"></div>
@@ -513,8 +546,8 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="wb-sym">Active RPC Node</div>
         <div class="wb-val" id="wb-network" style="font-size:.7rem;color:var(--green)">—</div>
       </div>
-      <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()">⚡ Faucet Node</button>
-      <button class="disconnect-btn" onclick="disconnectWallet()">✕ Disconnect</button>
+      <button class="faucet-btn" id="faucet-btn" disabled>⚡ Faucet Node</button>
+      <button class="disconnect-btn" id="disconnect-btn">✕ Disconnect</button>
     </div>
   </div>
 
@@ -536,11 +569,11 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 
   <!-- TABS -->
   <div class="tabs-wrap reveal">
-    <button class="tab-btn active" onclick="switchTab('swap')">⇄ Token Swap</button>
-    <button class="tab-btn" onclick="switchTab('bridge')">⬡ Testnet Bridge</button>
-    <button class="tab-btn" onclick="switchTab('stake')">⬟ Stake Room</button>
-    <button class="tab-btn" onclick="switchTab('liquidity')">◈ Liquidity</button>
-    <button class="tab-btn" onclick="switchTab('monitor')">◉ Node Analytics</button>
+    <button class="tab-btn active" data-tab="swap">⇄ Token Swap</button>
+    <button class="tab-btn" data-tab="bridge">⬡ Testnet Bridge</button>
+    <button class="tab-btn" data-tab="stake">⬟ Stake Room</button>
+    <button class="tab-btn" data-tab="liquidity">◈ Liquidity</button>
+    <button class="tab-btn" data-tab="monitor">◉ Node Analytics</button>
   </div>
 
   <!-- ══ SWAP PANEL ══ -->
@@ -553,21 +586,21 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="field">
           <div class="field-label">You Pay</div>
           <div class="input-row">
-            <input class="inp" id="swap-from-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcSwap()"/>
-            <div class="token-pill" onclick="cycleFromToken()"><div class="tdot" id="from-dot" style="background:#6f7cff"></div><span id="from-sym">ETH</span> ▾</div>
+            <input class="inp" id="swap-from-amt" type="number" placeholder="0.00" min="0" step="any"/>
+            <div class="token-pill" id="from-token-pill"><div class="tdot" id="from-dot" style="background:#6f7cff"></div><span id="from-sym">ETH</span> ▾</div>
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:4px">≈ <span id="swap-from-usd">$0.00</span> · Balance: <span id="swap-from-bal" style="color:var(--cyan)">0.0000</span> <span id="swap-from-bal-sym">ETH</span></div>
         </div>
-        <div class="swap-div"><button class="flip-btn" onclick="flipTokens()">⇅</button></div>
+        <div class="swap-div"><button class="flip-btn" id="flip-btn">⇅</button></div>
         <div class="field">
           <div class="field-label">You Receive</div>
           <div class="input-row">
             <input class="inp" id="swap-to-amt" type="text" placeholder="0.00" readonly style="opacity:.6"/>
-            <div class="token-pill" onclick="cycleToToken()"><div class="tdot" id="to-dot" style="background:#26a17b"></div><span id="to-sym">USDC</span> ▾</div>
+            <div class="token-pill" id="to-token-pill"><div class="tdot" id="to-dot" style="background:#26a17b"></div><span id="to-sym">USDC</span> ▾</div>
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:4px">≈ <span id="swap-to-usd">$0.00</span> · Balance: <span id="swap-to-bal" style="color:var(--cyan)">0.00</span> <span id="swap-to-bal-sym">USDC</span></div>
         </div>
-        <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()">Swap Assets</button>
+        <button class="btn-main btn-purple" id="swap-btn">Swap Assets</button>
         <div class="result-box" id="swap-result"></div>
       </div>
       <div class="infra-card">
@@ -583,7 +616,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div style="font-size:.65rem;color:var(--muted);margin-top:8px;text-align:right">Updated: <span id="price-update-time">—</span></div>
       </div>
     </div>
-    <!-- RE-IMPLEMENTED: Swap Session History Dom Placement -->
     <div class="infra-card" style="margin-top:1.5rem">
       <div class="card-corner tl"></div>
       <div class="card-title">Swap History</div>
@@ -606,15 +638,15 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="card-title">Cross-Chain Bridge Relay</div>
         <div class="card-sub">// From Ethereum Sepolia to alternate chains</div>
         <div class="chain-row">
-          <div class="chain-sel" onclick="cycleBridgeFrom()"><div class="chain-icon" id="bridge-from-icon">🔷</div><div><div class="chain-name" id="bridge-from-name">Sepolia</div><div class="chain-net">EVM · Testnet</div></div></div>
+          <div class="chain-sel" id="bridge-from-sel"><div class="chain-icon" id="bridge-from-icon">🔷</div><div><div class="chain-name" id="bridge-from-name">Sepolia</div><div class="chain-net">EVM · Testnet</div></div></div>
           <div class="chain-arr">→</div>
-          <div class="chain-sel" onclick="cycleBridgeTo()"><div class="chain-icon" id="bridge-to-icon">🟣</div><div><div class="chain-name" id="bridge-to-name">Polygon</div><div class="chain-net">EVM · Mainnet</div></div></div>
+          <div class="chain-sel" id="bridge-to-sel"><div class="chain-icon" id="bridge-to-icon">🟣</div><div><div class="chain-name" id="bridge-to-name">Polygon</div><div class="chain-net">EVM · Mainnet</div></div></div>
         </div>
         <div class="field">
           <div class="field-label">Amount to Bridge</div>
           <div class="input-row">
-            <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()"/>
-            <button class="token-pill" onclick="bridgeMax()">MAX</button>
+            <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any"/>
+            <button class="token-pill" id="bridge-max-btn">MAX</button>
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:4px">Available: <span id="bridge-eth-bal" style="color:var(--cyan)">0.0000</span> Sepolia ETH · <span id="bridge-usd-val">≈ $0.00</span></div>
         </div>
@@ -628,7 +660,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
             </tbody>
           </table>
         </div>
-        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()">Initiate Bridge Protocol</button>
+        <button class="btn-main btn-cyan" id="bridge-btn">Initiate Bridge Protocol</button>
         <div class="result-box" id="bridge-result"></div>
       </div>
       <div class="infra-card">
@@ -659,18 +691,18 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
           <div class="s-metric"><div class="s-mlabel">Total Value</div><div class="s-mval" id="stake-total-usd">$0.00</div><div class="s-msub">USD value</div></div>
         </div>
         <div class="pool-list">
-          <div class="pool-row selected" data-apy="0.084" onclick="selectPool(this)"><div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div><span class="pname">Sepolia Staking Pool</span><span class="papy">8.4% APY</span><span class="ptvl">$14M TVL</span></div>
+          <div class="pool-row selected" data-apy="0.084"><div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div><span class="pname">Sepolia Staking Pool</span><span class="papy">8.4% APY</span><span class="ptvl">$14M TVL</span></div>
         </div>
         <div class="field-label">Amount to Stake</div>
-        <div class="input-row" style="margin-bottom:.5rem"><input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()"/></div>
+        <div class="input-row" style="margin-bottom:.5rem"><input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any"/></div>
         <div class="pct-row">
-          <button class="pct-btn" onclick="stakeMax(this,25)">25%</button>
-          <button class="pct-btn" onclick="stakeMax(this,50)">50%</button>
-          <button class="pct-btn" onclick="stakeMax(this,75)">75%</button>
-          <button class="pct-btn" onclick="stakeMax(this,100)">MAX</button>
+          <button class="pct-btn" data-pct="25">25%</button>
+          <button class="pct-btn" data-pct="50">50%</button>
+          <button class="pct-btn" data-pct="75">75%</button>
+          <button class="pct-btn" data-pct="100">MAX</button>
         </div>
         <div style="font-size:.7rem;color:var(--muted);margin-bottom:.5rem">Preview: <span id="stake-reth-preview" style="color:var(--gold)">0.0000</span> rETH · Annual: <span id="stake-annual-preview" style="color:var(--green)">0.0000</span> ETH</div>
-        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()">Deposit to Validator Room</button>
+        <button class="btn-main btn-green" id="stake-btn">Deposit to Validator Room</button>
         <div class="result-box" id="stake-result"></div>
       </div>
       <div class="infra-card">
@@ -703,15 +735,16 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
         <div class="card-title">Sandbox LP Module</div>
-        <div class="input-row" style="margin-top:10px; margin-bottom:10px;">
-          <select class="inp" id="liq-pair-sel" onchange="calcLiq()">
+        <div class="card-sub">// Inject dual-sided liquidity into Sepolia pools</div>
+        <div class="input-row" style="margin-top:10px;margin-bottom:10px;">
+          <select class="inp" id="liq-pair-sel">
             <option value="ETH/MATIC">Sepolia ETH / MATIC (0.30%)</option>
             <option value="ETH/USDT">Sepolia ETH / USDT (0.05%)</option>
           </select>
         </div>
-        <div class="input-row"><input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()"/></div>
-        <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">Required Paired Pair: <span id="liq-paired-amt" style="color:var(--gold)">—</span> · LP tokens: <span id="liq-lp-tokens" style="color:var(--green)">—</span></div>
-        <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()">Supply Liquidity Pool</button>
+        <div class="input-row"><input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any"/></div>
+        <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">Required Pair: <span id="liq-paired-amt" style="color:var(--gold)">—</span> · LP tokens: <span id="liq-lp-tokens" style="color:var(--green)">—</span></div>
+        <button class="btn-main btn-gold" id="liq-btn">Supply Liquidity Pool</button>
         <div class="result-box" id="liq-result"></div>
       </div>
       <div class="infra-card">
@@ -739,13 +772,15 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
         <div class="card-title">JSON-RPC Node Sync Vital Signs</div>
+        <div class="card-sub">// Live gas oracle — Sepolia base fee tracker</div>
         <div class="gas-big" id="gas-display">18</div>
+        <div style="text-align:center;font-size:.6rem;color:var(--muted);letter-spacing:.12em;margin-bottom:1rem">GWEI BASE FEE</div>
         <div class="gas-tiers">
           <div class="gtier"><div class="gtier-lbl">Slow</div><div class="gtier-val" id="gas-slow" style="color:#7ab4ff">15</div><div class="gtier-t">~5 min</div></div>
           <div class="gtier"><div class="gtier-lbl">Average</div><div class="gtier-val" id="gas-avg" style="color:var(--cyan)">18</div><div class="gtier-t">~1 min</div></div>
           <div class="gtier"><div class="gtier-lbl">Fast</div><div class="gtier-val" id="gas-fast" style="color:var(--green)">23</div><div class="gtier-t">~15 sec</div></div>
         </div>
-        <div style="position:relative;height:60px;width:100%"><canvas id="gas-chart"></canvas></div>
+        <div style="position:relative;height:70px;width:100%"><canvas id="gas-chart"></canvas></div>
       </div>
       <div class="infra-card">
         <div class="card-corner tl"></div>
@@ -765,84 +800,201 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── KURSOR INTERACTIVE LAYER ──
-const cur=document.getElementById('cursor'),trail=document.getElementById('cursor-trail');
-let mx=0,my=0,tx=0,ty=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function at(){tx+=(mx-tx)*.13;ty+=(my-ty)*.13;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(at);})();
-
-// ── BACKGROUND PARTICLES LAYER ──
-const pcanvas=document.getElementById('particles-canvas'),pctx=pcanvas.getContext('2d');
-function rC(){pcanvas.width=window.innerWidth;pcanvas.height=window.innerHeight;}
-rC();window.addEventListener('resize',rC);
-const pts=[];
-for(let i=0;i<60;i++)pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4,c:'6,182,212'});
-(function dp(){pctx.clearRect(0,0,pcanvas.width,pcanvas.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>pcanvas.width)p.vx*=-1;if(p.y<0||p.y>pcanvas.height)p.vy*=-1;pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle='rgba('+p.c+',.45)';pctx.fill();});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){pctx.beginPath();pctx.moveTo(pts[i].x,pts[i].y);pctx.lineTo(pts[j].x,pts[j].y);pctx.strokeStyle='rgba(6,182,212,'+(0.12*(1-d/115))+')';pctx.lineWidth=.5;pctx.stroke();}}requestAnimationFrame(dp);})();
-
-// ── INTERSECTION OBSERVER REVEAL ──
-const obsRev=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.12});
-document.querySelectorAll('.reveal,.infra-card,.stats-grid').forEach(el=>obsRev.observe(el));
-
-// ════════ SEPOLIA WEB3 ARCHITECTURE CORE LOGIC ════════
-let isWalletConnected = false;
-let connectedWallet = { address: null, shortAddr: null, providerName: null, chainId: null, provider: null, isDemo: false };
-let walletInternalState = { eth: 0, usdc: 0, reth: 0, stakedEth: 0 };
-let faucetUsed = false;
-const SEPOLIA_CHAIN_ID_HEX = "0xaa36a7"; 
-
-const CHAIN_NAMES = {
-  1:'Ethereum Mainnet', 11155111:'Ethereum Sepolia', 137:'Polygon', 10:'Optimism',
-  42161:'Arbitrum', 8453:'Base', 43114:'Avalanche', 56:'BSC'
-};
-
-function shortAddr(a){ return a.slice(0,6)+'…'+a.slice(-4); }
-
-function openWalletModal(){
-  const ovl=document.getElementById('wallet-modal-ovl');
-  ovl.style.display='flex'; detectInstalledWallets();
-  requestAnimationFrame(()=>ovl.classList.add('open'));
+// ══════════════════════════════════════════
+//  UTILITY FUNCTIONS
+// ══════════════════════════════════════════
+function fmt(n, d) {
+  if (isNaN(n) || n === null || n === undefined) return '0';
+  return parseFloat(n).toFixed(d !== undefined ? d : 4);
 }
-function closeWalletModal(){
-  const ovl=document.getElementById('wallet-modal-ovl'); ovl.classList.remove('open');
-  setTimeout(()=>{ovl.style.display='none';},400);
+function fmtUSD(n) {
+  if (isNaN(n)) return '$0.00';
+  return '$' + parseFloat(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-document.getElementById('wm-close-btn').addEventListener('click',closeWalletModal);
-
-function detectInstalledWallets(){
-  const eth = window.ethereum;
-  const hasMetaMask = !!(eth && (eth.isMetaMask||eth.providers?.some?.(p=>p.isMetaMask)));
-  setBadge('badge-metamask', hasMetaMask?'Detected':'Not installed', hasMetaMask);
-  setBadge('badge-rabby', !!(eth && eth.isRabby)?'Detected':'Extension missing', !!(eth && eth.isRabby));
-  setBadge('badge-okx', !!window.okxwallet?'Detected':'Extension missing', !!window.okxwallet);
-  setBadge('badge-phantom', !!window.phantom?.ethereum?'Detected':'Extension missing', !!window.phantom?.ethereum);
+function randHex() {
+  var h = '0x';
+  for (var i = 0; i < 12; i++) h += Math.floor(Math.random() * 16).toString(16);
+  return h + '…' + Math.floor(Math.random() * 0xffff).toString(16).padStart(4,'0');
 }
-function setBadge(id, text, ok){
-  const el=document.getElementById(id);if(!el)return;
-  el.textContent=text; el.className='wo-badge '+(ok?'badge-ok':'badge-none');
+function randAddr() {
+  var h = '0x';
+  for (var i = 0; i < 6; i++) h += Math.floor(Math.random() * 16).toString(16);
+  h += '…';
+  for (var j = 0; j < 4; j++) h += Math.floor(Math.random() * 16).toString(16);
+  return h;
+}
+function nowTime() {
+  var d = new Date();
+  return d.getHours().toString().padStart(2,'0') + ':' +
+         d.getMinutes().toString().padStart(2,'0') + ':' +
+         d.getSeconds().toString().padStart(2,'0');
+}
+function shortAddr(a) {
+  if (!a) return '—';
+  return a.slice(0, 6) + '…' + a.slice(-4);
 }
 
-// SELECTION BINDINGS
-document.getElementById('opt-metamask').addEventListener('click',()=>{
-  const eth=window.ethereum; if(!eth){showToast('Install MetaMask Extension');return;}
-  const provider = eth.providers?.find?.(p=>p.isMetaMask) || eth; connectSepoliaEVM(provider,'MetaMask');
+// ── TOAST ──
+var _toastTimer = null;
+function showToast(msg, dur) {
+  var el = document.getElementById('nexus-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function () { el.classList.remove('on'); }, dur || 3000);
+}
+
+// ── RESULT BOX ──
+function showResult(id, type, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = type === 'load' ? 'flex' : 'block';
+  el.className = 'result-box result-' + type;
+  if (type === 'load') {
+    el.innerHTML = '<div class="spinner"></div><span>' + msg + '</span>';
+  } else {
+    el.textContent = msg;
+  }
+}
+
+// ══════════════════════════════════════════
+//  CURSOR
+// ══════════════════════════════════════════
+var _cur = document.getElementById('cursor');
+var _trail = document.getElementById('cursor-trail');
+var _mx = 0, _my = 0, _tx = 0, _ty = 0;
+document.addEventListener('mousemove', function (e) {
+  _mx = e.clientX; _my = e.clientY;
+  _cur.style.left = _mx + 'px'; _cur.style.top = _my + 'px';
 });
-document.getElementById('opt-rabby').addEventListener('click',()=>{ if(!window.ethereum?.isRabby){showToast('Rabby Node undetected');return;} connectSepoliaEVM(window.ethereum,'Rabby'); });
-document.getElementById('opt-okx').addEventListener('click',()=>{ if(!window.okxwallet){showToast('OKX Component absent');return;} connectSepoliaEVM(window.okxwallet,'OKX'); });
-document.getElementById('opt-phantom').addEventListener('click',()=>{ if(!window.phantom?.ethereum){showToast('Phantom layer missing');return;} connectSepoliaEVM(window.phantom.ethereum,'Phantom'); });
-document.getElementById('opt-demo').addEventListener('click',()=>{ closeWalletModal(); startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96','Sepolia Sim Node',11155111,true); });
+(function animTrail() {
+  _tx += (_mx - _tx) * 0.13;
+  _ty += (_my - _ty) * 0.13;
+  _trail.style.left = _tx + 'px'; _trail.style.top = _ty + 'px';
+  requestAnimationFrame(animTrail);
+})();
 
-async function connectSepoliaEVM(provider, name){
+// ══════════════════════════════════════════
+//  PARTICLES CANVAS
+// ══════════════════════════════════════════
+var pcanvas = document.getElementById('particles-canvas');
+var pctx = pcanvas.getContext('2d');
+function resizeCanvas() { pcanvas.width = window.innerWidth; pcanvas.height = window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+var pts = [];
+for (var pi = 0; pi < 60; pi++) {
+  pts.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35, r: Math.random() * 1.8 + .4 });
+}
+(function drawParticles() {
+  pctx.clearRect(0, 0, pcanvas.width, pcanvas.height);
+  pts.forEach(function (p) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > pcanvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > pcanvas.height) p.vy *= -1;
+    pctx.beginPath(); pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pctx.fillStyle = 'rgba(6,182,212,.45)'; pctx.fill();
+  });
+  for (var i = 0; i < pts.length; i++) {
+    for (var j = i + 1; j < pts.length; j++) {
+      var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 115) {
+        pctx.beginPath(); pctx.moveTo(pts[i].x, pts[i].y); pctx.lineTo(pts[j].x, pts[j].y);
+        pctx.strokeStyle = 'rgba(6,182,212,' + (0.12 * (1 - d / 115)) + ')'; pctx.lineWidth = .5; pctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+})();
+
+// ══════════════════════════════════════════
+//  SCROLL REVEAL
+// ══════════════════════════════════════════
+var obsRev = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .12 });
+document.querySelectorAll('.reveal,.infra-card,.stats-grid').forEach(function (el) { obsRev.observe(el); });
+
+// ══════════════════════════════════════════
+//  WALLET STATE
+// ══════════════════════════════════════════
+var isWalletConnected = false;
+var connectedWallet = { address: null, shortAddr: null, providerName: null, chainId: null, provider: null, isDemo: false };
+var walletState = { eth: 0, usdc: 0, reth: 0, stakedEth: 0 };
+var faucetUsed = false;
+var SEPOLIA_CHAIN_ID_HEX = '0xaa36a7';
+
+// ══════════════════════════════════════════
+//  WALLET MODAL
+// ══════════════════════════════════════════
+function openWalletModal() {
+  var ovl = document.getElementById('wallet-modal-ovl');
+  ovl.style.display = 'flex';
+  detectInstalledWallets();
+  requestAnimationFrame(function () { ovl.classList.add('open'); });
+}
+function closeWalletModal() {
+  var ovl = document.getElementById('wallet-modal-ovl');
+  ovl.classList.remove('open');
+  setTimeout(function () { ovl.style.display = 'none'; }, 400);
+}
+
+function detectInstalledWallets() {
+  var eth = window.ethereum;
+  var hasMM = !!(eth && (eth.isMetaMask || (eth.providers && eth.providers.some(function (p) { return p.isMetaMask; }))));
+  setBadge('badge-metamask', hasMM ? 'Detected' : 'Not installed', hasMM);
+  setBadge('badge-rabby', !!(eth && eth.isRabby) ? 'Detected' : 'Extension missing', !!(eth && eth.isRabby));
+  setBadge('badge-okx', !!window.okxwallet ? 'Detected' : 'Extension missing', !!window.okxwallet);
+  setBadge('badge-phantom', !!(window.phantom && window.phantom.ethereum) ? 'Detected' : 'Extension missing', !!(window.phantom && window.phantom.ethereum));
+}
+function setBadge(id, text, ok) {
+  var el = document.getElementById(id); if (!el) return;
+  el.textContent = text;
+  el.className = 'wo-badge ' + (ok ? 'badge-ok' : 'badge-none');
+}
+
+// Event bindings — wallet modal
+document.getElementById('wm-close-btn').addEventListener('click', closeWalletModal);
+document.getElementById('wallet-modal-ovl').addEventListener('click', function (e) { if (e.target === this) closeWalletModal(); });
+
+document.getElementById('opt-metamask').addEventListener('click', function () {
+  var eth = window.ethereum; if (!eth) { showToast('Install MetaMask Extension'); return; }
+  var provider = (eth.providers && eth.providers.find(function (p) { return p.isMetaMask; })) || eth;
+  connectSepoliaEVM(provider, 'MetaMask');
+});
+document.getElementById('opt-rabby').addEventListener('click', function () {
+  if (!window.ethereum || !window.ethereum.isRabby) { showToast('Rabby Node undetected'); return; }
+  connectSepoliaEVM(window.ethereum, 'Rabby');
+});
+document.getElementById('opt-okx').addEventListener('click', function () {
+  if (!window.okxwallet) { showToast('OKX Component absent'); return; }
+  connectSepoliaEVM(window.okxwallet, 'OKX');
+});
+document.getElementById('opt-phantom').addEventListener('click', function () {
+  if (!window.phantom || !window.phantom.ethereum) { showToast('Phantom layer missing'); return; }
+  connectSepoliaEVM(window.phantom.ethereum, 'Phantom');
+});
+document.getElementById('opt-demo').addEventListener('click', function () {
+  closeWalletModal();
+  startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96', 'Sepolia Sim Node', 11155111, true, null);
+});
+
+// keyboard accessibility for wallet opts
+document.querySelectorAll('.wallet-opt').forEach(function (el) {
+  el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') el.click(); });
+});
+
+// ── EVM CONNECT ──
+async function connectSepoliaEVM(provider, name) {
   closeWalletModal();
   try {
-    showToast('Pemicu autentikasi Web3...');
-    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    showToast('Pemicu autentikasi Web3…');
+    var accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (!accounts || !accounts.length) { showToast('No accounts returned'); return; }
     try {
-      await provider.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
-      });
-    } catch (switchError) {
-      if (switchError.code === 4902) {
+      await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }] });
+    } catch (switchErr) {
+      if (switchErr.code === 4902) {
         try {
           await provider.request({
             method: 'wallet_addEthereumChain',
@@ -852,439 +1004,631 @@ async function connectSepoliaEVM(provider, name){
               nativeCurrency: { name: 'Sepolia ETH', symbol: 'ETH', decimals: 18 },
               rpcUrls: ['https://rpc.ankr.com/eth_sepolia'],
               blockExplorerUrls: ['https://sepolia.etherscan.io']
-            }],
+            }]
           });
-        } catch (addError) {
-          showToast('⚠ Gagal menambahkan konfigurasi node Sepolia');
-          return;
+        } catch (addErr) {
+          showToast('⚠ Gagal menambahkan konfigurasi node Sepolia'); return;
         }
-      } else {
-        showToast('⚠ Handshake jaringan Sepolia ditolak dompet');
-        return;
+      } else if (switchErr.code === 4001) {
+        showToast('⚠ Handshake jaringan ditolak — silakan switch ke Sepolia'); return;
       }
     }
     startScanAnimation(accounts[0], name, 11155111, false, provider);
   } catch (err) {
-    showToast('Handshake JSON-RPC ditolak oleh pengguna');
+    if (err.code === 4001) showToast('Koneksi dibatalkan oleh pengguna');
+    else showToast('Handshake JSON-RPC gagal');
   }
 }
 
-const SCAN_PHASES=['Membuka enkripsi parameter node…','Mengecek Jaringan Sepolia Testnet…','Sinkronisasi saldo Sepolia ETH…','Koneksi Stabil ✓'];
-let _scanTimer=null;
-function startScanAnimation(addr,walletName,chainId,isDemo,provider=null){
-  const ovl=document.getElementById('scan-ovl');
-  const addrEl=document.getElementById('scan-addr-disp');
-  const phaseEl=document.getElementById('scan-phase-disp');
-  const barEl=document.getElementById('scan-bar-fill');
-  ovl.style.display='flex'; requestAnimationFrame(()=>ovl.classList.add('open'));
-  if(addrEl)addrEl.textContent=shortAddr(addr);
-  let idx=0;
-  function nextPhase(){
-    if(idx>=SCAN_PHASES.length){
-      setTimeout(()=>{ closeScanAnimation(); finalizeConnection(addr,walletName,chainId,isDemo,provider); },300);
+// ── SCAN ANIMATION ──
+var _scanTimer = null;
+var SCAN_PHASES = [
+  'Membuka enkripsi parameter node…',
+  'Mengecek Jaringan Sepolia Testnet…',
+  'Sinkronisasi saldo Sepolia ETH…',
+  'Koneksi Stabil ✓'
+];
+
+function startScanAnimation(addr, walletName, chainId, isDemo, provider) {
+  var ovl = document.getElementById('scan-ovl');
+  var addrEl = document.getElementById('scan-addr-disp');
+  var phaseEl = document.getElementById('scan-phase-disp');
+  var barEl = document.getElementById('scan-bar-fill');
+  ovl.style.display = 'flex';
+  requestAnimationFrame(function () { ovl.classList.add('open'); });
+  if (addrEl) addrEl.textContent = shortAddr(addr);
+  var idx = 0;
+  function nextPhase() {
+    if (idx >= SCAN_PHASES.length) {
+      setTimeout(function () {
+        closeScanAnimation();
+        finalizeConnection(addr, walletName, chainId, isDemo, provider);
+      }, 300);
       return;
     }
-    if(phaseEl)phaseEl.textContent=SCAN_PHASES[idx];
-    if(barEl)barEl.style.width=Math.round((idx+1)/SCAN_PHASES.length*100)+'%';
-    idx++; _scanTimer=setTimeout(nextPhase,300);
+    if (phaseEl) phaseEl.textContent = SCAN_PHASES[idx];
+    if (barEl) barEl.style.width = Math.round((idx + 1) / SCAN_PHASES.length * 100) + '%';
+    idx++;
+    _scanTimer = setTimeout(nextPhase, 420);
   }
   nextPhase();
 }
-function closeScanAnimation(){
-  const ovl=document.getElementById('scan-ovl'); ovl.classList.remove('open');
-  setTimeout(()=>ovl.style.display='none',400); clearTimeout(_scanTimer);
+function closeScanAnimation() {
+  var ovl = document.getElementById('scan-ovl');
+  ovl.classList.remove('open');
+  setTimeout(function () { ovl.style.display = 'none'; }, 400);
+  clearTimeout(_scanTimer);
+  var barEl = document.getElementById('scan-bar-fill');
+  if (barEl) barEl.style.width = '0%';
 }
-document.getElementById('scan-cancel-btn').addEventListener('click',()=> { closeScanAnimation(); showToast('Koneksi dibatalkan'); });
+document.getElementById('scan-cancel-btn').addEventListener('click', function () {
+  closeScanAnimation();
+  showToast('Koneksi dibatalkan');
+});
 
-async function finalizeConnection(addr,walletName,chainId,isDemo,provider){
+// ── FINALIZE CONNECTION ──
+async function finalizeConnection(addr, walletName, chainId, isDemo, provider) {
   isWalletConnected = true;
-  connectedWallet={ address:addr, shortAddr:shortAddr(addr), providerName:walletName, chainId, chainName:'Ethereum Sepolia', provider, isDemo };
+  connectedWallet = { address: addr, shortAddr: shortAddr(addr), providerName: walletName, chainId: chainId, chainName: 'Ethereum Sepolia', provider: provider, isDemo: isDemo };
 
-  const fbtn = document.getElementById('faucet-btn');
-  if(isDemo){
-    walletInternalState.eth=5.7512;
-    walletInternalState.usdc=2500.00;
-    if(fbtn) { fbtn.disabled = false; fbtn.textContent = "⚡ Claim Demo ETH"; }
+  var fbtn = document.getElementById('faucet-btn');
+  if (isDemo) {
+    walletState.eth = 5.7512;
+    walletState.usdc = 2500.00;
+    walletState.reth = 0;
+    walletState.stakedEth = 0;
+    if (fbtn) { fbtn.disabled = false; fbtn.textContent = '⚡ Claim Demo ETH'; fbtn.onclick = claimFaucet; }
   } else {
-    await querySepoliaRealtimeBalance();
-    walletInternalState.usdc = 0.00;
-    if(fbtn) { fbtn.disabled = false; fbtn.textContent = "🌐 Open Third-Party Faucet"; }
+    await querySepoliaBalance();
+    walletState.usdc = 0;
+    walletState.reth = 0;
+    walletState.stakedEth = 0;
+    if (fbtn) {
+      fbtn.disabled = false;
+      fbtn.textContent = '🌐 Open Faucet';
+      fbtn.onclick = function () {
+        window.open('https://sepoliafaucet.com/', '_blank');
+        showToast('Membuka Sepolia Faucet resmi…');
+      };
+    }
   }
 
   onWalletConnected();
 
-  if(provider && !isDemo){
-    provider.on?.('accountsChanged', async accounts=>{
-      if(!accounts||!accounts.length){disconnectWallet();return;}
-      connectedWallet.address=accounts[0]; connectedWallet.shortAddr=shortAddr(accounts[0]);
-      document.getElementById('wb-addr').textContent=connectedWallet.shortAddr;
-      document.getElementById('nav-wallet-label').textContent=connectedWallet.shortAddr;
-      await querySepoliaRealtimeBalance();
-    });
-    provider.on?.('chainChanged', async () => {
-      await querySepoliaRealtimeBalance();
-    });
+  // Provider event listeners
+  if (provider && !isDemo) {
+    if (provider.on) {
+      provider.on('accountsChanged', async function (accounts) {
+        if (!accounts || !accounts.length) { disconnectWallet(); return; }
+        connectedWallet.address = accounts[0];
+        connectedWallet.shortAddr = shortAddr(accounts[0]);
+        document.getElementById('wb-addr').textContent = connectedWallet.shortAddr;
+        document.getElementById('nav-wallet-label').textContent = connectedWallet.shortAddr;
+        await querySepoliaBalance();
+      });
+      provider.on('chainChanged', async function () { await querySepoliaBalance(); });
+    }
   }
 }
 
-async function querySepoliaRealtimeBalance() {
+// ── QUERY REAL SEPOLIA BALANCE ──
+async function querySepoliaBalance() {
   if (!connectedWallet.address || connectedWallet.isDemo || !connectedWallet.provider) return;
   try {
-    const hexBal = await connectedWallet.provider.request({
+    var hexBal = await connectedWallet.provider.request({
       method: 'eth_getBalance',
       params: [connectedWallet.address, 'latest']
     });
-    const wei = parseInt(hexBal, 16);
-    walletInternalState.eth = wei / 1e18; 
+    walletState.eth = parseInt(hexBal, 16) / 1e18;
     updateWalletBar();
     calcSwap();
-  } catch(e) { console.error("Gagal menarik saldo Sepolia asli:", e); }
+  } catch (e) {
+    console.warn('Could not fetch Sepolia balance:', e);
+  }
 }
 
-function onWalletConnected(){
-  const {shortAddr:sa,providerName,chainName}=connectedWallet;
+// ── ON CONNECTED UI ──
+function onWalletConnected() {
   document.getElementById('nav-wallet-btn').classList.add('connected');
-  document.getElementById('nav-wallet-label').textContent=sa;
-  document.getElementById('wb-disconnected').style.display='none';
-  document.getElementById('wb-connected').style.display='flex';
+  document.getElementById('nav-wallet-label').textContent = connectedWallet.shortAddr;
+  document.getElementById('wb-disconnected').style.display = 'none';
+  document.getElementById('wb-connected').style.display = 'flex';
   document.getElementById('wallet-bar').classList.add('connected-state');
-  document.getElementById('wb-addr').textContent=sa;
-  document.getElementById('wb-network').textContent=chainName;
+  document.getElementById('wb-addr').textContent = connectedWallet.shortAddr;
+  document.getElementById('wb-network').textContent = connectedWallet.chainName;
 
   updateWalletBar();
   updateStakeTable();
   buildSwapHistory();
   buildBridgeFeed();
   buildLiqPositions();
+  showToast('✓ ' + connectedWallet.providerName + ' connected to Sepolia');
 }
 
-function disconnectWallet(){
+// ── DISCONNECT ──
+function disconnectWallet() {
   isWalletConnected = false;
-  connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,chainName:null,provider:null,isDemo:false};
-  walletInternalState={eth:0,usdc:0,reth:0,stakedEth:0}; faucetUsed=false;
-  swapHistory=[]; stakeHistory=[]; liqPositions=[]; bridgeFeedData=[];
+  connectedWallet = { address: null, shortAddr: null, providerName: null, chainId: null, provider: null, isDemo: false };
+  walletState = { eth: 0, usdc: 0, reth: 0, stakedEth: 0 };
+  faucetUsed = false;
+  swapHistory = []; stakeHistory = []; liqPositions = []; bridgeFeedData = [];
 
-  const navBtn=document.getElementById('nav-wallet-btn');
-  navBtn.classList.remove('connected');
-  document.getElementById('nav-wallet-label').textContent='Connect Wallet';
-  document.getElementById('wb-connected').style.display='none';
-  document.getElementById('wb-disconnected').style.display='flex';
+  document.getElementById('nav-wallet-btn').classList.remove('connected');
+  document.getElementById('nav-wallet-label').textContent = 'Connect Wallet';
+  document.getElementById('wb-connected').style.display = 'none';
+  document.getElementById('wb-disconnected').style.display = 'flex';
   document.getElementById('wallet-bar').classList.remove('connected-state');
-  
-  const fbtn=document.getElementById('faucet-btn');
-  if(fbtn){fbtn.textContent='⚡ Faucet'; fbtn.disabled=true;}
 
-  updateWalletBar(); 
-  calcSwap(); 
-  updateStakeTable();
-  buildSwapHistory();
-  buildBridgeFeed();
-  buildLiqPositions();
+  var fbtn = document.getElementById('faucet-btn');
+  if (fbtn) { fbtn.textContent = '⚡ Faucet Node'; fbtn.disabled = true; fbtn.onclick = null; }
+
+  updateWalletBar(); calcSwap(); updateStakeTable();
+  buildSwapHistory(); buildBridgeFeed(); buildLiqPositions();
   showToast('Node disconnected');
 }
 
-function claimFaucet(){
-  if(!isWalletConnected) return;
-  if(!connectedWallet.isDemo) {
-    showToast('Membuka Sepolia Faucet resmi di tab baru...');
-    window.open('https://sepoliafaucet.com/', '_blank');
-  } else {
-    if(faucetUsed){showToast('Batas klaim demo tercapai untuk sesi ini.');return;}
-    walletInternalState.eth += 2.0000;
-    walletInternalState.usdc += 500.00;
-    faucetUsed=true;
-    const btn=document.getElementById('faucet-btn');
-    if(btn){btn.textContent='✓ Deposited'; btn.disabled=true;}
-    updateWalletBar(); showToast('✓ +2.0000 Sepolia ETH dimasukkan ke sandbox!');
-  }
+// ── FAUCET ──
+function claimFaucet() {
+  if (!isWalletConnected) return;
+  if (faucetUsed) { showToast('Batas klaim demo tercapai untuk sesi ini.'); return; }
+  walletState.eth += 2.0;
+  walletState.usdc += 500.0;
+  faucetUsed = true;
+  var btn = document.getElementById('faucet-btn');
+  if (btn) { btn.textContent = '✓ Deposited'; btn.disabled = true; }
+  updateWalletBar();
+  showToast('✓ +2.0000 ETH + 500 USDC deposited to sandbox!');
 }
 
-// ═══ PRICES & SYNC CORE ═══
-let prices={eth:3248,btc:67420,sol:148.3,matic:.8812,usdc:1,usdt:1};
-let gasPrice=18;
-let gasHistory=Array.from({length:24},()=>12+Math.random()*20);
-let fromToken='ETH',toToken='USDC';
-let selectedPoolApy=.084,selectedPoolName='Sepolia Staking Pool';
-let swapHistory=[],stakeHistory=[],liqPositions=[],bridgeFeedData=[];
-const bridgeChains=[{name:'Ethereum Mainnet',icon:'🔷'},{name:'Polygon',icon:'🟣'},{name:'Arbitrum',icon:'🔵'},{name:'Optimism',icon:'🔴'},{name:'Base',icon:'🟦'}];
-let bridgeFromIdx=0,bridgeToIdx=1;
-let liqChartObj=null,gasChartObj=null;
-const tokenColors={ETH:'#6f7cff',USDC:'#26a17b',BTC:'#f7931a',SOL:'#ab73ff',MATIC:'#8247e5'};
-const tokenCycle=['ETH','BTC','SOL','MATIC'],toTokenCycle=['USDC','ETH'];
-let fromIdx=0,toIdx=0;
-
-function updateWalletBar(){
-  document.getElementById('wb-eth').textContent=fmt(walletInternalState.eth,4);
-  document.getElementById('wb-usdc').textContent=fmt(walletInternalState.usdc,2);
-  document.getElementById('wb-reth').textContent=fmt(walletInternalState.reth,4);
-  document.getElementById('user-staked').textContent=fmt(walletInternalState.stakedEth,4);
-  document.getElementById('user-reth-disp').textContent=fmt(walletInternalState.reth,4);
-  document.getElementById('user-rewards').textContent=fmt(walletInternalState.stakedEth*selectedPoolApy,4);
-  document.getElementById('stake-total-usd').textContent=fmtUSD(walletInternalState.stakedEth*prices.eth);
+// ── UPDATE WALLET BAR ──
+function updateWalletBar() {
+  document.getElementById('wb-eth').textContent = fmt(walletState.eth, 4);
+  document.getElementById('wb-usdc').textContent = fmt(walletState.usdc, 2);
+  document.getElementById('wb-reth').textContent = fmt(walletState.reth, 4);
+  document.getElementById('user-staked').textContent = fmt(walletState.stakedEth, 4);
+  document.getElementById('user-reth-disp').textContent = fmt(walletState.reth, 4);
+  document.getElementById('user-rewards').textContent = fmt(walletState.stakedEth * selectedPoolApy, 4);
+  document.getElementById('stake-total-usd').textContent = fmtUSD(walletState.stakedEth * prices.eth);
   updateSwapBals();
 }
 
-function switchTab(name){
-  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  event.target.classList.add('active');
-  if(name==='monitor') setTimeout(()=>buildGasChart(),60);
-  if(name==='liquidity') setTimeout(()=>buildLiqChart(),60);
-}
+// ══════════════════════════════════════════
+//  PRICE DATA
+// ══════════════════════════════════════════
+var prices = { eth: 3248, btc: 67420, sol: 148.3, matic: 0.88 };
+var gasPrice = 18;
+var gasHistory = Array.from({ length: 24 }, function () { return 12 + Math.random() * 20; });
+var liqChartObj = null, gasChartObj = null;
 
-function fetchPrices(){
+function fetchPrices() {
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana,matic-network&vs_currencies=usd&include_24hr_change=true')
-    .then(r=>r.json()).then(d=>{
-      if(d.ethereum)prices.eth=d.ethereum.usd;
-      if(d.bitcoin)prices.btc=d.bitcoin.usd;
-      if(d.solana)prices.sol=d.solana.usd;
-      if(d['matic-network'])prices.matic=d['matic-network'].usd;
-      updateTickerUI(d);updatePriceTable(d);calcSwap();updateWalletBar();
-      document.getElementById('price-update-time').textContent=nowTime();
-    }).catch(()=>{updateTickerUI({});updatePriceTable({});});
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.ethereum) prices.eth = d.ethereum.usd;
+      if (d.bitcoin) prices.btc = d.bitcoin.usd;
+      if (d.solana) prices.sol = d.solana.usd;
+      if (d['matic-network']) prices.matic = d['matic-network'].usd;
+      updateTickerUI(d); updatePriceTable(d); calcSwap(); updateWalletBar();
+      document.getElementById('price-update-time').textContent = nowTime();
+    })
+    .catch(function () { updateTickerUI({}); updatePriceTable({}); });
 }
 
-function updateTickerUI(d={}){
-  const map={eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'},btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'},sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'}};
-  Object.values(map).forEach(m=>{
-    const pe=document.getElementById(m.pid),ce=document.getElementById(m.cid);if(!pe)return;
-    pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:2});
-    const chg=d[m.key]?d[m.key].usd_24h_change:0;
-    if(ce){ce.textContent=(chg>0?'+':'')+chg.toFixed(2)+'%';ce.className='tick-chg '+(chg>=0?'up':'dn');}
+function updateTickerUI(d) {
+  var map = {
+    eth: { pid: 'tp-eth', cid: 'tc-eth', p: prices.eth, key: 'ethereum' },
+    btc: { pid: 'tp-btc', cid: 'tc-btc', p: prices.btc, key: 'bitcoin' },
+    sol: { pid: 'tp-sol', cid: 'tc-sol', p: prices.sol, key: 'solana' }
+  };
+  Object.values(map).forEach(function (m) {
+    var pe = document.getElementById(m.pid), ce = document.getElementById(m.cid); if (!pe) return;
+    pe.textContent = '$' + m.p.toLocaleString(undefined, { minimumFractionDigits: 2 });
+    var chg = d[m.key] ? d[m.key].usd_24h_change : 0;
+    if (ce) { ce.textContent = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%'; ce.className = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn'); }
   });
+  document.getElementById('tp-gas').textContent = gasPrice;
 }
 
-function updatePriceTable(d={}){
-  const assets=[
-    {sym:'Sepolia ETH',p:prices.eth,key:'ethereum',vol:'$14.2M',col:'#6f7cff'},
-    {sym:'wBTC Sepolia',p:prices.btc,key:'bitcoin',vol:'$2.1M',col:'#f7931a'},
-    {sym:'Sepolia USDC',p:1,key:null,vol:'$38.4M',col:'#26a17b'}
+function updatePriceTable(d) {
+  var assets = [
+    { sym: 'Sepolia ETH', p: prices.eth, key: 'ethereum', vol: '$14.2M', col: '#6f7cff' },
+    { sym: 'wBTC Sepolia', p: prices.btc, key: 'bitcoin', vol: '$2.1M', col: '#f7931a' },
+    { sym: 'Sepolia USDC', p: 1, key: null, vol: '$38.4M', col: '#26a17b' }
   ];
-  const tb=document.getElementById('price-table-body');if(!tb)return;
-  tb.innerHTML=assets.map(a=>{
-    const chg=a.key&&d[a.key]?d[a.key].usd_24h_change:0;
-    return`<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:${a.col}"></span>${a.sym}</span></td><td style="color:#fff;font-family:'Orbitron',monospace;font-weight:700">$${a.p.toLocaleString()}</td><td class="${chg>=0?'td-g':'td-red'}">${(chg>0?'+':'')+chg.toFixed(2)}%</td><td style="color:var(--muted)">${a.vol}</td></tr>`;
+  var tb = document.getElementById('price-table-body'); if (!tb) return;
+  tb.innerHTML = assets.map(function (a) {
+    var chg = a.key && d[a.key] ? d[a.key].usd_24h_change : 0;
+    return '<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:' + a.col + '"></span>' + a.sym + '</span></td><td style="color:#fff;font-family:\'Orbitron\',monospace;font-weight:700">$' + a.p.toLocaleString() + '</td><td class="' + (chg >= 0 ? 'td-g' : 'td-red') + '">' + (chg > 0 ? '+' : '') + chg.toFixed(2) + '%</td><td style="color:var(--muted)">' + a.vol + '</td></tr>';
   }).join('');
 }
 
-// ═══ DEFI PIPELINE LOGIC ═══
-function getPrice(sym){if(sym==='ETH')return prices.eth;if(sym==='BTC')return prices.btc;if(sym==='SOL')return prices.sol;if(sym==='MATIC')return prices.matic;return 1;}
-function getWalletBal(sym){if(sym==='ETH')return walletInternalState.eth;if(sym==='USDC')return walletInternalState.usdc;return 0;}
-function updateSwapBals(){
-  const fs=document.getElementById('swap-from-bal-sym'),ts=document.getElementById('swap-to-bal-sym');
-  if(fs)fs.textContent=fromToken;if(ts)ts.textContent=toToken;
-  document.getElementById('swap-from-bal').textContent=fmt(getWalletBal(fromToken),4);
-  document.getElementById('swap-to-bal').textContent=fmt(getWalletBal(toToken),2);
+// ══════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    var tab = btn.getAttribute('data-tab');
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (tab === 'monitor') setTimeout(buildGasChart, 60);
+    if (tab === 'liquidity') setTimeout(buildLiqChart, 60);
+    // Re-trigger card reveal
+    document.querySelectorAll('.infra-card').forEach(function (el) { obsRev.observe(el); });
+  });
+});
+
+// ══════════════════════════════════════════
+//  SWAP
+// ══════════════════════════════════════════
+var fromToken = 'ETH', toToken = 'USDC';
+var tokenColors = { ETH: '#6f7cff', USDC: '#26a17b', BTC: '#f7931a', SOL: '#ab73ff', MATIC: '#8247e5' };
+var tokenCycle = ['ETH', 'BTC', 'SOL', 'MATIC'], toTokenCycle = ['USDC', 'ETH'];
+var fromIdx = 0, toIdx = 0;
+var swapHistory = [];
+
+function getPrice(sym) {
+  if (sym === 'ETH') return prices.eth;
+  if (sym === 'BTC') return prices.btc;
+  if (sym === 'SOL') return prices.sol;
+  if (sym === 'MATIC') return prices.matic;
+  return 1;
 }
-function calcSwap(){
-  const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
-  if(amt<=0){document.getElementById('swap-from-usd').textContent='$0.00';document.getElementById('swap-to-amt').value='';document.getElementById('swap-to-usd').textContent='$0.00';updateSwapBals();return;}
-  const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0;
-  document.getElementById('swap-from-usd').textContent=fmtUSD(usd);
-  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,toToken=='USDC'?2:4):'';
-  document.getElementById('swap-to-usd').textContent=fmtUSD(usd);
+function getWalletBal(sym) {
+  if (sym === 'ETH') return walletState.eth;
+  if (sym === 'USDC') return walletState.usdc;
+  return 0;
+}
+function updateSwapBals() {
+  document.getElementById('swap-from-bal-sym').textContent = fromToken;
+  document.getElementById('swap-to-bal-sym').textContent = toToken;
+  document.getElementById('swap-from-bal').textContent = fmt(getWalletBal(fromToken), 4);
+  document.getElementById('swap-to-bal').textContent = fmt(getWalletBal(toToken), 2);
+}
+function calcSwap() {
+  var amt = parseFloat(document.getElementById('swap-from-amt').value) || 0;
+  if (amt <= 0) {
+    document.getElementById('swap-from-usd').textContent = '$0.00';
+    document.getElementById('swap-to-amt').value = '';
+    document.getElementById('swap-to-usd').textContent = '$0.00';
+    updateSwapBals(); return;
+  }
+  var fp = getPrice(fromToken), tp = getPrice(toToken), usd = amt * fp, toAmt = tp > 0 ? usd / tp : 0;
+  document.getElementById('swap-from-usd').textContent = fmtUSD(usd);
+  document.getElementById('swap-to-amt').value = toAmt > 0 ? fmt(toAmt, toToken === 'USDC' ? 2 : 4) : '';
+  document.getElementById('swap-to-usd').textContent = fmtUSD(usd);
   updateSwapBals();
 }
-function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenCycle[fromIdx];document.getElementById('from-sym').textContent=fromToken;document.getElementById('from-dot').style.background=tokenColors[fromToken];calcSwap();}
-function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;document.getElementById('to-dot').style.background=tokenColors[toToken];calcSwap();}
-function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken];document.getElementById('to-dot').style.background=tokenColors[toToken];calcSwap();}
 
-function doSwap(){
-  if(!isWalletConnected){showResult('swap-result','err','⚠ Hubungkan node dompet Sepolia terlebih dahulu!');return;}
-  const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
-  if(amt<=0){showResult('swap-result','err','⚠ Masukkan jumlah swap valid.');return;}
-  if(amt>getWalletBal(fromToken)){showResult('swap-result','err','⚠ Melebihi jumlah saldo '+fromToken+' yang tersedia.');return;}
-  showResult('swap-result','load','Membuat payload transaksi Sepolia Testnet…');
+document.getElementById('swap-from-amt').addEventListener('input', calcSwap);
+document.getElementById('liq-amt').addEventListener('input', calcLiq);
+document.getElementById('bridge-amt').addEventListener('input', calcBridge);
+document.getElementById('stake-amt').addEventListener('input', calcStake);
+document.getElementById('liq-pair-sel').addEventListener('change', calcLiq);
+
+document.getElementById('from-token-pill').addEventListener('click', function () {
+  fromIdx = (fromIdx + 1) % tokenCycle.length; fromToken = tokenCycle[fromIdx];
+  document.getElementById('from-sym').textContent = fromToken;
+  document.getElementById('from-dot').style.background = tokenColors[fromToken]; calcSwap();
+});
+document.getElementById('to-token-pill').addEventListener('click', function () {
+  toIdx = (toIdx + 1) % toTokenCycle.length; toToken = toTokenCycle[toIdx];
+  document.getElementById('to-sym').textContent = toToken;
+  document.getElementById('to-dot').style.background = tokenColors[toToken]; calcSwap();
+});
+document.getElementById('flip-btn').addEventListener('click', function () {
+  var tmp = fromToken; fromToken = toToken; toToken = tmp;
+  document.getElementById('from-sym').textContent = fromToken;
+  document.getElementById('to-sym').textContent = toToken;
+  document.getElementById('from-dot').style.background = tokenColors[fromToken] || '#fff';
+  document.getElementById('to-dot').style.background = tokenColors[toToken] || '#fff';
+  calcSwap();
+});
+
+document.getElementById('swap-btn').addEventListener('click', doSwap);
+function doSwap() {
+  if (!isWalletConnected) { showResult('swap-result', 'err', '⚠ Hubungkan node dompet Sepolia terlebih dahulu!'); return; }
+  var amt = parseFloat(document.getElementById('swap-from-amt').value) || 0;
+  if (amt <= 0) { showResult('swap-result', 'err', '⚠ Masukkan jumlah swap valid.'); return; }
+  if (amt > getWalletBal(fromToken)) { showResult('swap-result', 'err', '⚠ Melebihi saldo ' + fromToken + ' yang tersedia.'); return; }
+  showResult('swap-result', 'load', 'Membuat payload transaksi Sepolia Testnet…');
   document.getElementById('swap-btn').disabled = true;
-  setTimeout(async ()=>{
-    const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0;
-    if(fromToken==='ETH'){walletInternalState.eth-=amt; walletInternalState.usdc+=amt*prices.eth;}
-    else if(fromToken==='USDC'){walletInternalState.usdc-=amt; walletInternalState.eth+=amt/prices.eth;}
-    if(!connectedWallet.isDemo) await querySepoliaRealtimeBalance();
-    
-    const txh=randHex(),toFmt=fmt(toAmt*.997,toToken==='USDC'?2:6);
-    swapHistory.unshift({tx:txh,from:fmt(amt,4)+' '+fromToken,to:toFmt+' '+toToken,rate:'1 '+fromToken+' = '+fmt(fp/tp,4)+' '+toToken,status:'✓',time:nowTime()});
-    
-    updateWalletBar();buildSwapHistory();
-    showResult('swap-result','ok','✓ Mock Transaksi Berhasil disimulasikan di Sepolia Layer.');
-    document.getElementById('swap-from-amt').value=''; calcSwap();
+  setTimeout(async function () {
+    var fp = getPrice(fromToken), tp = getPrice(toToken), usd = amt * fp, toAmt = tp > 0 ? usd / tp : 0;
+    if (fromToken === 'ETH') { walletState.eth -= amt; walletState.usdc += amt * prices.eth; }
+    else if (fromToken === 'USDC') { walletState.usdc -= amt; walletState.eth += amt / prices.eth; }
+    if (!connectedWallet.isDemo) await querySepoliaBalance();
+    var txh = randHex(), toFmt = fmt(toAmt * 0.997, toToken === 'USDC' ? 2 : 6);
+    swapHistory.unshift({ tx: txh, from: fmt(amt, 4) + ' ' + fromToken, to: toFmt + ' ' + toToken, rate: '1 ' + fromToken + ' = ' + fmt(fp / tp, 4) + ' ' + toToken, status: '✓', time: nowTime() });
+    updateWalletBar(); buildSwapHistory();
+    showResult('swap-result', 'ok', '✓ Transaksi berhasil disimulasikan di Sepolia Layer.\nTx: ' + txh);
+    document.getElementById('swap-from-amt').value = ''; calcSwap();
     document.getElementById('swap-btn').disabled = false;
     showToast('✓ Swap Complete');
-  },1500);
+  }, 1500);
 }
-function buildSwapHistory(){
-  const tb=document.getElementById('swap-history'),empty=document.getElementById('swap-hist-empty');if(!tb)return;
-  if(!swapHistory.length){tb.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  tb.innerHTML=swapHistory.slice(0,5).map(h=>`<tr><td class="td-c" style="font-size:.7rem; color:var(--cyan);">${h.tx}</td><td>${h.from}</td><td class="td-g">${h.to}</td><td style="color:var(--muted);font-size:.7rem">${h.rate}</td><td class="td-g">${h.status}</td><td style="color:var(--muted)">${h.time}</td></tr>`).join('');
-}
-
-// ═══ BRIDGE ═══
-function cycleBridgeFrom(){bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;if(bridgeFromIdx===bridgeToIdx)bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;const c=bridgeChains[bridgeFromIdx];document.getElementById('bridge-from-name').textContent=c.name;document.getElementById('bridge-from-icon').textContent=c.icon;calcBridge();}
-function cycleBridgeTo(){bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;if(bridgeToIdx===bridgeFromIdx)bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;const c=bridgeChains[bridgeToIdx];document.getElementById('bridge-to-name').textContent=c.name;document.getElementById('bridge-to-icon').textContent=c.icon;calcBridge();}
-function bridgeMax(){document.getElementById('bridge-amt').value=fmt(walletInternalState.eth,6);calcBridge();}
-function calcBridge(){
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0,fee=amt*.0005,receive=amt-fee,gasEst=gasPrice*21000/1e9;
-  document.getElementById('bridge-fee').textContent=fmtUSD(fee*prices.eth)+' (0.05%)';
-  document.getElementById('bridge-receive').textContent=fmt(receive,6)+' ETH';
-  document.getElementById('bridge-gas').textContent=fmt(gasEst,6)+' ETH (≈'+fmtUSD(gasEst*prices.eth)+')';
-  document.getElementById('bridge-eth-bal').textContent=fmt(walletInternalState.eth,4);
-  document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD(amt*prices.eth);
-}
-function doBridge(){
-  if(!isWalletConnected){showResult('bridge-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0;
-  if(amt<=0){showResult('bridge-result','err','⚠ Masukkan nominal jembatan.');return;}
-  if(amt>walletInternalState.eth){showResult('bridge-result','err','⚠ Insufficient ETH');return;}
-  const toChain=bridgeChains[bridgeToIdx].name;
-  showResult('bridge-result','load','Initiating cross-chain relay structure to '+toChain+'…');
-  document.getElementById('bridge-btn').disabled = true;
-  setTimeout(async ()=>{
-    const receive=amt*.9995;walletInternalState.eth-=amt;
-    if(!connectedWallet.isDemo) await querySepoliaRealtimeBalance();
-    bridgeFeedData.unshift({from:'Sepolia',to:toChain,amt:fmt(receive,4)+' ETH',st:'✓',t:nowTime()});
-    updateWalletBar();calcBridge();buildBridgeFeed();
-    showResult('bridge-result','ok','✓ Bridge contract deployed.\nRelayed: '+fmt(receive,4)+' ETH to '+toChain);
-    document.getElementById('bridge-btn').disabled = false;document.getElementById('bridge-amt').value='';
-    showToast('✓ Bridge complete!');
-  },2200);
-}
-function buildBridgeFeed(){
-  const defaults=[{from:'Sepolia',to:'Polygon',amt:'2.4000 ETH',st:'✓',t:'2m ago'},{from:'Sepolia',to:'Arbitrum',amt:'0.8500 ETH',st:'✓',t:'5m ago'}];
-  const all=[...bridgeFeedData,...defaults].slice(0,5);
-  const tb=document.getElementById('bridge-feed');if(!tb)return;
-  tb.innerHTML=all.map(b=>`<tr><td>${b.from}</td><td>${b.to}</td><td class="td-c">${b.amt}</td><td class="${b.st==='✓'?'td-g':'td-gold'}">${b.st}</td><td style="color:var(--muted)">${b.t}</td></tr>`).join('');
-}
-
-// ═══ STAKE ═══
-function selectPool(el){
-  document.querySelectorAll('.pool-row').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');
-  selectedPoolApy=parseFloat(el.dataset.apy);selectedPoolName=el.querySelector('.pname').textContent;
-  calcStake();
-}
-function stakeMax(btnEl,pct){
-  document.querySelectorAll('.pct-btn').forEach(b=>b.classList.remove('pact'));if(btnEl)btnEl.classList.add('pact');
-  document.getElementById('stake-amt').value=fmt(walletInternalState.eth*pct/100,6);calcStake();
-}
-function calcStake(){
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  document.getElementById('stake-reth-preview').textContent=fmt(amt/1.03,4);
-  document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);
-}
-function doStake(){
-  if(!isWalletConnected){showResult('stake-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  if(amt<=0){showResult('stake-result','err','⚠ Masukkan nilai staking vault.');return;}
-  if(amt>walletInternalState.eth){showResult('stake-result','err','⚠ Insufficient ETH');return;}
-  showResult('stake-result','load','Depositing ETH into smart-vault layer…');
-  document.getElementById('stake-btn').disabled = true;
-  setTimeout(async ()=>{
-    const rethAmt=amt/1.03;walletInternalState.eth-=amt;walletInternalState.reth+=rethAmt;walletInternalState.stakedEth+=amt;
-    if(!connectedWallet.isDemo) await querySepoliaRealtimeBalance();
-    stakeHistory.unshift({tx:randHex(),amt:fmt(amt,4)+' ETH',pool:selectedPoolName,reth:fmt(rethAmt,4),t:nowTime()});
-    updateWalletBar();calcStake();updateStakeTable();buildStakeHistory();
-    showResult('stake-result','ok','✓ Liquid Staking completed.\nPool: '+selectedPoolName);
-    document.getElementById('stake-btn').disabled=false;document.getElementById('stake-amt').value='';
-    showToast('✓ Stake Injected');
-  },2000);
-}
-function updateStakeTable(){
-  const pools=[{name:'Sepolia Staking Pool',apy:'8.4%',tvl:'$14.0M',val:14,v:3912},{name:'Sandbox Diversified Vault',apy:'6.2%',tvl:'$8.2M',val:8.2,v:1504}];
-  const tb=document.getElementById('stake-table');if(!tb)return;
-  tb.innerHTML=pools.map((p,i)=>{const myShare=i===0&&walletInternalState.stakedEth>0?(walletInternalState.stakedEth/(p.val*1000)*100).toFixed(4)+'%':'0.0000%';return`<tr><td style="color:#fff; font-weight:600;">${p.name}</td><td class="td-g">${p.apy}</td><td class="td-c">${p.tvl}</td><td style="color:var(--muted)">${p.v.toLocaleString()}</td><td class="td-gold">${myShare}</td></tr>`;}).join('');
-}
-function buildStakeHistory(){
-  const tb=document.getElementById('stake-history'),empty=document.getElementById('stake-hist-empty');if(!tb)return;
-  if(empty) empty.style.display=stakeHistory.length?'none':'block';
-  tb.innerHTML=stakeHistory.map(h=>`<tr><td class="td-c" style="color:var(--cyan); font-size:0.7rem;">${h.tx}</td><td>${h.amt}</td><td>${h.pool}</td><td class="td-gold">${h.reth}</td><td style="color:var(--muted)">${h.t}</td></tr>`).join('');
-}
-
-// ═══ LIQUIDITY ═══
-function calcLiq(){
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0,pair=document.getElementById('liq-pair-sel').value;
-  let paired=pair==='ETH/MATIC'?amt*(prices.eth/prices.matic):amt*prices.eth;
-  document.getElementById('liq-paired-amt').textContent=fmt(paired,2)+' '+(pair==='ETH/MATIC'?'MATIC':'USDT');
-  document.getElementById('liq-lp-tokens').textContent=fmt(amt * 14.82,4)+' LP';
-}
-function doLiquidity(){
-  if(!isWalletConnected){showResult('liq-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0;
-  if(amt<=0){showResult('liq-result','err','⚠ Masukkan nilai likuiditas.');return;}
-  if(amt>walletInternalState.eth){showResult('liq-result','err','⚠ Insufficient funding balance');return;}
-  showResult('liq-result','load','Injecting market liquidity to framework pairs…');
-  document.getElementById('liq-btn').disabled = true;
-  setTimeout(async ()=>{
-    walletInternalState.eth-=amt; if(!connectedWallet.isDemo) await querySepoliaRealtimeBalance();
-    liqPositions.push({pair:document.getElementById('liq-pair-sel').value,lp:fmt(amt * 14.82,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,4)+' ETH'});
-    updateWalletBar();calcLiq();buildLiqPositions();
-    showResult('liq-result','ok','✓ LP position successfully registered inside Sepolia testing nodes.');
-    document.getElementById('liq-btn').disabled=false;document.getElementById('liq-amt').value='';
-    showToast('✓ Liquidity Supplied');
-  },1900);
-}
-function buildLiqPositions(){
-  const tb=document.getElementById('liq-positions'),empty=document.getElementById('liq-pos-empty');if(!tb)return;
-  if(empty) empty.style.display=liqPositions.length?'none':'block';
-  tb.innerHTML=liqPositions.map(p=>`<tr><td style="color:#fff; font-weight:600;">${p.pair}</td><td class="td-gold">${p.lp}</td><td class="td-c">${p.val}</td><td class="td-g">${p.fees}</td></tr>`).join('');
-}
-
-// ── CHARTS INTERACTION ──
-function buildLiqChart(){
-  const el=document.getElementById('liq-chart'); if(!el)return;
-  if(liqChartObj)liqChartObj.destroy();
-  liqChartObj=new Chart(el,{type:'bar',data:{labels:['M','T','W','T','F','S','S'],datasets:[{data:[12,15,8,22,31,14,45],backgroundColor:'rgba(6,182,212,.35)'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
-}
-function buildGasChart(){
-  const el=document.getElementById('gas-chart'); if(!el)return;
-  if(gasChartObj)gasChartObj.destroy();
-  gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map((_,i)=>i+'h'),datasets:[{data:gasHistory,backgroundColor:'rgba(6,182,212,.3)'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
-}
-function updateGasUI(){
-  document.getElementById('gas-display').textContent=gasPrice;
-  document.getElementById('gas-slow').textContent=Math.max(1,gasPrice-3);
-  document.getElementById('gas-avg').textContent=gasPrice;
-  document.getElementById('gas-fast').textContent=gasPrice+4;
-  gasHistory.push(gasPrice);if(gasHistory.length>24)gasHistory.shift();
-  if(gasChartObj){gasChartObj.data.datasets[0].data=gasHistory; gasChartObj.update('none');}
-}
-
-// ── LIVE NETWORK PARSING ──
-const feedActs=[{t:'Swap',c:'#06b6d4'},{t:'Bridge',c:'#d4a832'},{t:'Stake',c:'#00e87a'},{t:'Add LP',c:'#ab73ff'}];
-function buildLiveFeed(){
-  const el=document.getElementById('live-feed');if(!el)return;
-  let sampleFeed = Array.from({length:4}, (_,i)=>{
-    const act=feedActs[Math.floor(Math.random()*feedActs.length)];
-    return `<div class="feed-item"><div class="fd-dot" style="background:${act.c}"></div><div class="fd-action"><span style="color:${act.c}; font-size:11px; font-weight:700; margin-right:5px; text-transform:uppercase;">${act.t}</span>${randAddr()}</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:${act.c}">$${(Math.random()*4000+100).toFixed(2)}</div><div class="fd-ago">${i*4+2}s ago</div></div>`;
+function buildSwapHistory() {
+  var tb = document.getElementById('swap-history'), empty = document.getElementById('swap-hist-empty'); if (!tb) return;
+  if (!swapHistory.length) { tb.innerHTML = ''; if (empty) empty.style.display = 'block'; return; }
+  if (empty) empty.style.display = 'none';
+  tb.innerHTML = swapHistory.slice(0, 5).map(function (h) {
+    return '<tr><td class="td-c" style="font-size:.7rem">' + h.tx + '</td><td>' + h.from + '</td><td class="td-g">' + h.to + '</td><td style="color:var(--muted);font-size:.7rem">' + h.rate + '</td><td class="td-g">' + h.status + '</td><td style="color:var(--muted)">' + h.time + '</td></tr>';
   }).join('');
-  el.innerHTML = sampleFeed;
 }
 
-// ── INITIALIZATION ──
-window.addEventListener('DOMContentLoaded',()=>{
-  fetchPrices(); setInterval(fetchPrices,25000);
+// ══════════════════════════════════════════
+//  BRIDGE
+// ══════════════════════════════════════════
+var bridgeChains = [
+  { name: 'Ethereum Mainnet', icon: '🔷' }, { name: 'Polygon', icon: '🟣' },
+  { name: 'Arbitrum', icon: '🔵' }, { name: 'Optimism', icon: '🔴' }, { name: 'Base', icon: '🟦' }
+];
+var bridgeFromIdx = 0, bridgeToIdx = 1;
+var bridgeFeedData = [];
+
+document.getElementById('bridge-from-sel').addEventListener('click', function () {
+  bridgeFromIdx = (bridgeFromIdx + 1) % bridgeChains.length;
+  if (bridgeFromIdx === bridgeToIdx) bridgeFromIdx = (bridgeFromIdx + 1) % bridgeChains.length;
+  var c = bridgeChains[bridgeFromIdx];
+  document.getElementById('bridge-from-name').textContent = c.name;
+  document.getElementById('bridge-from-icon').textContent = c.icon;
+  calcBridge();
+});
+document.getElementById('bridge-to-sel').addEventListener('click', function () {
+  bridgeToIdx = (bridgeToIdx + 1) % bridgeChains.length;
+  if (bridgeToIdx === bridgeFromIdx) bridgeToIdx = (bridgeToIdx + 1) % bridgeChains.length;
+  var c = bridgeChains[bridgeToIdx];
+  document.getElementById('bridge-to-name').textContent = c.name;
+  document.getElementById('bridge-to-icon').textContent = c.icon;
+  calcBridge();
+});
+document.getElementById('bridge-max-btn').addEventListener('click', function () {
+  document.getElementById('bridge-amt').value = fmt(walletState.eth, 6); calcBridge();
+});
+
+function calcBridge() {
+  var amt = parseFloat(document.getElementById('bridge-amt').value) || 0;
+  var fee = amt * 0.0005, receive = amt - fee, gasEst = gasPrice * 21000 / 1e9;
+  document.getElementById('bridge-fee').textContent = fmtUSD(fee * prices.eth) + ' (0.05%)';
+  document.getElementById('bridge-receive').textContent = amt > 0 ? fmt(receive, 6) + ' ETH' : '—';
+  document.getElementById('bridge-gas').textContent = amt > 0 ? fmt(gasEst, 6) + ' ETH (≈' + fmtUSD(gasEst * prices.eth) + ')' : '—';
+  document.getElementById('bridge-eth-bal').textContent = fmt(walletState.eth, 4);
+  document.getElementById('bridge-usd-val').textContent = '≈ ' + fmtUSD(amt * prices.eth);
+}
+
+document.getElementById('bridge-btn').addEventListener('click', doBridge);
+function doBridge() {
+  if (!isWalletConnected) { showResult('bridge-result', 'err', '⚠ Connect wallet first!'); return; }
+  var amt = parseFloat(document.getElementById('bridge-amt').value) || 0;
+  if (amt <= 0) { showResult('bridge-result', 'err', '⚠ Masukkan nominal jembatan.'); return; }
+  if (amt > walletState.eth) { showResult('bridge-result', 'err', '⚠ Insufficient ETH balance.'); return; }
+  var toChain = bridgeChains[bridgeToIdx].name;
+  showResult('bridge-result', 'load', 'Initiating cross-chain relay to ' + toChain + '…');
+  document.getElementById('bridge-btn').disabled = true;
+  setTimeout(async function () {
+    var receive = amt * 0.9995; walletState.eth -= amt;
+    if (!connectedWallet.isDemo) await querySepoliaBalance();
+    bridgeFeedData.unshift({ from: 'Sepolia', to: toChain, amt: fmt(receive, 4) + ' ETH', st: '✓', t: nowTime() });
+    updateWalletBar(); calcBridge(); buildBridgeFeed();
+    showResult('bridge-result', 'ok', '✓ Bridge contract deployed.\nRelayed: ' + fmt(receive, 4) + ' ETH → ' + toChain);
+    document.getElementById('bridge-btn').disabled = false;
+    document.getElementById('bridge-amt').value = '';
+    showToast('✓ Bridge complete!');
+  }, 2200);
+}
+function buildBridgeFeed() {
+  var defaults = [
+    { from: 'Sepolia', to: 'Polygon', amt: '2.4000 ETH', st: '✓', t: '2m ago' },
+    { from: 'Sepolia', to: 'Arbitrum', amt: '0.8500 ETH', st: '✓', t: '5m ago' }
+  ];
+  var all = bridgeFeedData.concat(defaults).slice(0, 5);
+  var tb = document.getElementById('bridge-feed'); if (!tb) return;
+  tb.innerHTML = all.map(function (b) {
+    return '<tr><td>' + b.from + '</td><td>' + b.to + '</td><td class="td-c">' + b.amt + '</td><td class="' + (b.st === '✓' ? 'td-g' : 'td-gold') + '">' + b.st + '</td><td style="color:var(--muted)">' + b.t + '</td></tr>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  STAKE
+// ══════════════════════════════════════════
+var selectedPoolApy = 0.084, selectedPoolName = 'Sepolia Staking Pool';
+var stakeHistory = [];
+
+document.querySelectorAll('.pool-row').forEach(function (el) {
+  el.addEventListener('click', function () {
+    document.querySelectorAll('.pool-row').forEach(function (p) { p.classList.remove('selected'); });
+    el.classList.add('selected');
+    selectedPoolApy = parseFloat(el.dataset.apy);
+    selectedPoolName = el.querySelector('.pname').textContent;
+    calcStake();
+  });
+});
+document.querySelectorAll('.pct-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.pct-btn').forEach(function (b) { b.classList.remove('pact'); });
+    btn.classList.add('pact');
+    var pct = parseInt(btn.getAttribute('data-pct'));
+    document.getElementById('stake-amt').value = fmt(walletState.eth * pct / 100, 6);
+    calcStake();
+  });
+});
+
+function calcStake() {
+  var amt = parseFloat(document.getElementById('stake-amt').value) || 0;
+  document.getElementById('stake-reth-preview').textContent = fmt(amt / 1.03, 4);
+  document.getElementById('stake-annual-preview').textContent = fmt(amt * selectedPoolApy, 4);
+}
+
+document.getElementById('stake-btn').addEventListener('click', doStake);
+function doStake() {
+  if (!isWalletConnected) { showResult('stake-result', 'err', '⚠ Connect wallet first!'); return; }
+  var amt = parseFloat(document.getElementById('stake-amt').value) || 0;
+  if (amt <= 0) { showResult('stake-result', 'err', '⚠ Masukkan nilai staking vault.'); return; }
+  if (amt > walletState.eth) { showResult('stake-result', 'err', '⚠ Insufficient ETH balance.'); return; }
+  showResult('stake-result', 'load', 'Depositing ETH into smart-vault layer…');
+  document.getElementById('stake-btn').disabled = true;
+  setTimeout(async function () {
+    var rethAmt = amt / 1.03;
+    walletState.eth -= amt; walletState.reth += rethAmt; walletState.stakedEth += amt;
+    if (!connectedWallet.isDemo) await querySepoliaBalance();
+    stakeHistory.unshift({ tx: randHex(), amt: fmt(amt, 4) + ' ETH', pool: selectedPoolName, reth: fmt(rethAmt, 4), t: nowTime() });
+    updateWalletBar(); calcStake(); updateStakeTable(); buildStakeHistory();
+    showResult('stake-result', 'ok', '✓ Liquid Staking completed.\nPool: ' + selectedPoolName + '\nReceived: ' + fmt(rethAmt, 4) + ' rETH');
+    document.getElementById('stake-btn').disabled = false;
+    document.getElementById('stake-amt').value = '';
+    showToast('✓ Stake Injected');
+  }, 2000);
+}
+function updateStakeTable() {
+  var pools = [
+    { name: 'Sepolia Staking Pool', apy: '8.4%', tvl: '$14.0M', val: 14, v: 3912 },
+    { name: 'Sandbox Diversified Vault', apy: '6.2%', tvl: '$8.2M', val: 8.2, v: 1504 }
+  ];
+  var tb = document.getElementById('stake-table'); if (!tb) return;
+  tb.innerHTML = pools.map(function (p, i) {
+    var myShare = i === 0 && walletState.stakedEth > 0 ? (walletState.stakedEth / (p.val * 1000) * 100).toFixed(4) + '%' : '0.0000%';
+    return '<tr><td style="color:#fff;font-weight:600">' + p.name + '</td><td class="td-g">' + p.apy + '</td><td class="td-c">' + p.tvl + '</td><td style="color:var(--muted)">' + p.v.toLocaleString() + '</td><td class="td-gold">' + myShare + '</td></tr>';
+  }).join('');
+}
+function buildStakeHistory() {
+  var tb = document.getElementById('stake-history'), empty = document.getElementById('stake-hist-empty'); if (!tb) return;
+  if (empty) empty.style.display = stakeHistory.length ? 'none' : 'block';
+  tb.innerHTML = stakeHistory.map(function (h) {
+    return '<tr><td class="td-c" style="font-size:.7rem">' + h.tx + '</td><td>' + h.amt + '</td><td>' + h.pool + '</td><td class="td-gold">' + h.reth + '</td><td style="color:var(--muted)">' + h.t + '</td></tr>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  LIQUIDITY
+// ══════════════════════════════════════════
+var liqPositions = [];
+
+function calcLiq() {
+  var amt = parseFloat(document.getElementById('liq-amt').value) || 0;
+  var pair = document.getElementById('liq-pair-sel').value;
+  var paired = pair === 'ETH/MATIC' ? amt * (prices.eth / prices.matic) : amt * prices.eth;
+  document.getElementById('liq-paired-amt').textContent = amt > 0 ? fmt(paired, 2) + ' ' + (pair === 'ETH/MATIC' ? 'MATIC' : 'USDT') : '—';
+  document.getElementById('liq-lp-tokens').textContent = amt > 0 ? fmt(amt * 14.82, 4) + ' LP' : '—';
+}
+
+document.getElementById('liq-btn').addEventListener('click', doLiquidity);
+function doLiquidity() {
+  if (!isWalletConnected) { showResult('liq-result', 'err', '⚠ Connect wallet first!'); return; }
+  var amt = parseFloat(document.getElementById('liq-amt').value) || 0;
+  if (amt <= 0) { showResult('liq-result', 'err', '⚠ Masukkan nilai likuiditas.'); return; }
+  if (amt > walletState.eth) { showResult('liq-result', 'err', '⚠ Insufficient ETH balance.'); return; }
+  showResult('liq-result', 'load', 'Injecting market liquidity to framework pairs…');
+  document.getElementById('liq-btn').disabled = true;
+  setTimeout(async function () {
+    walletState.eth -= amt;
+    if (!connectedWallet.isDemo) await querySepoliaBalance();
+    liqPositions.push({ pair: document.getElementById('liq-pair-sel').value, lp: fmt(amt * 14.82, 4), val: fmtUSD(amt * 2 * prices.eth), fees: fmt(amt * 0.003, 4) + ' ETH' });
+    updateWalletBar(); calcLiq(); buildLiqPositions();
+    showResult('liq-result', 'ok', '✓ LP position registered in Sepolia testing nodes.\nLP Tokens: ' + fmt(amt * 14.82, 4));
+    document.getElementById('liq-btn').disabled = false;
+    document.getElementById('liq-amt').value = '';
+    showToast('✓ Liquidity Supplied');
+  }, 1900);
+}
+function buildLiqPositions() {
+  var tb = document.getElementById('liq-positions'), empty = document.getElementById('liq-pos-empty'); if (!tb) return;
+  if (empty) empty.style.display = liqPositions.length ? 'none' : 'block';
+  tb.innerHTML = liqPositions.map(function (p) {
+    return '<tr><td style="color:#fff;font-weight:600">' + p.pair + '</td><td class="td-gold">' + p.lp + '</td><td class="td-c">' + p.val + '</td><td class="td-g">' + p.fees + '</td></tr>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  CHARTS
+// ══════════════════════════════════════════
+function buildLiqChart() {
+  var el = document.getElementById('liq-chart'); if (!el) return;
+  if (liqChartObj) liqChartObj.destroy();
+  liqChartObj = new Chart(el, {
+    type: 'bar',
+    data: { labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], datasets: [{ data: [12, 15, 8, 22, 31, 14, 45], backgroundColor: 'rgba(6,182,212,.35)', borderRadius: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+  });
+}
+function buildGasChart() {
+  var el = document.getElementById('gas-chart'); if (!el) return;
+  if (gasChartObj) gasChartObj.destroy();
+  gasChartObj = new Chart(el, {
+    type: 'bar',
+    data: { labels: gasHistory.map(function (_, i) { return i + 'h'; }), datasets: [{ data: gasHistory, backgroundColor: 'rgba(6,182,212,.3)', borderRadius: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+  });
+}
+function updateGasUI() {
+  var g = gasPrice + Math.floor((Math.random() - 0.5) * 4);
+  if (g > 0 && g < 500) gasPrice = g;
+  document.getElementById('gas-display').textContent = gasPrice;
+  document.getElementById('gas-slow').textContent = Math.max(1, gasPrice - 3);
+  document.getElementById('gas-avg').textContent = gasPrice;
+  document.getElementById('gas-fast').textContent = gasPrice + 4;
+  document.getElementById('tp-gas').textContent = gasPrice;
+  gasHistory.push(gasPrice); if (gasHistory.length > 24) gasHistory.shift();
+  if (gasChartObj) { gasChartObj.data.datasets[0].data = gasHistory; gasChartObj.update('none'); }
+}
+
+// ══════════════════════════════════════════
+//  LIVE ACTIVITY FEED
+// ══════════════════════════════════════════
+var feedActs = [
+  { t: 'Swap', c: '#06b6d4' }, { t: 'Bridge', c: '#d4a832' },
+  { t: 'Stake', c: '#00e87a' }, { t: 'Add LP', c: '#ab73ff' }
+];
+function buildLiveFeed() {
+  var el = document.getElementById('live-feed'); if (!el) return;
+  var items = Array.from({ length: 5 }, function (_, i) {
+    var act = feedActs[Math.floor(Math.random() * feedActs.length)];
+    return '<div class="feed-item"><div class="fd-dot" style="background:' + act.c + '"></div><div class="fd-action"><span style="color:' + act.c + ';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">' + act.t + '</span>' + randAddr() + '</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:' + act.c + '">$' + (Math.random() * 4000 + 100).toFixed(2) + '</div><div class="fd-ago">' + (i * 4 + 2) + 's ago</div></div>';
+  });
+  el.innerHTML = items.join('');
+}
+
+// ══════════════════════════════════════════
+//  WALLET BAR & NAV BUTTON BINDINGS
+// ══════════════════════════════════════════
+document.getElementById('nav-wallet-btn').addEventListener('click', openWalletModal);
+document.getElementById('wb-connect-btn').addEventListener('click', openWalletModal);
+document.getElementById('disconnect-btn').addEventListener('click', disconnectWallet);
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function () {
+  fetchPrices();
+  setInterval(fetchPrices, 30000);
+  setInterval(updateGasUI, 8000);
+  setInterval(async function () {
+    if (isWalletConnected && !connectedWallet.isDemo) await querySepoliaBalance();
+  }, 5000);
+
   updateStakeTable();
   buildSwapHistory();
   buildBridgeFeed();
   buildLiqPositions();
   buildLiveFeed();
-  
-  // Sinkronisasi background interval untuk update konstan saldo Sepolia asli dompet (tiap 5 detik)
-  setInterval(async ()=>{ if(isWalletConnected && !connectedWallet.isDemo) await querySepoliaRealtimeBalance(); },5000);
-  
-  setTimeout(()=>{buildGasChart();buildLiqChart();},600);
-  
-  // Realtime logging updates
-  const el=document.getElementById('live-feed');
-  if(el){
-    setInterval(()=>{
-      const act=feedActs[Math.floor(Math.random()*feedActs.length)];
-      el.innerHTML=`<div class="feed-item"><div class="fd-dot" style="background:${act.c}"></div><div class="fd-action"><span style="color:${act.c}; font-size:11px; font-weight:700; margin-right:5px; text-transform:uppercase;">${act.t}</span>${randAddr()}</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:${act.c}">$${(Math.random()*1500).toFixed(2)}</div><div class="fd-ago">just now</div></div>` + el.innerHTML;
-    },4000);
-  }
-  
-  document.getElementById('nav-wallet-btn').onclick = openWalletModal;
-  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+
+  // Live feed refresh
+  setInterval(function () {
+    var el = document.getElementById('live-feed'); if (!el) return;
+    var act = feedActs[Math.floor(Math.random() * feedActs.length)];
+    var item = '<div class="feed-item"><div class="fd-dot" style="background:' + act.c + '"></div><div class="fd-action"><span style="color:' + act.c + ';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">' + act.t + '</span>' + randAddr() + '</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:' + act.c + '">$' + (Math.random() * 1500).toFixed(2) + '</div><div class="fd-ago">just now</div></div>';
+    el.innerHTML = item + el.innerHTML;
+    // cap at 8 items
+    var children = el.querySelectorAll('.feed-item');
+    if (children.length > 8) children[children.length - 1].remove();
+  }, 4000);
+
+  setTimeout(function () { buildGasChart(); buildLiqChart(); }, 600);
+
+  // Trigger reveal on visible elements
+  setTimeout(function () {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('visible'); });
+  }, 100);
 });
 </script>
 </body>
