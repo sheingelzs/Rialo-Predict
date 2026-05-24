@@ -1,4 +1,3 @@
-<script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,17 +31,23 @@ body{
 }
 
 /* ==========================================================================
-   TRIK AMPUH: Menghapus Logo "Built with Spline" dan Teks bawaan Spline
+   SISTEM PEMBERSIH AGRESIF: Menghilangkan sisa logo & teks bawaan Spline
    ========================================================================== */
 spline-viewer::part(logo),
 spline-viewer::part(watermark),
+spline-viewer::part(shadow-root) #shadow-root-container #logo,
+spline-viewer::part(shadow-root) .spline-watermark,
 #spline-logo,
 .spline-watermark,
-a[href*="spline.design"] {
+a[href*="spline.design"],
+#containment-wrapper,
+#logo-container {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  width: 0px !important;
+  height: 0px !important;
 }
 
 /* CURSOR */
@@ -261,7 +266,6 @@ nav{
   cursor: grabbing;
 }
 
-/* Efek glow ambient di belakang objek 3D */
 .spline-shadow-glow {
   position: absolute;
   top: 50%; left: 50%;
@@ -603,7 +607,7 @@ footer{
    
   <div class="hero-wrapper">
     <div class="hero-content">
-      <h1 class="hero-title-33d">
+      <h1 class="hero-title-3d">
         <span class="title-welcome">WELCOME TO THE</span>
         <span class="title-core-focus">RIALO ALPHA CORE</span>
       </h1>
@@ -874,6 +878,36 @@ footer{
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
+
+/* ---- SCRIPT FIX: Force membersihkan teks/elemen ui eksternal bawaan Spline yang membandel ---- */
+function clearSplineUI() {
+  const splineViewer = document.querySelector('spline-viewer');
+  if (splineViewer && splineViewer.shadowRoot) {
+    // Cari shadow root container internal
+    const shadow = splineViewer.shadowRoot;
+    
+    // Target selector elemen UI teks bawaan Spline
+    const uiElements = shadow.querySelectorAll('[id*="logo"], [class*="logo"], [id*="watermark"], [class*="watermark"], a, button, div[style*="position: absolute"]');
+    
+    uiElements.forEach(el => {
+      // Validasi agar tidak salah menghapus canvas utama
+      if (el.tagName !== 'CANVAS') {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+      }
+    });
+  }
+}
+
+// Jalankan berkala saat aset ter-load sepenuhnya
+window.addEventListener('load', () => {
+  clearSplineUI();
+  // Jalankan interval pendek untuk mengantisipasi lazy-load ui spline
+  setTimeout(clearSplineUI, 500);
+  setTimeout(clearSplineUI, 1500);
+});
 
 /* ---- ANIMASI SAAT MEMBUKA LINK (LOADING INTRO) ---- */
 window.addEventListener('DOMContentLoaded', () => {
