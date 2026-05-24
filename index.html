@@ -135,7 +135,7 @@ nav{
 }
 .hero-wrapper {
   position: relative;
-  z-index: 5; /* Di atas video dan overlay background */
+  z-index: 5; /* Berada di atas video */
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -156,7 +156,7 @@ nav{
   z-index: 0;
   pointer-events: none;
   opacity: 0.23; /* Tetap gelap agar teks menyala tajam */
-  filter: hue-rotate(240deg) saturate(1.4) contrast(1.1); /* Nge-blend warna video ke arah purple/cyan */
+  filter: hue-rotate(240deg) saturate(1.4) contrast(1.1); /* Menyelaraskan warna video ke tema purple/cyan */
 }
 
 .hero-bg{
@@ -636,8 +636,9 @@ footer{
 </nav>
 
 <section id="hero">
+  <!-- VIDEO BACKGROUND HUBUNG LOKAL KAN KE (logo.mp4) -->
   <video autoplay muted loop playsinline class="hero-video-bg">
-    <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
+    <source src="logo.mp4" type="video/mp4">
   </video>
 
   <div class="hero-bg"></div>
