@@ -531,7 +531,7 @@ section{padding:6rem 4rem;}
   overflow:hidden;
 }
 
-/* Tambahan Style Khusus untuk Image Avatar Validator */
+/* Style Khusus untuk Image Avatar Validator */
 .char-avatar img {
   width: 100%;
   height: 100%;
@@ -811,17 +811,15 @@ footer{
   <h2 class="section-title reveal">Select Consensus<br/><span style="color:var(--purple)">Client</span></h2>
 
   <div class="char-showcase">
-    <!-- VALIDATOR 1 (x.png) -->
-    <div class="char-card active reveal">
+    <div class="char-card active reveal" id="gelzs-card">
       <div class="char-avatar">
-        <img src="images/x.png" alt="Ryze-Net Avatar" />
+        <img src="images/x.png" alt="Gelzs Avatar" />
       </div>
-      <div class="char-name">RYZE-NET</div>
+      <div class="char-name">GELZS</div>
       <div class="char-role">Relay Validator</div>
       <div class="char-power">Tier — 1</div>
     </div>
 
-    <!-- VALIDATOR 2 (x2.png) -->
     <div class="char-card reveal">
       <div class="char-avatar">
         <img src="images/x2.png" alt="Voidra-EVM Avatar" />
@@ -831,7 +829,6 @@ footer{
       <div class="char-power">Tier — 1</div>
     </div>
 
-    <!-- VALIDATOR 3 (x3.png) -->
     <div class="char-card reveal">
       <div class="char-avatar">
         <img src="images/x3.png" alt="Cyb-RPC Avatar" />
@@ -1107,10 +1104,16 @@ var observer = new IntersectionObserver(function(entries) {
 
 reveals.forEach(function(el) { observer.observe(el); });
 
+// Logika Klik untuk Semua Kartu Validator & Redirect Khusus GELZS
 document.querySelectorAll('.char-card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
+    
+    // Jika kartu yang diklik memiliki ID 'gelzs-card', buka tautan X
+    if (card.id === 'gelzs-card') {
+      window.open('https://x.com/rayhn_1991?s=21', '_blank');
+    }
   });
 });
 </script>
