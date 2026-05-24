@@ -58,6 +58,7 @@ nav{
   background:rgba(5,0,16,0.85);
   backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(124,58,237,0.2);
+  opacity: 0; /* Diadopsi oleh GSAP untuk opening */
 }
 .logo{
   font-family:'Orbitron',monospace;
@@ -148,13 +149,7 @@ nav{
 .hero-content{
   max-width:680px;
   transform-style: preserve-3d;
-  transform: rotateY(12deg) rotateX(4deg);
-  animation: intro3D 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes intro3D {
-  from { opacity: 0; transform: rotateY(30deg) rotateX(15deg) translateZ(-150px); }
-  to { opacity: 1; transform: rotateY(12deg) rotateX(4deg) translateZ(0); }
+  opacity: 0; /* Diatur via GSAP Timeline saat membuka link */
 }
 
 .hero-title-3d {
@@ -233,7 +228,7 @@ nav{
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeUp 1s 0.4s ease both;
+  opacity: 0; /* Diatur via GSAP Timeline saat membuka link */
 }
 .logo-rings{
   position: absolute;
@@ -357,9 +352,9 @@ section{padding:6rem 4rem;}
   border:1px solid rgba(124,58,237,0.2);
   padding:2rem;
   position:relative;
-  overflow: visible; /* Wajib agar gambar bisa keluar menembus batas kotak */
+  overflow: visible;
   transition: border-color 0.4s, background 0.4s;
-  perspective: 1200px; /* Memberikan kedalaman ruang 3D */
+  perspective: 1200px;
 }
 .card::before{
   content:'';position:absolute;inset:0;
@@ -394,10 +389,9 @@ section{padding:6rem 4rem;}
   transition: transform 0.3s ease;
 }
 
-/* Mengatur avatar agar bertindak sebagai objek 3D pop-out */
 .pop-avatar {
   width: auto;
-  height: 105%; /* Sengaja dilebihkan agar memotong batas atas container */
+  height: 105%;
   max-width: 95%;
   object-fit: contain;
   z-index: 3;
@@ -408,7 +402,6 @@ section{padding:6rem 4rem;}
   filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.6));
 }
 
-/* Efek saat kartu di-hover: Gambar membesar, meloncat maju di sumbu Z, dan bayangan menjauh */
 .card:hover .pop-avatar {
   transform: translateZ(60px) scale(1.1) translateY(-10px);
   filter: drop-shadow(15px 25px 20px rgba(0, 0, 0, 0.8)) 
@@ -445,7 +438,7 @@ section{padding:6rem 4rem;}
   letter-spacing:2px;text-transform:uppercase;
 }
 
-/* MODIFIKASI TERBARU: FEATURE SEKARANG MENJADI CONTRIBUTOR */
+/* CONTRIBUTOR */
 #feature {
   position: relative;
   background: var(--dark);
@@ -530,12 +523,6 @@ section{padding:6rem 4rem;}
   color: var(--cyan);
   letter-spacing: 1.5px;
   text-transform: uppercase;
-}
-
-/* ANIMASI REVEAL BARU UNTUK KARTU KONTRIBUTOR */
-.contributor-grid.active .contributor-card {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* CHARACTERS */
@@ -664,7 +651,7 @@ footer{
    
   <div class="hero-wrapper">
     <div class="hero-content">
-      <h1 class="hero-title-33d">
+      <h1 class="hero-title-3d">
         <span class="title-welcome">WELCOME TO THE</span>
         <span class="title-core-focus">RIALO ALPHA CORE</span>
       </h1>
@@ -741,7 +728,7 @@ footer{
   </div>
 </section>
 
-<!-- SECTION CONTRIBUTOR TERBARU (MENGGANTIKAN FEATURE) -->
+<!-- SECTION CONTRIBUTOR -->
 <section id="feature">
   <div class="contributor-header">
     <div class="section-tag">// 02 — Network Partners</div>
@@ -958,6 +945,52 @@ footer{
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
+/* ---- ANIMASI SAAT MEMBUKA LINK (LOADING INTRO) ---- */
+window.addEventListener('DOMContentLoaded', () => {
+  const introTl = gsap.timeline();
+  
+  // 1. Navbar muncul tipis dari atas
+  introTl.to("nav", {
+    opacity: 1,
+    y: 0,
+    duration: 1,
+    ease: "power4.out"
+  });
+
+  // 2. Animasi konten utama teks (3D Pop-In)
+  introTl.fromTo(".hero-content", 
+    { 
+      opacity: 0, 
+      transform: "rotateY(30deg) rotateX(15deg) translateZ(-150px)" 
+    },
+    { 
+      opacity: 1, 
+      transform: "rotateY(12deg) rotateX(4deg) translateZ(0)",
+      duration: 1.2,
+      ease: "cubic-bezier(0.16, 1, 0.3, 1)"
+    }, 
+    "-=0.7"
+  );
+
+  // 3. Animasi logo ring 3D di sebelah kanan
+  introTl.fromTo(".logo-33d-wrap",
+    {
+      opacity: 0,
+      scale: 0.8,
+      z: -100
+    },
+    {
+      opacity: 1,
+      scale: 1,
+      z: 0,
+      duration: 1.2,
+      ease: "back.out(1.2)"
+    },
+    "-=1"
+  );
+});
+
+/* ---- CARDS HOVER SCROLL TRIGGERS ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -50, opacity: 0 }, 
@@ -986,7 +1019,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- MOUSE PARALLAX FOR CARDS (VERSI FIX 3D POP-OUT) ---- */
+/* ---- MOUSE PARALLAX FOR CARDS ---- */
 const cards = document.querySelectorAll('.card');
 cards.forEach((card, index) => {
   const avatar = card.querySelector('.pop-avatar');
@@ -1043,7 +1076,7 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-/* ---- CURSOR ---- */
+/* ---- CURSOR TRAIL ---- */
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
@@ -1067,7 +1100,7 @@ document.querySelectorAll('a, button, .char-card, .card, .contributor-card').for
   });
 });
 
-/* ---- PARTICLES ---- */
+/* ---- BACKGROUND PARTICLES ---- */
 const pcanvas = document.getElementById('particles-canvas');
 const pctx = pcanvas.getContext('2d');
 function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
@@ -1095,7 +1128,7 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- INTERSECTION OBSERVER & GSAP ANIMATION FOR CONTRIBUTOR GRID ---- */
+/* ---- INTERSECTION OBSERVER FOR GENERIC REVEAL ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
@@ -1120,19 +1153,25 @@ var observer = new IntersectionObserver(function(entries) {
 
 reveals.forEach(function(el) { observer.observe(el); });
 
-// Animasi Stagger Efek Berurutan (Pop-In) saat Scroll Masuk ke Bagian Contributor Grid
+/* ---- ANIMASI SCROLL STAGGER POP-IN (BAGIAN CONTRIBUTOR) ---- */
 gsap.fromTo(".contributor-card", 
-  { opacity: 0, scale: 0.7, y: 50 },
+  { 
+    opacity: 0, 
+    scale: 0.6, 
+    y: 60,
+    rotateX: -15
+  },
   { 
     opacity: 1, 
     scale: 1, 
     y: 0, 
-    duration: 0.6, 
-    stagger: 0.08, 
-    ease: "back.out(1.5)",
+    rotateX: 0,
+    duration: 0.8, 
+    stagger: 0.06, 
+    ease: "back.out(1.6)",
     scrollTrigger: {
       trigger: ".contributor-grid",
-      start: "top 85%",
+      start: "top 88%", // Mulai sedikit lebih awal agar transisi terlihat natural saat scrolling
       toggleActions: "play none none none"
     }
   }
