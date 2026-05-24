@@ -395,7 +395,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 <canvas id="particles-canvas"></canvas>
 <div id="nexus-toast"></div>
 
-<!-- ═══════════════ WALLET MODAL ═══════════════ -->
 <div id="wallet-modal-ovl" role="dialog" aria-modal="true" aria-label="Connect Wallet">
   <div class="wm-box">
     <div class="wm-header">
@@ -460,7 +459,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   </div>
 </div>
 
-<!-- ═══════════════ SCAN OVERLAY ═══════════════ -->
 <div id="scan-ovl">
   <div class="scan-box">
     <button class="scan-cancel-btn" id="scan-cancel-btn">✕ Cancel</button>
@@ -472,13 +470,12 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   </div>
 </div>
 
-<!-- ═══════════════ NAVBAR ═══════════════ -->
 <nav>
   <a href="index.html" class="logo">NEXUS</a>
   <ul class="nav-links">
     <li><a href="index.html#explore">Explore</a></li>
     <li><a href="index.html#feature">Feature</a></li>
-    <li><a href="index.html#characters">Characters</a></li>
+    <li><a href="index.html#characters">ACCOUNT X</a></li>
     <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
   </ul>
   <button id="nav-wallet-btn">
@@ -487,7 +484,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   </button>
 </nav>
 
-<!-- ═══════════════ HERO ═══════════════ -->
 <section class="page-hero">
   <div class="page-hero-bg"></div>
   <div class="grid-bg"></div>
@@ -501,14 +497,12 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="breadcrumb"><a href="index.html">← Home</a><span>// Infrastructure</span></div>
     <div class="hero-tag">Network Status // Ethereum Sepolia Testnet</div>
     <h1 class="page-title">NEXUS<br/>SEPOLIA ENGINE</h1>
-    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — Terintegrasi Jaringan Sepolia.</p>
+    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — Integrated Sepolia Network.</p>
   </div>
 </section>
 
-<!-- ═══════════════ MAIN ═══════════════ -->
 <div class="container">
 
-  <!-- WALLET BAR -->
   <div class="wallet-bar reveal" id="wallet-bar">
     <div id="wb-disconnected" style="display:flex;align-items:center;gap:14px;width:100%">
       <div style="font-size:.7rem;color:var(--muted);letter-spacing:.1em">
@@ -516,7 +510,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <span style="color:rgba(148,163,184,.5)">Offline</span>
       </div>
       <div class="wb-sep"></div>
-      <div style="font-size:.75rem;color:var(--muted);letter-spacing:.05em">Hubungkan Web3 Extension kamu untuk membaca data saldo asli di Ethereum Sepolia Testnet.</div>
+      <div style="font-size:.75rem;color:var(--muted);letter-spacing:.05em">Connect your Web3 Extension to read actual balance data on the Ethereum Sepolia Testnet.</div>
       <button class="wb-connect-prompt" id="wb-connect-btn" style="margin-left:auto">
         ⚡ Connect to Sepolia
       </button>
@@ -551,7 +545,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     </div>
   </div>
 
-  <!-- TICKER -->
   <div class="ticker-strip reveal">
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia ETH/USD</div><div class="tick-price" id="tp-eth">$3,248.00</div><div class="tick-chg up" id="tc-eth">+0.00%</div></div>
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>BTC/USD</div><div class="tick-price" id="tp-btc">$67,420.00</div><div class="tick-chg up" id="tc-btc">+0.00%</div></div>
@@ -559,7 +552,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia Gas</div><div class="tick-price" id="tp-gas" style="color:var(--gold)">18</div><div class="tick-chg" style="color:var(--muted);font-size:.6rem">BASE GWEI</div></div>
   </div>
 
-  <!-- STATS -->
   <div class="stats-grid reveal">
     <div class="stat-box"><div class="stat-num">11155111</div><div class="stat-label">Sepolia Chain ID</div></div>
     <div class="stat-box"><div class="stat-num" id="st-tvl">$41.5M</div><div class="stat-label">Testnet Pool Volume</div></div>
@@ -567,7 +559,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="stat-box"><div class="stat-num" style="color:var(--green)">99.98%</div><div class="stat-label">RPC Uptime</div></div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs-wrap reveal">
     <button class="tab-btn active" data-tab="swap">⇄ Token Swap</button>
     <button class="tab-btn" data-tab="bridge">⬡ Testnet Bridge</button>
@@ -576,7 +567,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <button class="tab-btn" data-tab="monitor">◉ Node Analytics</button>
   </div>
 
-  <!-- ══ SWAP PANEL ══ -->
   <div class="panel active" id="panel-swap">
     <div class="grid2">
       <div class="infra-card">
@@ -630,7 +620,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     </div>
   </div>
 
-  <!-- ══ BRIDGE PANEL ══ -->
   <div class="panel" id="panel-bridge">
     <div class="grid2">
       <div class="infra-card">
@@ -677,7 +666,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     </div>
   </div>
 
-  <!-- ══ STAKE PANEL ══ -->
   <div class="panel" id="panel-stake">
     <div class="grid2">
       <div class="infra-card">
@@ -729,7 +717,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     </div>
   </div>
 
-  <!-- ══ LIQUIDITY PANEL ══ -->
   <div class="panel" id="panel-liquidity">
     <div class="grid2">
       <div class="infra-card">
@@ -766,7 +753,6 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     </div>
   </div>
 
-  <!-- ══ MONITOR PANEL ══ -->
   <div class="panel" id="panel-monitor">
     <div class="grid2">
       <div class="infra-card">
@@ -988,7 +974,7 @@ document.querySelectorAll('.wallet-opt').forEach(function (el) {
 async function connectSepoliaEVM(provider, name) {
   closeWalletModal();
   try {
-    showToast('Pemicu autentikasi Web3…');
+    showToast('Triggering Web3 authentication…');
     var accounts = await provider.request({ method: 'eth_requestAccounts' });
     if (!accounts || !accounts.length) { showToast('No accounts returned'); return; }
     try {
@@ -1007,26 +993,26 @@ async function connectSepoliaEVM(provider, name) {
             }]
           });
         } catch (addErr) {
-          showToast('⚠ Gagal menambahkan konfigurasi node Sepolia'); return;
+          showToast('⚠ Failed to add Sepolia node configuration'); return;
         }
       } else if (switchErr.code === 4001) {
-        showToast('⚠ Handshake jaringan ditolak — silakan switch ke Sepolia'); return;
+        showToast('⚠ Network handshake rejected — please switch to Sepolia'); return;
       }
     }
     startScanAnimation(accounts[0], name, 11155111, false, provider);
   } catch (err) {
-    if (err.code === 4001) showToast('Koneksi dibatalkan oleh pengguna');
-    else showToast('Handshake JSON-RPC gagal');
+    if (err.code === 4001) showToast('Connection cancelled by user');
+    else showToast('JSON-RPC handshake failed');
   }
 }
 
 // ── SCAN ANIMATION ──
 var _scanTimer = null;
 var SCAN_PHASES = [
-  'Membuka enkripsi parameter node…',
-  'Mengecek Jaringan Sepolia Testnet…',
-  'Sinkronisasi saldo Sepolia ETH…',
-  'Koneksi Stabil ✓'
+  'Decrypting node parameters…',
+  'Checking Sepolia Testnet Network…',
+  'Synchronizing Sepolia ETH balance…',
+  'Connection Stable ✓'
 ];
 
 function startScanAnimation(addr, walletName, chainId, isDemo, provider) {
@@ -1063,7 +1049,7 @@ function closeScanAnimation() {
 }
 document.getElementById('scan-cancel-btn').addEventListener('click', function () {
   closeScanAnimation();
-  showToast('Koneksi dibatalkan');
+  showToast('Connection cancelled');
 });
 
 // ── FINALIZE CONNECTION ──
@@ -1088,7 +1074,7 @@ async function finalizeConnection(addr, walletName, chainId, isDemo, provider) {
       fbtn.textContent = '🌐 Open Faucet';
       fbtn.onclick = function () {
         window.open('https://sepoliafaucet.com/', '_blank');
-        showToast('Membuka Sepolia Faucet resmi…');
+        showToast('Opening official Sepolia Faucet…');
       };
     }
   }
@@ -1170,7 +1156,7 @@ function disconnectWallet() {
 // ── FAUCET ──
 function claimFaucet() {
   if (!isWalletConnected) return;
-  if (faucetUsed) { showToast('Batas klaim demo tercapai untuk sesi ini.'); return; }
+  if (faucetUsed) { showToast('Demo claim limit reached for this session.'); return; }
   walletState.eth += 2.0;
   walletState.usdc += 500.0;
   faucetUsed = true;
@@ -1328,11 +1314,11 @@ document.getElementById('flip-btn').addEventListener('click', function () {
 
 document.getElementById('swap-btn').addEventListener('click', doSwap);
 function doSwap() {
-  if (!isWalletConnected) { showResult('swap-result', 'err', '⚠ Hubungkan node dompet Sepolia terlebih dahulu!'); return; }
+  if (!isWalletConnected) { showResult('swap-result', 'err', '⚠ Connect your Sepolia wallet node first!'); return; }
   var amt = parseFloat(document.getElementById('swap-from-amt').value) || 0;
-  if (amt <= 0) { showResult('swap-result', 'err', '⚠ Masukkan jumlah swap valid.'); return; }
-  if (amt > getWalletBal(fromToken)) { showResult('swap-result', 'err', '⚠ Melebihi saldo ' + fromToken + ' yang tersedia.'); return; }
-  showResult('swap-result', 'load', 'Membuat payload transaksi Sepolia Testnet…');
+  if (amt <= 0) { showResult('swap-result', 'err', '⚠ Enter a valid swap amount.'); return; }
+  if (amt > getWalletBal(fromToken)) { showResult('swap-result', 'err', '⚠ Exceeds available ' + fromToken + ' balance.'); return; }
+  showResult('swap-result', 'load', 'Generating Sepolia Testnet transaction payload…');
   document.getElementById('swap-btn').disabled = true;
   setTimeout(async function () {
     var fp = getPrice(fromToken), tp = getPrice(toToken), usd = amt * fp, toAmt = tp > 0 ? usd / tp : 0;
@@ -1342,7 +1328,7 @@ function doSwap() {
     var txh = randHex(), toFmt = fmt(toAmt * 0.997, toToken === 'USDC' ? 2 : 6);
     swapHistory.unshift({ tx: txh, from: fmt(amt, 4) + ' ' + fromToken, to: toFmt + ' ' + toToken, rate: '1 ' + fromToken + ' = ' + fmt(fp / tp, 4) + ' ' + toToken, status: '✓', time: nowTime() });
     updateWalletBar(); buildSwapHistory();
-    showResult('swap-result', 'ok', '✓ Transaksi berhasil disimulasikan di Sepolia Layer.\nTx: ' + txh);
+    showResult('swap-result', 'ok', '✓ Transaction successfully simulated on Sepolia Layer.\nTx: ' + txh);
     document.getElementById('swap-from-amt').value = ''; calcSwap();
     document.getElementById('swap-btn').disabled = false;
     showToast('✓ Swap Complete');
@@ -1401,7 +1387,7 @@ document.getElementById('bridge-btn').addEventListener('click', doBridge);
 function doBridge() {
   if (!isWalletConnected) { showResult('bridge-result', 'err', '⚠ Connect wallet first!'); return; }
   var amt = parseFloat(document.getElementById('bridge-amt').value) || 0;
-  if (amt <= 0) { showResult('bridge-result', 'err', '⚠ Masukkan nominal jembatan.'); return; }
+  if (amt <= 0) { showResult('bridge-result', 'err', '⚠ Enter bridge amount.'); return; }
   if (amt > walletState.eth) { showResult('bridge-result', 'err', '⚠ Insufficient ETH balance.'); return; }
   var toChain = bridgeChains[bridgeToIdx].name;
   showResult('bridge-result', 'load', 'Initiating cross-chain relay to ' + toChain + '…');
@@ -1464,7 +1450,7 @@ document.getElementById('stake-btn').addEventListener('click', doStake);
 function doStake() {
   if (!isWalletConnected) { showResult('stake-result', 'err', '⚠ Connect wallet first!'); return; }
   var amt = parseFloat(document.getElementById('stake-amt').value) || 0;
-  if (amt <= 0) { showResult('stake-result', 'err', '⚠ Masukkan nilai staking vault.'); return; }
+  if (amt <= 0) { showResult('stake-result', 'err', '⚠ Enter staking vault value.'); return; }
   if (amt > walletState.eth) { showResult('stake-result', 'err', '⚠ Insufficient ETH balance.'); return; }
   showResult('stake-result', 'load', 'Depositing ETH into smart-vault layer…');
   document.getElementById('stake-btn').disabled = true;
@@ -1516,7 +1502,7 @@ document.getElementById('liq-btn').addEventListener('click', doLiquidity);
 function doLiquidity() {
   if (!isWalletConnected) { showResult('liq-result', 'err', '⚠ Connect wallet first!'); return; }
   var amt = parseFloat(document.getElementById('liq-amt').value) || 0;
-  if (amt <= 0) { showResult('liq-result', 'err', '⚠ Masukkan nilai likuiditas.'); return; }
+  if (amt <= 0) { showResult('liq-result', 'err', '⚠ Enter a liquidity value.'); return; }
   if (amt > walletState.eth) { showResult('liq-result', 'err', '⚠ Insufficient ETH balance.'); return; }
   showResult('liq-result', 'load', 'Injecting market liquidity to framework pairs…');
   document.getElementById('liq-btn').disabled = true;
@@ -1631,5 +1617,5 @@ window.addEventListener('DOMContentLoaded', function () {
   }, 100);
 });
 </script>
-</body>
+</body> 
 </html>
