@@ -58,7 +58,7 @@ nav{
   background:rgba(5,0,16,0.85);
   backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(124,58,237,0.2);
-  opacity: 0; /* Diadopsi oleh GSAP untuk opening */
+  opacity: 0;
 }
 .logo{
   font-family:'Orbitron',monospace;
@@ -149,7 +149,7 @@ nav{
 .hero-content{
   max-width:680px;
   transform-style: preserve-3d;
-  opacity: 0; /* Diatur via GSAP Timeline saat membuka link */
+  opacity: 0;
 }
 
 .hero-title-3d {
@@ -228,7 +228,7 @@ nav{
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0; /* Diatur via GSAP Timeline saat membuka link */
+  opacity: 0;
 }
 .logo-rings{
   position: absolute;
@@ -467,7 +467,6 @@ section{padding:6rem 4rem;}
   clip-path: polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   opacity: 0;
-  transform: translateY(40px);
 }
 .contributor-card::before {
   content: '';
@@ -949,7 +948,6 @@ gsap.registerPlugin(ScrollTrigger);
 window.addEventListener('DOMContentLoaded', () => {
   const introTl = gsap.timeline();
   
-  // 1. Navbar muncul tipis dari atas
   introTl.to("nav", {
     opacity: 1,
     y: 0,
@@ -957,7 +955,6 @@ window.addEventListener('DOMContentLoaded', () => {
     ease: "power4.out"
   });
 
-  // 2. Animasi konten utama teks (3D Pop-In)
   introTl.fromTo(".hero-content", 
     { 
       opacity: 0, 
@@ -972,7 +969,6 @@ window.addEventListener('DOMContentLoaded', () => {
     "-=0.7"
   );
 
-  // 3. Animasi logo ring 3D di sebelah kanan
   introTl.fromTo(".logo-33d-wrap",
     {
       opacity: 0,
@@ -990,7 +986,7 @@ window.addEventListener('DOMContentLoaded', () => {
   );
 });
 
-/* ---- CARDS HOVER SCROLL TRIGGERS ---- */
+/* ---- CARDS SCRUB TRIGGERS (EXPLORE SECTION) ---- */
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card, 
     { x: -50, opacity: 0 }, 
@@ -1014,6 +1010,29 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
         start: "top 92%",
         end: "top 35%",
         scrub: 2.5        
+      }
+    }
+  );
+});
+
+/* ---- UPDATE: ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE + STYLE GERAKAN CHARACTERS ---- */
+gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
+  gsap.fromTo(card,
+    { 
+      opacity: 0, 
+      scale: 0.6,    // Mengambil visual scale pop-up dari character card
+      y: 50          // Jarak lompatan vertical atas-bawah
+    },
+    { 
+      opacity: 1, 
+      scale: 1, 
+      y: 0, 
+      ease: "none",
+      scrollTrigger: {
+        trigger: card,
+        start: "top 95%",   // Memulai transisi scrub
+        end: "top 45%",     // Durasi sinkronisasi gulir scroll
+        scrub: 2.5          // Kecepatan & kehalusan animasi disamakan persis dengan Explore
       }
     }
   );
@@ -1128,7 +1147,7 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- INTERSECTION OBSERVER FOR GENERIC REVEAL ---- */
+/* ---- INTERSECTION OBSERVER FOR GENERIC REVEAL (CHARACTERS) ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
@@ -1152,30 +1171,6 @@ var observer = new IntersectionObserver(function(entries) {
 }, { threshold: 0.15 });
 
 reveals.forEach(function(el) { observer.observe(el); });
-
-/* ---- ANIMASI SCROLL STAGGER POP-IN (BAGIAN CONTRIBUTOR) ---- */
-gsap.fromTo(".contributor-card", 
-  { 
-    opacity: 0, 
-    scale: 0.6, 
-    y: 60,
-    rotateX: -15
-  },
-  { 
-    opacity: 1, 
-    scale: 1, 
-    y: 0, 
-    rotateX: 0,
-    duration: 0.8, 
-    stagger: 0.06, 
-    ease: "back.out(1.6)",
-    scrollTrigger: {
-      trigger: ".contributor-grid",
-      start: "top 88%", // Mulai sedikit lebih awal agar transisi terlihat natural saat scrolling
-      toggleActions: "play none none none"
-    }
-  }
-);
 
 /* ---- CHAR SELECT ---- */
 document.querySelectorAll('.char-card').forEach(function(card) {
