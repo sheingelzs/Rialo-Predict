@@ -145,7 +145,7 @@ nav{
   align-items: center;
 }
 
-/* VIDEO BACKGROUND STYLING */
+/* VIDEO BACKGROUND STYLING (DIOPTIMALKAN UNTUK VERCEL DEPLOYMENT) */
 .hero-video-bg {
   position: absolute;
   top: 0;
@@ -155,8 +155,8 @@ nav{
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.28; /* Menjaga kontras kegelapan agar teks menyala tajam */
-  filter: hue-rotate(230deg) saturate(1.3) contrast(1.1); /* Mengunci gradasi warna agar menyatu dengan palet core */
+  opacity: 0.28; /* Menjaga kegelapan latar belakang agar teks menyala tajam */
+  filter: hue-rotate(230deg) saturate(1.4) contrast(1.1); /* Efek filter gradasi warna neon */
 }
 
 .hero-bg{
@@ -636,8 +636,9 @@ footer{
 </nav>
 
 <section id="hero">
+  <!-- CDN VIDEO LINK — GANTI LINK DI BAWAH DENGAN DIRECT LINK .MP4 HASIL UNGGAHAN IMGUR-MU BIAR RE-DEPLOY VERCEL LANGSUNG TEMBUS -->
   <video autoplay muted loop playsinline class="hero-video-bg">
-    <source src="videos/logo.mp4" type="video/mp4">
+    <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
   </video>
 
   <div class="hero-bg"></div>
