@@ -148,13 +148,12 @@ a[href*="spline.design"],
   background:var(--cyan);
   border-radius:50%;
   pointer-events:none;
-  z-index:100000001; /* Ditinggikan agar berada di atas Gate Layer */
+  z-index:100000002; /* Di atas segalanya termasuk gate overlay */
   transform:translate(-50%,-50%);
-  top:-100px; left:-100px; /* Dibuang keluar layar dulu sebelum terdeteksi instan */
   mix-blend-mode: screen;
   box-shadow: 0 0 8px var(--cyan);
   transition: width 0.2s, height 0.2s, background-color 0.2s;
-  opacity: 0; /* Tersembunyi sampai koordinat pertama dibaca */
+  opacity: 1; /* FIX: Langsung dipaksa nyala di awal */
 }
 #cursor-trail{
   position:fixed;
@@ -162,12 +161,11 @@ a[href*="spline.design"],
   border:1px solid rgba(124,58,237,0.6);
   border-radius:50%;
   pointer-events:none;
-  z-index:100000000;
+  z-index:100000001;
   transform:translate(-50%,-50%);
-  top:-100px; left:-100px;
   mix-blend-mode: screen;
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
-  opacity: 0;
+  opacity: 1; /* FIX: Langsung dipaksa nyala di awal */
 }
 
 /* NAVBAR */
@@ -744,7 +742,7 @@ footer{
   .hero-btns { justify-content: center; }
   nav { padding: 1.2rem 2rem; }
   .nav-links { display: none; }
-  body { cursor: auto !important; } /* Kembalikan kursor default di mobile device */
+  body { cursor: auto !important; } 
   #cursor, #cursor-trail { display: none !important; }
 }
 </style>
@@ -938,7 +936,7 @@ enterBtn.addEventListener('click', () => {
   setTimeout(() => {
     gateContainer.style.display = 'none';
     introOverlay.style.display = 'flex';
-    introVideo.muted = false; // Aktifkan audio beneran karena user sudah berinteraksi
+    introVideo.muted = false; 
     introVideo.play().catch(err => {
       console.log("Autoplay ditolak, fallback berjalan otomatis.");
       initiateMainSite();
@@ -953,11 +951,10 @@ function initiateMainSite() {
   const exitTl = gsap.timeline({
     onComplete: () => {
       introOverlay.style.display = 'none';
-      document.body.style.overflowY = 'auto'; // Aktifkan scroll halaman utama kembali
+      document.body.style.overflowY = 'auto'; 
     }
   });
 
-  // Efek transisi kamera cinematic keluar dari video intro
   exitTl.to(introOverlay, {
     scale: 1.1,
     filter: "blur(20px)",
@@ -1004,41 +1001,39 @@ function animateHeroParallax() {
 }
 requestAnimationFrame(animateHeroParallax);
 
-// FIX: INITIAL CINEMATIC CURSOR TRACKING ENGINE
+
+// FIX: AUTO INITIALIZE POSITION ON PAGE LOAD
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursor-trail');
-let mx = -100, my = -100, tx = -100, ty = -100;
-let cursorInitialized = false;
+
+// Set posisi kursor otomatis pas di tengah layar saat web pertama dibuka (Sebelum mouse digerakkan)
+let mx = window.innerWidth / 2;
+let my = window.innerHeight / 2;
+let tx = mx;
+let ty = my;
+
+cur.style.left = mx + 'px';
+cur.style.top = my + 'px';
+trail.style.left = tx + 'px';
+trail.style.top = ty + 'px';
 
 document.addEventListener('mousemove', function(e) {
   mx = e.clientX; 
   my = e.clientY;
-  
-  // Instant trigger pada pergerakan mouse pertama kali agar kursor tidak berkedip di (0,0)
-  if (!cursorInitialized) {
-    cursorInitialized = true;
-    tx = mx; 
-    ty = my;
-    cur.style.opacity = '1';
-    trail.style.opacity = '1';
-  }
-  
   cur.style.left = mx + 'px'; 
   cur.style.top = my + 'px';
 });
 
 (function animateTrail() {
-  if (cursorInitialized) {
-    tx += (mx - tx) * 0.12; 
-    ty += (my - ty) * 0.12;
-    trail.style.left = tx + 'px'; 
-    trail.style.top = ty + 'px';
-  }
+  tx += (mx - tx) * 0.12; 
+  ty += (my - ty) * 0.12;
+  trail.style.left = tx + 'px'; 
+  trail.style.top = ty + 'px';
   requestAnimationFrame(animateTrail);
 })();
 
-// FIX TYPO: Penanganan Hover Fleksibel & Perbaikan Kode Properti CSS Perubah Warna Sempurna
-document.querySelectorAll('a, button, .char-card, .card, .contributor-card').forEach(function(el) {
+// Penanganan Hover Fleksibel & Perubah Warna Sempurna
+document.querySelectorAll('a, button, .char-card, .card, .contributor-card, #enter-btn').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
     cur.style.width='24px'; cur.style.height='24px'; cur.style.backgroundColor='var(--pink)';
     trail.style.width='48px'; trail.style.height='48px'; trail.style.borderColor='var(--pink)';
@@ -1096,7 +1091,6 @@ for (var i = 0; i < 50; i++) {
       p.x+=p.vx; p.y+=p.vy;
       if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
       if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
-      pctx.健全=true;
       pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       pctx.fillStyle='rgba('+p.c+',0.5)'; pctx.fill();
     });
