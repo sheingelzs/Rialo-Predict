@@ -473,61 +473,98 @@ section{padding:6rem 4rem;}
   letter-spacing:2px;text-transform:uppercase;
 }
 
-/* FEATURE */
-#feature{position:relative;}
-.feature-inner{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:5rem;align-items:center;
+/* MODIFIKASI TERBARU: FEATURE SEKARANG MENJADI CONTRIBUTOR */
+#feature {
+  position: relative;
+  background: var(--dark);
 }
-.feature-box{
-  background:rgba(124,58,237,0.05);
-  border:1px solid rgba(124,58,237,0.25);
-  padding:2.5rem;
-  clip-path:polygon(0 0,calc(100% - 30px) 0,100% 30px,100% 100%,30px 100%,0 calc(100% - 30px));
-  position:relative;
+.contributor-header {
+  text-align: center;
+  margin-bottom: 4rem;
 }
-.corner-tl,.corner-br{position:absolute;width:20px;height:20px;}
-.corner-tl{top:0;left:0;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);}
-.corner-br{bottom:0;right:0;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);}
-.hud-wrap{
-  display:flex;align-items:center;justify-content:center;
-  aspect-ratio:1;
+.contributor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
-.hud-ring{
-  width:220px;height:220px;border-radius:50%;
-  border:1px solid rgba(6,182,212,0.3);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;animation:spinCW 20s linear infinite;
+.contributor-card {
+  background: rgba(13, 0, 32, 0.6);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  clip-path: polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  opacity: 0;
+  transform: translateY(40px);
 }
-.hud-ring::before{
-  content:'';position:absolute;
-  width:175px;height:175px;border-radius:50%;
-  border:1px dashed rgba(124,58,237,0.4);
+.contributor-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
-.hud-ring::after{
-  content:'';position:absolute;
-  width:128px;height:128px;border-radius:50%;
-  border:2px solid rgba(236,72,153,0.3);
+.contributor-card:hover {
+  border-color: var(--pink);
+  background: rgba(124, 58, 237, 0.08);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
 }
-.hud-core{
-  width:78px;height:78px;border-radius:50%;
-  border:2px solid var(--cyan);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',monospace;font-size:0.55rem;
-  letter-spacing:1.5px;color:var(--cyan);z-index:1;
-  text-align:center;
+.contributor-card:hover::before {
+  opacity: 1;
 }
-.hud-dot2{
-  position:absolute;width:8px;height:8px;border-radius:50%;
-  background:var(--cyan);top:-4px;left:50%;transform:translateX(-50%);
-  box-shadow:0 0 10px var(--cyan);
+.contributor-logo-wrap {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 0, 16, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 50%;
+  padding: 12px;
+  transition: transform 0.3s ease;
 }
-.feature-list{margin-top:2rem;}
-.feature-item{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(124,58,237,0.12);}
-.feature-item:last-child{border-bottom:none;}
-.fdot{width:8px;height:8px;min-width:8px;background:var(--cyan);border-radius:50%;margin-top:6px;box-shadow:0 0 8px var(--cyan);}
-.feature-text h4{font-size:0.9rem;letter-spacing:1px;margin-bottom:0.3rem;}
-.feature-text p{color:var(--muted);font-size:0.85rem;line-height:1.6;}
+.contributor-card:hover .contributor-logo-wrap {
+  transform: rotate(10deg) scale(1.1);
+  border-color: var(--cyan);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+.contributor-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+}
+.contributor-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.contributor-status {
+  font-size: 0.7rem;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ANIMASI REVEAL BARU UNTUK KARTU KONTRIBUTOR */
+.contributor-grid.active .contributor-card {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* CHARACTERS */
 #characters{background:var(--dark3);}
@@ -641,7 +678,7 @@ footer{
   <div class="logo">NEXUS</div>
   <ul class="nav-links">
     <li><a href="#explore">Explore</a></li>
-    <li><a href="#feature">Feature</a></li>
+    <li><a href="#feature">Contributor</a></li>
     <li><a href="#characters">Characters</a></li>
     <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
   </ul>
@@ -652,7 +689,7 @@ footer{
   <div class="hero-bg"></div>
   <div class="grid-bg"></div>
   <div class="scanline"></div>
-  
+   
   <div class="hero-wrapper">
     <div class="hero-content">
       <div class="hero-tag">System Online // v2.077</div>
@@ -686,11 +723,11 @@ footer{
         <div class="ring ring-2"><div class="ring-dot dot-purple"></div></div>
         <div class="ring ring-3"><div class="ring-dot dot-pink"></div></div>
       </div>
-      
+       
       <div class="logo-container-fixed">
         <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo" class="logo-muter"/>
       </div>
-      
+       
       <div class="logo-glow"></div>
     </div>
   </div>
@@ -699,7 +736,7 @@ footer{
 <section id="explore">
   <div class="section-tag">// 01 — Core Terminal</div>
   <h2 class="section-title reveal">DeFi Liquidity<br/><span style="color:var(--cyan)">Infrastructure</span></h2>
-  
+   
   <div class="cards-grid">
     <div class="card slide-left-card">
       <div class="card-img-container">
@@ -711,7 +748,7 @@ footer{
       <div class="card-advantage"><strong>Key Advantage:</strong> Uses smart routing to scan trust vectors in real-time, automatically securing the lowest slippage (0.5%) and best pricing.</div>
       <span class="card-tag">Swap</span>
     </div>
-    
+     
     <div class="card slide-right-card">
       <div class="card-img-container">
         <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs1.png" alt="Gelzs Visual" class="pop-avatar"/>
@@ -722,7 +759,7 @@ footer{
       <div class="card-advantage"><strong>Key Advantage:</strong> Fully insured, low-fee (0.05%) transactions that bypass traditional multi-day locking periods.</div>
       <span class="card-tag">Bridge</span>
     </div>
-    
+     
     <div class="card slide-left-card">
       <div class="card-img-container">
         <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
@@ -733,7 +770,7 @@ footer{
       <div class="card-advantage"><strong>Key Advantage:</strong> Earn up to 8.4% APY dynamically without losing capital liquidity—trade or deploy your rETH anytime.</div>
       <span class="card-tag">Staking</span>
     </div>
-    
+     
     <div class="card slide-right-card">
       <div class="card-img-container">
         <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
@@ -747,47 +784,138 @@ footer{
   </div>
 </section>
 
+<!-- SECTION CONTRIBUTOR TERBARU (MENGGANTIKAN FEATURE) -->
 <section id="feature">
-  <div class="feature-inner">
-    <div class="feature-visual reveal">
-      <div class="feature-box">
-        <div class="corner-tl"></div>
-        <div class="corner-br"></div>
-        <div class="hud-wrap">
-          <div class="hud-ring">
-            <div class="hud-dot2"></div>
-            <div class="hud-core">NEXUS<br/>CORE</div>
-          </div>
-        </div>
+  <div class="contributor-header">
+    <div class="section-tag">// 02 — Network Partners</div>
+    <h2 class="section-title reveal">Core Core<br/><span style="color:var(--pink)">Contributors</span></h2>
+  </div>
+  
+  <div class="contributor-grid">
+    <!-- 1. Meta -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/meta.png" alt="Meta" class="contributor-logo"/>
       </div>
+      <div class="contributor-name">META</div>
+      <div class="contributor-status">Node Partner</div>
     </div>
-    <div class="reveal">
-      <div class="section-tag">// 02 — Live Monitor</div>
-      <h2 class="section-title">Live Market<br/><span style="color:var(--pink)">Monitor</span></h2>
-      <p style="color:var(--muted);line-height:1.8;margin-bottom:1rem;">Tracks real-time network transaction processing speeds (TPS) and multi-tier gas prices (Slow/Avg/Fast).</p>
-      <div class="feature-list">
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Global Aggregation</h4>
-            <p>Aggregates a live global transaction feed so you can time trades when network congestion is lowest.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Adaptive Route Execution</h4>
-            <p>Processes network spikes instantly and reroutes orders through lighter smart contracts dynamically.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="fdot"></div>
-          <div class="feature-text">
-            <h4>Cross-Realm Sync</h4>
-            <p>Your liquidity tracking, node analytics, and metrics carry seamlessly across all chain dimensions.</p>
-          </div>
-        </div>
+
+    <!-- 2. Apple -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/apple.png" alt="Apple" class="contributor-logo"/>
       </div>
+      <div class="contributor-name">APPLE</div>
+      <div class="contributor-status">Hardware Integrator</div>
+    </div>
+
+    <!-- 3. Amazon -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/amazon.png" alt="Amazon" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">AMAZON</div>
+      <div class="contributor-status">Cloud Infrastructure</div>
+    </div>
+
+    <!-- 4. Netflix -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/netflix.png" alt="Netflix" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">NETFLIX</div>
+      <div class="contributor-status">Data Relay</div>
+    </div>
+
+    <!-- 5. Google -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/google.png" alt="Google" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">GOOGLE</div>
+      <div class="contributor-status">RPC Provider</div>
+    </div>
+
+    <!-- 6. TikTok -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/tiktok.png" alt="TikTok" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">TIKTOK</div>
+      <div class="contributor-status">Network Node</div>
+    </div>
+
+    <!-- 7. Citadel -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/citadel.png" alt="Citadel" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">CITADEL</div>
+      <div class="contributor-status">Liquidity Provider</div>
+    </div>
+
+    <!-- 8. Mysten Labs -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/mystenlabs.png" alt="Mysten Labs" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">MYSTEN LABS</div>
+      <div class="contributor-status">Cryptography</div>
+    </div>
+
+    <!-- 9. Solana -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/solana.png" alt="Solana" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">SOLANA</div>
+      <div class="contributor-status">Consensus Protocol</div>
+    </div>
+
+    <!-- 10. EigenLayer -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/eigenlayer.png" alt="EigenLayer" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">EIGENLAYER</div>
+      <div class="contributor-status">Restaking Layer</div>
+    </div>
+
+    <!-- 11. Coinbase -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/coinbase.png" alt="Coinbase" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">COINBASE</div>
+      <div class="contributor-status">Institutional Gateway</div>
+    </div>
+
+    <!-- 12. NEAR Protocol -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/near.png" alt="NEAR Protocol" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">NEAR PROTOCOL</div>
+      <div class="contributor-status">Sharding Client</div>
+    </div>
+
+    <!-- 13. VMware -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/vmware.png" alt="VMware" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">VMWARE</div>
+      <div class="contributor-status">Virtual Machine</div>
+    </div>
+
+    <!-- 14. Diem -->
+    <div class="contributor-card">
+      <div class="contributor-logo-wrap">
+        <img src="images/diem.png" alt="Diem" class="contributor-logo"/>
+      </div>
+      <div class="contributor-name">DIEM</div>
+      <div class="contributor-status">Legacy Framework</div>
     </div>
   </div>
 </section>
@@ -795,7 +923,7 @@ footer{
 <section id="characters">
   <div class="section-tag">// 03 — Node Validators</div>
   <h2 class="section-title reveal">Select Consensus<br/><span style="color:var(--purple)">Client</span></h2>
-  
+   
   <div class="char-showcase">
     <div class="char-card active reveal">
       <div class="char-avatar">
@@ -812,7 +940,7 @@ footer{
       <div class="char-role">Relay Validator</div>
       <div class="char-power">Tier — 1</div>
     </div>
-    
+     
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -826,7 +954,7 @@ footer{
       <div class="char-role">ZK-Rollup Node</div>
       <div class="char-power">Tier — 1</div>
     </div>
-    
+     
     <div class="char-card reveal">
       <div class="char-avatar">
         <svg viewBox="0 0 100 100" width="70" height="70">
@@ -915,7 +1043,6 @@ cards.forEach((card, index) => {
     const cardCenterX = rect.left + rect.width / 2;
     const cardCenterY = rect.top + rect.height / 2;
     
-    // Sudut kemiringan diturunkan dari 28 ke 10 agar efek "kertas gepeng" hilang
     const angleX = (e.clientX - cardCenterX) / (rect.width / 2);
     const angleY = (e.clientY - cardCenterY) / (rect.height / 2);
     targetX = angleX * 10; 
@@ -932,7 +1059,6 @@ cards.forEach((card, index) => {
     const speedFactor = 0.0025;
     const offsetTime = time * speedFactor + (index * 0.8);
     
-    // Efek mengapung halus (subtle floating)
     const floatY = Math.sin(offsetTime) * 6;
     
     currentX += (targetX - currentX) * 0.1;
@@ -940,10 +1066,8 @@ cards.forEach((card, index) => {
     
     if (avatar) {
       if (isHovered) {
-        // Saat di-hover: Maju melompat ke depan (translateZ), membesar, dan miring sedikit
         avatar.style.transform = `translateZ(70px) scale(1.12) translateY(${floatY - 12}px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
       } else {
-        // Saat normal: Hanya mengapung santai di posisi awal
         avatar.style.transform = `translateZ(0px) scale(1) translateY(${floatY}px) rotateY(${currentX}deg) rotateX(${currentY}deg)`;
       }
     }
@@ -975,7 +1099,7 @@ document.addEventListener('mousemove', function(e) {
   trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
   requestAnimationFrame(animateTrail);
 })();
-document.querySelectorAll('a, button, .char-card, .card').forEach(function(el) {
+document.querySelectorAll('a, button, .char-card, .card, .contributor-card').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
     cur.style.width='28px';cur.style.height='28px';cur.style.background='var(--pink)';
     trail.style.width='55px';trail.style.height='55px';
@@ -1014,7 +1138,7 @@ for (var i = 0; i < 55; i++) {
   requestAnimationFrame(drawParticles);
 })();
 
-/* ---- INTERSECTION OBSERVER ---- */
+/* ---- INTERSECTION OBSERVER & GSAP ANIMATION FOR CONTRIBUTOR GRID ---- */
 var reveals = document.querySelectorAll('.reveal');
 var observer = new IntersectionObserver(function(entries) {
   let charCards = Array.from(entries).filter(e => e.target.classList.contains('char-card'));
@@ -1038,6 +1162,24 @@ var observer = new IntersectionObserver(function(entries) {
 }, { threshold: 0.15 });
 
 reveals.forEach(function(el) { observer.observe(el); });
+
+// Animasi Stagger Efek Berurutan (Pop-In) saat Scroll Masuk ke Bagian Contributor Grid
+gsap.fromTo(".contributor-card", 
+  { opacity: 0, scale: 0.7, y: 50 },
+  { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0, 
+    duration: 0.6, 
+    stagger: 0.08, 
+    ease: "back.out(1.5)",
+    scrollTrigger: {
+      trigger: ".contributor-grid",
+      start: "top 85%",
+      toggleActions: "play none none none"
+    }
+  }
+);
 
 /* ---- CHAR SELECT ---- */
 document.querySelectorAll('.char-card').forEach(function(card) {
