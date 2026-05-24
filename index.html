@@ -210,6 +210,22 @@ nav{
 }
 @keyframes infraPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
 
+/* PATCHED: Flash Loan Navbar Link Style */
+.nav-links a.flash-nav-link{
+  color:var(--pink);
+  position:relative;
+}
+.nav-links a.flash-nav-link::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;right:0;
+  height:1px;
+  background:var(--pink);
+  box-shadow:0 0 6px var(--pink);
+  animation:flashNavPulse 1.8s ease-in-out infinite;
+}
+@keyframes flashNavPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+
 .nav-btn{
   padding:0.5rem 1.5rem;
   border:1px solid var(--cyan);
@@ -772,6 +788,8 @@ footer{
       <li><a href="#feature">Contributor</a></li>
       <li><a href="#account-x">Account X</a></li>
       <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
+      <!-- PATCHED: Added Flash Loan Node -->
+      <li><a href="flashloan.html" class="flash-nav-link">Flash Loan</a></li>
     </ul>
     <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
   </nav>
