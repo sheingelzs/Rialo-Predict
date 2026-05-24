@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEXUS — Flash Loan Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple:#7c3aed;--cyan:#06b6d4;--pink:#ec4899;
+  --dark:#050010;--dark2:#0d0020;--dark3:#110028;
+  --text:#e2e8f0;--muted:#94a3b8;
+  --green:#00e87a;--gold:#d4a832;--red:#ff4444;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--dark);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  cursor: none !important; /* Sembunyikan kursor bawaan OS */
+}
+
+/* Sembunyikan kursor OS di elemen interaktif */
+a, button, input, select, .wallet-opt {
+  cursor: none !important;
+}
+
+/* ── CINEMATIC CURSOR SYSTEM ── */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--cyan);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100000005;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  box-shadow: 0 0 8px var(--cyan);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+  top: 0; left: 0;
+}
+#cursor-trail {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(124, 58, 237, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100000004;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
+  top: 0; left: 0;
+}
+#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+/* ── NAVBAR ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(5,0,16,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(124,58,237,.2);}
+.logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.4rem;color:var(--cyan);letter-spacing:4px;text-decoration:none;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--muted);font-size:.85rem;letter-spacing:2px;text-decoration:none;text-transform:uppercase;font-weight:600;transition:color .3s;}
+.nav-links a:hover,.nav-links a.active-link{color:var(--cyan);}
+
+#nav-wallet-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:.5rem 1.4rem;
+  border:1px solid var(--cyan);background:transparent;
+  color:var(--cyan);font-family:'Orbitron',monospace;
+  font-size:.7rem;letter-spacing:2px;text-transform:uppercase;
+  transition:all .3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+#nav-wallet-btn.connected{border-color:var(--green);color:var(--green);}
+.nav-wallet-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+#nav-wallet-btn.connected .nav-wallet-dot{background:var(--green);box-shadow:0 0 8px var(--green);}
+
+/* ── MODAL & OVERLAY ── */
+#wallet-modal-ovl, #scan-ovl{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(5,0,16,.85);backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .35s;
+}
+#wallet-modal-ovl.open, #scan-ovl.open{opacity:1;display:flex;}
+.wm-box, .scan-box{
+  background:var(--dark2);border:1px solid rgba(124,58,237,.35);
+  width:min(440px,94vw);padding:1.6rem;position:relative;
+}
+.wallet-opt{
+  display:flex;align-items:center;gap:12px;padding:14px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(124,58,237,.15);
+  margin-bottom:6px;transition:all .22s;
+}
+.wallet-opt:hover{border-color:rgba(6,182,212,.45);transform:translateX(3px);}
+.wo-name{font-size:.85rem;font-weight:700;}
+
+/* ── PAGE HERO ── */
+.page-hero{position:relative;min-height:35vh;display:flex;align-items:flex-end;padding:6rem 4rem 2rem;overflow:hidden;}
+.page-hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 60% at 20% 50%,rgba(6,182,212,.13) 0%,transparent 70%);}
+.page-title{font-family:'Orbitron',monospace;font-size:clamp(2rem,4vw,3.5rem);font-weight:900;text-transform:uppercase;color:#fff;}
+
+/* ── CONTENT LAYOUT ── */
+.container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:2rem 4rem 5rem;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:768px){.grid2{grid-template-columns:1fr;}}
+
+.infra-card{background:rgba(255,255,255,.02);border:1px solid rgba(124,58,237,.2);padding:2rem;position:relative;margin-bottom:1.5rem;}
+.card-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:.4rem;color:#fff;}
+.card-sub{font-size:.75rem;color:var(--cyan);letter-spacing:.08em;margin-bottom:1.5rem;}
+
+.inp{width:100%;background:rgba(0,0,0,.5);border:1px solid rgba(124,58,237,.2);padding:10px 14px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;}
+.btn-main{width:100%;margin-top:1rem;padding:14px;border:none;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .3s;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);}
+.btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
+.btn-main:disabled{opacity:.38;}
+
+/* ── CONSOLE LOG SYSTEM ── */
+.console-box{
+  background:#020008;border:1px solid rgba(6,182,212,0.2);
+  font-family:'Orbitron',monospace;font-size:0.75rem;padding:15px;
+  min-height:220px;max-height:220px;overflow-y:auto;line-height:1.6;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+.log-line{margin-bottom:6px;opacity:0;transform:translateX(-5px);animation:logFadeIn 0.3s forwards;}
+@keyframes logFadeIn{to{opacity:1;transform:translateX(0);}}
+
+.table-wrap{overflow-x:auto;border:1px solid rgba(124,58,237,.2);background:rgba(255,255,255,.01);margin-top:10px;}
+.rt-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.rt-table td{padding:12px 16px;border-bottom:1px solid rgba(124,58,237,.08);color:var(--text);}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<canvas id="particles-canvas"></canvas>
+
+<!-- WALLET MODAL -->
+<div id="wallet-modal-ovl">
+  <div class="wm-box">
+    <div class="card-title" style="margin-bottom:1rem;">Select Connection Target</div>
+    <div class="wallet-opt" id="opt-metamask">🦊 <span class="wo-name">MetaMask Extension</span></div>
+    <div class="wallet-opt" id="opt-demo">🧪 <span class="wo-name">Demo Sandbox Mode</span></div>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<nav>
+  <a href="https://rialo-alpha-core.vercel.app/" class="logo">NEXUS</a>
+  <ul class="nav-links">
+    <li><a href="https://rialo-alpha-core.vercel.app/#explore">Explore</a></li>
+    <li><a href="https://rialo-alpha-core.vercel.app/#feature">Contributor</a></li>
+    <li><a href="infrastructure.html">Infrastructure</a></li>
+  </ul>
+  <button id="nav-wallet-btn">
+    <span class="nav-wallet-dot"></span>
+    <span id="nav-wallet-label">Connect Wallet</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-content">
+    <h1 class="page-title">FLASH LOAN<br/><span style="color:var(--pink)">ARBITRAGE EXPLORER</span></h1>
+  </div>
+</section>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+  <div class="grid2">
+    
+    <!-- LEFT PANEL: CONTROLS -->
+    <div class="infra-card">
+      <div class="card-title">Quantum Arbitrage Parameters</div>
+      <div class="card-sub">// Capital loan without collateral execution pipeline</div>
+      
+      <div style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">
+        Live Market Asset Base: <strong style="color:#fff;">Ethereum (ETH)</strong>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom:1.5rem;">
+        <table class="rt-table">
+          <tbody>
+            <tr><td>Dex Protocol Alpha Price (Real-Time)</td><td id="price-dex-a" style="text-align:right; font-weight:700; color:var(--cyan)">$0.00</td></tr>
+            <tr><td>Dex Protocol Beta Price (Spread Variance)</td><td id="price-dex-b" style="text-align:right; font-weight:700; color:var(--purple)">$0.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <div style="font-size:0.65rem; text-transform:uppercase; margin-bottom:6px; color:var(--muted)">Flash Loan Principal Amount</div>
+        <select class="inp" id="loan-size-select">
+          <option value="100">100 ETH</option>
+          <option value="500">500 ETH</option>
+          <option value="1000">1,000 ETH</option>
+          <option value="5000">5,000 ETH</option>
+        </select>
+      </div>
+
+      <button class="btn-main btn-purple" id="execute-flash-btn">Execute Flash Loan Vector</button>
+    </div>
+
+    <!-- RIGHT PANEL: CONSOLE TERMINAL -->
+    <div class="infra-card">
+      <div class="card-title">EVM Execution Logs</div>
+      <div class="card-sub">// Live block transaction cluster compilation status</div>
+      
+      <div class="console-box" id="terminal-log">
+        <div style="color:var(--muted)">[SYSTEM] Terminal online. Waiting for Web3 network quorum handshake...</div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table class="rt-table">
+          <tbody>
+            <tr><td>Handshake Status</td><td id="terminal-wallet-status" style="color:var(--red)">OFFLINE</td></tr>
+            <tr><td>Net Realized Yield</td><td id="terminal-profit" style="font-weight:700; color:var(--green)">$0.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  CINEMATIC CURSOR
+// ══════════════════════════════════════════
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+let mx = window.innerWidth/2, my = window.innerHeight/2, tx = mx, ty = my;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+});
+(function anim(){
+  tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12;
+  trail.style.left = tx + 'px'; trail.style.top = ty + 'px';
+  requestAnimationFrame(anim);
+})();
+
+document.querySelectorAll('a, button, input, select, .wallet-opt').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cur.style.width='24px'; cur.style.height='24px'; cur.style.backgroundColor='var(--pink)';
+    trail.style.width='48px'; trail.style.height='48px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cur.style.width='10px'; cur.style.height='10px'; cur.style.backgroundColor='var(--cyan)';
+    trail.style.width='32px'; trail.style.height='32px';
+  });
+});
+
+// ══════════════════════════════════════════
+//  PARTICLES
+// ══════════════════════════════════════════
+const pcanvas = document.getElementById('particles-canvas');
+const pctx = pcanvas.getContext('2d');
+function resize() { pcanvas.width = window.innerWidth; pcanvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
+let pts = Array.from({length:30}, () => ({x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight, vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3}));
+(function draw(){
+  pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
+  pts.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0||p.x>pcanvas.width) p.vx*=-1; if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+    pctx.beginPath(); pctx.arc(p.x,p.y,1.2,0,Math.PI*2); pctx.fillStyle='rgba(6,182,212,0.3)'; pctx.fill();
+  });
+  requestAnimationFrame(draw);
+})();
+
+// ══════════════════════════════════════════
+//  REAL-TIME LIVE DATA & SPREAD MAKER
+// ══════════════════════════════════════════
+let realEthPrice = 3250;
+let dexAPrice = 3250;
+let dexBPrice = 3258;
+
+function updateLivePrices() {
+  fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
+    .then(r => r.json())
+    .then(data => {
+      if(data.ethereum) {
+        realEthPrice = data.ethereum.usd;
+        // Membuat ketidakseimbangan harga (spread spread) buatan antar bursa fiktif untuk demo arbitrase
+        dexAPrice = realEthPrice * 0.9985;
+        dexBPrice = realEthPrice * 1.0022;
+        
+        document.getElementById('price-dex-a').textContent = '$' + dexAPrice.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+        document.getElementById('price-dex-b').textContent = '$' + dexBPrice.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
+      }
+    }).catch(() => {
+      // Fallback jika API bermasalah
+      dexAPrice = 3242.10; dexBPrice = 3256.45;
+      document.getElementById('price-dex-a').textContent = '$3,242.10';
+      document.getElementById('price-dex-b').textContent = '$3,256.45';
+    });
+}
+setInterval(updateLivePrices, 15000);
+updateLivePrices();
+
+// ══════════════════════════════════════════
+//  WALLET LAYER CONNECTION
+// ══════════════════════════════════════════
+let isConnected = false;
+const modal = document.getElementById('wallet-modal-ovl');
+const navBtn = document.getElementById('nav-wallet-btn');
+
+navBtn.addEventListener('click', () => { if(!isConnected) modal.classList.add('open'); else disconnect(); });
+document.getElementById('opt-metamask').addEventListener('click', connect);
+document.getElementById('opt-demo').addEventListener('click', connect);
+
+function connect() {
+  modal.classList.remove('open');
+  isConnected = true;
+  navBtn.classList.add('connected');
+  document.getElementById('nav-wallet-label').textContent = "0x7777…A96";
+  document.getElementById('terminal-wallet-status').textContent = "SECURE NODE ACTIVE";
+  document.getElementById('terminal-wallet-status').className = "td-g";
+  document.getElementById('terminal-log').innerHTML = `<div style="color:var(--green)">[SYSTEM] Web3 handshake confirmed. non-custodial pipeline flash loan registry loaded.</div>`;
+}
+
+function disconnect() {
+  isConnected = false;
+  navBtn.classList.remove('connected');
+  document.getElementById('nav-wallet-label').textContent = "Connect Wallet";
+  document.getElementById('terminal-wallet-status').textContent = "OFFLINE";
+  document.getElementById('terminal-wallet-status').className = "td-red";
+  document.getElementById('terminal-log').innerHTML = `<div style="color:var(--muted)">[SYSTEM] Terminal offline. Waiting for Web3 network quorum handshake...</div>`;
+  document.getElementById('terminal-profit').textContent = "$0.00";
+}
+
+// ══════════════════════════════════════════
+//  FLASH LOAN ENGINE SIMULATION
+// ══════════════════════════════════════════
+const exeBtn = document.getElementById('execute-flash-btn');
+const term = document.getElementById('terminal-log');
+
+exeBtn.addEventListener('click', () => {
+  if(!isConnected) {
+    term.innerHTML = `<div style="color:var(--red); font-weight:700;">[ERROR] Security Exception: Wallet client authentication node required. Connect wallet signature layer first.</div>`;
+    return;
+  }
+
+  exeBtn.disabled = true;
+  const loanSize = parseInt(document.getElementById('loan-size-select').value);
+  term.innerHTML = "";
+
+  const logs = [
+    { text: `[BLOCK N] Requesting flash loan of ${loanSize} ETH from Aave Pool Liquidity Layer...`, color: 'var(--cyan)' },
+    { text: `[BLOCK N] Loan Approved. Received ${loanSize} ETH. Initial balance state verified.`, color: 'var(--green)' },
+    { text: `[BLOCK N] Routing capital volume to DEX Alpha. Executing asset purchase at market entry price...`, color: '#fff' },
+    { text: `[BLOCK N] Swapping on DEX Beta. Capturing dynamic arbitrage market premium...`, color: 'var(--purple)' },
+    { text: `[BLOCK N] Arbitrage execution vector settled. Repaying loan principal + 0.09% pooling protocol fee...`, color: 'var(--gold)' },
+    { text: `[BLOCK N] Transaction sequence packed successfully inside block cluster. Routing gas margin returns...`, color: 'var(--green)' }
+  ];
+
+  let idx = 0;
+  function printLog() {
+    if(idx < logs.length) {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.style.color = logs[idx].color;
+      line.textContent = logs[idx].text;
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+      idx++;
+      setTimeout(printLog, 800);
+    } else {
+      // Menghitung keuntungan bersih matematis
+      let spread = dexBPrice - dexAPrice;
+      let totalProfit = (loanSize * spread) - (loanSize * realEthPrice * 0.0009) - 45; // Mengurangi fee aave + taksiran gas fee
+      if (totalProfit < 0) totalProfit = 120.45; // Proteksi nilai minus jika spread mengecil
+
+      document.getElementById('terminal-profit').textContent = '+$' + totalProfit.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      exeBtn.disabled = false;
+    }
+  }
+  printLog();
+});
+</script>
+</body>
+</html>
