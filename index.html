@@ -26,7 +26,50 @@ body{
   color:var(--text);
   font-family:'Rajdhani',sans-serif;
   overflow-x:hidden;
-  overflow-y:auto;
+  overflow-y:hidden; /* Dikunci dulu saat intro berjalan, nanti dibuka lewat JS */
+}
+
+/* INTRO VIDEO PRELOADER OVERLAY */
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 999999; /* Berada di atas segalanya termasuk kursor kustom */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.skip-intro-btn {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  background: rgba(5, 0, 16, 0.6);
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  color: var(--cyan);
+  padding: 0.6rem 1.5rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  z-index: 1000000;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all 0.3s;
+}
+.skip-intro-btn:hover {
+  background: var(--cyan);
+  color: var(--dark);
+  box-shadow: 0 0 15px var(--cyan);
+}
+
+/* Menyembunyikan konten utama di awal agar tidak bocor di belakang video intro */
+main-wrapper {
+  opacity: 0;
+  display: block;
 }
 
 spline-viewer::part(logo),
@@ -135,7 +178,7 @@ nav{
 }
 .hero-wrapper {
   position: relative;
-  z-index: 5; /* Berada di atas video latar belakang */
+  z-index: 5;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -145,7 +188,6 @@ nav{
   align-items: center;
 }
 
-/* VIDEO BACKGROUND STYLING (DIOPTIMALKAN UNTUK VERCEL DEPLOYMENT) */
 .hero-video-bg {
   position: absolute;
   top: 0;
@@ -155,8 +197,8 @@ nav{
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.28; /* Menjaga kegelapan latar belakang agar teks menyala tajam */
-  filter: hue-rotate(230deg) saturate(1.4) contrast(1.1); /* Efek filter gradasi warna neon */
+  opacity: 0.28;
+  filter: hue-rotate(230deg) saturate(1.4) contrast(1.1);
 }
 
 .hero-bg{
@@ -290,12 +332,9 @@ nav{
   z-index: 1;
 }
 
-/* Overlay untuk menyembunyikan tombol "Get in touch" bawaan Spline */
 .spline-bottom-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   height: 90px;
   background: linear-gradient(to bottom, transparent, #050010 85%);
   pointer-events: none;
@@ -549,7 +588,6 @@ section{padding:6rem 4rem; position: relative; z-index: 10;}
   overflow:hidden;
 }
 
-/* Style Khusus untuk Image Avatar Validator */
 .char-avatar img {
   width: 100%;
   height: 100%;
@@ -620,262 +658,313 @@ footer{
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-trail"></div>
-<canvas id="particles-canvas"></canvas>
-
-<nav>
-  <div class="logo">NEXUS</div>
-  <ul class="nav-links">
-    <li><a href="#explore">Explore</a></li>
-    <li><a href="#feature">Contributor</a></li>
-    <li><a href="#account-x">Account X</a></li>
-    <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
-  </ul>
-  <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
-</nav>
-
-<section id="hero">
-  <!-- CDN VIDEO LINK — GANTI LINK DI BAWAH DENGAN DIRECT LINK .MP4 HASIL UNGGAHAN IMGUR-MU BIAR RE-DEPLOY VERCEL LANGSUNG TEMBUS -->
-  <video autoplay muted loop playsinline class="hero-video-bg">
-    <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
+<div id="intro-overlay">
+  <video id="intro-video" autoplay muted playsinline>
+    <source src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/videos/logo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
   </video>
+  <button class="skip-intro-btn" id="skip-intro">SKIP INTRO ➔</button>
+</div>
 
-  <div class="hero-bg"></div>
-  <div class="grid-bg"></div>
-  <div class="scanline"></div>
+<div id="main-wrapper">
+  <div id="cursor"></div>
+  <div id="cursor-trail"></div>
+  <canvas id="particles-canvas"></canvas>
 
-  <div class="hero-wrapper">
-    <div class="hero-content">
-      <h1 class="hero-title-3d">
-        <span class="title-welcome">WELCOME TO THE</span>
-        <span class="title-core-focus">RIALO ALPHA CORE</span>
-      </h1>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="window.location.href='infrastructure.html'">Begin Journey</button>
-        <button class="btn-secondary">Watch Trailer</button>
-      </div>
-    </div>
+  <nav>
+    <div class="logo">NEXUS</div>
+    <ul class="nav-links">
+      <li><a href="#explore">Explore</a></li>
+      <li><a href="#feature">Contributor</a></li>
+      <li><a href="#account-x">Account X</a></li>
+      <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
+    </ul>
+    <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
+  </nav>
 
-    <div class="spline-container-wrap">
-      <div class="spline-shadow-glow"></div>
-      <spline-viewer class="spline-viewport" url="https://prod.spline.design/prxiNDfi28dmP-dd/scene.splinecode"></spline-viewer>
-      <div class="spline-bottom-overlay"></div>
-    </div>
-  </div>
-</section>
+  <section id="hero">
+    <video autoplay muted loop playsinline class="hero-video-bg">
+      <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
+    </video>
 
-<section id="explore">
-  <div class="section-tag">// 01 — Core Terminal</div>
-  <h2 class="section-title reveal">DeFi Liquidity<br/><span style="color:var(--cyan)">Infrastructure</span></h2>
+    <div class="hero-bg"></div>
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
 
-  <div class="cards-grid">
-    <div class="card slide-left-card">
-      <div class="card-img-container">
-        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/shein.png" alt="Shein Visual" class="pop-avatar"/>
+    <div class="hero-wrapper">
+      <div class="hero-content">
+        <h1 class="hero-title-3d">
+          <span class="title-welcome">WELCOME TO THE</span>
+          <span class="title-core-focus">RIALO ALPHA CORE</span>
+        </h1>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="window.location.href='infrastructure.html'">Begin Journey</button>
+          <button class="btn-secondary">Watch Trailer</button>
+        </div>
       </div>
-      <div class="card-icon">⬡</div>
-      <div class="card-title">Multi-Route Token Swap</div>
-      <p class="card-desc">Swaps digital assets across automated market makers (AMMs) like Uniswap v4.</p>
-      <div class="card-advantage"><strong>Key Advantage:</strong> Uses smart routing to scan trust vectors in real-time, automatically securing the lowest slippage (0.5%) and best pricing.</div>
-      <span class="card-tag">Swap</span>
-    </div>
 
-    <div class="card slide-right-card">
-      <div class="card-img-container">
-        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs1.png" alt="Gelzs Visual" class="pop-avatar"/>
+      <div class="spline-container-wrap">
+        <div class="spline-shadow-glow"></div>
+        <spline-viewer class="spline-viewport" url="https://prod.spline.design/prxiNDfi28dmP-dd/scene.splinecode"></spline-viewer>
+        <div class="spline-bottom-overlay"></div>
       </div>
-      <div class="card-icon">⬟</div>
-      <div class="card-title">Cross-Chain Atomic Bridge</div>
-      <p class="card-desc">Transfers assets instantly between major layers (Ethereum, Polygon, Arbitrum, Optimism, Base, and Solana).</p>
-      <div class="card-advantage"><strong>Key Advantage:</strong> Fully insured, low-fee (0.05%) transactions that bypass traditional multi-day locking periods.</div>
-      <span class="card-tag">Bridge</span>
     </div>
+  </section>
 
-    <div class="card slide-left-card">
-      <div class="card-img-container">
-        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
-      </div>
-      <div class="card-icon">◈</div>
-      <div class="card-title">Liquid Staking (rETH)</div>
-      <p class="card-desc">Locks native ETH into high-yield validation pools while issuing you liquid rETH in return.</p>
-      <div class="card-advantage"><strong>Key Advantage:</strong> Earn up to 8.4% APY dynamically without losing capital liquidity—trade or deploy your rETH anytime.</div>
-      <span class="card-tag">Staking</span>
-    </div>
+  <section id="explore">
+    <div class="section-tag">// 01 — Core Terminal</div>
+    <h2 class="section-title reveal">DeFi Liquidity<br/><span style="color:var(--cyan)">Infrastructure</span></h2>
 
-    <div class="card slide-right-card">
-      <div class="card-img-container">
-        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
+    <div class="cards-grid">
+      <div class="card slide-left-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/shein.png" alt="Shein Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">⬡</div>
+        <div class="card-title">Multi-Route Token Swap</div>
+        <p class="card-desc">Swaps digital assets across automated market makers (AMMs) like Uniswap v4.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Uses smart routing to scan trust vectors in real-time, automatically securing the lowest slippage (0.5%) and best pricing.</div>
+        <span class="card-tag">Swap</span>
       </div>
-      <div class="card-icon">◉</div>
-      <div class="card-title">Liquidity Provision</div>
-      <p class="card-desc">Deposits asset pairs (e.g., ETH/MATIC, SOL/USDC) into active market-making pools.</p>
-      <div class="card-advantage"><strong>Key Advantage:</strong> Generates passive income by capturing a direct share of pool trading fees (up to 0.30% per trade).</div>
-      <span class="card-tag">Yield</span>
-    </div>
-  </div>
-</section>
 
-<section id="feature">
-  <div class="contributor-header">
-    <div class="section-tag">// 02 — Network Partners</div>
-    <h2 class="section-title reveal">Core Core<br/><span style="color:var(--pink)">Contributors</span></h2>
-  </div>
+      <div class="card slide-right-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs1.png" alt="Gelzs Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">⬟</div>
+        <div class="card-title">Cross-Chain Atomic Bridge</div>
+        <p class="card-desc">Transfers assets instantly between major layers (Ethereum, Polygon, Arbitrum, Optimism, Base, and Solana).</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Fully insured, low-fee (0.05%) transactions that bypass traditional multi-day locking periods.</div>
+        <span class="card-tag">Bridge</span>
+      </div>
 
-  <div class="contributor-grid">
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/meta.png" alt="Meta" class="contributor-logo"/>
+      <div class="card slide-left-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">◈</div>
+        <div class="card-title">Liquid Staking (rETH)</div>
+        <p class="card-desc">Locks native ETH into high-yield validation pools while issuing you liquid rETH in return.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Earn up to 8.4% APY dynamically without losing capital liquidity—trade or deploy your rETH anytime.</div>
+        <span class="card-tag">Staking</span>
       </div>
-      <div class="contributor-name">META</div>
-      <div class="contributor-status">Node Partner</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/apple.png" alt="Apple" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">APPLE</div>
-      <div class="contributor-status">Hardware Integrator</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/amazon.png" alt="Amazon" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">AMAZON</div>
-      <div class="contributor-status">Cloud Infrastructure</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/netflix.png" alt="Netflix" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">NETFLIX</div>
-      <div class="contributor-status">Data Relay</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/google.png" alt="Google" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">GOOGLE</div>
-      <div class="contributor-status">RPC Provider</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/tiktok.png" alt="TikTok" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">TIKTOK</div>
-      <div class="contributor-status">Network Node</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/citadel.png" alt="Citadel" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">CITADEL</div>
-      <div class="contributor-status">Liquidity Provider</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/mystenlabs.png" alt="Mysten Labs" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">MYSTEN LABS</div>
-      <div class="contributor-status">Cryptography</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/solana.png" alt="Solana" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">SOLANA</div>
-      <div class="contributor-status">Consensus Protocol</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/eigenlayer.png" alt="EigenLayer" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">EIGENLAYER</div>
-      <div class="contributor-status">Restaking Layer</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/coinbase.png" alt="Coinbase" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">COINBASE</div>
-      <div class="contributor-status">Institutional Gateway</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/near.png" alt="NEAR Protocol" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">NEAR PROTOCOL</div>
-      <div class="contributor-status">Sharding Client</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/vmware.png" alt="VMware" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">VMWARE</div>
-      <div class="contributor-status">Virtual Machine</div>
-    </div>
-    <div class="contributor-card">
-      <div class="contributor-logo-wrap">
-        <img src="images/diem.png" alt="Diem" class="contributor-logo"/>
-      </div>
-      <div class="contributor-name">DIEM</div>
-      <div class="contributor-status">Legacy Framework</div>
-    </div>
-  </div>
-</section>
 
-<section id="account-x">
-  <div class="section-tag">// 03 — Account X</div>
-
-  <div class="char-showcase">
-    <div class="char-card active reveal" id="gelzs-card">
-      <div class="char-avatar">
-        <img src="images/x.png" alt="Gelzs Avatar" />
+      <div class="card slide-right-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">◉</div>
+        <div class="card-title">Liquidity Provision</div>
+        <p class="card-desc">Deposits asset pairs (e.g., ETH/MATIC, SOL/USDC) into active market-making pools.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Generates passive income by capturing a direct share of pool trading fees (up to 0.30% per trade).</div>
+        <span class="card-tag">Yield</span>
       </div>
-      <div class="char-name">GELZS</div>
+    </div>
+  </section>
+
+  <section id="feature">
+    <div class="contributor-header">
+      <div class="section-tag">// 02 — Network Partners</div>
+      <h2 class="section-title reveal">Core Core<br/><span style="color:var(--pink)">Contributors</span></h2>
     </div>
 
-    <div class="char-card reveal" id="sheinasalisha-card">
-      <div class="char-avatar">
-        <img src="images/x2.png" alt="SheinaSalisha Avatar" />
+    <div class="contributor-grid">
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/meta.png" alt="Meta" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">META</div>
+        <div class="contributor-status">Node Partner</div>
       </div>
-      <div class="char-name">SheinaSalisha</div>
-    </div>
-
-    <div class="char-card reveal" id="rialo-card">
-      <div class="char-avatar">
-        <img src="images/x3.png" alt="Rialo Avatar" />
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/apple.png" alt="Apple" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">APPLE</div>
+        <div class="contributor-status">Hardware Integrator</div>
       </div>
-      <div class="char-name">Rialo</div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/amazon.png" alt="Amazon" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">AMAZON</div>
+        <div class="contributor-status">Cloud Infrastructure</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/netflix.png" alt="Netflix" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">NETFLIX</div>
+        <div class="contributor-status">Data Relay</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/google.png" alt="Google" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">GOOGLE</div>
+        <div class="contributor-status">RPC Provider</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/tiktok.png" alt="TikTok" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">TIKTOK</div>
+        <div class="contributor-status">Network Node</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/citadel.png" alt="Citadel" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">CITADEL</div>
+        <div class="contributor-status">Liquidity Provider</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/mystenlabs.png" alt="Mysten Labs" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">MYSTEN LABS</div>
+        <div class="contributor-status">Cryptography</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/solana.png" alt="Solana" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">SOLANA</div>
+        <div class="contributor-status">Consensus Protocol</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/eigenlayer.png" alt="EigenLayer" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">EIGENLAYER</div>
+        <div class="contributor-status">Restaking Layer</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/coinbase.png" alt="Coinbase" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">COINBASE</div>
+        <div class="contributor-status">Institutional Gateway</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/near.png" alt="NEAR Protocol" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">NEAR PROTOCOL</div>
+        <div class="contributor-status">Sharding Client</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/vmware.png" alt="VMware" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">VMWARE</div>
+        <div class="contributor-status">Virtual Machine</div>
+      </div>
+      <div class="contributor-card">
+        <div class="contributor-logo-wrap">
+          <img src="images/diem.png" alt="Diem" class="contributor-logo"/>
+        </div>
+        <div class="contributor-name">DIEM</div>
+        <div class="contributor-status">Legacy Framework</div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="cta">
-  <div class="cta-inner reveal">
-    <div class="section-tag">// Ready?</div>
-    <h2 class="section-title">Connect To<br/><span style="color:var(--cyan)">The Core</span></h2>
-    <div class="cta-line"></div>
-    <p class="cta-sub">Deploy assets directly into non-custodial pipelines.</p>
-    <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;" onclick="window.location.href='infrastructure.html'">Launch Terminal</button>
-  </div>
-</section>
+  <section id="account-x">
+    <div class="section-tag">// 03 — Account X</div>
 
-<footer>
-  <div class="footer-logo">NEXUS</div>
-  <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
-  <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="infrastructure.html">Infrastructure</a>
-  </div>
-</footer>
+    <div class="char-showcase">
+      <div class="char-card active reveal" id="gelzs-card">
+        <div class="char-avatar">
+          <img src="images/x.png" alt="Gelzs Avatar" />
+        </div>
+        <div class="char-name">GELZS</div>
+      </div>
+
+      <div class="char-card reveal" id="sheinasalisha-card">
+        <div class="char-avatar">
+          <img src="images/x2.png" alt="SheinaSalisha Avatar" />
+        </div>
+        <div class="char-name">SheinaSalisha</div>
+      </div>
+
+      <div class="char-card reveal" id="rialo-card">
+        <div class="char-avatar">
+          <img src="images/x3.png" alt="Rialo Avatar" />
+        </div>
+        <div class="char-name">Rialo</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <div class="cta-inner reveal">
+      <div class="section-tag">// Ready?</div>
+      <h2 class="section-title">Connect To<br/><span style="color:var(--cyan)">The Core</span></h2>
+      <div class="cta-line"></div>
+      <p class="cta-sub">Deploy assets directly into non-custodial pipelines.</p>
+      <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;" onclick="window.location.href='infrastructure.html'">Launch Terminal</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">NEXUS</div>
+    <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="infrastructure.html">Infrastructure</a>
+    </div>
+  </footer>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
 <script>
 gsap.registerPlugin(ScrollTrigger);
+
+// LOGIKA INTRO PRELOADER TRANSITION
+const introOverlay = document.getElementById('intro-overlay');
+const introVideo = document.getElementById('intro-video');
+const skipBtn = document.getElementById('skip-intro');
+const mainWrapper = document.getElementById('main-wrapper');
+
+function initiateMainSite() {
+  // Cegah eksekusi ganda jika video beres berbarengan dengan tombol skip diklik
+  if (introOverlay.style.display === 'none') return;
+
+  const exitTl = gsap.timeline({
+    onComplete: () => {
+      introOverlay.style.display = 'none';
+      document.body.style.overflowY = 'auto'; // Aktifkan scroll halaman utama kembali
+    }
+  });
+
+  // Animasi transisi penutup intro
+  exitTl.to(introOverlay, {
+    opacity: 0,
+    duration: 0.8,
+    ease: "power2.out"
+  });
+
+  // Munculkan container website utama bersamaan dengan masuknya animasi Hero
+  exitTl.to(mainWrapper, {
+    opacity: 1,
+    duration: 0.4,
+    onStart: startHomeAnimations
+  }, "-=0.6");
+}
+
+// Trigger ketika video intro selesai terputar alami
+introVideo.addEventListener('ended', initiateMainSite);
+
+// Trigger ketika user menekan tombol "SKIP INTRO"
+skipBtn.addEventListener('click', () => {
+  introVideo.pause();
+  initiateMainSite();
+});
+
 
 function clearSplineUI() {
   const splineViewer = document.querySelector('spline-viewer');
@@ -899,7 +988,8 @@ window.addEventListener('load', () => {
   setTimeout(clearSplineUI, 1500);
 });
 
-window.addEventListener('DOMContentLoaded', () => {
+// Bungkus animasi masuk utama ke dalam fungsi agar jalan TEPAT setelah intro beres
+function startHomeAnimations() {
   const introTl = gsap.timeline();
 
   introTl.to("nav", {
@@ -938,8 +1028,9 @@ window.addEventListener('DOMContentLoaded', () => {
     },
     "-=1"
   );
-});
+}
 
+// Sisa script scroll & efek interaktif tetap dipertahankan utuh
 gsap.utils.toArray('.slide-left-card').forEach(card => {
   gsap.fromTo(card,
     { x: -50, opacity: 0 },
@@ -1118,13 +1209,11 @@ var observer = new IntersectionObserver(function(entries) {
 
 reveals.forEach(function(el) { observer.observe(el); });
 
-// Logika Klik untuk Semua Kartu Validator & Redirect Khusus ke Tautan X
 document.querySelectorAll('.char-card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
     card.classList.add('active');
     
-    // Redirect sesuai ID kartu masing-masing
     if (card.id === 'gelzs-card') {
       window.open('https://x.com/rayhn_1991?s=21', '_blank');
     } else if (card.id === 'sheinasalisha-card') {
