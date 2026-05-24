@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>NEXUS — Enter The Void</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+<!-- STRATEGIS: Script Spline diletakkan di head dengan type="module" agar di-load secara asinkronus tanpa memblokir render halaman -->
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -120,7 +124,7 @@ nav{
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1.1fr 0.9fr; /* Sedikit disesuaikan agar ruang Spline lebih luas */
   gap: 2rem;
   align-items: center;
 }
@@ -220,105 +224,42 @@ nav{
 }
 .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);}
 
-/* === HOLOGRAPHIC SPHERE === */
-.logo-33d-wrap{
+/* === BAGIAN UPDATE: SPLINE CONTAINER CONTAINER === */
+.spline-container-wrap {
   position: relative;
   width: 100%;
-  height: 420px;
+  height: 500px; /* Ditambahkan tinggi agar canvas 3D leluasa */
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
+  z-index: 5;
 }
-.logo-rings{
-  position: absolute;
+
+.spline-viewport {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
+  border: none;
+  cursor: grab;
 }
-.ring{position:absolute;border-radius:50%;border-style:solid;}
-.ring-1{
-  width:390px;height:390px;
-  border-width:1px;border-color:rgba(124,58,237,0.3);
-  animation:spinCW 18s linear infinite;
+.spline-viewport:active {
+  cursor: grabbing;
 }
-.ring-2{
-  width:315px;height:315px;
-  border-width:1px;border-color:rgba(6,182,212,0.35);
-  border-style:dashed;
-  animation:spinCCW 12s linear infinite;
-}
-.ring-3{
-  width:245px;height:245px;
-  border-width:1px;border-color:rgba(236,72,153,0.25);
-  animation:spinCW 8s linear infinite;
-}
-.ring-dot{
-  position:absolute;width:8px;height:8px;
-  border-radius:50%;top:-4px;left:50%;transform:translateX(-50%);
-}
-.dot-cyan{background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
-.dot-purple{background:var(--purple);box-shadow:0 0 10px var(--purple);}
-.dot-pink{background:var(--pink);box-shadow:0 0 8px var(--pink);}
 
-.logo-container-fixed {
+/* Efek glow ambient di belakang objek 3D */
+.spline-shadow-glow {
   position: absolute;
-  z-index: 5;
-  width: 180px;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: logoFloatAlaRialo 4s ease-in-out infinite;
-}
-
-.logo-muter{
-  width: 140px;
-  height: 140px;
-  object-fit: contain;
-  display: block;
-  animation: neonPulseAlaRialo 3s ease-in-out infinite;
-}
-
-@keyframes logoFloatAlaRialo {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes neonPulseAlaRialo {
-  0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 35px rgba(124, 58, 237, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.9)) drop-shadow(0 0 55px rgba(124, 58, 237, 0.7));
-  }
-}
-
-.logo-glow{
-  position:absolute;
-  bottom: 0px;
-  left:50%;
-  transform:translateX(-50%);
-  width:220px;height:30px;
-  background:radial-gradient(ellipse,rgba(124,58,237,0.45) 0%,transparent 70%);
-  border-radius:50%;
-  animation:glowPulse 3s ease-in-out infinite;
-  pointer-events:none;
-}
-
-@keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
-@keyframes glowPulse{
-  0%,100%{opacity:0.8;transform:translateX(-50%) scale(1);}
-  50%{opacity:0.4;transform:translateX(-50%) scale(1.3);}
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* SECTIONS */
 section{padding:6rem 4rem;}
-.section-tag{
+.section-tag{// 01 — Core Terminal
   font-family:'Orbitron',monospace;
   font-size:0.7rem;letter-spacing:4px;
   color:var(--cyan);text-transform:uppercase;margin-bottom:0.8rem;
@@ -330,7 +271,7 @@ section{padding:6rem 4rem;}
   line-height:1.1;margin-bottom:1rem;
 }
 
-/* EXPLORE - VERSI UPDATE 3D LAYERED POP-OUT */
+/* EXPLORE */
 #explore{
   background:var(--dark2);
   position:relative;
@@ -615,10 +556,9 @@ footer{
   #hero { padding: 7rem 2rem 3rem 2rem; }
   .hero-wrapper { grid-template-columns: 1fr; text-align: center; }
   .hero-content { max-width: 100%; order: 2; transform: none !important; animation: none; }
-  .logo-33d-wrap { order: 1; height: 320px; }
-  .ring-1 { width: 300px; height: 300px; }
-  .ring-2 { width: 240px; height: 240px; }
-  .ring-3 { width: 180px; height: 180px; }
+  
+  /* Update responsivitas untuk area Spline di mobile */
+  .spline-container-wrap { order: 1; height: 350px; }
   .hero-btns { justify-content: center; }
   nav { padding: 1.2rem 2rem; }
   .nav-links { display: none; }
@@ -660,18 +600,11 @@ footer{
       </div>
     </div>
 
-    <div class="logo-33d-wrap">
-      <div class="logo-rings">
-        <div class="ring ring-1"><div class="ring-dot dot-cyan"></div></div>
-        <div class="ring ring-2"><div class="ring-dot dot-purple"></div></div>
-        <div class="ring ring-3"><div class="ring-dot dot-pink"></div></div>
-      </div>
-       
-      <div class="logo-container-fixed">
-        <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/market.png" alt="Market Logo" class="logo-muter"/>
-      </div>
-       
-      <div class="logo-glow"></div>
+    <!-- STRATEGIS: Peletakan Utama Elemen Spline 3D -->
+    <!-- Menggantikan logo statis lama agar menjadi pusat perhatian visual di Hero Section -->
+    <div class="spline-container-wrap">
+      <div class="spline-shadow-glow"></div>
+      <spline-viewer class="spline-viewport" url="https://prod.spline.design/CIwPE-LdJyWbHWab/scene.splinecode"></spline-viewer>
     </div>
   </div>
 </section>
@@ -969,7 +902,8 @@ window.addEventListener('DOMContentLoaded', () => {
     "-=0.7"
   );
 
-  introTl.fromTo(".logo-33d-wrap",
+  /* UPDATE: Target animasi intro disesuaikan ke pembungkus Spline baru */
+  introTl.fromTo(".spline-container-wrap",
     {
       opacity: 0,
       scale: 0.8,
@@ -1015,13 +949,13 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
   );
 });
 
-/* ---- UPDATE: ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE + STYLE GERAKAN CHARACTERS ---- */
+/* ---- UPDATE: ANIMASI CONTRIBUTOR DI-SCRUB SEPERTI EXPLORE ---- */
 gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
   gsap.fromTo(card,
     { 
       opacity: 0, 
-      scale: 0.6,    // Mengambil visual scale pop-up dari character card
-      y: 50          // Jarak lompatan vertical atas-bawah
+      scale: 0.6,    
+      y: 50          
     },
     { 
       opacity: 1, 
@@ -1030,9 +964,9 @@ gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
       ease: "none",
       scrollTrigger: {
         trigger: card,
-        start: "top 95%",   // Memulai transisi scrub
-        end: "top 45%",     // Durasi sinkronisasi gulir scroll
-        scrub: 2.5          // Kecepatan & kehalusan animasi disamakan persis dengan Explore
+        start: "top 95%",   
+        end: "top 45%",     
+        scrub: 2.5          
       }
     }
   );
