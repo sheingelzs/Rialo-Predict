@@ -1606,3 +1606,16 @@ window.addEventListener('DOMContentLoaded', function () {
     el.innerHTML = item + el.innerHTML;
     // cap at 8 items
     var children = el.querySelectorAll('.feed-item');
+    if (children.length > 8) children[children.length - 1].remove();
+  }, 4000);
+
+  setTimeout(function () { buildGasChart(); buildLiqChart(); }, 600);
+
+  // Trigger reveal on visible elements
+  setTimeout(function () {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('visible'); });
+  }, 100);
+});
+</script>
+</body> 
+</html>
