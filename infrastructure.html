@@ -471,11 +471,11 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 </div>
 
 <nav>
-  <a href="index.html" class="logo">NEXUS</a>
+  <a href="https://rialo-alpha-core.vercel.app/" class="logo">NEXUS</a>
   <ul class="nav-links">
-    <li><a href="index.html#explore">Explore</a></li>
-    <li><a href="index.html#feature">Feature</a></li>
-    <li><a href="index.html#characters">ACCOUNT X</a></li>
+    <li><a href="https://rialo-alpha-core.vercel.app/#explore">Explore</a></li>
+    <li><a href="https://rialo-alpha-core.vercel.app/#feature">Contributor</a></li>
+    <li><a href="https://rialo-alpha-core.vercel.app/#characters">ACCOUNT X</a></li>
     <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
   </ul>
   <button id="nav-wallet-btn">
@@ -494,7 +494,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="holo-ring holo-ring-3"><div class="holo-dot holo-dot-k"></div></div>
   </div>
   <div class="page-hero-content">
-    <div class="breadcrumb"><a href="index.html">← Home</a><span>// Infrastructure</span></div>
+    <div class="breadcrumb"><a href="https://rialo-alpha-core.vercel.app/">← Home</a><span>// Infrastructure</span></div>
     <div class="hero-tag">Network Status // Ethereum Sepolia Testnet</div>
     <h1 class="page-title">NEXUS<br/>SEPOLIA ENGINE</h1>
     <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — Integrated Sepolia Network.</p>
@@ -553,10 +553,10 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   </div>
 
   <div class="stats-grid reveal">
-    <div class="stat-box"><div class="stat-num">11155111</div><div class="stat-label">Sepolia Chain ID</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-tvl">$41.5M</div><div class="stat-label">Testnet Pool Volume</div></div>
-    <div class="stat-box"><div class="stat-num">Ethereum</div><div class="stat-label">Root Architecture</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--green)">99.98%</div><div class="stat-label">RPC Uptime</div></div>
+    <div class="stats-box"><div class="stat-num">11155111</div><div class="stat-label">Sepolia Chain ID</div></div>
+    <div class="stats-box"><div class="stat-num" id="st-tvl">$41.5M</div><div class="stat-label">Testnet Pool Volume</div></div>
+    <div class="stats-box"><div class="stat-num">Ethereum</div><div class="stat-label">Root Architecture</div></div>
+    <div class="stats-box"><div class="stat-num" style="color:var(--green)">99.98%</div><div class="stat-label">RPC Uptime</div></div>
   </div>
 
   <div class="tabs-wrap reveal">
@@ -1606,16 +1606,3 @@ window.addEventListener('DOMContentLoaded', function () {
     el.innerHTML = item + el.innerHTML;
     // cap at 8 items
     var children = el.querySelectorAll('.feed-item');
-    if (children.length > 8) children[children.length - 1].remove();
-  }, 4000);
-
-  setTimeout(function () { buildGasChart(); buildLiqChart(); }, 600);
-
-  // Trigger reveal on visible elements
-  setTimeout(function () {
-    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('visible'); });
-  }, 100);
-});
-</script>
-</body> 
-</html>
