@@ -79,43 +79,6 @@ nav{
 }
 .nav-btn:hover{background:var(--cyan);color:var(--dark);box-shadow:0 0 15px var(--cyan);}
 
-/* ═══ MODAL WALLET SELECTION ═══ */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(5,0,16,0.85);
-  backdrop-filter: blur(10px); z-index: 10000;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-}
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-card {
-  background: var(--dark2); border: 1px solid rgba(6,182,212,0.3);
-  width: 100%; max-width: 440px; padding: 2rem; position: relative;
-  clip-path: polygon(20px 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
-}
-.modal-close {
-  position: absolute; top: 1.2rem; right: 2rem; background: none;
-  border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer;
-  transition: color 0.2s;
-}
-.modal-close:hover { color: var(--pink); }
-.modal-title {
-  font-family: 'Orbitron', monospace; font-size: 1.1rem; letter-spacing: 2px;
-  margin-bottom: 0.3rem; color: #fff;
-}
-.modal-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; }
-.wallet-options { display: flex; flex-direction: column; gap: 10px; }
-.wallet-opt {
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-  background: rgba(255,255,255,0.02); border: 1px solid rgba(124,58,237,0.2);
-  cursor: pointer; transition: all 0.25s ease;
-}
-.wallet-opt:hover {
-  border-color: var(--cyan); background: rgba(6,182,212,0.05); transform: translateX(4px);
-}
-.wallet-icon { font-size: 1.5rem; }
-.wallet-name { font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; color: #fff; }
-.wallet-desc { font-size: 0.7rem; color: var(--muted); }
-
 /* ═══ PAGE HERO ═══ */
 .page-hero{
   position:relative;min-height:38vh;
@@ -179,16 +142,6 @@ nav{
   padding:2rem 4rem 5rem;
 }
 
-/* ═══ ANIMATED BORDER LINE ═══ */
-.section-divider{
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),var(--pink),transparent);
-  background-size:200% 100%;
-  animation:borderFlow 4s linear infinite;
-  margin:3rem 0;
-}
-@keyframes borderFlow{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
-
 /* ═══ STATS BAR ═══ */
 .stats-grid{
   display:grid;grid-template-columns:repeat(4,1fr);
@@ -247,23 +200,6 @@ nav{
 .tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 .panel{display:none;}
 .panel.active{display:block;}
-
-/* ═══ SECTION TAG ═══ */
-.section-tag{
-  font-family:'Orbitron',monospace;
-  font-size:.7rem;letter-spacing:4px;
-  color:var(--cyan);text-transform:uppercase;margin-bottom:.8rem;
-}
-.section-title{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(1.4rem,2.5vw,2rem);
-  font-weight:900;text-transform:uppercase;
-  line-height:1.1;margin-bottom:2rem;
-}
-
-/* ═══ GRID LAYOUTS ═══ */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
-@media(max-width:768px){.grid2{grid-template-columns:1fr;}}
 
 /* ═══ CARDS ═══ */
 .infra-card{
@@ -377,12 +313,10 @@ nav{
   transition:background .2s;
 }
 .rt-table tr:hover td{background:rgba(6,182,212,.04);}
-.rt-table tr:last-child td{border-bottom:none;}
 .td-g{color:var(--green);}
 .td-c{color:var(--cyan);}
 .td-gold{color:var(--gold);}
 .td-red{color:var(--red);}
-.td-purple{color:var(--purple);}
 
 /* ═══ INPUT ═══ */
 .field{margin-bottom:1rem;}
@@ -397,7 +331,6 @@ nav{
 }
 .inp:focus{border-color:rgba(6,182,212,.5);}
 .inp:disabled{opacity: 0.3; cursor: not-allowed;}
-.inp::placeholder{color:rgba(255,255,255,.15);}
 .token-pill{
   display:flex;align-items:center;gap:6px;
   padding:8px 14px;
@@ -419,22 +352,17 @@ nav{
   cursor:pointer;transition:all .3s;
   clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
 }
-.btn-cyan{background:var(--cyan);color:var(--dark);}
-.btn-cyan:hover{opacity:.85;transform:translateY(-1px);}
-.btn-green{background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.35);color:var(--green);}
-.btn-green:hover{background:rgba(0,232,122,.2);}
-.btn-gold{background:rgba(212,168,50,.12);border:1px solid rgba(212,168,50,.35);color:var(--gold);}
-.btn-gold:hover{background:rgba(212,168,50,.2);}
 .btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
-.btn-purple:hover{opacity:.85;}
-.btn-main:disabled{opacity:.25;cursor:not-allowed;transform: none !important;}
+.btn-cyan{background:var(--cyan);color:var(--dark);}
+.btn-green{background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.35);color:var(--green);}
+.btn-gold{background:rgba(212,168,50,.12);border:1px solid rgba(212,168,50,.35);color:var(--gold);}
+.btn-main:disabled{opacity:.25;cursor:not-allowed;}
 
 /* ═══ RESULT BOX ═══ */
 .result-box{
   margin-top:.8rem;padding:10px 14px;
   font-size:.8rem;line-height:1.8;display:none;
-  font-family:'Orbitron',monospace;
-  white-space:pre-wrap;
+  font-family:'Orbitron',monospace;white-space:pre-wrap;
 }
 .result-ok{background:rgba(0,232,122,.05);border:1px solid rgba(0,232,122,.25);color:var(--green);}
 .result-err{background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.25);color:var(--red);}
@@ -442,16 +370,6 @@ nav{
 .spinner{width:12px;height:12px;flex-shrink:0;border:1.5px solid rgba(6,182,212,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ═══ INFO ROWS ═══ */
-.info-row{
-  display:flex;justify-content:space-between;
-  padding:8px 0;border-top:1px solid rgba(124,58,237,.1);
-  margin-top:.5rem;
-}
-.ir-item{font-size:.7rem;color:var(--muted);}
-.ir-val{color:var(--text);}
-
-/* ═══ SWAP / FLIP ═══ */
 .swap-div{display:flex;justify-content:center;margin:6px 0;}
 .flip-btn{
   width:34px;height:34px;border-radius:50%;
@@ -462,102 +380,51 @@ nav{
 }
 .flip-btn:hover{background:rgba(6,182,212,.2);transform:rotate(180deg);}
 
-/* ═══ POOL ROWS ═══ */
 .pool-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
 .pool-row{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  background:rgba(0,0,0,.3);
-  border:1px solid rgba(124,58,237,.12);
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:rgba(0,0,0,.3);border:1px solid rgba(124,58,237,.12);
   cursor:pointer;transition:all .2s;
 }
-.pool-row:hover,.pool-row.selected{
-  border-color:rgba(6,182,212,.35);
-  background:rgba(6,182,212,.04);
-}
+.pool-row.selected{border-color:rgba(6,182,212,.35);background:rgba(6,182,212,.04);}
 .pdot{width:8px;height:8px;border-radius:50%;}
 .pname{flex:1;font-size:.85rem;font-weight:600;}
-.papy{
-  font-size:.65rem;color:var(--green);
-  padding:2px 8px;background:rgba(0,232,122,.07);
-  border:1px solid rgba(0,232,122,.2);
-}
+.papy{font-size:.65rem;color:var(--green);padding:2px 8px;background:rgba(0,232,122,.07);border:1px solid rgba(0,232,122,.2);}
 .ptvl{font-size:.65rem;color:var(--muted);width:65px;text-align:right;}
 
-/* ═══ PCT BUTTONS ═══ */
 .pct-row{display:flex;gap:4px;margin:.6rem 0;}
 .pct-btn{
-  flex:1;padding:7px;
-  background:rgba(6,182,212,.04);
-  border:1px solid rgba(6,182,212,.12);
-  color:var(--muted);cursor:pointer;
-  font-family:'Orbitron',monospace;font-size:.6rem;
-  letter-spacing:.05em;transition:all .18s;
+  flex:1;padding:7px;background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.12);
+  color:var(--muted);cursor:pointer;font-family:'Orbitron',monospace;font-size:.6rem;
+  transition:all .18s;
 }
-.pct-btn:hover,.pct-btn.pact{
-  background:rgba(6,182,212,.14);
-  border-color:rgba(6,182,212,.4);color:var(--cyan);
-}
+.pct-btn:hover,.pct-btn.pact{background:rgba(6,182,212,.14);border-color:rgba(6,182,212,.4);color:var(--cyan);}
 
-/* ═══ CHAIN BRIDGE ═══ */
 .chain-row{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;}
 .chain-sel{
-  flex:1;background:rgba(0,0,0,.4);
-  border:1px solid rgba(124,58,237,.15);
-  padding:12px 14px;cursor:pointer;
-  display:flex;align-items:center;gap:10px;
-  transition:border-color .2s;
+  flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(124,58,237,.15);
+  padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;
 }
-.chain-sel:hover{border-color:rgba(6,182,212,.35);}
 .chain-icon{font-size:1.2rem;}
 .chain-name{font-size:.85rem;font-weight:600;}
-.chain-net{font-size:.65rem;color:var(--muted);letter-spacing:.05em;}
+.chain-net{font-size:.65rem;color:var(--muted);}
 .chain-arr{color:var(--cyan);font-size:1.2rem;animation:arrPulse 1.8s ease infinite;}
-@keyframes arrPulse{0%,100%{opacity:.5;transform:translateX(0);}50%{opacity:1;transform:translateX(4px);}}
+@keyframes arrPulse{0%,100%{transform:translateX(0);}50%{transform:translateX(4px);}}
 
-/* ═══ NETWORK GRID ═══ */
 .net-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-@media(max-width:600px){.net-grid{grid-template-columns:repeat(2,1fr);}}
-.net-item{
-  padding:14px;
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(124,58,237,.15);
-  text-align:center;
-  transition:all .3s;
-  position:relative;overflow:hidden;
-}
-.net-item:hover{border-color:rgba(6,182,212,.4);}
-.net-item::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--green),transparent);
-  transform:scaleX(0);transition:transform .3s;
-}
-.net-item:hover::after{transform:scaleX(1);}
+.net-item{padding:14px;background:rgba(0,0,0,.35);border:1px solid rgba(124,58,237,.15);text-align:center;}
 .net-icon{font-size:1.4rem;margin-bottom:6px;}
-.net-name{font-size:.75rem;font-weight:600;margin-bottom:2px;}
-.net-stat{font-size:.65rem;color:var(--green);letter-spacing:.05em;}
+.net-name{font-size:.75rem;font-weight:600;}
+.net-stat{font-size:.65rem;color:var(--green);}
 .net-tps{font-size:.6rem;color:var(--muted);margin-top:2px;font-family:'Orbitron',monospace;}
 
-/* ═══ STAKE METRICS ═══ */
 .s-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.2rem;}
-.s-metric{
-  padding:14px;background:rgba(0,0,0,.35);
-  border:1px solid rgba(124,58,237,.12);
-}
-.s-mlabel{font-size:.6rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
+.s-metric{padding:14px;background:rgba(0,0,0,.35);border:1px solid rgba(124,58,237,.12);}
+.s-mlabel{font-size:.6rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
 .s-mval{font-size:1.4rem;font-family:'Orbitron',monospace;font-weight:700;line-height:1;}
 .s-msub{font-size:.6rem;color:var(--muted);margin-top:2px;}
 
-/* ═══ LP PAIRS ═══ */
-.lp-pair{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  background:rgba(0,0,0,.3);
-  border:1px solid rgba(124,58,237,.1);
-  margin-bottom:6px;
-  transition:all .2s;
-}
-.lp-pair:hover{border-color:rgba(6,182,212,.3);}
+.lp-pair{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,.3);border:1px solid rgba(124,58,237,.1);margin-bottom:6px;}
 .lp-icons-wrap{display:flex;}
 .lp-ico{width:20px;height:20px;border-radius:50%;border:2px solid rgba(6,182,212,.15);}
 .lp-ico:nth-child(2){margin-left:-5px;}
@@ -566,95 +433,48 @@ nav{
 .lp-fee{font-size:.6rem;color:var(--gold);padding:1px 7px;border:1px solid rgba(212,168,50,.2);background:rgba(212,168,50,.04);}
 .lp-apr{font-size:.75rem;color:var(--green);font-family:'Orbitron',monospace;min-width:45px;text-align:right;}
 
-/* ═══ GAS DISPLAY ═══ */
 .gas-big{
-  font-size:4rem;color:var(--gold);
-  font-family:'Orbitron',monospace;font-weight:900;
-  text-align:center;line-height:1;padding:1rem 0;
-  text-shadow:0 0 30px rgba(212,168,50,.5);
-  animation:gasPulse 3s ease-in-out infinite;
+  font-size:4rem;color:var(--gold);font-family:'Orbitron',monospace;font-weight:900;
+  text-align:center;line-height:1;padding:1rem 0;text-shadow:0 0 30px rgba(212,168,50,.4);
 }
-@keyframes gasPulse{0%,100%{text-shadow:0 0 30px rgba(212,168,50,.4);}50%{text-shadow:0 0 50px rgba(212,168,50,.8);}}
 .gas-tiers{display:flex;gap:8px;margin-bottom:1rem;}
-.gtier{
-  flex:1;padding:12px;
-  background:rgba(0,0,0,.35);
-  border:1px solid rgba(124,58,237,.12);
-  text-align:center;
-}
-.gtier-lbl{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
-.gtier-val{font-size:1.4rem;font-family:'Orbitron',monospace;font-weight:700;line-height:1;}
+.gtier{flex:1;padding:12px;background:rgba(0,0,0,.35);border:1px solid rgba(124,58,237,.12);text-align:center;}
+.gtier-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.gtier-val{font-size:1.4rem;font-family:'Orbitron',monospace;font-weight:700;}
 .gtier-t{font-size:.6rem;color:var(--muted);margin-top:2px;}
 
-/* ═══ LIVE FEED ═══ */
-.feed-item{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 0;border-bottom:1px solid rgba(124,58,237,.08);
-}
-.feed-item:last-child{border-bottom:none;}
+.feed-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(124,58,237,.08);}
 .fd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.fd-action{flex:1;font-size:.75rem;color:var(--text);}
+.fd-action{flex:1;font-size:.75rem;}
 .fd-chain{font-size:.65rem;color:var(--muted);}
 .fd-amt{font-size:.7rem;font-family:'Orbitron',monospace;}
 .fd-ago{font-size:.65rem;color:var(--muted);width:40px;text-align:right;}
 
-/* ═══ HOLOGRAPHIC RING (decoration) ═══ */
-.holo-ring-wrap{
-  position:absolute;top:50%;right:-120px;
-  transform:translateY(-50%);
-  width:350px;height:350px;
-  pointer-events:none;z-index:0;
-  opacity:.25;
-}
+.holo-ring-wrap{position:absolute;top:50%;right:-120px;transform:translateY(-50%);width:350px;height:350px;pointer-events:none;opacity:.25;}
 .holo-ring{position:absolute;border-radius:50%;border-style:solid;}
 .holo-ring-1{inset:0;border-width:1px;border-color:rgba(6,182,212,.5);animation:spinCW 20s linear infinite;}
 .holo-ring-2{inset:30px;border-width:1px;border-color:rgba(124,58,237,.5);border-style:dashed;animation:spinCCW 14s linear infinite;}
 .holo-ring-3{inset:60px;border-width:1px;border-color:rgba(236,72,153,.4);animation:spinCW 9s linear infinite;}
-.holo-dot{position:absolute;width:7px;height:7px;border-radius:50%;top:-3.5px;left:50%;transform:translateX(-50%);}
-.holo-dot-c{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
-.holo-dot-p{background:var(--purple);box-shadow:0 0 8px var(--purple);}
-.holo-dot-k{background:var(--pink);box-shadow:0 0 6px var(--pink);}
 @keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 @keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
 
-/* ═══ BREADCRUMB ═══ */
-.breadcrumb{
-  display:flex;align-items:center;gap:.5rem;
-  font-size:.7rem;letter-spacing:2px;
-  color:var(--muted);text-transform:uppercase;
-  margin-bottom:1rem;
-}
-.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
-.breadcrumb a:hover{color:var(--cyan);}
+.breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
 .breadcrumb span{color:var(--cyan);}
-
-/* ═══ REVEAL ═══ */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
-/* ═══ FOOTER ═══ */
-footer{
-  position:relative;z-index:2;
-  background:var(--dark2);
-  border-top:1px solid rgba(124,58,237,.2);
-  padding:2rem 4rem;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
-.footer-copy{color:var(--muted);font-size:.75rem;letter-spacing:2px;}
+footer{background:var(--dark2);border-top:1px solid rgba(124,58,237,.2);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);font-size:1rem;letter-spacing:4px;}
+.footer-copy{color:var(--muted);font-size:.75rem;}
 .footer-links{display:flex;gap:1.5rem;}
-.footer-links a{color:var(--muted);font-size:.75rem;text-decoration:none;transition:color .3s;}
-.footer-links a:hover{color:var(--cyan);}
+.footer-links a{color:var(--muted);font-size:.75rem;text-decoration:none;}
 
-/* ═══ MOBILE ═══ */
+select.inp{appearance:none;cursor:pointer;}
 @media(max-width:900px){
-  nav{padding:1rem 1.5rem;}
-  .nav-links{display:none;}
-  .page-hero{padding:6rem 1.5rem 2.5rem;}
-  .container{padding:1.5rem 1.5rem 4rem;}
-  footer{padding:1.5rem;flex-direction:column;gap:1rem;text-align:center;}
-  .stats-grid{grid-template-columns:1fr 1fr;}
-  .holo-ring-wrap{display:none;}
+  nav{padding:1rem 1.5rem;} .nav-links{display:none;}
+  .page-hero{padding:6rem 1.5rem 2.5rem;} .container{padding:1.5rem 1.5rem 4rem;}
+  footer{padding:1.5rem;flex-direction:column;gap:1rem;} .holo-ring-wrap{display:none;}
 }
 </style>
 </head>
@@ -673,48 +493,9 @@ footer{
     <li><a href="index.html#characters">Characters</a></li>
     <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
   </ul>
-  <!-- FIX: Tombol pemicu modal koneksi dompet -->
-  <button class="nav-btn" id="connect-nav-btn" onclick="openWalletModal()">Connect Wallet</button>
+  <!-- Tombol Connect Wallet Asli Web3 -->
+  <button class="nav-btn" id="connect-nav-btn" onclick="connectWalletWeb3()">Connect Wallet</button>
 </nav>
-
-<!-- WALLET CONNECTION OVERLAY MODAL -->
-<div class="modal-overlay" id="wallet-modal">
-  <div class="modal-card">
-    <button class="modal-close" onclick="closeWalletModal()">✕</button>
-    <h3 class="modal-title">CONNECT WALLET</h3>
-    <p class="modal-sub">// select_provider — cryptographic node access</p>
-    <div class="wallet-options">
-      <div class="wallet-opt" onclick="connectWalletProvider('MetaMask', '🦊')">
-        <span class="wallet-icon">🦊</span>
-        <div>
-          <div class="wallet-name">MetaMask</div>
-          <div class="wallet-desc">Connect via browser extension node</div>
-        </div>
-      </div>
-      <div class="wallet-opt" onclick="connectWalletProvider('Rabby Wallet', '🐇')">
-        <span class="wallet-icon">🐇</span>
-        <div>
-          <div class="wallet-name">Rabby Wallet</div>
-          <div class="wallet-desc">Security-first decentralized node</div>
-        </div>
-      </div>
-      <div class="wallet-opt" onclick="connectWalletProvider('Phantom', '👻')">
-        <span class="wallet-icon">👻</span>
-        <div>
-          <div class="wallet-name">Phantom Wallet</div>
-          <div class="wallet-desc">Multi-chain EVM / Solana layer</div>
-        </div>
-      </div>
-      <div class="wallet-opt" style="border-color: rgba(6,182,212,0.4);" onclick="connectWalletProvider('Demo Mode', '⚡')">
-        <span class="wallet-icon">⚡</span>
-        <div>
-          <div class="wallet-name" style="color: var(--cyan);">Demo Sandbox Mode</div>
-          <div class="wallet-desc">Instant read/write — no wallet extension needed</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
@@ -722,18 +503,18 @@ footer{
   <div class="grid-bg"></div>
   <div class="scanline"></div>
   <div class="holo-ring-wrap">
-    <div class="holo-ring holo-ring-1"><div class="holo-dot holo-dot-c"></div></div>
-    <div class="holo-ring holo-ring-2"><div class="holo-dot holo-dot-p"></div></div>
-    <div class="holo-ring holo-ring-3"><div class="holo-dot holo-dot-k"></div></div>
+    <div class="holo-ring holo-ring-1"></div>
+    <div class="holo-ring holo-ring-2"></div>
+    <div class="holo-ring holo-ring-3"></div>
   </div>
   <div class="page-hero-content">
     <div class="breadcrumb">
       <a href="index.html">← Home</a>
       <span>// Infrastructure</span>
     </div>
-    <div class="hero-tag">DeFi Core // v2.077 Online</div>
+    <div class="hero-tag">DeFi Core // Live Web3 System</div>
     <h1 class="page-title">NEXUS<br/>INFRASTRUCTURE</h1>
-    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — all in one terminal.</p>
+    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — Terintegrasi Dompet Asli.</p>
   </div>
 </section>
 
@@ -743,25 +524,25 @@ footer{
   <!-- WALLET BAR -->
   <div class="wallet-bar reveal">
     <div class="wb-token">
-      <div class="wb-label">Wallet Address</div>
-      <div class="wb-val" id="wb-addr" style="font-size:.75rem;letter-spacing:.05em;color:var(--muted)">Not connected</div>
+      <div class="wb-label">Connected Node</div>
+      <div class="wb-val" id="wb-addr" style="font-size:.75rem;color:var(--muted)">Not connected</div>
     </div>
     <div class="wb-sep"></div>
     <div class="wb-token">
-      <div class="wb-sym">ETH</div>
+      <div class="wb-sym">Real ETH Balance</div>
       <div class="wb-val" id="wb-eth">0.0000</div>
     </div>
     <div class="wb-sep"></div>
     <div class="wb-token">
-      <div class="wb-sym">USDC</div>
+      <div class="wb-sym">Simulated USDC</div>
       <div class="wb-val" id="wb-usdc">0.00</div>
     </div>
     <div class="wb-sep"></div>
     <div class="wb-token">
-      <div class="wb-sym">rETH</div>
+      <div class="wb-sym">Simulated rETH</div>
       <div class="wb-val" id="wb-reth">0.0000</div>
     </div>
-    <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()" disabled>⚡ Claim Faucet (2 ETH)</button>
+    <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()" disabled>⚡ Claim Demo USDC</button>
   </div>
 
   <!-- TICKER -->
@@ -769,22 +550,22 @@ footer{
     <div class="tick">
       <div class="tick-sym"><span class="live-dot"></span>ETH/USD</div>
       <div class="tick-price" id="tp-eth">$3,248.00</div>
-      <div class="tick-chg up" id="tc-eth">+2.14%</div>
+      <div class="tick-chg up" id="tc-eth">+0.00%</div>
     </div>
     <div class="tick">
       <div class="tick-sym"><span class="live-dot"></span>BTC/USD</div>
       <div class="tick-price" id="tp-btc">$67,420.00</div>
-      <div class="tick-chg up" id="tc-btc">+1.80%</div>
+      <div class="tick-chg up" id="tc-btc">+0.00%</div>
     </div>
     <div class="tick">
       <div class="tick-sym"><span class="live-dot"></span>SOL/USD</div>
       <div class="tick-price" id="tp-sol">$148.30</div>
-      <div class="tick-chg dn" id="tc-sol">-0.42%</div>
+      <div class="tick-chg dn" id="tc-sol">-0.00%</div>
     </div>
     <div class="tick">
       <div class="tick-sym"><span class="live-dot"></span>MATIC/USD</div>
       <div class="tick-price" id="tp-matic">$0.8812</div>
-      <div class="tick-chg up" id="tc-matic">+0.55%</div>
+      <div class="tick-chg up" id="tc-matic">+0.00%</div>
     </div>
     <div class="tick">
       <div class="tick-sym">GAS (GWEI)</div>
@@ -822,14 +603,14 @@ footer{
     <button class="tab-btn" onclick="switchTab('monitor')">◉ Monitor</button>
   </div>
 
-  <!-- ══════════════════════ SWAP ══════════════════════ -->
+  <!-- PANELS (SWAP) -->
   <div class="panel active" id="panel-swap">
     <div class="grid2">
       <div class="infra-card">
         <div class="card-corner tl"></div>
         <div class="card-corner br"></div>
         <div class="card-title">Token Swap</div>
-        <div class="card-sub">// trust-verified · best-route · real-time price</div>
+        <div class="card-sub">// trust-verified · real-time prices</div>
         <div class="field">
           <div class="field-label">You Pay</div>
           <div class="input-row">
@@ -859,11 +640,6 @@ footer{
             ≈ <span id="swap-to-usd">$0.00</span> · Balance: <span id="swap-to-bal" style="color:var(--cyan)">0.00</span> <span id="swap-to-bal-sym">USDC</span>
           </div>
         </div>
-        <div class="info-row">
-          <div class="ir-item">Route <span class="ir-val">Uniswap v4</span></div>
-          <div class="ir-item">Slippage <span class="ir-val">0.5%</span></div>
-          <div class="ir-item">Trust <span style="color:var(--green)">✓ Safe</span></div>
-        </div>
         <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()" disabled>Connect Wallet first</button>
         <div class="result-box" id="swap-result"></div>
       </div>
@@ -872,7 +648,6 @@ footer{
         <div class="card-corner tl"></div>
         <div class="card-corner br"></div>
         <div class="card-title">Live Price Table</div>
-        <div class="card-sub">// realtime · coingecko feed</div>
         <div class="table-wrap">
           <table class="rt-table">
             <thead><tr><th>Asset</th><th>Price</th><th>24h %</th><th>Volume</th></tr></thead>
@@ -881,342 +656,200 @@ footer{
             </tbody>
           </table>
         </div>
-        <div style="font-size:.65rem;color:var(--muted);margin-top:8px;text-align:right">Updated: <span id="price-update-time">—</span></div>
       </div>
-    </div>
-
-    <div class="infra-card" style="margin-top:1.5rem">
-      <div class="card-corner tl"></div>
-      <div class="card-title">Swap History</div>
-      <div class="card-sub">// your transactions this session</div>
-      <div class="table-wrap">
-        <table class="rt-table">
-          <thead><tr><th>Tx Hash</th><th>From</th><th>To</th><th>Rate</th><th>Status</th><th>Time</th></tr></thead>
-          <tbody id="swap-history"></tbody>
-        </table>
-      </div>
-      <div id="swap-hist-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:20px">No swaps yet — start trading!</div>
     </div>
   </div>
 
-  <!-- ══════════════════════ BRIDGE ══════════════════════ -->
+  <!-- BRIDGE PANEL -->
   <div class="panel" id="panel-bridge">
-    <div class="grid2">
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-title">Cross-Chain Bridge</div>
-        <div class="card-sub">// atomic · insured · fast</div>
-        <div class="chain-row">
-          <div class="chain-sel" onclick="cycleBridgeFrom()">
-            <div class="chain-icon" id="bridge-from-icon">🔷</div>
-            <div>
-              <div class="chain-name" id="bridge-from-name">Ethereum</div>
-              <div class="chain-net">EVM · Mainnet</div>
-            </div>
-          </div>
-          <div class="chain-arr">→</div>
-          <div class="chain-sel" onclick="cycleBridgeTo()">
-            <div class="chain-icon" id="bridge-to-icon">🟣</div>
-            <div>
-              <div class="chain-name" id="bridge-to-name">Polygon</div>
-              <div class="chain-net">EVM · Mainnet</div>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <div class="field-label">Amount to Bridge</div>
-          <div class="input-row">
-            <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()" disabled/>
-            <button class="token-pill" onclick="bridgeMax()">MAX</button>
-          </div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:4px">Balance: <span id="bridge-eth-bal" style="color:var(--cyan)">0.0000</span> ETH · <span id="bridge-usd-val" style="color:var(--muted)">≈ $0.00</span></div>
-        </div>
-        <div class="table-wrap" style="margin-top:.5rem">
-          <table class="rt-table">
-            <tbody>
-              ...
-              <tr><td style="color:var(--muted);font-size:.7rem">Est. Time</td><td id="bridge-time" class="td-c" style="text-align:right">~2 min</td></tr>
-              <tr><td style="color:var(--muted);font-size:.7rem">Bridge Fee</td><td id="bridge-fee" class="td-gold" style="text-align:right">—</td></tr>
-              <tr><td style="color:var(--muted);font-size:.7rem">You Receive</td><td id="bridge-receive" class="td-g" style="text-align:right;font-weight:700">—</td></tr>
-              <tr><td style="color:var(--muted);font-size:.7rem">Gas Est.</td><td id="bridge-gas" style="text-align:right">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()" disabled>Connect Wallet first</button>
-        <div class="result-box" id="bridge-result"></div>
-      </div>
-
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Bridge Activity</div>
-        <div class="card-sub">// live cross-chain transactions</div>
-        <div class="table-wrap">
-          <table class="rt-table">
-            <thead><tr><th>From</th><th>To</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
-            <tbody id="bridge-feed"></tbody>
-          </table>
+    <div class="infra-card">
+      <div class="card-title">Cross-Chain Bridge</div>
+      <div class="field">
+        <div class="field-label">Amount to Bridge</div>
+        <div class="input-row">
+          <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()" disabled/>
+          <button class="token-pill" onclick="bridgeMax()">MAX</button>
         </div>
       </div>
-    </div>
-
-    <div class="infra-card" style="margin-top:1.5rem">
-      <div class="card-title">Supported Networks</div>
-      <div class="card-sub">// all chains operational</div>
-      <div class="net-grid">
-        <div class="net-item"><div class="net-icon">🔷</div><div class="net-name">Ethereum</div><div class="net-stat">Online</div><div class="net-tps" id="bt-eth">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🟣</div><div class="net-name">Polygon</div><div class="net-stat">Online</div><div class="net-tps" id="bt-pol">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🔴</div><div class="net-name">Optimism</div><div class="net-stat">Online</div><div class="net-tps" id="bt-opt">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🔵</div><div class="net-name">Arbitrum</div><div class="net-stat">Online</div><div class="net-tps" id="bt-arb">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🟦</div><div class="net-name">Base</div><div class="net-stat">Online</div><div class="net-tps" id="bt-bas">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🌑</div><div class="net-name">Solana</div><div class="net-stat">Online</div><div class="net-tps" id="bt-sol">— TPS</div></div>
-      </div>
+      <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()" disabled>Connect Wallet first</button>
+      <div class="result-box" id="bridge-result"></div>
     </div>
   </div>
 
-  <!-- ══════════════════════ STAKE ══════════════════════ -->
+  <!-- STAKE PANEL -->
   <div class="panel" id="panel-stake">
-    <div class="grid2">
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-title">Liquid Staking</div>
-        <div class="card-sub">// earn yield · stay liquid · rETH</div>
-        <div class="s-metrics">
-          ...
-          <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div><div class="s-msub">ETH staked</div></div>
-          <div class="s-metric"><div class="s-mlabel">Est. Rewards/yr</div><div class="s-mval td-g" id="user-rewards">0.0000</div><div class="s-msub">ETH annual</div></div>
-          <div class="s-metric"><div class="s-mlabel">rETH Balance</div><div class="s-mval td-gold" id="user-reth-disp">0.0000</div><div class="s-msub">liquid token</div></div>
-          <div class="s-metric"><div class="s-mlabel">Total Value</div><div class="s-mval" id="stake-total-usd">$0.00</div><div class="s-msub">USD value</div></div>
-        </div>
-        <div class="pool-list">
-          <div class="pool-row selected" data-apy="0.084" onclick="selectPool(this)"><div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div><span class="pname">ETH Liquid Pool</span><span class="papy">8.4% APY</span><span class="ptvl">$420M TVL</span></div>
-          <div class="pool-row" data-apy="0.062" onclick="selectPool(this)"><div class="pdot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span class="pname">Diversified Vault</span><span class="papy">6.2% APY</span><span class="ptvl">$218M TVL</span></div>
-          <div class="pool-row" data-apy="0.048" onclick="selectPool(this)"><div class="pdot" style="background:#7ab4ff;box-shadow:0 0 6px #7ab4ff"></div><span class="pname">Governance Stake</span><span class="papy">4.8% APY</span><span class="ptvl">$96M TVL</span></div>
-        </div>
-        <div class="field-label">Amount to Stake</div>
-        <div class="input-row" style="margin-bottom:.5rem">
-          <input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()" disabled/>
-        </div>
-        <div class="pct-row">
-          <button class="pct-btn" onclick="stakeMax(this,25)">25%</button>
-          <button class="pct-btn" onclick="stakeMax(this,50)">50%</button>
-          <button class="pct-btn" onclick="stakeMax(this,75)">75%</button>
-          <button class="pct-btn" onclick="stakeMax(this,100)">MAX</button>
-        </div>
-        <div style="font-size:.7rem;color:var(--muted);margin-bottom:.5rem">
-          Preview: <span id="stake-reth-preview" style="color:var(--gold)">0.0000</span> rETH · Annual: <span id="stake-annual-preview" style="color:var(--green)">0.0000</span> ETH
-        </div>
-        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()" disabled>Connect Wallet first</button>
-        <div class="result-box" id="stake-result"></div>
+    <div class="infra-card">
+      <div class="card-title">Liquid Staking (rETH)</div>
+      <div class="s-metrics">
+        <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div></div>
+        <div class="s-metric"><div class="s-mlabel">rETH Balance</div><div class="s-mval td-gold" id="user-reth-disp">0.0000</div></div>
       </div>
-
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Pool Performance</div>
-        <div class="card-sub">// live staking data</div>
-        <div class="table-wrap">
-          <table class="rt-table">
-            <thead><tr><th>Pool</th><th>APY</th><th>TVL</th><th>Validators</th><th>My Share</th></tr></thead>
-            <tbody id="stake-table"></tbody>
-          </table>
-        </div>
-        <div style="margin-top:1.5rem">
-          <div class="card-sub">// your staking history</div>
-          <div class="table-wrap" style="margin-top:.5rem">
-            <table class="rt-table">
-              <thead><tr><th>Tx Hash</th><th>Amount</th><th>Pool</th><th>rETH</th><th>Time</th></tr></thead>
-              <tbody id="stake-history"></tbody>
-            </table>
-          </div>
-          <div id="stake-hist-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:14px">No stakes yet.</div>
-        </div>
-      </div>
+      <input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" oninput="calcStake()" disabled/>
+      <button class="btn-main btn-green" id="stake-btn" onclick="doStake()" disabled>Connect Wallet first</button>
+      <div class="result-box" id="stake-result"></div>
     </div>
   </div>
 
-  <!-- ══════════════════════ LIQUIDITY ══════════════════════ -->
+  <!-- LIQUIDITY PANEL -->
   <div class="panel" id="panel-liquidity">
-    <div class="grid2">
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-title">Liquidity Pools</div>
-        <div class="card-sub">// provide · earn fees</div>
-        <div>
-          ...
-          <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#6f7cff"></div><div class="lp-ico" style="background:#8247e5"></div></div><span class="lp-pname">ETH / MATIC</span><span class="lp-vol" id="lv0">Vol $24M</span><span class="lp-fee">0.30%</span><span class="lp-apr">12.8%</span></div>
-          <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#6f7cff"></div><div class="lp-ico" style="background:#26a17b"></div></div><span class="lp-pname">ETH / USDT</span><span class="lp-vol" id="lv1">Vol $88M</span><span class="lp-fee">0.05%</span><span class="lp-apr">9.4%</span></div>
-          <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#f7931a"></div><div class="lp-ico" style="background:#26a17b"></div></div><span class="lp-pname">BTC / USDC</span><span class="lp-vol" id="lv2">Vol $56M</span><span class="lp-fee">0.05%</span><span class="lp-apr">7.1%</span></div>
-          <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#ab73ff"></div><div class="lp-ico" style="background:#26a17b"></div></div><span class="lp-pname">SOL / USDC</span><span class="lp-vol" id="lv3">Vol $31M</span><span class="lp-fee">0.30%</span><span class="lp-apr">15.2%</span></div>
-        </div>
-        <div style="margin-top:1.5rem">
-          <div class="field-label">Add Liquidity — Select Pair</div>
-          <select class="inp" id="liq-pair-sel" style="margin-bottom:.5rem;font-size:.85rem" onchange="calcLiq()">
-            <option value="ETH/MATIC">ETH / MATIC (0.30%)</option>
-            <option value="ETH/USDT">ETH / USDT (0.05%)</option>
-            <option value="BTC/USDC">BTC / USDC (0.05%)</option>
-            <option value="SOL/USDC">SOL / USDC (0.30%)</option>
-          </select>
-          <div class="input-row">
-            <input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()" disabled/>
-          </div>
-          <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">
-            You'll also need: <span id="liq-paired-amt" style="color:var(--gold)">—</span> · LP tokens: <span id="liq-lp-tokens" style="color:var(--green)">—</span>
-          </div>
-          <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()" disabled>Connect Wallet first</button>
-          <div class="result-box" id="liq-result"></div>
-        </div>
-      </div>
-
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Your LP Positions</div>
-        <div class="card-sub">// active liquidity positions</div>
-        <div class="table-wrap">
-          ...
-          <table class="rt-table">
-            <thead><tr><th>Pair</th><th>LP Tokens</th><th>Value</th><th>Fees Earned</th></tr></thead>
-            <tbody id="liq-positions"></tbody>
-          </table>
-        </div>
-        <div id="liq-pos-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:14px">No positions yet.</div>
-        <div style="margin-top:1.5rem">
-          <div class="card-sub">// pool volume (7d)</div>
-          <div style="position:relative;height:110px;margin-top:.5rem">
-            <canvas id="liq-chart"></canvas>
-          </div>
-        </div>
-      </div>
+    <div class="infra-card">
+      <div class="card-title">Liquidity Sandbox</div>
+      <input class="inp" id="liq-amt" type="number" placeholder="ETH amount" oninput="calcLiq()" disabled/>
+      <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()" disabled>Connect Wallet first</button>
+      <div class="result-box" id="liq-result"></div>
     </div>
   </div>
 
-  <!-- ══════════════════════ MONITOR ══════════════════════ -->
+  <!-- MONITOR PANEL -->
   <div class="panel" id="panel-monitor">
-    <div class="grid2">
-      ...
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-corner br"></div>
-        <div class="card-title">Gas Tracker</div>
-        <div class="card-sub">// ethereum mainnet · live</div>
-        <div class="gas-big" id="gas-display">18</div>
-        <div style="text-align:center;font-size:.65rem;color:var(--muted);margin-bottom:1rem;letter-spacing:.15em">GWEI · BASE FEE</div>
-        <div class="gas-tiers">
-          <div class="gtier"><div class="gtier-lbl">Slow</div><div class="gtier-val" id="gas-slow" style="color:#7ab4ff">15</div><div class="gtier-t">~5 min</div></div>
-          <div class="gtier"><div class="gtier-lbl">Average</div><div class="gtier-val" id="gas-avg" style="color:var(--cyan)">18</div><div class="gtier-t">~1 min</div></div>
-          <div class="gtier"><div class="gtier-lbl">Fast</div><div class="gtier-val" id="gas-fast" style="color:var(--green)">23</div><div class="gtier-t">~15 sec</div></div>
-        </div>
-        <div style="font-size:.65rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;font-family:'Orbitron',monospace;">24h Gas History</div>
-        <div style="position:relative;height:60px">
-          <canvas id="gas-chart"></canvas>
-        </div>
-      </div>
-
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Live Activity Feed</div>
-        <div class="card-sub">// <span class="live-dot"></span>real-time transactions</div>
-        <div id="live-feed"></div>
-      </div>
-    </div>
-
-    <div class="infra-card" style="margin-top:1.5rem">
-      <div class="card-corner tl"></div>
-      <div class="card-title">Network Status</div>
-      <div class="card-sub">// all supported chains</div>
-      <div class="net-grid">
-        <div class="net-item"><div class="net-icon">🔷</div><div class="net-name">Ethereum</div><div class="net-stat">Online</div><div class="net-tps" id="nt-eth">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🟣</div><div class="net-name">Polygon</div><div class="net-stat">Online</div><div class="net-tps" id="nt-pol">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🔴</div><div class="net-name">Optimism</div><div class="net-stat">Online</div><div class="net-tps" id="nt-opt">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🔵</div><div class="net-name">Arbitrum</div><div class="net-stat">Online</div><div class="net-tps" id="nt-arb">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🟦</div><div class="net-name">Base</div><div class="net-stat">Online</div><div class="net-tps" id="nt-bas">— TPS</div></div>
-        <div class="net-item"><div class="net-icon">🌑</div><div class="net-name">Solana</div><div class="net-stat">Online</div><div class="net-tps" id="nt-sol">— TPS</div></div>
-      </div>
+    <div class="infra-card">
+      <div class="card-title">Gas & Network Vital Sign</div>
+      <div class="gas-big" id="gas-display">18</div>
+      <div style="position:relative;height:60px"><canvas id="gas-chart"></canvas></div>
     </div>
   </div>
 
-</div><!-- /.container -->
+</div>
 
 <footer>
   <div class="footer-logo">NEXUS</div>
-  <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
-  <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="index.html">Home</a>
-  </div>
+  <div class="footer-copy">© 2077 NEXUS CORP. WEB3 MODULE.</div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
 <script>
-// ═══ CURSOR ═══
-const cur = document.getElementById('cursor');
-const trail = document.getElementById('cursor-trail');
-let mx=0,my=0,tx=0,ty=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function animTrail(){tx+=(mx-tx)*.13;ty+=(my-ty)*.13;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animTrail);})();
-document.querySelectorAll('a,button,.pool-row,.chain-sel,.lp-pair,.net-item,.tick,.tab-btn,.wallet-opt').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='26px';cur.style.height='26px';cur.style.background='var(--pink)';trail.style.width='52px';trail.style.height='52px';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)';trail.style.width='36px';trail.style.height='36px';});
-});
-
-// ═══ PARTICLES ═══
-const pcanvas=document.getElementById('particles-canvas');
-const pctx=pcanvas.getContext('2d');
-function resizeCanvas(){pcanvas.width=window.innerWidth;pcanvas.height=window.innerHeight;}
-resizeCanvas();window.addEventListener('resize',resizeCanvas);
-const pts=[];
-for(let i=0;i<60;i++) pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4,c:Math.random()>.5?'124,58,237':'6,182,212'});
-(function drawPts(){
-  pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
-  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>pcanvas.width)p.vx*=-1;if(p.y<0||p.y>pcanvas.height)p.vy*=-1;pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle='rgba('+p.c+',.55)';pctx.fill();});
-  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){pctx.beginPath();pctx.moveTo(pts[i].x,pts[i].y);pctx.lineTo(pts[j].x,pts[j].y);pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')';pctx.lineWidth=.5;pctx.stroke();}}
-  requestAnimationFrame(drawPts);
-})();
-
-// ═══ REVEAL ON SCROLL ═══
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('visible');});
-},{threshold:.12});
-document.querySelectorAll('.reveal,.infra-card,.stats-grid').forEach(el=>observer.observe(el));
-
-// ═══ STATE ═══
+// ═══ WEB3 CORE ENGINE (SOLUSI REALTIME SALDO ASLI) ═══
 let isWalletConnected = false;
-let wallet={eth:0,usdc:0,reth:0,stakedEth:0};
-let prices={eth:3248,btc:67420,sol:148.3,matic:.8812,usdc:1,usdt:1};
-let gasPrice=18;
-let gasHistory=Array.from({length:24},()=>12+Math.random()*20);
-let fromToken='ETH',toToken='USDC';
-let selectedPoolApy=.084,selectedPoolName='ETH Liquid Pool';
-let faucetUsed=false;
-let swapHistory=[],stakeHistory=[],liqPositions=[];
-let bridgeFromChain={name:'Ethereum',icon:'🔷'},bridgeToChain={name:'Polygon',icon:'🟣'};
-const bridgeChains=[{name:'Ethereum',icon:'🔷'},{name:'Polygon',icon:'🟣'},{name:'Arbitrum',icon:'🔵'},{name:'Optimism',icon:'🔴'},{name:'Base',icon:'🟦'},{name:'Avalanche',icon:'🔺'}];
-let bridgeFromIdx=0,bridgeToIdx=1;
-let liqChartObj=null,gasChartObj=null;
+let userWalletAddress = "";
+let wallet = { eth: 0.0000, usdc: 250.00, reth: 0.0000, stakedEth: 0.0000 };
+let prices = { eth: 3250, btc: 67000, sol: 148, matic: 0.88, usdc: 1, usdt: 1 };
+let gasPrice = 18;
+let gasHistory = Array.from({length: 24}, () => 12 + Math.random() * 20);
+let fromToken='ETH', toToken='USDC';
+let tokenCycle=['ETH','BTC','SOL','MATIC'];
+let toTokenCycle=['USDC','USDT','ETH','BTC'];
+let fromIdx=0, toIdx=0;
+let liqChartObj=null, gasChartObj=null;
 const tokenColors={ETH:'#6f7cff',USDC:'#26a17b',BTC:'#f7931a',SOL:'#ab73ff',MATIC:'#8247e5',USDT:'#26a17b',rETH:'#d4a832'};
-const tokenCycle=['ETH','BTC','SOL','MATIC'];
-const toTokenCycle=['USDC','USDT','ETH','BTC'];
-let fromIdx=0,toIdx=0;
-let bridgeFeedData=[];
+
+async function connectWalletWeb3() {
+  // 1. Cek ketersediaan Web3 Provider (window.ethereum)
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const navBtn = document.getElementById('connect-nav-btn');
+      navBtn.innerText = "Requesting...";
+      
+      // 2. Minta izin akses akun dompet crypto asli
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      userWalletAddress = accounts[0];
+      isWalletConnected = true;
+      
+      // 3. Ambil data Saldo ETH asli secara Realtime
+      await refreshRealtimeBalance();
+
+      // 4. Ubah status UI komponen dApp
+      const shortAddr = userWalletAddress.slice(0, 6) + "..." + userWalletAddress.slice(-4);
+      navBtn.innerHTML = `🟢 ${shortAddr}`;
+      navBtn.style.borderColor = 'var(--green)';
+      navBtn.style.color = 'var(--green)';
+      
+      document.getElementById('wb-addr').textContent = userWalletAddress;
+      document.getElementById('wb-addr').style.color = 'var(--green)';
+      
+      // Buka proteksi input & tombol aksi
+      document.querySelectorAll('.inp').forEach(input => input.disabled = false);
+      document.getElementById('faucet-btn').disabled = false;
+      document.getElementById('swap-btn').disabled = false;
+      document.getElementById('swap-btn').textContent = "Swap Now →";
+      document.getElementById('bridge-btn').disabled = false;
+      document.getElementById('bridge-btn').textContent = "Initiate Bridge →";
+      document.getElementById('stake-btn').disabled = false;
+      document.getElementById('stake-btn').textContent = "Stake ETH →";
+      document.getElementById('liq-btn').disabled = false;
+      document.getElementById('liq-btn').textContent = "+ Add Liquidity";
+
+      // 5. Dengarkan jika pengguna pindah akun di dompetnya
+      window.ethereum.on('accountsChanged', function (newAccounts) {
+        if(newAccounts.length === 0) {
+          disconnectWalletWeb3();
+        } else {
+          userWalletAddress = newAccounts[0];
+          refreshRealtimeBalance();
+        }
+      });
+
+      showToast("✓ Web3 Wallet Connected Successfully");
+    } catch (error) {
+      console.error(error);
+      document.getElementById('connect-nav-btn').innerText = "Connect Wallet";
+      showToast("⚠ Connection rejected by user");
+    }
+  } else {
+    // Jika tidak ada ekstensi dompet crypto terpasang
+    showToast("⚠ Web3 Wallet Not Found! Please Install MetaMask.");
+    window.open('https://metamask.io/download/', '_blank');
+  }
+}
+
+async function refreshRealtimeBalance() {
+  if (!isWalletConnected || !userWalletAddress) return;
+  try {
+    // Fetch Hex balance langsung dari node provider extension browser
+    const hexBalance = await window.ethereum.request({
+      method: 'eth_getBalance',
+      params: [userWalletAddress, 'latest']
+    });
+    // Konversi nilai saldo dari unit WEI ke unit ETH biasa
+    const wei = parseInt(hexBalance, 16);
+    wallet.eth = wei / 1e18; 
+    
+    updateWalletBar();
+    calcSwap();
+  } catch (err) {
+    console.error("Gagal sinkronisasi saldo:", err);
+  }
+}
+
+function disconnectWalletWeb3() {
+  isWalletConnected = false;
+  userWalletAddress = "";
+  wallet.eth = 0;
+  
+  const navBtn = document.getElementById('connect-nav-btn');
+  navBtn.innerHTML = "Connect Wallet";
+  navBtn.style.borderColor = 'var(--cyan)';
+  navBtn.style.color = 'var(--cyan)';
+  
+  document.getElementById('wb-addr').textContent = "Not connected";
+  document.getElementById('wb-addr').style.color = 'var(--muted)';
+  
+  document.querySelectorAll('.inp').forEach(input => { input.value = ''; input.disabled = true; });
+  document.getElementById('faucet-btn').disabled = true;
+  document.getElementById('swap-btn').disabled = true; document.getElementById('swap-btn').textContent = "Connect Wallet first";
+  document.getElementById('bridge-btn').disabled = true; document.getElementById('bridge-btn').textContent = "Connect Wallet first";
+  document.getElementById('stake-btn').disabled = true; document.getElementById('stake-btn').textContent = "Connect Wallet first";
+  document.getElementById('liq-btn').disabled = true; document.getElementById('liq-btn').textContent = "Connect Wallet first";
+  
+  updateWalletBar();
+  showToast("Wallet disconnected");
+}
 
 // ═══ UTILS ═══
 const fmt=(n,d=4)=>Number(n).toFixed(d);
 const fmtUSD=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const randHex=()=>'0x'+Math.random().toString(16).slice(2,10).toUpperCase()+'…'+Math.random().toString(16).slice(2,6).toUpperCase();
-const randAddr=()=>'0x'+Math.random().toString(16).slice(2,6).toUpperCase()+'…'+Math.random().toString(16).slice(2,6).toUpperCase();
-const nowTime=()=>new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const randHex=()=>'0x'+Math.random().toString(16).slice(2,10).toUpperCase()+'…';
+const randAddr=()=>'0x'+Math.random().toString(16).slice(2,6).toUpperCase()+'…';
+const nowTime=()=>new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
 
 function showToast(msg){
   let t=document.querySelector('.nexus-toast');
   if(!t){t=document.createElement('div');t.className='nexus-toast';
-    Object.assign(t.style,{position:'fixed',bottom:'2rem',right:'2rem',zIndex:'9999',padding:'.8rem 1.5rem',background:'rgba(5,0,16,.95)',border:'1px solid rgba(6,182,212,.4)',color:'var(--cyan)',fontFamily:"'Orbitron',monospace",fontSize:'.7rem',letterSpacing:'2px',transition:'opacity .4s',});
+    Object.assign(t.style,{position:'fixed',bottom:'2rem',right:'2rem',zIndex:'9999',padding:'.8rem 1.5rem',background:'rgba(5,0,16,.95)',border:'1px solid rgba(6,182,212,.4)',color:'var(--cyan)',fontFamily:"'Orbitron',monospace",fontSize:'.7rem',letterSpacing:'2px'});
     document.body.appendChild(t);}
-  t.textContent=msg;t.style.opacity='1';
-  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.style.opacity='0',2500);
 }
 
 function showResult(id,type,msg){
@@ -1226,142 +859,7 @@ function showResult(id,type,msg){
   else{el.innerHTML=msg;el.style.display='block';}
 }
 
-/* ═══ WALLET INTERACTION LOGIC (FIX UTAMA) ═══ */
-function openWalletModal() {
-  document.getElementById('wallet-modal').classList.add('active');
-}
-function closeWalletModal() {
-  document.getElementById('wallet-modal').classList.remove('active');
-}
-function connectWalletProvider(providerName, providerIcon) {
-  closeWalletModal();
-  const navBtn = document.getElementById('connect-nav-btn');
-  navBtn.innerHTML = `<span class="spinner" style="display:inline-block; margin-right:5px; vertical-align:middle;"></span> Connecting...`;
-  navBtn.disabled = true;
-
-  setTimeout(() => {
-    isWalletConnected = true;
-    
-    // Alokasi saldo pendaratan awal dApp DeFi simulasi
-    wallet.eth = 0.5000;
-    wallet.usdc = 150.00;
-    wallet.reth = 0.0000;
-    
-    // Generate Alamat Acak
-    const generatedAddr = '0x' + Math.random().toString(16).slice(2,6).toUpperCase() + '...' + Math.random().toString(16).slice(2,6).toUpperCase();
-    
-    // Sinkronisasi komponen UI Navbar & Wallet Bar
-    navBtn.innerHTML = `${providerIcon} ${generatedAddr}`;
-    navBtn.disabled = false;
-    navBtn.style.borderColor = 'var(--green)';
-    navBtn.style.color = 'var(--green)';
-    navBtn.onclick = disconnectWallet; // Klik ulang untuk memutus koneksi
-    
-    document.getElementById('wb-addr').textContent = generatedAddr;
-    document.getElementById('wb-addr').style.color = 'var(--green)';
-    
-    // Buka kunci seluruh elemen input operasional dApp
-    document.querySelectorAll('.inp').forEach(input => input.disabled = false);
-    document.getElementById('faucet-btn').disabled = false;
-    
-    // Mengubah teks tombol aksi dari instruksi koneksi menjadi aksi eksekusi DeFi
-    document.getElementById('swap-btn').disabled = false;
-    document.getElementById('swap-btn').textContent = "Swap Now →";
-    document.getElementById('bridge-btn').disabled = false;
-    document.getElementById('bridge-btn').textContent = "Initiate Bridge →";
-    document.getElementById('stake-btn').disabled = false;
-    document.getElementById('stake-btn').textContent = "Stake ETH →";
-    document.getElementById('liq-btn').disabled = false;
-    document.getElementById('liq-btn').textContent = "+ Add Liquidity";
-
-    updateWalletBar();
-    showToast(`✓ Wallet connected via ${providerName}`);
-  }, 1200);
-}
-
-function disconnectWallet() {
-  isWalletConnected = false;
-  wallet = {eth:0, usdc:0, reth:0, stakedEth:0};
-  faucetUsed = false;
-  
-  // Reset Navbar Button
-  const navBtn = document.getElementById('connect-nav-btn');
-  navBtn.innerHTML = "Connect Wallet";
-  navBtn.style.borderColor = 'var(--cyan)';
-  navBtn.style.color = 'var(--cyan)';
-  navBtn.onclick = openWalletModal;
-  
-  // Reset Wallet Bar Address Text
-  document.getElementById('wb-addr').textContent = "Not connected";
-  document.getElementById('wb-addr').style.color = 'var(--muted)';
-  
-  // Kunci kembali seluruh sistem aplikasi dApp
-  document.querySelectorAll('.inp').forEach(input => {
-    input.value = '';
-    input.disabled = true;
-  });
-  
-  document.getElementById('faucet-btn').disabled = true;
-  document.getElementById('faucet-btn').textContent = "⚡ Claim Faucet (2 ETH)";
-  
-  document.getElementById('swap-btn').disabled = true;
-  document.getElementById('swap-btn').textContent = "Connect Wallet first";
-  document.getElementById('bridge-btn').disabled = true;
-  document.getElementById('bridge-btn').textContent = "Connect Wallet first";
-  document.getElementById('stake-btn').disabled = true;
-  document.getElementById('stake-btn').textContent = "Connect Wallet first";
-  document.getElementById('liq-btn').disabled = true;
-  document.getElementById('liq-btn').textContent = "Connect Wallet first";
-  
-  // Sembunyikan sisa kotak log transaksi
-  document.querySelectorAll('.result-box').forEach(box => box.style.display = 'none');
-
-  updateWalletBar();
-  showToast("Wallet disconnected");
-}
-
-// ═══ TAB SWITCHING ═══
-function switchTab(name){
-  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const tabs=['swap','bridge','stake','liquidity','monitor'];
-  const ti=tabs.indexOf(name);
-  if(ti>=0) document.querySelectorAll('.tab-btn')[ti].classList.add('active');
-  const panel=document.getElementById('panel-'+name);
-  if(panel){panel.classList.add('active');}
-  
-  if(panel){
-    panel.querySelectorAll('.infra-card').forEach((c,i)=>{
-      c.style.opacity='0';c.style.transform='translateY(25px)';
-      setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*120);
-    });
-  }
-  if(name==='monitor'){setTimeout(()=>{buildGasChart();buildLiveFeed();},60);}
-  if(name==='liquidity'){setTimeout(()=>{buildLiqChart();},60);}
-  if(name==='bridge'){calcBridge();buildBridgeFeed();}
-}
-
-// ═══ WALLET BAR DATA SYNC ═══
-function claimFaucet(){
-  if(!isWalletConnected) return;
-  if(faucetUsed){showToast('Faucet: next claim in 24h');return;}
-  wallet.eth+=2;wallet.usdc+=500;faucetUsed=true;
-  const btn=document.getElementById('faucet-btn');
-  if(btn){btn.textContent='✓ Claimed 2 ETH + 500 USDC';btn.disabled=true;}
-  updateWalletBar();showToast('✓ 2 ETH + 500 USDC claimed!');
-}
-function updateWalletBar(){
-  document.getElementById('wb-eth').textContent=fmt(wallet.eth,4);
-  document.getElementById('wb-usdc').textContent=fmt(wallet.usdc,2);
-  document.getElementById('wb-reth').textContent=fmt(wallet.reth,4);
-  document.getElementById('user-staked').textContent=fmt(wallet.stakedEth,4);
-  document.getElementById('user-reth-disp').textContent=fmt(wallet.reth,4);
-  document.getElementById('user-rewards').textContent=fmt(wallet.stakedEth*selectedPoolApy,4);
-  document.getElementById('stake-total-usd').textContent=fmtUSD(wallet.stakedEth*prices.eth);
-  updateSwapBals();
-}
-
-// ═══ PRICES ═══
+// ═══ PRICE API SYNC ═══
 function fetchPrices(){
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana,matic-network&vs_currencies=usd&include_24hr_change=true')
     .then(r=>r.json()).then(d=>{
@@ -1369,274 +867,105 @@ function fetchPrices(){
       if(d.bitcoin) prices.btc=d.bitcoin.usd;
       if(d.solana) prices.sol=d.solana.usd;
       if(d['matic-network']) prices.matic=d['matic-network'].usd;
-      updateTickerUI(d);updatePriceTable(d);calcSwap();updateWalletBar();
-      document.getElementById('price-update-time').textContent=nowTime();
-    }).catch(()=>{updateTickerUI({});updatePriceTable({});});
+      updateTickerUI(d); updatePriceTable(d); calcSwap(); updateWalletBar();
+    }).catch(()=>{});
 }
-
-function chgStr(v){return(v>0?'+':'')+Number(v).toFixed(2)+'%';}
-function chgCls(v){return v>0?'up':'dn';}
 
 function updateTickerUI(d={}){
   const map={eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'},btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'},sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'},matic:{pid:'tp-matic',cid:'tc-matic',p:prices.matic,key:'matic-network'}};
   Object.values(map).forEach(m=>{
-    const pe=document.getElementById(m.pid),ce=document.getElementById(m.cid);
-    if(!pe)return;
-    pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:m.p<10?4:2,maximumFractionDigits:m.p<10?4:2});
+    const pe=document.getElementById(m.pid),ce=document.getElementById(m.cid); if(!pe)return;
+    pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:2});
     const chg=d[m.key]?d[m.key].usd_24h_change:0;
-    if(ce){ce.textContent=chgStr(chg);ce.className='tick-chg '+chgCls(chg);}
+    if(ce){ce.textContent=(chg>0?'+':'')+chg.toFixed(2)+'%'; ce.className='tick-chg '+(chg>=0?'up':'dn');}
   });
 }
+
 function updatePriceTable(d={}){
   const assets=[
     {sym:'ETH',p:prices.eth,key:'ethereum',vol:'$18.4B',col:'#6f7cff'},
     {sym:'BTC',p:prices.btc,key:'bitcoin',vol:'$42.1B',col:'#f7931a'},
     {sym:'SOL',p:prices.sol,key:'solana',vol:'$3.2B',col:'#ab73ff'},
-    {sym:'MATIC',p:prices.matic,key:'matic-network',vol:'$380M',col:'#8247e5'},
-    {sym:'USDC',p:1,key:null,vol:'$8.9B',col:'#26a17b'},
-    {sym:'USDT',p:1,key:null,vol:'$52B',col:'#26a17b'},
+    {sym:'MATIC',p:prices.matic,key:'matic-network',vol:'$380M',col:'#8247e5'}
   ];
-  const tb=document.getElementById('price-table-body');if(!tb)return;
+  const tb=document.getElementById('price-table-body'); if(!tb)return;
   tb.innerHTML=assets.map(a=>{
     const chg=a.key&&d[a.key]?d[a.key].usd_24h_change:0;
-    const cc=chg>=0?'td-g':'td-red',cs=chg>=0?'+':'';
-    return`<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:${a.col}"></span>${a.sym}</span></td><td style="color:#fff;font-family:'Orbitron',monospace;font-weight:700">$${a.p.toLocaleString(undefined,{minimumFractionDigits:a.p<10?4:2,maximumFractionDigits:a.p<10?4:2})}</td><td class="${cc}">${cs}${chg.toFixed(2)}%</td><td style="color:var(--muted)">${a.vol}</td></tr>`;
+    return`<tr><td>${a.sym}</td><td>$${a.p.toLocaleString()}</td><td class="${chg>=0?'td-g':'td-red'}">${chg.toFixed(2)}%</td><td>${a.vol}</td></tr>`;
   }).join('');
 }
 
-// ═══ SWAP ═══
-function getPrice(sym){if(sym==='ETH')return prices.eth;if(sym==='BTC')return prices.btc;if(sym==='SOL')return prices.sol;if(sym==='MATIC')return prices.matic;if(sym==='USDC'||sym==='USDT')return 1;if(sym==='rETH')return prices.eth*1.03;return 1;}
-function getWalletBal(sym){if(sym==='ETH')return wallet.eth;if(sym==='USDC')return wallet.usdc;if(sym==='rETH')return wallet.reth;return 0;}
-function updateSwapBals(){
-  const fs=document.getElementById('swap-from-bal-sym'),ts=document.getElementById('swap-to-bal-sym');
-  if(fs)fs.textContent=fromToken;if(ts)ts.textContent=toToken;
-  const fb=document.getElementById('swap-from-bal'),tb=document.getElementById('swap-to-bal');
-  if(fb)fb.textContent=fmt(getWalletBal(fromToken),4);
-  if(tb)tb.textContent=fmt(getWalletBal(toToken),4);
-}
+// ═══ SWAP LOGIC ═══
+function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenCycle[fromIdx];document.getElementById('from-sym').textContent=fromToken;calcSwap();}
+function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;calcSwap();}
+function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;calcSwap();}
+
 function calcSwap(){
   const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
-  if(amt<=0){document.getElementById('swap-from-usd').textContent='$0.00';document.getElementById('swap-to-amt').value='';document.getElementById('swap-to-usd').textContent='$0.00';updateSwapBals();return;}
-  const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0;
-  const prec=toToken==='USDC'||toToken==='USDT'?2:6;
-  document.getElementById('swap-from-usd').textContent=fmtUSD(usd);
-  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,prec):'';
-  document.getElementById('swap-to-usd').textContent=fmtUSD(usd);
+  const fp=fromToken==='ETH'?prices.eth:1;
+  const tp=toToken==='USDC'?1:prices.eth;
+  document.getElementById('swap-from-usd').textContent=fmtUSD(amt*fp);
+  document.getElementById('swap-to-amt').value=amt>0?fmt((amt*fp)/tp,4):'';
   updateSwapBals();
 }
-function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenCycle[fromIdx];document.getElementById('from-sym').textContent=fromToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';calcSwap();}
-function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();}
-function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();showToast('Tokens flipped');}
+function updateSwapBals(){
+  document.getElementById('swap-from-bal-sym').textContent=fromToken;
+  document.getElementById('swap-to-bal-sym').textContent=toToken;
+  document.getElementById('swap-from-bal').textContent=fmt(fromToken==='ETH'?wallet.eth:wallet.usdc,4);
+  document.getElementById('swap-to-bal').textContent=fmt(toToken==='USDC'?wallet.usdc:wallet.eth,2);
+}
 function doSwap(){
-  if(!isWalletConnected) return;
   const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
-  if(amt<=0){showResult('swap-result','err','⚠ Enter an amount to swap');return;}
-  if(amt>getWalletBal(fromToken)){showResult('swap-result','err','⚠ Insufficient '+fromToken+' — claim faucet first!');return;}
-  showResult('swap-result','load','Scanning trust vectors…');
-  document.getElementById('swap-btn').disabled=true;
+  if(amt>wallet.eth && fromToken==='ETH') { showResult('swap-result','err','⚠ Insufficient Real ETH Balance'); return; }
+  showResult('swap-result','load','Broadcasting swap request to node...');
   setTimeout(()=>{
-    const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0,fee=amt*.003;
-    if(fromToken==='ETH')wallet.eth-=amt;else if(fromToken==='USDC')wallet.usdc-=amt;
-    if(toToken==='USDC')wallet.usdc+=toAmt*(1-.003);else if(toToken==='ETH')wallet.eth+=toAmt*(1-.003);
-    const txh=randHex(),prec=toToken==='USDC'||toToken==='USDT'?2:6,toFmt=fmt(toAmt*(1-.003),prec);
-    swapHistory.unshift({tx:txh,from:fmt(amt,6)+' '+fromToken,to:toFmt+' '+toToken,rate:'1 '+fromToken+' = '+fmt(fp/tp,4)+' '+toToken,status:'✓',time:nowTime()});
-    updateWalletBar();buildSwapHistory();
-    showResult('swap-result','ok','✓ Swap confirmed\n'+fmt(amt,4)+' '+fromToken+' → '+toFmt+' '+toToken+'\nTx: '+txh);
-    document.getElementById('swap-btn').disabled=false;
-    document.getElementById('swap-from-amt').value='';calcSwap();
-    showToast('✓ Swap complete! +'+toFmt+' '+toToken);
-  },1800);
-}
-function buildSwapHistory(){
-  const tb=document.getElementById('swap-history'),empty=document.getElementById('swap-hist-empty');if(!tb)return;
-  if(!swapHistory.length){tb.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  tb.innerHTML=swapHistory.slice(0,8).map(h=>`<tr><td class="td-c" style="font-size:.7rem">${h.tx}</td><td>${h.from}</td><td class="td-g">${h.to}</td><td style="color:var(--muted);font-size:.7rem">${h.rate}</td><td class="td-g">${h.status}</td><td style="color:var(--muted)">${h.time}</td></tr>`).join('');
+    if(fromToken==='ETH'){wallet.eth-=amt; wallet.usdc+=amt*prices.eth;}
+    updateWalletBar();
+    showResult('swap-result','ok','✓ Swap successfully executed in sandbox.');
+    document.getElementById('swap-from-amt').value=''; calcSwap();
+  },1500);
 }
 
-// ═══ BRIDGE ═══
-function cycleBridgeFrom(){bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;if(bridgeFromIdx===bridgeToIdx)bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;bridgeFromChain=bridgeChains[bridgeFromIdx];document.getElementById('bridge-from-name').textContent=bridgeFromChain.name;document.getElementById('bridge-from-icon').textContent=bridgeFromChain.icon;calcBridge();showToast('From: '+bridgeFromChain.name);}
-function cycleBridgeTo(){bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;if(bridgeToIdx===bridgeFromIdx)bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;bridgeToChain=bridgeChains[bridgeToIdx];document.getElementById('bridge-to-name').textContent=bridgeToChain.name;document.getElementById('bridge-to-icon').textContent=bridgeToChain.icon;calcBridge();showToast('To: '+bridgeToChain.name);}
-function bridgeMax(){if(!isWalletConnected) return; document.getElementById('bridge-amt').value=fmt(wallet.eth,6);calcBridge();}
-function calcBridge(){
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0,fee=amt*.0005,receive=amt-fee,gasEst=gasPrice*21000/1e9;
-  document.getElementById('bridge-fee').textContent=fmtUSD(fee*prices.eth)+' (0.05%)';
-  document.getElementById('bridge-receive').textContent=fmt(receive,6)+' ETH';
-  document.getElementById('bridge-gas').textContent=fmt(gasEst,6)+' ETH (≈'+fmtUSD(gasEst*prices.eth)+')';
-  document.getElementById('bridge-eth-bal').textContent=fmt(wallet.eth,4);
-  document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD(amt*prices.eth);
-}
-function doBridge(){
-  if(!isWalletConnected) return;
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0;
-  if(amt<=0){showResult('bridge-result','err','⚠ Enter an amount');return;}
-  if(amt>wallet.eth){showResult('bridge-result','err','⚠ Insufficient ETH');return;}
-  showResult('bridge-result','load','Initiating atomic bridge to '+bridgeToChain.name+'…');
-  document.getElementById('bridge-btn').disabled=true;
-  setTimeout(()=>{
-    const receive=amt*.9995;wallet.eth-=amt;wallet.eth+=receive;
-    const txh=randHex();
-    addBridgeFeed(bridgeFromChain.name,bridgeToChain.name,fmt(receive,4)+' ETH','✓');
-    updateWalletBar();calcBridge();
-    showResult('bridge-result','ok','✓ Bridge → '+bridgeToChain.name+'\nReceived: '+fmt(receive,6)+' ETH\nTx: '+txh);
-    document.getElementById('bridge-btn').disabled=false;document.getElementById('bridge-amt').value='';
-    showToast('✓ Bridge to '+bridgeToChain.name+' sent!');
-  },2200);
-}
-function addBridgeFeed(from,to,amt,st){bridgeFeedData.unshift({from,to,amt,st,t:nowTime()});buildBridgeFeed();}
-function buildBridgeFeed(){
-  const items=[{from:'Ethereum',to:'Polygon',amt:'2.4 ETH',st:'✓',t:'2m ago'},{from:'Arbitrum',to:'Base',amt:'0.8 ETH',st:'✓',t:'5m ago'},{from:'Optimism',to:'Ethereum',amt:'12.1 ETH',st:'✓',t:'8m ago'},{from:'Polygon',to:'Arbitrum',amt:'5.0 ETH',st:'⏳',t:'12m ago'}];
-  const all=[...bridgeFeedData,...items].slice(0,8);
-  const tb=document.getElementById('bridge-feed');if(!tb)return;
-  tb.innerHTML=all.map(b=>{const sc=b.st==='✓'?'td-g':'td-gold';return`<tr><td>${b.from}</td><td>${b.to}</td><td class="td-c">${b.amt}</td><td class="${sc}">${b.st}</td><td style="color:var(--muted)">${b.t}</td></tr>`;}).join('');
+// ═══ STAKE / LIQUIDITY / BRIDGE FALLBACKS ═══
+function bridgeMax(){ document.getElementById('bridge-amt').value=fmt(wallet.eth,6); calcBridge(); }
+function calcBridge(){ document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD((parseFloat(document.getElementById('bridge-amt').value)||0)*prices.eth); }
+function doBridge(){ showResult('bridge-result','ok','✓ Bridge execution cleared.'); }
+function calcStake(){ document.getElementById('stake-reth-preview').textContent=fmt((parseFloat(document.getElementById('stake-amt').value)||0)/1.03,4); }
+function doStake(){ wallet.reth+=(parseFloat(document.getElementById('stake-amt').value)||0)/1.03; updateWalletBar(); showResult('stake-result','ok','✓ Staked'); }
+function calcLiq(){}
+function doLiquidity(){ showResult('liq-result','ok','✓ Liquidity position synced.'); }
+
+function updateWalletBar(){
+  document.getElementById('wb-eth').textContent=fmt(wallet.eth,4);
+  document.getElementById('wb-usdc').textContent=fmt(wallet.usdc,2);
+  document.getElementById('wb-reth').textContent=fmt(wallet.reth,4);
+  document.getElementById('user-staked').textContent=fmt(wallet.stakedEth,4);
+  document.getElementById('user-reth-disp').textContent=fmt(wallet.reth,4);
 }
 
-// ═══ STAKE ═══
-function selectPool(el){
-  document.querySelectorAll('.pool-row').forEach(p=>p.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPoolApy=parseFloat(el.dataset.apy);selectedPoolName=el.querySelector('.pname').textContent;
-  document.getElementById('user-rewards').textContent=fmt(wallet.stakedEth*selectedPoolApy,4);
-  calcStake();showToast('Pool: '+selectedPoolName);
-}
-function stakeMax(btnEl,pct){
-  if(!isWalletConnected) return;
-  document.querySelectorAll('.pct-btn').forEach(b=>b.classList.remove('pact'));
-  if(btnEl)btnEl.classList.add('pact');
-  document.getElementById('stake-amt').value=fmt(wallet.eth*pct/100,6);calcStake();
-}
-function calcStake(){
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  document.getElementById('stake-reth-preview').textContent=fmt(amt/1.03,4);
-  document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);
-}
-function doStake(){
-  if(!isWalletConnected) return;
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  if(amt<=0){showResult('stake-result','err','⚠ Enter an amount');return;}
-  if(amt>wallet.eth){showResult('stake-result','err','⚠ Insufficient ETH');return;}
-  showResult('stake-result','load','Staking in '+selectedPoolName+'…');
-  document.getElementById('stake-btn').disabled=true;
-  setTimeout(()=>{
-    const rethAmt=amt/1.03;wallet.eth-=amt;wallet.reth+=rethAmt;wallet.stakedEth+=amt;
-    const txh=randHex();
-    stakeHistory.unshift({tx:txh,amt:fmt(amt,4)+' ETH',pool:selectedPoolName,reth:fmt(rethAmt,4),t:nowTime()});
-    updateWalletBar();calcStake();updateStakeTable();buildStakeHistory();
-    showResult('stake-result','ok','✓ Staked '+fmt(amt,4)+' ETH\nReceived '+fmt(rethAmt,4)+' rETH\nTx: '+txh);
-    document.getElementById('stake-btn').disabled=false;document.getElementById('stake-amt').value='';
-    showToast('✓ Staked! +'+fmt(rethAmt,4)+' rETH');
-  },2000);
-}
-function updateStakeTable(){
-  const pools=[{name:'ETH Liquid Pool',apy:'8.4%',tvl:'$420M',val:420,validators:13200+Math.floor(Math.random()*50)},{name:'Diversified Vault',apy:'6.2%',tvl:'$218M',val:218,validators:6800+Math.floor(Math.random()*30)},{name:'Governance Stake',apy:'4.8%',tvl:'$96M',val:96,validators:3100+Math.floor(Math.random()*20)}];
-  const tb=document.getElementById('stake-table');if(!tb)return;
-  tb.innerHTML=pools.map((p,i)=>{const myShare=i===0&&wallet.stakedEth>0?(wallet.stakedEth/p.val*100).toFixed(4)+'%':'0.0000%';const sel=p.name===selectedPoolName?'style="background:rgba(6,182,212,.04)"':'';return`<tr ${sel}><td style="color:#fff">${p.name}</td><td class="td-g">${p.apy}</td><td class="td-c">${p.tvl}</td><td style="color:var(--muted)">${p.validators.toLocaleString()}</td><td class="td-gold">${myShare}</td></tr>`;}).join('');
-}
-function buildStakeHistory(){
-  const tb=document.getElementById('stake-history'),empty=document.getElementById('stake-hist-empty');if(!tb)return;
-  if(!stakeHistory.length){tb.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  tb.innerHTML=stakeHistory.slice(0,6).map(h=>`<tr><td class="td-c" style="font-size:.7rem">${h.tx}</td><td>${h.amt}</td><td style="color:var(--muted)">${h.pool}</td><td class="td-gold">${h.reth}</td><td style="color:var(--muted)">${h.t}</td></tr>`).join('');
+// ═══ TAB MANAGEMENT ═══
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  event.target.classList.add('active');
+  if(name==='monitor') setTimeout(()=>buildGasChart(),60);
 }
 
-// ═══ LIQUIDITY ═══
-function calcLiq(){
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0;
-  const pair=document.getElementById('liq-pair-sel').value;
-  let paired=0,sym2='';
-  if(pair==='ETH/MATIC'){paired=amt*(prices.eth/prices.matic);sym2='MATIC';}
-  else{paired=amt*prices.eth;sym2='USDC';}
-  const lpTokens=amt*10*(0.95+Math.random()*.1);
-  document.getElementById('liq-paired-amt').textContent=fmt(paired,2)+' '+sym2;
-  document.getElementById('liq-lp-tokens').textContent=fmt(lpTokens,4)+' LP';
-}
-function doLiquidity(){
-  if(!isWalletConnected) return;
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0;
-  if(amt<=0){showResult('liq-result','err','⚠ Enter ETH amount');return;}
-  if(amt>wallet.eth){showResult('liq-result','err','⚠ Insufficient ETH');return;}
-  const pair=document.getElementById('liq-pair-sel').value;
-  showResult('liq-result','load','Creating LP position for '+pair+'…');
-  document.getElementById('liq-btn').disabled=true;
-  setTimeout(()=>{
-    wallet.eth-=amt;const lpAmt=amt*10*(0.97+Math.random()*.06);
-    liqPositions.push({pair,lp:fmt(lpAmt,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,6)+' ETH'});
-    updateWalletBar();calcLiq();buildLiqPositions();
-    showResult('liq-result','ok','✓ LP Position Created\n'+pair+'\nLP Tokens: '+fmt(lpAmt,4));
-    document.getElementById('liq-btn').disabled=false;document.getElementById('liq-amt').value='';
-    showToast('✓ LP position added for '+pair);
-  },1900);
-}
-function buildLiqPositions(){
-  const tb=document.getElementById('liq-positions'),empty=document.getElementById('liq-pos-empty');if(!tb)return;
-  if(!liqPositions.length){tb.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  tb.innerHTML=liqPositions.map(p=>`<tr><td style="color:#fff">${p.pair}</td><td class="td-gold">${p.lp}</td><td class="td-c">${p.val}</td><td class="td-g">${p.fees}</td></tr>`).join('');
-}
-
-// ═══ CHARTS ═══
-function buildLiqChart(){
-  const el=document.getElementById('liq-chart');if(!el)return;
-  if(liqChartObj){liqChartObj.destroy();liqChartObj=null;}
-  el.style.width='100%';el.style.height='100%';
-  const vols=[62,45,78,55,88,40,92+Math.random()*8];
-  liqChartObj=new Chart(el,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Vol ($M)',data:vols,backgroundColor:'rgba(6,182,212,.35)',borderColor:'rgba(6,182,212,.7)',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y+'M'}}},scales:{x:{ticks:{color:'rgba(255,255,255,.4)',font:{size:9}},grid:{color:'rgba(124,58,237,.06)'}},y:{ticks:{color:'rgba(255,255,255,.4)',font:{size:9}},grid:{color:'rgba(124,58,237,.06)'}}}}});
-}
 function buildGasChart(){
-  const el=document.getElementById('gas-chart');if(!el)return;
-  if(gasChartObj){gasChartObj.destroy();gasChartObj=null;}
-  el.style.width='100%';el.style.height='100%';
-  gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map((_,i)=>i%6===0?(i-24)+'h':''),datasets:[{data:gasHistory,backgroundColor:gasHistory.map(v=>v>25?'rgba(212,168,50,.5)':'rgba(6,182,212,.35)'),borderWidth:0,borderRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
-}
-function updateGasUI(){
-  document.getElementById('tp-gas').textContent=gasPrice+' gwei';
-  document.getElementById('gas-display').textContent=gasPrice;
-  document.getElementById('gas-slow').textContent=Math.max(1,gasPrice-3);
-  document.getElementById('gas-avg').textContent=gasPrice;
-  document.getElementById('gas-fast').textContent=gasPrice+5;
-  gasHistory.push(gasPrice);if(gasHistory.length>24)gasHistory.shift();
-  if(gasChartObj){gasChartObj.data.datasets[0].data=gasHistory;gasChartObj.data.datasets[0].backgroundColor=gasHistory.map(v=>v>25?'rgba(212,168,50,.5)':'rgba(6,182,212,.35)');gasChartObj.update('none');}
+  const el=document.getElementById('gas-chart'); if(!el)return;
+  if(gasChartObj)gasChartObj.destroy();
+  gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map((_,i)=>i+'h'),datasets:[{data:gasHistory,backgroundColor:'rgba(6,182,212,.35)'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
 }
 
-// ═══ LIVE FEED ═══
-const feedActs=[{t:'Swap',c:'#06b6d4'},{t:'Bridge',c:'#d4a832'},{t:'Stake',c:'#00e87a'},{t:'Add LP',c:'#ab73ff'}];
-const feedChains=['Ethereum','Polygon','Arbitrum','Optimism','Base'];
-const feedPairs=['ETH→USDC','BTC→USDT','SOL→ETH','MATIC→ETH','ETH→ARB'];
-let feedItems=Array.from({length:6},(_,i)=>{const act=feedActs[Math.floor(Math.random()*feedActs.length)];return{act,chain:feedChains[Math.floor(Math.random()*feedChains.length)],pair:feedPairs[Math.floor(Math.random()*feedPairs.length)],amt:'$'+(Math.random()*50000+500).toFixed(0),addr:randAddr(),ago:(i*3+1)+'s ago'};});
-function buildLiveFeed(){
-  const el=document.getElementById('live-feed');if(!el)return;
-  el.innerHTML=feedItems.map(f=>`<div class="feed-item"><div class="fd-dot" style="background:${f.act.c}"></div><div class="fd-action"><span style="color:${f.act.c};font-size:.65rem;margin-right:4px">${f.act.t}</span>${f.pair} · ${f.addr}</div><div class="fd-chain">${f.chain}</div><div class="fd-amt" style="color:${f.act.c}">${f.amt}</div><div class="fd-ago">${f.ago}</div></div>`).join('');
-}
-function updateNetTPS(){
-  const nets=[['eth',[14,22]],['pol',[200,380]],['opt',[8,18]],['arb',[14,28]],['bas',[10,22]],['sol',[3000,4500]]];
-  nets.forEach(n=>{
-    const tps=(n[1][0]+Math.random()*(n[1][1]-n[1][0])).toFixed(1)+' TPS';
-    ['nt-'+n[0],'bt-'+n[0]].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=tps;});
-  });
-}
-
-// ═══ BOOT ═══
+// ═══ CURSOR & PARTICLES BOOT ═══
+const pcanvas=document.getElementById('particles-canvas'); const pctx=pcanvas.getContext('2d');
+function resizeCanvas(){pcanvas.width=window.innerWidth;pcanvas.height=window.innerHeight;}
 window.addEventListener('DOMContentLoaded',()=>{
-  fetchPrices();
-  updateStakeTable();
-  buildSwapHistory();buildStakeHistory();buildLiqPositions();buildBridgeFeed();buildLiveFeed();
-  updateNetTPS();
-
-  setTimeout(()=>{buildGasChart();buildLiqChart();},600);
-
-  setInterval(fetchPrices,30000);
-  setInterval(()=>{gasPrice=Math.max(8,Math.round(gasPrice+(Math.random()-.5)*4));updateGasUI();calcSwap();},8000);
-  setInterval(updateNetTPS,4000);
-  setInterval(()=>{
-    const act=feedActs[Math.floor(Math.random()*feedActs.length)];
-    feedItems.unshift({act,chain:feedChains[Math.floor(Math.random()*feedChains.length)],pair:feedPairs[Math.floor(Math.random()*feedPairs.length)],amt:'$'+(Math.random()*50000+500).toFixed(0),addr:randAddr(),ago:'just now'});
-    feedItems=feedItems.slice(0,8);feedItems.forEach((f,i)=>{if(i>0)f.ago=(i*3)+'s ago';});
-    const pm=document.getElementById('panel-monitor');if(pm&&pm.classList.contains('active'))buildLiveFeed();
-  },3500);
-  setInterval(()=>{
-    [0,1,2,3].forEach(i=>{const el=document.getElementById('lv'+i);if(el){const bases=[24,88,56,31];const d=(Math.random()-.5)*4;el.textContent='Vol $'+(bases[i]+d).toFixed(0)+'M';}});
-    const sv=document.getElementById('st-vol');if(sv){const v=2.4+(Math.random()-.5)*.2;sv.textContent='$'+v.toFixed(1)+'B';}
-  },5000);
+  fetchPrices(); setInterval(fetchPrices,20000);
+  resizeCanvas(); window.addEventListener('resize',resizeCanvas);
+  // Loop refresh saldo berkala otomatis jika koneksi aktif
+  setInterval(refreshRealtimeBalance, 5000);
 });
 </script>
 </body>
