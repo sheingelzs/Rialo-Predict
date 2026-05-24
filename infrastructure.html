@@ -1,1 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEXUS — Enter The Void</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
 
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --purple:#7c3aed;
+  --cyan:#06b6d4;
+  --pink:#ec4899;
+  --dark:#050010;
+  --dark2:#0d0020;
+  --dark3:#110028;
+  --text:#e2e8f0;
+  --muted:#94a3b8;
+}
+html{
+  scroll-behavior:smooth;
+  background:#000;
+}
+body{
+  background:#000;
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;
+  overflow-y:hidden; /* Dikunci permanen hingga sistem masuk diizinkan */
+  cursor: none !important; /* Sembunyikan kursor bawaan agar tidak tabrakan */
+}
+a, button, .card, .char-card, .contributor-card, #gate-container, #intro-overlay {
+  cursor: none !important; /* Sembunyikan kursor OS di semua layer termasuk gerbang awal */
+}
+
+/* INITIAL DOORMAN OVERLAY (UX FIX FOR AUDIO POLICY) */
+#gate-container {
+  position: fixed;
+  inset: 0;
+  background: #010005;
+  z-index: 10000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transition: opacity 0.8s ease;
+}
+.gate-glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.gate-btn {
+  background: transparent;
+  border: 1px solid var(--purple);
+  color: #fff;
+  padding: 1.2rem 3rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+  clip-path: polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+  transition: all 0.4s ease;
+  z-index: 2;
+}
+.gate-btn:hover {
+  border-color: var(--cyan);
+  background: rgba(6, 182, 212, 0.05);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+  transform: scale(1.05);
+}
+
+/* INTRO VIDEO PRELOADER OVERLAY */
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 999999;
+  display: none; /* Diaktifkan via JS setelah gerbang diklik */
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity, filter;
+}
+#intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.skip-intro-btn {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  background: rgba(5, 0, 16, 0.6);
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  color: var(--cyan);
+  padding: 0.6rem 1.5rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  z-index: 1000000;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all 0.3s;
+}
+
+/* CONTAINER UTAMA */
+#main-wrapper {
+  opacity: 0;
+  display: block;
+  background: var(--dark);
+  visibility: hidden;
+}
+
+/* SPLINE PROTECTION OVERLAY (Mencegah kursor hilang/stuck di dalam Canvas 3D) */
+.spline-mouse-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: transparent;
+}
+
+spline-viewer::part(logo),
+spline-viewer::part(watermark),
+spline-viewer::part(shadow-root) #shadow-root-container #logo,
+spline-viewer::part(shadow-root) .spline-watermark,
+#spline-logo,
+.spline-watermark,
+a[href*="spline.design"],
+#containment-wrapper,
+#logo-container {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* CINEMATIC CURSOR */
+#cursor{
+  position:fixed;
+  width:10px;height:10px;
+  background:var(--cyan);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:100000005; /* Ditinggikan maksimal agar berada di atas layer apapun */
+  transform:translate(-50%,-50%);
+  mix-blend-mode: screen;
+  box-shadow: 0 0 8px var(--cyan);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+#cursor-trail{
+  position:fixed;
+  width:32px;height:32px;
+  border:1px solid rgba(124,58,237,0.6);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:100000004;
+  transform:translate(-50%,-50%);
+  mix-blend-mode: screen;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
+}
+
+/* NAVBAR */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 4rem;
+  background:rgba(5,0,16,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(124,58,237,0.15);
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.logo{
+  font-family:'Orbitron',monospace;
+  font-weight:900;font-size:1.4rem;
+  color:var(--cyan);
+  letter-spacing:4px;
+}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{
+  color:var(--muted);font-size:0.85rem;
+  letter-spacing:2px;text-decoration:none;
+  text-transform:uppercase;font-weight:600;
+  transition:color 0.3s, text-shadow 0.3s;
+}
+.nav-links a:hover{
+  color:var(--cyan);
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+}
+
+.nav-links a.infra-link{
+  color:var(--cyan);
+  position:relative;
+}
+.nav-links a.infra-link::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;right:0;
+  height:1px;
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);
+  animation:infraPulse 2s ease-in-out infinite;
+}
+@keyframes infraPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
+
+/* PATCHED: Flash Loan Navbar Link Style */
+.nav-links a.flash-nav-link{
+  color:var(--pink);
+  position:relative;
+}
+.nav-links a.flash-nav-link::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;right:0;
+  height:1px;
+  background:var(--pink);
+  box-shadow:0 0 6px var(--pink);
+  animation:flashNavPulse 1.8s ease-in-out infinite;
+}
+@keyframes flashNavPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+
+.nav-btn{
+  padding:0.5rem 1.5rem;
+  border:1px solid var(--cyan);
+  background:transparent;color:var(--cyan);
+  font-family:'Rajdhani',sans-serif;
+  font-size:0.85rem;letter-spacing:2px;
+  text-transform:uppercase;font-weight:600;
+  transition:all 0.3s;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.nav-btn:hover{background:var(--cyan);color:var(--dark);box-shadow: 0 0 15px rgba(6,182,212,0.4);}
+
+/* HERO GRID LAYOUT */
+#hero{
+  min-height:100vh;
+  position:relative;
+  padding: 6rem 4rem 2rem 4rem;
+  overflow:hidden;
+  display: flex;
+  align-items: center;
+  perspective: 2000px;
+}
+.hero-wrapper {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  filter: hue-rotate(230deg) saturate(1.4) contrast(1.1);
+}
+
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 60% 60% at 70% 50%, rgba(124,58,237,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 30% 80%, rgba(236,72,153,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 80% 20%, rgba(6,182,212,0.08) 0%, transparent 60%);
+}
+.grid-bg{
+  position:absolute;inset:0;pointer-events:none;
+  z-index: 2;
+  background-image:
+    linear-gradient(rgba(124,58,237,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.05) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+.scanline{
+  position:absolute;inset:0;pointer-events:none;
+  z-index: 3;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 2px,
+    rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px
+  );
+}
+
+.hero-content{
+  max-width:680px;
+  transform-style: preserve-3d;
+  opacity: 0;
+  will-change: transform;
+}
+
+.hero-title-3d {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(2.2rem, 4.8vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  letter-spacing: 2px;
+}
+
+.title-welcome {
+  display: block;
+  font-size: 0.45em;
+  color: var(--muted);
+  letter-spacing: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.title-core-focus {
+  display: block;
+  font-size: 1.25em;
+  font-weight: 900;
+  background: linear-gradient(90deg, #fff 0%, var(--cyan) 50%, var(--purple) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shineGlint 4s linear infinite, floatingGlow 3.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 2px 15px rgba(6, 182, 212, 0.3));
+}
+
+@keyframes shineGlint {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes floatingGlow {
+  0% { transform: translateZ(30px) translateY(0); filter: drop-shadow(0 2px 10px rgba(6, 182, 212, 0.3)); }
+  100% { transform: translateZ(55px) translateY(-6px); filter: drop-shadow(0 5px 25px rgba(124, 58, 237, 0.6)); }
+}
+
+.hero-btns{
+  display:flex;gap:1rem;flex-wrap:wrap;
+  margin-top: 1rem;
+}
+.btn-primary{
+  padding:0.9rem 2.5rem;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  color:#fff;border:none;
+  font-family:'Rajdhani',sans-serif;font-size:0.9rem;
+  letter-spacing:3px;text-transform:uppercase;font-weight:700;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.btn-primary:hover{opacity:0.9; transform: translateY(-2px);}
+
+.btn-secondary{
+  padding:0.9rem 2.5rem;
+  background:transparent;
+  border:1px solid rgba(124,58,237,0.5);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;font-size:0.9rem;
+  letter-spacing:3px;text-transform:uppercase;font-weight:600;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:all 0.3s;
+}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,0.05);}
+
+/* SPLINE CONTAINER */
+.spline-container-wrap {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  z-index: 5;
+}
+
+.spline-viewport {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.spline-shadow-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spline-bottom-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 90px;
+  background: linear-gradient(to bottom, transparent, #050010 85%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* SECTIONS */
+section{padding:6rem 4rem; position: relative; z-index: 10;}
+.section-tag{
+  font-family:'Orbitron',monospace;
+  font-size:0.7rem;letter-spacing:4px;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:0.8rem;
+}
+.section-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.8rem,3vw,2.8rem);
+  font-weight:900;text-transform:uppercase;
+  line-height:1.1;margin-bottom:1rem;
+}
+
+/* EXPLORE */
+#explore{
+  background:var(--dark2);
+  position:relative;
+}
+#explore::before{
+  content:'';position:absolute;top:-100px;left:-100px;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:2.5rem 1.5rem;
+  margin-top:5rem;
+}
+.card{
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(124,58,237,0.15);
+  padding:2rem;
+  position:relative;
+  overflow: visible;
+  transition: border-color 0.4s, background 0.4s;
+  perspective: 1200px;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,58,237,0.07) 0%,transparent 50%);
+  opacity:0;transition:opacity 0.4s;
+  pointer-events: none;
+}
+.card:hover{
+  border-color:rgba(6,182,212,0.5);
+  background: rgba(124, 58, 237, 0.04);
+}
+.card:hover::before{opacity:1;}
+
+.card-img-container {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+}
+.card-img-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 0, 16, 0.6);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  z-index: 1;
+}
+
+.pop-avatar {
+  width: auto;
+  height: 105%;
+  max-width: 95%;
+  object-fit: contain;
+  z-index: 3;
+  transform-style: preserve-3d;
+  transform: translateZ(0px) scale(1);
+  will-change: transform, filter;
+  filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.6));
+}
+
+.card:hover .pop-avatar {
+  filter: drop-shadow(15px 25px 20px rgba(0, 0, 0, 0.8)) 
+          drop-shadow(0px 0px 25px rgba(6, 182, 212, 0.4));
+}
+
+.card-icon{
+  position: absolute;
+  top: -15px; right: 15px;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(6,182,212,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  background: rgba(5, 0, 16, 0.9);
+  z-index: 4;
+}
+.card-title{
+  font-family:'Orbitron',monospace;font-size:0.9rem;
+  font-weight:700;letter-spacing:2px;margin-bottom:0.8rem;
+}
+.card-desc{color:var(--muted);font-size:0.9rem;line-height:1.7;}
+.card-advantage {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--cyan);
+  line-height: 1.5;
+}
+.card-tag{
+  display:inline-block;margin-top:1.2rem;
+  padding:0.2rem 0.8rem;
+  border:1px solid rgba(124,58,237,0.3);
+  color:var(--purple);font-size:0.7rem;
+  letter-spacing:2px;text-transform:uppercase;
+}
+
+/* CONTRIBUTOR */
+#feature {
+  position: relative;
+  background: var(--dark);
+}
+.contributor-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.contributor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.contributor-card {
+  background: rgba(13, 0, 32, 0.6);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  clip-path: polygon(15px 0%, 100% 0%, calc(100% - 15px) 100%, 0% 100%);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  opacity: 0;
+}
+.contributor-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pink), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.contributor-card:hover {
+  border-color: var(--pink);
+  background: rgba(124, 58, 237, 0.08);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
+}
+.contributor-card:hover::before {
+  opacity: 1;
+}
+.contributor-logo-wrap {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 0, 16, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  border-radius: 50%;
+  padding: 12px;
+  transition: transform 0.3s ease;
+}
+.contributor-card:hover .contributor-logo-wrap {
+  transform: rotate(10deg) scale(1.1);
+  border-color: var(--cyan);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+}
+.contributor-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+}
+.contributor-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.contributor-status {
+  font-size: 0.7rem;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* CHARACTERS (ACCOUNT X) */
+#account-x{background:var(--dark3);}
+.char-showcase{
+  display:flex;gap:1.5rem;margin-top:3rem;
+  overflow-x:auto;padding-bottom:1rem;
+}
+.char-showcase::-webkit-scrollbar{height:3px;}
+.char-showcase::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+
+.char-card.reveal {
+  opacity: 0;
+  transform: scale(0.6) translateY(50px);
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.char-card.reveal.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.char-card{
+  min-width:190px;flex-shrink:0;
+  background:rgba(255,255,255,0.01);
+  border:1px solid rgba(124,58,237,0.15);
+  padding:1.8rem 1rem;text-align:center;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+}
+.char-card:hover{border-color:var(--pink);transform:translateY(-6px) !important;}
+.char-card.active{border-color:var(--cyan);background: rgba(6, 182, 212, 0.04);}
+
+.char-avatar{
+  width:90px;height:90px;border-radius:50%;
+  margin:0 auto 1.2rem;
+  border:2px solid rgba(124,58,237,0.2);
+  background:rgba(124,58,237,0.05);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+.char-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.char-card:hover .char-avatar img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px var(--cyan));
+}
+
+.char-name{
+  font-family:'Orbitron',monospace;font-size:0.9rem;
+  letter-spacing:2px;
+  margin-bottom: 0px;
+}
+
+/* CTA */
+#cta{text-align:center;position:relative;}
+#cta::before{
+  content:'';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:400px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(124,58,237,0.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cta-inner{position:relative;z-index:1;}
+.cta-line{
+  width:100px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  margin:1.5rem auto;
+}
+.cta-sub{color:var(--muted);font-size:1rem;letter-spacing:2px;margin-bottom:2.5rem;}
+
+/* FOOTER */
+footer{
+  background:var(--dark2);
+  border-top:1px solid rgba(124,58,237,0.15);
+  padding:2rem 4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position: relative;
+  z-index: 10;
+}
+.footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
+.footer-copy{color:var(--muted);font-size:0.75rem;letter-spacing:2px;}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{color:var(--muted);font-size:0.75rem;text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--cyan);}
+
+/* STANDARD REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* PARTICLES */
+#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:4;}
+
+/* DYNAMIC CINEMATIC MODAL TRAILER */
+#trailer-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(1, 0, 4, 0.95);
+  z-index: 100000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  backdrop-filter: blur(15px);
+}
+#trailer-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-content {
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+}
+.modal-close {
+  position: absolute;
+  top: -40px; right: 0;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--pink); }
+
+@media (max-width: 968px) {
+  #hero { padding: 7rem 2rem 3rem 2rem; }
+  .hero-wrapper { grid-template-columns: 1fr; text-align: center; }
+  .hero-content { max-width: 100%; order: 2; transform: none !important; }
+  .spline-container-wrap { order: 1; height: 350px; }
+  .hero-btns { justify-content: center; }
+  nav { padding: 1.2rem 2rem; }
+  .nav-links { display: none; }
+  body { cursor: auto !important; } 
+  #cursor, #cursor-trail { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<div id="gate-container">
+  <div class="gate-glow"></div>
+  <button class="gate-btn" id="enter-btn">ENTER THE VOID</button>
+</div>
+
+<div id="intro-overlay">
+  <video id="intro-video" playsinline>
+    <source src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/videos/logo.mp4" type="video/mp4">
+  </video>
+  <button class="skip-intro-btn" id="skip-intro">SKIP INTRO ➔</button>
+</div>
+
+<div id="main-wrapper">
+  <canvas id="particles-canvas"></canvas>
+
+  <nav>
+    <div class="logo">NEXUS</div>
+    <ul class="nav-links">
+      <li><a href="#explore">Explore</a></li>
+      <li><a href="#feature">Contributor</a></li>
+      <li><a href="#account-x">Account X</a></li>
+      <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
+      <!-- PATCHED: Added Flash Loan Node -->
+      <li><a href="flashloan.html" class="flash-nav-link">Flash Loan</a></li>
+    </ul>
+    <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
+  </nav>
+
+  <section id="hero">
+    <video autoplay muted loop playsinline class="hero-video-bg">
+      <source src="https://player.vimeo.com/external/435674703.sd.mp4?s=6fad4da61fe8b2eb594249a56cb04c355470d0c3&profile_id=165&oauth2_token_id=57447761" type="video/mp4">
+    </video>
+
+    <div class="hero-bg"></div>
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
+
+    <div class="hero-wrapper">
+      <div class="hero-content">
+        <h1 class="hero-title-3d">
+          <span class="title-welcome">WELCOME TO THE</span>
+          <span class="title-core-focus">RIALO ALPHA CORE</span>
+        </h1>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="window.location.href='infrastructure.html'">Begin Journey</button>
+          <button class="btn-secondary" id="open-trailer-btn">Watch Trailer</button>
+        </div>
+      </div>
+
+      <div class="spline-container-wrap">
+        <div class="spline-mouse-shield"></div> <div class="spline-shadow-glow"></div>
+        <spline-viewer class="spline-viewport" url="https://prod.spline.design/prxiNDfi28dmP-dd/scene.splinecode"></spline-viewer>
+        <div class="spline-bottom-overlay"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="explore">
+    <div class="section-tag">// 01 — Core Terminal</div>
+    <h2 class="section-title reveal">DeFi Liquidity<br/><span style="color:var(--cyan)">Infrastructure</span></h2>
+
+    <div class="cards-grid">
+      <div class="card slide-left-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/shein.png" alt="Shein Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">⬡</div>
+        <div class="card-title">Multi-Route Token Swap</div>
+        <p class="card-desc">Swaps digital assets across automated market makers (AMMs) like Uniswap v4.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Uses smart routing to scan trust vectors in real-time, automatically securing the lowest slippage (0.5%) and best pricing.</div>
+        <span class="card-tag">Swap</span>
+      </div>
+
+      <div class="card slide-right-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs1.png" alt="Gelzs Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">⬟</div>
+        <div class="card-title">Cross-Chain Atomic Bridge</div>
+        <p class="card-desc">Transfers assets instantly between major layers (Ethereum, Polygon, Arbitrum, Optimism, Base, and Solana).</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Fully insured, low-fee (0.05%) transactions that bypass traditional multi-day locking periods.</div>
+        <span class="card-tag">Bridge</span>
+      </div>
+
+      <div class="card slide-left-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/sheina.png" alt="Sheina Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">◈</div>
+        <div class="card-title">Liquid Staking (rETH)</div>
+        <p class="card-desc">Locks native ETH into high-yield validation pools while issuing you liquid rETH in return.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Earn up to 8.4% APY dynamically without losing capital liquidity—trade or deploy your rETH anytime.</div>
+        <span class="card-tag">Staking</span>
+      </div>
+
+      <div class="card slide-right-card">
+        <div class="card-img-container">
+          <img src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/images/gelzs2.png" alt="Gelzs Alternate Visual" class="pop-avatar"/>
+        </div>
+        <div class="card-icon">◉</div>
+        <div class="card-title">Liquidity Provision</div>
+        <p class="card-desc">Deposits asset pairs (e.g., ETH/MATIC, SOL/USDC) into active market-making pools.</p>
+        <div class="card-advantage"><strong>Key Advantage:</strong> Generates passive income by capturing a direct share of pool trading fees (up to 0.30% per trade).</div>
+        <span class="card-tag">Yield</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="feature">
+    <div class="contributor-header">
+      <div class="section-tag">// 02 — Network Partners</div>
+      <h2 class="section-title reveal">Core Core<br/><span style="color:var(--pink)">Contributors</span></h2>
+    </div>
+
+    <div class="contributor-grid">
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/meta.png" alt="Meta" class="contributor-logo"/></div><div class="contributor-name">META</div><div class="contributor-status">Node Partner</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/apple.png" alt="Apple" class="contributor-logo"/></div><div class="contributor-name">APPLE</div><div class="contributor-status">Hardware Integrator</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/amazon.png" alt="Amazon" class="contributor-logo"/></div><div class="contributor-name">AMAZON</div><div class="contributor-status">Cloud Infrastructure</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/netflix.png" alt="Netflix" class="contributor-logo"/></div><div class="contributor-name">NETFLIX</div><div class="contributor-status">Data Relay</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/google.png" alt="Google" class="contributor-logo"/></div><div class="contributor-name">GOOGLE</div><div class="contributor-status">RPC Provider</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/tiktok.png" alt="TikTok" class="contributor-logo"/></div><div class="contributor-name">TIKTOK</div><div class="contributor-status">Network Node</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/citadel.png" alt="Citadel" class="contributor-logo"/></div><div class="contributor-name">CITADEL</div><div class="contributor-status">Liquidity Provider</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/mystenlabs.png" alt="Mysten Labs" class="contributor-logo"/></div><div class="contributor-name">MYSTEN LABS</div><div class="contributor-status">Cryptography</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/solana.png" alt="Solana" class="contributor-logo"/></div><div class="contributor-name">SOLANA</div><div class="contributor-status">Consensus Protocol</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/eigenlayer.png" alt="EigenLayer" class="contributor-logo"/></div><div class="contributor-name">EIGENLAYER</div><div class="contributor-status">Restaking Layer</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/coinbase.png" alt="Coinbase" class="contributor-logo"/></div><div class="contributor-name">COINBASE</div><div class="contributor-status">Institutional Gateway</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/near.png" alt="NEAR Protocol" class="contributor-logo"/></div><div class="contributor-name">NEAR PROTOCOL</div><div class="contributor-status">Sharding Client</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/vmware.png" alt="VMware" class="contributor-logo"/></div><div class="contributor-name">VMWARE</div><div class="contributor-status">Virtual Machine</div></div>
+      <div class="contributor-card"><div class="contributor-logo-wrap"><img src="images/diem.png" alt="Diem" class="contributor-logo"/></div><div class="contributor-name">DIEM</div><div class="contributor-status">Legacy Framework</div></div>
+    </div>
+  </section>
+
+  <section id="account-x">
+    <div class="section-tag">// 03 — Account X</div>
+    <div class="char-showcase">
+      <div class="char-card active reveal" id="gelzs-card"><div class="char-avatar"><img src="images/x.png" alt="Gelzs Avatar" /></div><div class="char-name">GELZS</div></div>
+      <div class="char-card reveal" id="sheinasalisha-card"><div class="char-avatar"><img src="images/x2.png" alt="SheinaSalisha Avatar" /></div><div class="char-name">SheinaSalisha</div></div>
+      <div class="char-card reveal" id="rialo-card"><div class="char-avatar"><img src="images/x3.png" alt="Rialo Avatar" /></div><div class="char-name">Rialo</div></div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <div class="cta-inner reveal">
+      <div class="section-tag">// Ready?</div>
+      <h2 class="section-title">Connect To<br/><span style="color:var(--cyan)">The Core</span></h2>
+      <div class="cta-line"></div>
+      <p class="cta-sub">Deploy assets directly into non-custodial pipelines.</p>
+      <button class="btn-primary" style="font-size:1rem;padding:1rem 3rem;" onclick="window.location.href='infrastructure.html'">Launch Terminal</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">NEXUS</div>
+    <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="infrastructure.html">Infrastructure</a>
+    </div>
+  </footer>
+</div>
+
+<div id="trailer-modal">
+  <div class="modal-content">
+    <button class="modal-close" id="close-trailer-btn">✕ CLOSE</button>
+    <iframe id="trailer-frame" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// MANAGEMENT ELEMEN UTAMA
+const gateContainer = document.getElementById('gate-container');
+const enterBtn = document.getElementById('enter-btn');
+const introOverlay = document.getElementById('intro-overlay');
+const introVideo = document.getElementById('intro-video');
+const skipBtn = document.getElementById('skip-intro');
+const mainWrapper = document.getElementById('main-wrapper');
+
+// STAGE 0 -> STAGE 1 (Bypass Kebijakan Autoplay dengan Audio Sempurna)
+enterBtn.addEventListener('click', () => {
+  gateContainer.style.opacity = '0';
+  setTimeout(() => {
+    gateContainer.style.display = 'none';
+    introOverlay.style.display = 'flex';
+    introVideo.muted = false; 
+    introVideo.play().catch(err => {
+      console.log("Autoplay ditolak, fallback berjalan otomatis.");
+      initiateMainSite();
+    });
+  }, 800);
+});
+
+// STAGE 1 -> STAGE 2 (Cinematic Transitions dengan Efek Zoom-Blur Out)
+function initiateMainSite() {
+  if (mainWrapper.style.visibility === 'visible') return;
+
+  const exitTl = gsap.timeline({
+    onComplete: () => {
+      introOverlay.style.display = 'none';
+      document.body.style.overflowY = 'auto'; 
+    }
+  });
+
+  exitTl.to(introOverlay, {
+    scale: 1.1,
+    filter: "blur(20px)",
+    opacity: 0,
+    duration: 0.9,
+    ease: "power3.inOut"
+  });
+
+  exitTl.to(mainWrapper, {
+    onStart: () => {
+      mainWrapper.style.visibility = 'visible';
+    },
+    opacity: 1,
+    duration: 0.5,
+    onComplete: startHomeAnimations
+  }, "-=0.6");
+}
+
+introVideo.addEventListener('ended', initiateMainSite);
+skipBtn.addEventListener('click', () => {
+  introVideo.pause();
+  initiateMainSite();
+});
+
+// LERP SMOOTHING UNTUK INTERPOLASI PARALLAX 3D (Mencegah Gerakan Kaku/Patah)
+let currentMouseX = 0, currentMouseY = 0;
+let targetMouseX = 0, targetMouseY = 0;
+const heroContent = document.querySelector('.hero-content');
+
+document.addEventListener('mousemove', (e) => {
+  if (window.innerWidth > 968) {
+    targetMouseX = (window.innerWidth / 2 - e.clientX) / 40;
+    targetMouseY = (window.innerHeight / 2 - e.clientY) / 40;
+  }
+});
+
+// INITIAL CINEMATIC CURSOR TRACKING ENGINE (DIKONSTRUKSI DI LUAR WRAPPER UTAMA)
+const cur = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+
+let mx = window.innerWidth / 2;
+let my = window.innerHeight / 2;
+let tx = mx;
+let ty = my;
+
+cur.style.left = mx + 'px';
+cur.style.top = my + 'px';
+trail.style.left = tx + 'px';
+trail.style.top = ty + 'px';
+
+document.addEventListener('mousemove', function(e) {
+  mx = e.clientX; 
+  my = e.clientY;
+  cur.style.left = mx + 'px'; 
+  cur.style.top = my + 'px';
+});
+
+(function animateTrail() {
+  tx += (mx - tx) * 0.12; 
+  ty += (my - ty) * 0.12;
+  trail.style.left = tx + 'px'; 
+  trail.style.top = ty + 'px';
+  requestAnimationFrame(animateTrail);
+})();
+
+function animateHeroParallax() {
+  if (window.innerWidth > 968 && heroContent && mainWrapper.style.visibility === 'visible') {
+    currentMouseX += (targetMouseX - currentMouseX) * 0.08;
+    currentMouseY += (targetMouseY - currentMouseY) * 0.08;
+    heroContent.style.transform = `rotateY(${12 - currentMouseX}deg) rotateX(${4 + currentMouseY}deg)`;
+  }
+  requestAnimationFrame(animateHeroParallax);
+}
+requestAnimationFrame(animateHeroParallax);
+
+// Penanganan Hover Fleksibel & Perubah Warna Sempurna (Mendukung Tombol Pintu Masuk Awal)
+document.querySelectorAll('a, button, .char-card, .card, .contributor-card, #enter-btn').forEach(function(el) {
+  el.addEventListener('mouseenter', function() {
+    cur.style.width='24px'; cur.style.height='24px'; cur.style.backgroundColor='var(--pink)';
+    trail.style.width='48px'; trail.style.height='48px'; trail.style.borderColor='var(--pink)';
+  });
+  el.addEventListener('mouseleave', function() {
+    cur.style.width='10px'; cur.style.height='10px'; cur.style.backgroundColor='var(--cyan)';
+    trail.style.width='32px'; trail.style.height='32px'; trail.style.borderColor='rgba(124,58,237,0.6)';
+  });
+});
+
+// SPLINE PROTECTION
+const shield = document.querySelector('.spline-mouse-shield');
+if(shield) {
+  shield.addEventListener('mouseenter', () => {
+    trail.style.width = '60px'; trail.style.height = '60px';
+    trail.style.borderColor = 'var(--cyan)';
+  });
+  shield.addEventListener('mouseleave', () => {
+    trail.style.width = '32px'; trail.style.height = '32px';
+    trail.style.borderColor = 'rgba(124,58,237,0.6)';
+  });
+}
+
+// DYNAMIC VIDEO MODAL SYSTEM
+const trailerModal = document.getElementById('trailer-modal');
+const openTrailerBtn = document.getElementById('open-trailer-btn');
+const closeTrailerBtn = document.getElementById('close-trailer-btn');
+const trailerFrame = document.getElementById('trailer-frame');
+const trailerVideoLink = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"; 
+
+openTrailerBtn.addEventListener('click', () => {
+  trailerModal.classList.add('active');
+  trailerFrame.src = trailerVideoLink;
+});
+closeTrailerBtn.addEventListener('click', () => {
+  trailerModal.classList.remove('active');
+  trailerFrame.src = "";
+});
+
+// PARTICLE ENGINE (Optimasi Performa)
+const pcanvas = document.getElementById('particles-canvas');
+const pctx = pcanvas.getContext('2d');
+function resizeCanvas() { pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+const pts = [];
+for (var i = 0; i < 50; i++) {
+  pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3,
+    r:Math.random()*1.5+0.5, c:Math.random()>0.5?'124,58,237':'6,182,212' });
+}
+(function drawParticles() {
+  if (mainWrapper.style.visibility === 'visible') {
+    pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
+    pts.forEach(function(p) {
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>pcanvas.width) p.vx*=-1;
+      if(p.y<0||p.y>pcanvas.height) p.vy*=-1;
+      pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      pctx.fillStyle='rgba('+p.c+',0.5)'; pctx.fill();
+    });
+    for (var i=0;i<pts.length;i++) for(var j=i+1;j<pts.length;j++){
+      var dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<110){ pctx.beginPath(); pctx.moveTo(pts[i].x,pts[i].y); pctx.lineTo(pts[j].x,pts[j].y);
+        pctx.strokeStyle='rgba(124,58,237,'+(0.1*(1-d/110))+')'; pctx.lineWidth=0.5; pctx.stroke(); }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+})();
+
+// CLEANUP SPLINE BRANDING LOGO
+function clearSplineUI() {
+  const splineViewer = document.querySelector('spline-viewer');
+  if (splineViewer && splineViewer.shadowRoot) {
+    const shadow = splineViewer.shadowRoot;
+    const uiElements = shadow.querySelectorAll('[id*="logo"], [class*="logo"], [id*="watermark"], [class*="watermark"], a, button, div[style*="position: absolute"]');
+    uiElements.forEach(el => {
+      if (el.tagName !== 'CANVAS') {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+      }
+    });
+  }
+}
+window.addEventListener('load', () => {
+  clearSplineUI();
+  setTimeout(clearSplineUI, 500);
+  setTimeout(clearSplineUI, 1500);
+});
+
+// INTRO TIMELINE ANIMATION AFTER ENTRANCE
+function startHomeAnimations() {
+  const introTl = gsap.timeline();
+  introTl.to("nav", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+  introTl.fromTo(".hero-content",
+    { opacity: 0, transform: "rotateY(30deg) rotateX(15deg) translateZ(-150px)" },
+    { opacity: 1, transform: "rotateY(12deg) rotateX(4deg) translateZ(0)", duration: 1, ease: "cubic-bezier(0.16, 1, 0.3, 1)" },
+    "-=0.5"
+  );
+  introTl.fromTo(".spline-container-wrap",
+    { opacity: 0, scale: 0.85, z: -80 },
+    { opacity: 1, scale: 1, z: 0, duration: 1, ease: "back.out(1.1)" },
+    "-=0.8"
+  );
+}
+
+// SCROLL ANIMATIONS ENGINE
+gsap.utils.toArray('.slide-left-card').forEach(card => {
+  gsap.fromTo(card, { x: -40, opacity: 0 }, { x: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 92%", end: "top 40%", scrub: 2 } });
+});
+gsap.utils.toArray('.slide-right-card').forEach(card => {
+  gsap.fromTo(card, { x: 40, opacity: 0 }, { x: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 92%", end: "top 40%", scrub: 2 } });
+});
+gsap.utils.toArray('.contributor-card').forEach(card => {
+  gsap.fromTo(card, { opacity: 0, scale: 0.7, y: 30 }, { opacity: 1, scale: 1, y: 0, scrollTrigger: { trigger: card, start: "top 95%", end: "top 50%", scrub: 2 } });
+});
+
+// INTERACTIVE CARD AVATAR FLOATING DYNAMICS
+const cardsList = document.querySelectorAll('.card');
+cardsList.forEach((card, index) => {
+  const avatar = card.querySelector('.pop-avatar');
+  let cx = 0, cy = 0, tx = 0, ty = 0;
+  let isHovered = false;
+
+  card.addEventListener('mousemove', (e) => {
+    isHovered = true;
+    const rect = card.getBoundingClientRect();
+    tx = ((e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)) * 12;
+    ty = ((e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2)) * -12;
+  });
+  card.addEventListener('mouseleave', () => { isHovered = false; tx = 0; ty = 0; });
+
+  function renderCombinedMotion(time) {
+    const floatY = Math.sin(time * 0.0025 + (index * 0.8)) * 5;
+    cx += (tx - cx) * 0.1; cy += (ty - cy) * 0.1;
+    if (avatar) {
+      avatar.style.transform = isHovered 
+        ? `translateZ(75px) scale(1.12) translateY(${floatY - 10}px) rotateY(${cx}deg) rotateX(${cy}deg)`
+        : `translateZ(0px) scale(1) translateY(${floatY}px) rotateY(${cx}deg) rotateX(${cy}deg)`;
+    }
+    requestAnimationFrame(renderCombinedMotion);
+  }
+  requestAnimationFrame(renderCombinedMotion);
+});
+
+// INTERSECTION OBSERVER FOR SYSTEM CARDS REVEAL
+var reveals = document.querySelectorAll('.reveal, .char-card');
+var observer = new IntersectionObserver(function(entries) {
+  let visibleCount = 0;
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+      if(entry.target.classList.contains('char-card')) {
+        setTimeout(() => { entry.target.classList.add('visible'); }, visibleCount * 150);
+        visibleCount++;
+      } else {
+        entry.target.classList.add('visible');
+      }
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(function(el) { observer.observe(el); });
+
+document.querySelectorAll('.char-card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('.char-card').forEach(function(c) { c.classList.remove('active'); });
+    card.classList.add('active');
+    if (card.id === 'gelzs-card') window.open('https://x.com/rayhn_1991?s=21', '_blank');
+    else if (card.id === 'sheinasalisha-card') window.open('https://x.com/sheinasalisha?s=20', '_blank');
+    else if (card.id === 'rialo-card') window.open('https://x.com/RialoHQ?s=20', '_blank');
+  });
+});
+
+// FIX: Nav link scroll handler
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+</script>
+</body>
+</html>
