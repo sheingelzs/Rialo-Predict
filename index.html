@@ -492,8 +492,8 @@ section{padding:6rem 4rem;}
   text-transform: uppercase;
 }
 
-/* CHARACTERS (NODE VALIDATORS) */
-#characters{background:var(--dark3);}
+/* CHARACTERS (ACCOUNT X) */
+#account-x{background:var(--dark3);}
 .char-showcase{
   display:flex;gap:1.5rem;margin-top:3rem;
   overflow-x:auto;padding-bottom:1rem;
@@ -609,7 +609,7 @@ footer{
   <ul class="nav-links">
     <li><a href="#explore">Explore</a></li>
     <li><a href="#feature">Contributor</a></li>
-    <li><a href="#characters">Characters</a></li>
+    <li><a href="#account-x">Account X</a></li>
     <li><a href="infrastructure.html" class="infra-link">Infrastructure</a></li>
   </ul>
   <button class="nav-btn" onclick="window.location.href='infrastructure.html'">Launch App</button>
@@ -799,8 +799,8 @@ footer{
   </div>
 </section>
 
-<section id="characters">
-  <div class="section-tag">// 03 — Node Validators</div>
+<section id="account-x">
+  <div class="section-tag">// 03 — Account X</div>
 
   <div class="char-showcase">
     <div class="char-card active reveal" id="gelzs-card">
@@ -923,6 +923,7 @@ gsap.utils.toArray('.slide-left-card').forEach(card => {
         trigger: card,
         start: "top 92%",
         end: "top 35%",
+        scroll: window,
         scrub: 2.5
       }
     }
@@ -937,6 +938,7 @@ gsap.utils.toArray('.slide-right-card').forEach(card => {
         trigger: card,
         start: "top 92%",
         end: "top 35%",
+        scroll: window,
         scrub: 2.5
       }
     }
@@ -959,6 +961,7 @@ gsap.utils.toArray('.contributor-card').forEach((card, idx) => {
         trigger: card,
         start: "top 95%",
         end: "top 45%",
+        scroll: window,
         scrub: 2.5
       }
     }
