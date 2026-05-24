@@ -72,12 +72,49 @@ nav{
 .nav-btn{
   padding:.5rem 1.5rem;border:1px solid var(--cyan);
   background:transparent;color:var(--cyan);
-  font-family:'Rajdhani',sans-serif;font-size:.85rem;
+  font-family:'Orbitron',monospace;font-size:.75rem;
   letter-spacing:2px;text-transform:uppercase;font-weight:600;
   cursor:pointer;transition:all .3s;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
 }
-.nav-btn:hover{background:var(--cyan);color:var(--dark);}
+.nav-btn:hover{background:var(--cyan);color:var(--dark);box-shadow:0 0 15px var(--cyan);}
+
+/* ═══ MODAL WALLET SELECTION ═══ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(5,0,16,0.85);
+  backdrop-filter: blur(10px); z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-card {
+  background: var(--dark2); border: 1px solid rgba(6,182,212,0.3);
+  width: 100%; max-width: 440px; padding: 2rem; position: relative;
+  clip-path: polygon(20px 0%, 100% 0%, calc(100% - 20px) 100%, 0% 100%);
+}
+.modal-close {
+  position: absolute; top: 1.2rem; right: 2rem; background: none;
+  border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--pink); }
+.modal-title {
+  font-family: 'Orbitron', monospace; font-size: 1.1rem; letter-spacing: 2px;
+  margin-bottom: 0.3rem; color: #fff;
+}
+.modal-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.5rem; }
+.wallet-options { display: flex; flex-direction: column; gap: 10px; }
+.wallet-opt {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(124,58,237,0.2);
+  cursor: pointer; transition: all 0.25s ease;
+}
+.wallet-opt:hover {
+  border-color: var(--cyan); background: rgba(6,182,212,0.05); transform: translateX(4px);
+}
+.wallet-icon { font-size: 1.5rem; }
+.wallet-name { font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; color: #fff; }
+.wallet-desc { font-size: 0.7rem; color: var(--muted); }
 
 /* ═══ PAGE HERO ═══ */
 .page-hero{
@@ -359,6 +396,7 @@ nav{
   font-size:1rem;outline:none;transition:border-color .2s;
 }
 .inp:focus{border-color:rgba(6,182,212,.5);}
+.inp:disabled{opacity: 0.3; cursor: not-allowed;}
 .inp::placeholder{color:rgba(255,255,255,.15);}
 .token-pill{
   display:flex;align-items:center;gap:6px;
@@ -389,7 +427,7 @@ nav{
 .btn-gold:hover{background:rgba(212,168,50,.2);}
 .btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
 .btn-purple:hover{opacity:.85;}
-.btn-main:disabled{opacity:.38;cursor:not-allowed;}
+.btn-main:disabled{opacity:.25;cursor:not-allowed;transform: none !important;}
 
 /* ═══ RESULT BOX ═══ */
 .result-box{
@@ -608,33 +646,6 @@ footer{
 .footer-links a{color:var(--muted);font-size:.75rem;text-decoration:none;transition:color .3s;}
 .footer-links a:hover{color:var(--cyan);}
 
-/* ═══ BACK BUTTON ═══ */
-.back-home{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.5rem 1.2rem;
-  border:1px solid rgba(124,58,237,.3);
-  color:var(--muted);font-size:.7rem;
-  text-decoration:none;letter-spacing:2px;
-  text-transform:uppercase;
-  transition:all .3s;
-  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-}
-.back-home:hover{border-color:var(--cyan);color:var(--cyan);}
-
-/* ═══ SELECT ═══ */
-select.inp{appearance:none;cursor:pointer;}
-
-/* ═══ PROGRESS BARS ═══ */
-.prog-bar{
-  height:4px;background:rgba(124,58,237,.15);
-  border-radius:2px;overflow:hidden;margin-top:4px;
-}
-.prog-fill{
-  height:100%;border-radius:2px;
-  background:linear-gradient(90deg,var(--cyan),var(--purple));
-  transition:width 1s ease;
-}
-
 /* ═══ MOBILE ═══ */
 @media(max-width:900px){
   nav{padding:1rem 1.5rem;}
@@ -662,8 +673,48 @@ select.inp{appearance:none;cursor:pointer;}
     <li><a href="index.html#characters">Characters</a></li>
     <li><a href="infrastructure.html" class="active-link">Infrastructure</a></li>
   </ul>
-  <button class="nav-btn" onclick="claimFaucet()">Launch App</button>
+  <!-- FIX: Tombol pemicu modal koneksi dompet -->
+  <button class="nav-btn" id="connect-nav-btn" onclick="openWalletModal()">Connect Wallet</button>
 </nav>
+
+<!-- WALLET CONNECTION OVERLAY MODAL -->
+<div class="modal-overlay" id="wallet-modal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeWalletModal()">✕</button>
+    <h3 class="modal-title">CONNECT WALLET</h3>
+    <p class="modal-sub">// select_provider — cryptographic node access</p>
+    <div class="wallet-options">
+      <div class="wallet-opt" onclick="connectWalletProvider('MetaMask', '🦊')">
+        <span class="wallet-icon">🦊</span>
+        <div>
+          <div class="wallet-name">MetaMask</div>
+          <div class="wallet-desc">Connect via browser extension node</div>
+        </div>
+      </div>
+      <div class="wallet-opt" onclick="connectWalletProvider('Rabby Wallet', '🐇')">
+        <span class="wallet-icon">🐇</span>
+        <div>
+          <div class="wallet-name">Rabby Wallet</div>
+          <div class="wallet-desc">Security-first decentralized node</div>
+        </div>
+      </div>
+      <div class="wallet-opt" onclick="connectWalletProvider('Phantom', '👻')">
+        <span class="wallet-icon">👻</span>
+        <div>
+          <div class="wallet-name">Phantom Wallet</div>
+          <div class="wallet-desc">Multi-chain EVM / Solana layer</div>
+        </div>
+      </div>
+      <div class="wallet-opt" style="border-color: rgba(6,182,212,0.4);" onclick="connectWalletProvider('Demo Mode', '⚡')">
+        <span class="wallet-icon">⚡</span>
+        <div>
+          <div class="wallet-name" style="color: var(--cyan);">Demo Sandbox Mode</div>
+          <div class="wallet-desc">Instant read/write — no wallet extension needed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
@@ -692,7 +743,7 @@ select.inp{appearance:none;cursor:pointer;}
   <!-- WALLET BAR -->
   <div class="wallet-bar reveal">
     <div class="wb-token">
-      <div class="wb-label">Wallet</div>
+      <div class="wb-label">Wallet Address</div>
       <div class="wb-val" id="wb-addr" style="font-size:.75rem;letter-spacing:.05em;color:var(--muted)">Not connected</div>
     </div>
     <div class="wb-sep"></div>
@@ -710,7 +761,7 @@ select.inp{appearance:none;cursor:pointer;}
       <div class="wb-sym">rETH</div>
       <div class="wb-val" id="wb-reth">0.0000</div>
     </div>
-    <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()">⚡ Claim Faucet (2 ETH)</button>
+    <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()" disabled>⚡ Claim Faucet (2 ETH)</button>
   </div>
 
   <!-- TICKER -->
@@ -782,7 +833,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="field">
           <div class="field-label">You Pay</div>
           <div class="input-row">
-            <input class="inp" id="swap-from-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcSwap()"/>
+            <input class="inp" id="swap-from-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcSwap()" disabled/>
             <div class="token-pill" onclick="cycleFromToken()">
               <div class="tdot" id="from-dot" style="background:#6f7cff"></div>
               <span id="from-sym">ETH</span> ▾
@@ -813,7 +864,7 @@ select.inp{appearance:none;cursor:pointer;}
           <div class="ir-item">Slippage <span class="ir-val">0.5%</span></div>
           <div class="ir-item">Trust <span style="color:var(--green)">✓ Safe</span></div>
         </div>
-        <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()">Swap Now →</button>
+        <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()" disabled>Connect Wallet first</button>
         <div class="result-box" id="swap-result"></div>
       </div>
 
@@ -876,7 +927,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="field">
           <div class="field-label">Amount to Bridge</div>
           <div class="input-row">
-            <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()"/>
+            <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()" disabled/>
             <button class="token-pill" onclick="bridgeMax()">MAX</button>
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:4px">Balance: <span id="bridge-eth-bal" style="color:var(--cyan)">0.0000</span> ETH · <span id="bridge-usd-val" style="color:var(--muted)">≈ $0.00</span></div>
@@ -884,6 +935,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="table-wrap" style="margin-top:.5rem">
           <table class="rt-table">
             <tbody>
+              ...
               <tr><td style="color:var(--muted);font-size:.7rem">Est. Time</td><td id="bridge-time" class="td-c" style="text-align:right">~2 min</td></tr>
               <tr><td style="color:var(--muted);font-size:.7rem">Bridge Fee</td><td id="bridge-fee" class="td-gold" style="text-align:right">—</td></tr>
               <tr><td style="color:var(--muted);font-size:.7rem">You Receive</td><td id="bridge-receive" class="td-g" style="text-align:right;font-weight:700">—</td></tr>
@@ -891,7 +943,7 @@ select.inp{appearance:none;cursor:pointer;}
             </tbody>
           </table>
         </div>
-        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()">Initiate Bridge →</button>
+        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()" disabled>Connect Wallet first</button>
         <div class="result-box" id="bridge-result"></div>
       </div>
 
@@ -931,6 +983,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="card-title">Liquid Staking</div>
         <div class="card-sub">// earn yield · stay liquid · rETH</div>
         <div class="s-metrics">
+          ...
           <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div><div class="s-msub">ETH staked</div></div>
           <div class="s-metric"><div class="s-mlabel">Est. Rewards/yr</div><div class="s-mval td-g" id="user-rewards">0.0000</div><div class="s-msub">ETH annual</div></div>
           <div class="s-metric"><div class="s-mlabel">rETH Balance</div><div class="s-mval td-gold" id="user-reth-disp">0.0000</div><div class="s-msub">liquid token</div></div>
@@ -943,7 +996,7 @@ select.inp{appearance:none;cursor:pointer;}
         </div>
         <div class="field-label">Amount to Stake</div>
         <div class="input-row" style="margin-bottom:.5rem">
-          <input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()"/>
+          <input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()" disabled/>
         </div>
         <div class="pct-row">
           <button class="pct-btn" onclick="stakeMax(this,25)">25%</button>
@@ -954,7 +1007,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div style="font-size:.7rem;color:var(--muted);margin-bottom:.5rem">
           Preview: <span id="stake-reth-preview" style="color:var(--gold)">0.0000</span> rETH · Annual: <span id="stake-annual-preview" style="color:var(--green)">0.0000</span> ETH
         </div>
-        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()">Stake ETH →</button>
+        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()" disabled>Connect Wallet first</button>
         <div class="result-box" id="stake-result"></div>
       </div>
 
@@ -991,6 +1044,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="card-title">Liquidity Pools</div>
         <div class="card-sub">// provide · earn fees</div>
         <div>
+          ...
           <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#6f7cff"></div><div class="lp-ico" style="background:#8247e5"></div></div><span class="lp-pname">ETH / MATIC</span><span class="lp-vol" id="lv0">Vol $24M</span><span class="lp-fee">0.30%</span><span class="lp-apr">12.8%</span></div>
           <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#6f7cff"></div><div class="lp-ico" style="background:#26a17b"></div></div><span class="lp-pname">ETH / USDT</span><span class="lp-vol" id="lv1">Vol $88M</span><span class="lp-fee">0.05%</span><span class="lp-apr">9.4%</span></div>
           <div class="lp-pair"><div class="lp-icons-wrap"><div class="lp-ico" style="background:#f7931a"></div><div class="lp-ico" style="background:#26a17b"></div></div><span class="lp-pname">BTC / USDC</span><span class="lp-vol" id="lv2">Vol $56M</span><span class="lp-fee">0.05%</span><span class="lp-apr">7.1%</span></div>
@@ -1005,12 +1059,12 @@ select.inp{appearance:none;cursor:pointer;}
             <option value="SOL/USDC">SOL / USDC (0.30%)</option>
           </select>
           <div class="input-row">
-            <input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()"/>
+            <input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()" disabled/>
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">
             You'll also need: <span id="liq-paired-amt" style="color:var(--gold)">—</span> · LP tokens: <span id="liq-lp-tokens" style="color:var(--green)">—</span>
           </div>
-          <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()">+ Add Liquidity</button>
+          <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()" disabled>Connect Wallet first</button>
           <div class="result-box" id="liq-result"></div>
         </div>
       </div>
@@ -1020,6 +1074,7 @@ select.inp{appearance:none;cursor:pointer;}
         <div class="card-title">Your LP Positions</div>
         <div class="card-sub">// active liquidity positions</div>
         <div class="table-wrap">
+          ...
           <table class="rt-table">
             <thead><tr><th>Pair</th><th>LP Tokens</th><th>Value</th><th>Fees Earned</th></tr></thead>
             <tbody id="liq-positions"></tbody>
@@ -1039,6 +1094,7 @@ select.inp{appearance:none;cursor:pointer;}
   <!-- ══════════════════════ MONITOR ══════════════════════ -->
   <div class="panel" id="panel-monitor">
     <div class="grid2">
+      ...
       <div class="infra-card">
         <div class="card-corner tl"></div>
         <div class="card-corner br"></div>
@@ -1102,7 +1158,7 @@ const trail = document.getElementById('cursor-trail');
 let mx=0,my=0,tx=0,ty=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
 (function animTrail(){tx+=(mx-tx)*.13;ty+=(my-ty)*.13;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animTrail);})();
-document.querySelectorAll('a,button,.pool-row,.chain-sel,.lp-pair,.net-item,.tick,.tab-btn').forEach(el=>{
+document.querySelectorAll('a,button,.pool-row,.chain-sel,.lp-pair,.net-item,.tick,.tab-btn,.wallet-opt').forEach(el=>{
   el.addEventListener('mouseenter',()=>{cur.style.width='26px';cur.style.height='26px';cur.style.background='var(--pink)';trail.style.width='52px';trail.style.height='52px';});
   el.addEventListener('mouseleave',()=>{cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)';trail.style.width='36px';trail.style.height='36px';});
 });
@@ -1128,6 +1184,7 @@ const observer = new IntersectionObserver(entries=>{
 document.querySelectorAll('.reveal,.infra-card,.stats-grid').forEach(el=>observer.observe(el));
 
 // ═══ STATE ═══
+let isWalletConnected = false;
 let wallet={eth:0,usdc:0,reth:0,stakedEth:0};
 let prices={eth:3248,btc:67420,sol:148.3,matic:.8812,usdc:1,usdt:1};
 let gasPrice=18;
@@ -1169,6 +1226,100 @@ function showResult(id,type,msg){
   else{el.innerHTML=msg;el.style.display='block';}
 }
 
+/* ═══ WALLET INTERACTION LOGIC (FIX UTAMA) ═══ */
+function openWalletModal() {
+  document.getElementById('wallet-modal').classList.add('active');
+}
+function closeWalletModal() {
+  document.getElementById('wallet-modal').classList.remove('active');
+}
+function connectWalletProvider(providerName, providerIcon) {
+  closeWalletModal();
+  const navBtn = document.getElementById('connect-nav-btn');
+  navBtn.innerHTML = `<span class="spinner" style="display:inline-block; margin-right:5px; vertical-align:middle;"></span> Connecting...`;
+  navBtn.disabled = true;
+
+  setTimeout(() => {
+    isWalletConnected = true;
+    
+    // Alokasi saldo pendaratan awal dApp DeFi simulasi
+    wallet.eth = 0.5000;
+    wallet.usdc = 150.00;
+    wallet.reth = 0.0000;
+    
+    // Generate Alamat Acak
+    const generatedAddr = '0x' + Math.random().toString(16).slice(2,6).toUpperCase() + '...' + Math.random().toString(16).slice(2,6).toUpperCase();
+    
+    // Sinkronisasi komponen UI Navbar & Wallet Bar
+    navBtn.innerHTML = `${providerIcon} ${generatedAddr}`;
+    navBtn.disabled = false;
+    navBtn.style.borderColor = 'var(--green)';
+    navBtn.style.color = 'var(--green)';
+    navBtn.onclick = disconnectWallet; // Klik ulang untuk memutus koneksi
+    
+    document.getElementById('wb-addr').textContent = generatedAddr;
+    document.getElementById('wb-addr').style.color = 'var(--green)';
+    
+    // Buka kunci seluruh elemen input operasional dApp
+    document.querySelectorAll('.inp').forEach(input => input.disabled = false);
+    document.getElementById('faucet-btn').disabled = false;
+    
+    // Mengubah teks tombol aksi dari instruksi koneksi menjadi aksi eksekusi DeFi
+    document.getElementById('swap-btn').disabled = false;
+    document.getElementById('swap-btn').textContent = "Swap Now →";
+    document.getElementById('bridge-btn').disabled = false;
+    document.getElementById('bridge-btn').textContent = "Initiate Bridge →";
+    document.getElementById('stake-btn').disabled = false;
+    document.getElementById('stake-btn').textContent = "Stake ETH →";
+    document.getElementById('liq-btn').disabled = false;
+    document.getElementById('liq-btn').textContent = "+ Add Liquidity";
+
+    updateWalletBar();
+    showToast(`✓ Wallet connected via ${providerName}`);
+  }, 1200);
+}
+
+function disconnectWallet() {
+  isWalletConnected = false;
+  wallet = {eth:0, usdc:0, reth:0, stakedEth:0};
+  faucetUsed = false;
+  
+  // Reset Navbar Button
+  const navBtn = document.getElementById('connect-nav-btn');
+  navBtn.innerHTML = "Connect Wallet";
+  navBtn.style.borderColor = 'var(--cyan)';
+  navBtn.style.color = 'var(--cyan)';
+  navBtn.onclick = openWalletModal;
+  
+  // Reset Wallet Bar Address Text
+  document.getElementById('wb-addr').textContent = "Not connected";
+  document.getElementById('wb-addr').style.color = 'var(--muted)';
+  
+  // Kunci kembali seluruh sistem aplikasi dApp
+  document.querySelectorAll('.inp').forEach(input => {
+    input.value = '';
+    input.disabled = true;
+  });
+  
+  document.getElementById('faucet-btn').disabled = true;
+  document.getElementById('faucet-btn').textContent = "⚡ Claim Faucet (2 ETH)";
+  
+  document.getElementById('swap-btn').disabled = true;
+  document.getElementById('swap-btn').textContent = "Connect Wallet first";
+  document.getElementById('bridge-btn').disabled = true;
+  document.getElementById('bridge-btn').textContent = "Connect Wallet first";
+  document.getElementById('stake-btn').disabled = true;
+  document.getElementById('stake-btn').textContent = "Connect Wallet first";
+  document.getElementById('liq-btn').disabled = true;
+  document.getElementById('liq-btn').textContent = "Connect Wallet first";
+  
+  // Sembunyikan sisa kotak log transaksi
+  document.querySelectorAll('.result-box').forEach(box => box.style.display = 'none');
+
+  updateWalletBar();
+  showToast("Wallet disconnected");
+}
+
 // ═══ TAB SWITCHING ═══
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
@@ -1178,7 +1329,7 @@ function switchTab(name){
   if(ti>=0) document.querySelectorAll('.tab-btn')[ti].classList.add('active');
   const panel=document.getElementById('panel-'+name);
   if(panel){panel.classList.add('active');}
-  // Stagger card reveal on tab switch
+  
   if(panel){
     panel.querySelectorAll('.infra-card').forEach((c,i)=>{
       c.style.opacity='0';c.style.transform='translateY(25px)';
@@ -1190,8 +1341,9 @@ function switchTab(name){
   if(name==='bridge'){calcBridge();buildBridgeFeed();}
 }
 
-// ═══ WALLET ═══
+// ═══ WALLET BAR DATA SYNC ═══
 function claimFaucet(){
+  if(!isWalletConnected) return;
   if(faucetUsed){showToast('Faucet: next claim in 24h');return;}
   wallet.eth+=2;wallet.usdc+=500;faucetUsed=true;
   const btn=document.getElementById('faucet-btn');
@@ -1276,6 +1428,7 @@ function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenC
 function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();}
 function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken]||'#fff';document.getElementById('to-dot').style.background=tokenColors[toToken]||'#fff';calcSwap();showToast('Tokens flipped');}
 function doSwap(){
+  if(!isWalletConnected) return;
   const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
   if(amt<=0){showResult('swap-result','err','⚠ Enter an amount to swap');return;}
   if(amt>getWalletBal(fromToken)){showResult('swap-result','err','⚠ Insufficient '+fromToken+' — claim faucet first!');return;}
@@ -1304,7 +1457,7 @@ function buildSwapHistory(){
 // ═══ BRIDGE ═══
 function cycleBridgeFrom(){bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;if(bridgeFromIdx===bridgeToIdx)bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;bridgeFromChain=bridgeChains[bridgeFromIdx];document.getElementById('bridge-from-name').textContent=bridgeFromChain.name;document.getElementById('bridge-from-icon').textContent=bridgeFromChain.icon;calcBridge();showToast('From: '+bridgeFromChain.name);}
 function cycleBridgeTo(){bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;if(bridgeToIdx===bridgeFromIdx)bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;bridgeToChain=bridgeChains[bridgeToIdx];document.getElementById('bridge-to-name').textContent=bridgeToChain.name;document.getElementById('bridge-to-icon').textContent=bridgeToChain.icon;calcBridge();showToast('To: '+bridgeToChain.name);}
-function bridgeMax(){document.getElementById('bridge-amt').value=fmt(wallet.eth,6);calcBridge();}
+function bridgeMax(){if(!isWalletConnected) return; document.getElementById('bridge-amt').value=fmt(wallet.eth,6);calcBridge();}
 function calcBridge(){
   const amt=parseFloat(document.getElementById('bridge-amt').value)||0,fee=amt*.0005,receive=amt-fee,gasEst=gasPrice*21000/1e9;
   document.getElementById('bridge-fee').textContent=fmtUSD(fee*prices.eth)+' (0.05%)';
@@ -1314,6 +1467,7 @@ function calcBridge(){
   document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD(amt*prices.eth);
 }
 function doBridge(){
+  if(!isWalletConnected) return;
   const amt=parseFloat(document.getElementById('bridge-amt').value)||0;
   if(amt<=0){showResult('bridge-result','err','⚠ Enter an amount');return;}
   if(amt>wallet.eth){showResult('bridge-result','err','⚠ Insufficient ETH');return;}
@@ -1346,6 +1500,7 @@ function selectPool(el){
   calcStake();showToast('Pool: '+selectedPoolName);
 }
 function stakeMax(btnEl,pct){
+  if(!isWalletConnected) return;
   document.querySelectorAll('.pct-btn').forEach(b=>b.classList.remove('pact'));
   if(btnEl)btnEl.classList.add('pact');
   document.getElementById('stake-amt').value=fmt(wallet.eth*pct/100,6);calcStake();
@@ -1356,6 +1511,7 @@ function calcStake(){
   document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);
 }
 function doStake(){
+  if(!isWalletConnected) return;
   const amt=parseFloat(document.getElementById('stake-amt').value)||0;
   if(amt<=0){showResult('stake-result','err','⚠ Enter an amount');return;}
   if(amt>wallet.eth){showResult('stake-result','err','⚠ Insufficient ETH');return;}
@@ -1395,6 +1551,7 @@ function calcLiq(){
   document.getElementById('liq-lp-tokens').textContent=fmt(lpTokens,4)+' LP';
 }
 function doLiquidity(){
+  if(!isWalletConnected) return;
   const amt=parseFloat(document.getElementById('liq-amt').value)||0;
   if(amt<=0){showResult('liq-result','err','⚠ Enter ETH amount');return;}
   if(amt>wallet.eth){showResult('liq-result','err','⚠ Insufficient ETH');return;}
