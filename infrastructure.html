@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NEXUS — Infrastructure</title>
+<title>NEXUS — Sepolia Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -57,7 +57,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   opacity:0;transition:opacity .35s;
 }
 #wallet-modal-ovl.show{display:flex;}
-#wallet-modal-ovl.open{opacity:1;}
+#wallet-modal-ovl.open { opacity:1; }
 .wm-box{
   background:var(--dark2);
   border:1px solid rgba(124,58,237,.35);
@@ -157,6 +157,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .holo-dot-c{background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
 .holo-dot-p{background:var(--purple);box-shadow:0 0 8px var(--purple);}
 .holo-dot-k{background:var(--pink);}
+@keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
 
 /* ── CONTAINER ── */
 .container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:2rem 4rem 5rem;}
@@ -202,7 +204,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
 }
 .faucet-btn:hover{background:rgba(0,232,122,.16);border-color:rgba(0,232,122,.5);}
-.faucet-btn:disabled{opacity:.25;cursor:not-allowed;}
 .disconnect-btn{
   padding:.45rem 1rem;
   background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);
@@ -298,7 +299,7 @@ select.inp{appearance:none;cursor:pointer;}
 .result-ok{background:rgba(0,232,122,.05);border:1px solid rgba(0,232,122,.25);color:var(--green);}
 .result-err{background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.25);color:var(--red);}
 .result-load{background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.2);color:var(--cyan);display:flex!important;align-items:center;gap:8px;}
-.spinner{width:12px;height:12px;flex-shrink:0;border:1.5px solid rgba(6,182,212,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite;}
+.spinner{width:12px;height:12px;flex-shrink:0;border:1.5px solid rgba(6,182,212,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite;}
 
 /* ── INFO ROW ── */
 .info-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(124,58,237,.1);margin-top:.5rem;}
@@ -342,7 +343,7 @@ select.inp{appearance:none;cursor:pointer;}
 .net-tps{font-size:.6rem;color:var(--muted);margin-top:2px;font-family:'Orbitron',monospace;}
 
 /* ── TOAST ── */
-.nexus-toast{position:fixed;bottom:2rem;right:2rem;z-index:20000;padding:.8rem 1.5rem;background:rgba(5,0,16,.95);border:1px solid rgba(6,182,212,.4);color:var(--cyan);font-family:'Orbitron',monospace;font-size:.7rem;letter-spacing:2px;transition:opacity .4s;}
+.nexus-toast{position:fixed;bottom:2rem;right:2rem;z-index:20000;padding:.8rem 1.5rem;background:rgba(5,0,16,.95);border:1px solid rgba(6,182,212,.4);color:var(--cyan);font-family:'Orbitron',monospace;font-size Rama;.7rem;letter-spacing:2px;transition:opacity .4s;}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
@@ -351,8 +352,6 @@ select.inp{appearance:none;cursor:pointer;}
 footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid rgba(124,58,237,.2);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;}
 .footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
 .footer-copy{color:var(--muted);font-size:.75rem;}
-.footer-links{display:flex;gap:1.5rem;}
-.footer-links a{color:var(--muted);font-size:.75rem;text-decoration:none;}
 </style>
 </head>
 <body>
@@ -367,7 +366,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="wm-header">
       <div>
         <div class="wm-title">Connect Wallet</div>
-        <div class="wm-sub">// Select provider to authenticate</div>
+        <div class="wm-sub">// Select Sepolia testnet validator</div>
       </div>
       <button class="wm-close" id="wm-close-btn" aria-label="Close">✕</button>
     </div>
@@ -378,7 +377,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="wo-icon" style="background:rgba(245,130,32,.12)">🦊</div>
         <div class="wo-info">
           <div class="wo-name">MetaMask</div>
-          <div class="wo-desc">Most popular Ethereum wallet</div>
+          <div class="wo-desc">EVM extension infrastructure</div>
         </div>
         <span class="wo-badge badge-none" id="badge-metamask">Checking…</span>
       </div>
@@ -387,7 +386,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="wo-icon" style="background:rgba(117,94,255,.12)">🐰</div>
         <div class="wo-info">
           <div class="wo-name">Rabby</div>
-          <div class="wo-desc">Security-focused EVM wallet</div>
+          <div class="wo-desc">Security-focused multi-node</div>
         </div>
         <span class="wo-badge badge-none" id="badge-rabby">Checking…</span>
       </div>
@@ -396,7 +395,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="wo-icon" style="background:rgba(255,255,255,.06)">⬛</div>
         <div class="wo-info">
           <div class="wo-name">OKX Wallet</div>
-          <div class="wo-desc">Multi-chain wallet by OKX</div>
+          <div class="wo-desc">Advanced multi-chain layout</div>
         </div>
         <span class="wo-badge badge-none" id="badge-okx">Checking…</span>
       </div>
@@ -405,24 +404,24 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
         <div class="wo-icon" style="background:rgba(171,115,255,.12)">👻</div>
         <div class="wo-info">
           <div class="wo-name">Phantom</div>
-          <div class="wo-desc">Solana & EVM multi-chain</div>
+          <div class="wo-desc">Cross-realm account sync</div>
         </div>
         <span class="wo-badge badge-none" id="badge-phantom">Checking…</span>
       </div>
 
       <div class="wm-divider"></div>
-      <div class="wm-section-label">No Wallet? Try Demo</div>
+      <div class="wm-section-label">No Testnet Tokens? Try Demo</div>
 
       <div class="wallet-opt" id="opt-demo" tabindex="0" role="button" style="border-color:rgba(212,168,50,.2)">
         <div class="wo-icon" style="background:rgba(212,168,50,.1)">🧪</div>
         <div class="wo-info">
-          <div class="wo-name">Demo Mode</div>
-          <div class="wo-desc">Explore with a simulated wallet — no extension required</div>
+          <div class="wo-name">Demo Sandbox Mode</div>
+          <div class="wo-desc">Simulated Sepolia environment with preloaded gas</div>
         </div>
-        <span class="wo-badge badge-demo">Testnet</span>
+        <span class="wo-badge badge-demo">Sepolia VM</span>
       </div>
     </div>
-    <div class="wm-footer">By connecting you agree to NEXUS Terms of Service &amp; Privacy Policy</div>
+    <div class="wm-footer">Node Client Connection via JSON-RPC Protocol Layer</div>
   </div>
 </div>
 
@@ -431,7 +430,7 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   <div class="scan-box">
     <button class="scan-cancel-btn" id="scan-cancel-btn">✕ Cancel</button>
     <div class="scan-spinner"></div>
-    <div class="scan-title">Verifying Identity</div>
+    <div class="scan-title">Verifying Sepolia Node</div>
     <div class="scan-addr" id="scan-addr-disp">0x0000…0000</div>
     <div class="scan-phase" id="scan-phase-disp">Initializing…</div>
     <div class="scan-bar-wrap"><div class="scan-bar-fill" id="scan-bar-fill"></div></div>
@@ -465,9 +464,9 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
   </div>
   <div class="page-hero-content">
     <div class="breadcrumb"><a href="index.html">← Home</a><span>// Infrastructure</span></div>
-    <div class="hero-tag">DeFi Core // v2.077 Online</div>
-    <h1 class="page-title">NEXUS<br/>INFRASTRUCTURE</h1>
-    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — all in one terminal.</p>
+    <div class="hero-tag">Network Status // Ethereum Sepolia Testnet</div>
+    <h1 class="page-title">NEXUS<br/>SEPOLIA ENGINE</h1>
+    <p class="page-sub">Swap · Bridge · Stake · Liquidity · Monitor — Terintegrasi Jaringan Sepolia.</p>
   </div>
 </section>
 
@@ -476,74 +475,73 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
 
   <!-- WALLET BAR -->
   <div class="wallet-bar reveal" id="wallet-bar">
-    <!-- Not connected state -->
+    <!-- Disconnected View -->
     <div id="wb-disconnected" style="display:flex;align-items:center;gap:14px;width:100%">
       <div style="font-size:.7rem;color:var(--muted);letter-spacing:.1em">
-        <span style="font-family:'Orbitron',monospace;color:var(--muted);font-size:.65rem">WALLET</span><br>
-        <span style="color:rgba(148,163,184,.5)">Not connected</span>
+        <span style="font-family:'Orbitron',monospace;color:var(--muted);font-size:.65rem">NODE STATUS</span><br>
+        <span style="color:rgba(148,163,184,.5)">Offline</span>
       </div>
       <div class="wb-sep"></div>
-      <div style="font-size:.75rem;color:var(--muted);letter-spacing:.05em">Connect your wallet to start trading, staking, and bridging.</div>
+      <div style="font-size:.75rem;color:var(--muted);letter-spacing:.05em">Hubungkan Web3 Extension kamu untuk membaca data saldo asli di Ethereum Sepolia Testnet.</div>
       <button class="wb-connect-prompt" onclick="openWalletModal()" style="margin-left:auto">
-        ⚡ Connect Wallet
+        ⚡ Connect to Sepolia
       </button>
     </div>
-    <!-- Connected state -->
+    <!-- Connected View -->
     <div id="wb-connected" style="display:none;align-items:center;gap:1.5rem;width:100%;flex-wrap:wrap">
       <div class="wb-token">
-        <div class="wb-label">Wallet</div>
+        <div class="wb-label">Validator Account</div>
         <div class="wb-val" id="wb-addr" style="font-size:.7rem;letter-spacing:.04em;color:var(--muted)">—</div>
       </div>
       <div class="wb-sep"></div>
       <div class="wb-token">
-        <div class="wb-sym" id="wb-native-label">ETH</div>
-        <div class="wb-val" id="wb-eth">0.0000</div>
+        <div class="wb-sym" id="wb-native-label">Sepolia ETH</div>
+        <div class="wb-val" id="wb-eth" style="color:var(--cyan)">0.0000</div>
       </div>
       <div class="wb-sep"></div>
       <div class="wb-token">
-        <div class="wb-sym">USDC</div>
+        <div class="wb-sym">Sandbox USDC</div>
         <div class="wb-val" id="wb-usdc">0.00</div>
       </div>
       <div class="wb-sep"></div>
       <div class="wb-token">
-        <div class="wb-sym">rETH</div>
+        <div class="wb-sym">Sandbox rETH</div>
         <div class="wb-val" id="wb-reth">0.0000</div>
       </div>
       <div class="wb-sep"></div>
       <div class="wb-token">
-        <div class="wb-sym">Network</div>
+        <div class="wb-sym">Active RPC Node</div>
         <div class="wb-val" id="wb-network" style="font-size:.7rem;color:var(--green)">—</div>
       </div>
-      <!-- FIX UTAMA: Tombol faucet yang diatur kondisinya di JS -->
-      <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()">⚡ Faucet</button>
+      <!-- FIX FAUCET: Dinamis tergantung jenis koneksi -->
+      <button class="faucet-btn" id="faucet-btn" onclick="claimFaucet()">⚡ Faucet Node</button>
       <button class="disconnect-btn" onclick="disconnectWallet()">✕ Disconnect</button>
     </div>
   </div>
 
   <!-- TICKER -->
   <div class="ticker-strip reveal">
-    <div class="tick"><div class="tick-sym"><span class="live-dot"></span>ETH/USD</div><div class="tick-price" id="tp-eth">$3,248.00</div><div class="tick-chg up" id="tc-eth">+0.00%</div></div>
+    <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia ETH/USD</div><div class="tick-price" id="tp-eth">$3,248.00</div><div class="tick-chg up" id="tc-eth">+0.00%</div></div>
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>BTC/USD</div><div class="tick-price" id="tp-btc">$67,420.00</div><div class="tick-chg up" id="tc-btc">+0.00%</div></div>
     <div class="tick"><div class="tick-sym"><span class="live-dot"></span>SOL/USD</div><div class="tick-price" id="tp-sol">$148.30</div><div class="tick-chg dn" id="tc-sol">-0.00%</div></div>
-    <div class="tick"><div class="tick-sym"><span class="live-dot"></span>MATIC/USD</div><div class="tick-price" id="tp-matic">$0.8812</div><div class="tick-chg up" id="tc-matic">+0.00%</div></div>
-    <div class="tick"><div class="tick-sym">GAS (GWEI)</div><div class="tick-price" id="tp-gas" style="color:var(--gold)">18</div><div class="tick-chg" style="color:var(--muted);font-size:.6rem">ETH BASE FEE</div></div>
+    <div class="tick"><div class="tick-sym"><span class="live-dot"></span>Sepolia Gas</div><div class="tick-price" id="tp-gas" style="color:var(--gold)">18</div><div class="tick-chg" style="color:var(--muted);font-size:.6rem">BASE GWEI</div></div>
   </div>
 
   <!-- STATS -->
   <div class="stats-grid reveal">
-    <div class="stat-box"><div class="stat-num" id="st-vol">$2.4B</div><div class="stat-label">24h Volume</div></div>
-    <div class="stat-box"><div class="stat-num" id="st-tvl">$847M</div><div class="stat-label">Total Value Locked</div></div>
-    <div class="stat-box"><div class="stat-num">12</div><div class="stat-label">Supported Chains</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:var(--green)">99.97%</div><div class="stat-label">Uptime</div></div>
+    <div class="stat-box"><div class="stat-num">11155111</div><div class="stat-label">Sepolia Chain ID</div></div>
+    <div class="stat-box"><div class="stat-num" id="st-tvl">$41.5M</div><div class="stat-label">Testnet Pool Volume</div></div>
+    <div class="stat-box"><div class="stat-num">Ethereum</div><div class="stat-label">Root Architecture</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--green)">99.98%</div><div class="stat-label">RPC Uptime</div></div>
   </div>
 
   <!-- TABS -->
   <div class="tabs-wrap reveal">
-    <button class="tab-btn active" onclick="switchTab('swap')">⇄ Swap</button>
-    <button class="tab-btn" onclick="switchTab('bridge')">⬡ Bridge</button>
-    <button class="tab-btn" onclick="switchTab('stake')">⬟ Stake</button>
+    <button class="tab-btn active" onclick="switchTab('swap')">⇄ Token Swap</button>
+    <button class="tab-btn" onclick="switchTab('bridge')">⬡ Testnet Bridge</button>
+    <button class="tab-btn" onclick="switchTab('stake')">⬟ Stake Room</button>
     <button class="tab-btn" onclick="switchTab('liquidity')">◈ Liquidity</button>
-    <button class="tab-btn" onclick="switchTab('monitor')">◉ Monitor</button>
+    <button class="tab-btn" onclick="switchTab('monitor')">◉ Node Analytics</button>
   </div>
 
   <!-- ══ SWAP PANEL ══ -->
@@ -551,8 +549,8 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="grid2">
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Token Swap</div>
-        <div class="card-sub">// trust-verified · best-route · real-time price</div>
+        <div class="card-title">Token Swap Engine</div>
+        <div class="card-sub">// Sepolia decentralized pricing mechanism</div>
         <div class="field">
           <div class="field-label">You Pay</div>
           <div class="input-row">
@@ -570,33 +568,21 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
           </div>
           <div style="font-size:.7rem;color:var(--muted);margin-top:4px">≈ <span id="swap-to-usd">$0.00</span> · Balance: <span id="swap-to-bal" style="color:var(--cyan)">0.00</span> <span id="swap-to-bal-sym">USDC</span></div>
         </div>
-        <div class="info-row">
-          <div class="ir-item">Route <span class="ir-val">Uniswap v4</span></div>
-          <div class="ir-item">Slippage <span class="ir-val">0.5%</span></div>
-          <div class="ir-item">Trust <span style="color:var(--green)">✓ Safe</span></div>
-        </div>
-        <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()">Swap Now →</button>
+        <button class="btn-main btn-purple" id="swap-btn" onclick="doSwap()">Swap Assets</button>
         <div class="result-box" id="swap-result"></div>
       </div>
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Live Price Table</div>
-        <div class="card-sub">// realtime · coingecko feed</div>
+        <div class="card-title">Realtime Price Feeds</div>
+        <div class="card-sub">// Sync via decentralized API pipeline</div>
         <div class="table-wrap">
           <table class="rt-table">
             <thead><tr><th>Asset</th><th>Price</th><th>24h %</th><th>Volume</th></tr></thead>
-            <tbody id="price-table-body"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Loading…</td></tr></tbody>
+            <tbody id="price-table-body"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Loading crypto data...</td></tr></tbody>
           </table>
         </div>
         <div style="font-size:.65rem;color:var(--muted);margin-top:8px;text-align:right">Updated: <span id="price-update-time">—</span></div>
       </div>
-    </div>
-    <div class="infra-card" style="margin-top:1.5rem">
-      <div class="card-corner tl"></div>
-      <div class="card-title">Swap History</div>
-      <div class="card-sub">// your transactions this session</div>
-      <div class="table-wrap"><table class="rt-table"><thead><tr><th>Tx Hash</th><th>From</th><th>To</th><th>Rate</th><th>Status</th><th>Time</th></tr></thead><tbody id="swap-history"></tbody></table></div>
-      <div id="swap-hist-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:20px">No swaps yet — start trading!</div>
     </div>
   </div>
 
@@ -605,10 +591,10 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="grid2">
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Cross-Chain Bridge</div>
-        <div class="card-sub">// atomic · insured · fast</div>
+        <div class="card-title">Cross-Chain Bridge Relay</div>
+        <div class="card-sub">// From Ethereum Sepolia to alternate chains</div>
         <div class="chain-row">
-          <div class="chain-sel" onclick="cycleBridgeFrom()"><div class="chain-icon" id="bridge-from-icon">🔷</div><div><div class="chain-name" id="bridge-from-name">Ethereum</div><div class="chain-net">EVM · Mainnet</div></div></div>
+          <div class="chain-sel" onclick="cycleBridgeFrom()"><div class="chain-icon" id="bridge-from-icon">🔷</div><div><div class="chain-name" id="bridge-from-name">Sepolia</div><div class="chain-net">EVM · Testnet</div></div></div>
           <div class="chain-arr">→</div>
           <div class="chain-sel" onclick="cycleBridgeTo()"><div class="chain-icon" id="bridge-to-icon">🟣</div><div><div class="chain-name" id="bridge-to-name">Polygon</div><div class="chain-net">EVM · Mainnet</div></div></div>
         </div>
@@ -618,22 +604,14 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
             <input class="inp" id="bridge-amt" type="number" placeholder="0.00" min="0" step="any" oninput="calcBridge()"/>
             <button class="token-pill" onclick="bridgeMax()">MAX</button>
           </div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:4px">Balance: <span id="bridge-eth-bal" style="color:var(--cyan)">0.0000</span> ETH · <span id="bridge-usd-val">≈ $0.00</span></div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:4px">Available: <span id="bridge-eth-bal" style="color:var(--cyan)">0.0000</span> Sepolia ETH · <span id="bridge-usd-val">≈ $0.00</span></div>
         </div>
-        <div class="table-wrap" style="margin-top:.5rem">
-          <table class="rt-table"><tbody>
-            <tr><td style="color:var(--muted);font-size:.7rem">Est. Time</td><td id="bridge-time" class="td-c" style="text-align:right">~2 min</td></tr>
-            <tr><td style="color:var(--muted);font-size:.7rem">Bridge Fee</td><td id="bridge-fee" class="td-gold" style="text-align:right">—</td></tr>
-            <tr><td style="color:var(--muted);font-size:.7rem">You Receive</td><td id="bridge-receive" class="td-g" style="text-align:right;font-weight:700">—</td></tr>
-            <tr><td style="color:var(--muted);font-size:.7rem">Gas Est.</td><td id="bridge-gas" style="text-align:right">—</td></tr>
-          </tbody></table>
-        </div>
-        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()">Initiate Bridge →</button>
+        <button class="btn-main btn-cyan" id="bridge-btn" onclick="doBridge()">Initiate Bridge Protocol</button>
         <div class="result-box" id="bridge-result"></div>
       </div>
       <div class="infra-card">
         <div class="card-corner tl"></div>
-        <div class="card-title">Bridge Activity</div>
+        <div class="card-title">Relayer Status</div>
         <div class="table-wrap"><table class="rt-table"><thead><tr><th>From</th><th>To</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead><tbody id="bridge-feed"></tbody></table></div>
       </div>
     </div>
@@ -644,209 +622,166 @@ footer{position:relative;z-index:2;background:var(--dark2);border-top:1px solid 
     <div class="grid2">
       <div class="infra-card">
         <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Liquid Staking</div>
-        <div class="card-sub">// earn yield · stay liquid · rETH</div>
+        <div class="card-title">Liquid Staking Vault</div>
+        <div class="card-sub">// Lock Sepolia ETH and generate simulated yield</div>
         <div class="s-metrics">
-          <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div><div class="s-msub">ETH staked</div></div>
-          <div class="s-metric"><div class="s-mlabel">Est. Rewards/yr</div><div class="s-mval td-g" id="user-rewards">0.0000</div><div class="s-msub">ETH annual</div></div>
+          <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div><div class="s-msub">ETH Locked</div></div>
           <div class="s-metric"><div class="s-mlabel">rETH Balance</div><div class="s-mval td-gold" id="user-reth-disp">0.0000</div><div class="s-msub">liquid token</div></div>
-          <div class="s-metric"><div class="s-mlabel">Total Value</div><div class="s-mval" id="stake-total-usd">$0.00</div><div class="s-msub">USD value</div></div>
         </div>
         <div class="pool-list">
-          <div class="pool-row selected" data-apy="0.084" onclick="selectPool(this)"><div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div><span class="pname">ETH Liquid Pool</span><span class="papy">8.4% APY</span><span class="ptvl">$420M TVL</span></div>
-          <div class="pool-row" data-apy="0.062" onclick="selectPool(this)"><div class="pdot" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div><span class="pname">Diversified Vault</span><span class="papy">6.2% APY</span><span class="ptvl">$218M TVL</span></div>
-          <div class="pool-row" data-apy="0.048" onclick="selectPool(this)"><div class="pdot" style="background:#7ab4ff;box-shadow:0 0 6px #7ab4ff"></div><span class="pname">Governance Stake</span><span class="papy">4.8% APY</span><span class="ptvl">$96M TVL</span></div>
+          <div class="pool-row selected" data-apy="0.084" onclick="selectPool(this)"><div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div><span class="pname">Sepolia Staking Pool</span><span class="papy">8.4% APY</span><span class="ptvl">$14M TVL</span></div>
         </div>
         <div class="field-label">Amount to Stake</div>
         <div class="input-row" style="margin-bottom:.5rem"><input class="inp" id="stake-amt" type="number" placeholder="0.00 ETH" min="0" step="any" oninput="calcStake()"/></div>
-        <div class="pct-row">
-          <button class="pct-btn" onclick="stakeMax(this,25)">25%</button>
-          <button class="pct-btn" onclick="stakeMax(this,50)">50%</button>
-          <button class="pct-btn" onclick="stakeMax(this,75)">75%</button>
-          <button class="pct-btn" onclick="stakeMax(this,100)">MAX</button>
-        </div>
-        <div style="font-size:.7rem;color:var(--muted);margin-bottom:.5rem">Preview: <span id="stake-reth-preview" style="color:var(--gold)">0.0000</span> rETH · Annual: <span id="stake-annual-preview" style="color:var(--green)">0.0000</span> ETH</div>
-        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()">Stake ETH →</button>
+        <button class="btn-main btn-green" id="stake-btn" onclick="doStake()">Deposit to Validator Room</button>
         <div class="result-box" id="stake-result"></div>
       </div>
       <div class="infra-card">
         <div class="card-corner tl"></div>
-        <div class="card-title">Pool Performance</div>
-        <div class="table-wrap"><table class="rt-table"><thead><tr><th>Pool</th><th>APY</th><th>TVL</th><th>Validators</th><th>My Share</th></tr></thead><tbody id="stake-table"></tbody></table></div>
-        <div style="margin-top:1.5rem">
-          <div class="card-sub">// your staking history</div>
-          <div class="table-wrap" style="margin-top:.5rem"><table class="rt-table"><thead><tr><th>Tx Hash</th><th>Amount</th><th>Pool</th><th>rETH</th><th>Time</th></tr></thead><tbody id="stake-history"></tbody></table></div>
-          <div id="stake-hist-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:14px">No stakes yet.</div>
-        </div>
+        <div class="card-title">Active History</div>
+        <div class="table-wrap"><table class="rt-table"><thead><tr><th>Tx Hash</th><th>Amount</th><th>Pool</th><th>rETH</th><th>Time</th></tr></thead><tbody id="stake-history"></tbody></table></div>
+        <div id="stake-hist-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:14px">No stakes registered in this session.</div>
       </div>
     </div>
   </div>
 
   <!-- ══ LIQUIDITY PANEL ══ -->
   <div class="panel" id="panel-liquidity">
-    <div class="grid2">
-      <div class="infra-card">
-        <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Liquidity Pools</div>
-        <div class="input-row" style="margin-top:10px; margin-bottom:10px;">
-          <select class="inp" id="liq-pair-sel" onchange="calcLiq()">
-            <option value="ETH/MATIC">ETH / MATIC (0.30%)</option>
-            <option value="ETH/USDT">ETH / USDT (0.05%)</option>
-            <option value="BTC/USDC">BTC / USDC (0.05%)</option>
-            <option value="SOL/USDC">SOL / USDC (0.30%)</option>
-          </select>
-        </div>
-        <div class="input-row"><input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()"/></div>
-        <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">You'll also need: <span id="liq-paired-amt" style="color:var(--gold)">—</span> · LP tokens: <span id="liq-lp-tokens" style="color:var(--green)">—</span></div>
-        <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()">+ Add Liquidity</button>
-        <div class="result-box" id="liq-result"></div>
+    <div class="infra-card">
+      <div class="card-title">Sandbox LP Module</div>
+      <div class="input-row" style="margin-top:10px; margin-bottom:10px;">
+        <select class="inp" id="liq-pair-sel" onchange="calcLiq()">
+          <option value="ETH/MATIC">Sepolia ETH / MATIC (0.30%)</option>
+          <option value="ETH/USDT">Sepolia ETH / USDT (0.05%)</option>
+        </select>
       </div>
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Your LP Positions</div>
-        <div class="table-wrap"><table class="rt-table"><thead><tr><th>Pair</th><th>LP Tokens</th><th>Value</th><th>Fees Earned</th></tr></thead><tbody id="liq-positions"></tbody></table></div>
-        <div id="liq-pos-empty" style="text-align:center;color:var(--muted);font-size:.75rem;padding:14px">No positions yet.</div>
-        <div style="margin-top:1.5rem">
-          <div class="card-sub">// pool volume (7d)</div>
-          <div style="position:relative;height:110px;margin-top:.5rem"><canvas id="liq-chart"></canvas></div>
-        </div>
-      </div>
+      <div class="input-row"><input class="inp" id="liq-amt" type="number" placeholder="ETH amount" min="0" step="any" oninput="calcLiq()"/></div>
+      <div style="font-size:.7rem;color:var(--muted);margin:.5rem 0">Required Paired Pair: <span id="liq-paired-amt" style="color:var(--gold)">—</span></div>
+      <button class="btn-main btn-gold" id="liq-btn" onclick="doLiquidity()">Supply Liquidity Pool</button>
+      <div class="result-box" id="liq-result"></div>
     </div>
   </div>
 
   <!-- ══ MONITOR PANEL ══ -->
   <div class="panel" id="panel-monitor">
-    <div class="grid2">
-      <div class="infra-card">
-        <div class="card-corner tl"></div><div class="card-corner br"></div>
-        <div class="card-title">Gas Tracker</div>
-        <div class="gas-big" id="gas-display">18</div>
-        <div class="gas-tiers">
-          <div class="gtier"><div class="gtier-lbl">Slow</div><div class="gtier-val" id="gas-slow" style="color:#7ab4ff">15</div><div class="gtier-t">~5 min</div></div>
-          <div class="gtier"><div class="gtier-lbl">Average</div><div class="gtier-val" id="gas-avg" style="color:var(--cyan)">18</div><div class="gtier-t">~1 min</div></div>
-          <div class="gtier"><div class="gtier-lbl">Fast</div><div class="gtier-val" id="gas-fast" style="color:var(--green)">23</div><div class="gtier-t">~15 sec</div></div>
-        </div>
-        <div style="position:relative;height:60px"><canvas id="gas-chart"></canvas></div>
-      </div>
-      <div class="infra-card">
-        <div class="card-corner tl"></div>
-        <div class="card-title">Live Activity Feed</div>
-        <div id="live-feed"></div>
-      </div>
+    <div class="infra-card">
+      <div class="card-title">JSON-RPC Node Sync Vital Signs</div>
+      <div class="gas-big" id="gas-display">18</div>
+      <div style="position:relative;height:60px;width:100%"><canvas id="gas-chart"></canvas></div>
     </div>
   </div>
 
-</div><!-- /.container -->
+</div>
 
 <footer>
   <div class="footer-logo">NEXUS</div>
-  <div class="footer-copy">© 2077 NEXUS CORP. ALL RIGHTS RESERVED.</div>
+  <div class="footer-copy">© 2077 NEXUS CORP. SEPOLIA CRYPTO CLIENT INFRASTRUCTURE.</div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── KURSOR & EFREK MOUSE ──
+// ── KURSOR INTERACTIVE LAYER ──
 const cur=document.getElementById('cursor'),trail=document.getElementById('cursor-trail');
 let mx=0,my=0,tx=0,ty=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
 (function at(){tx+=(mx-tx)*.13;ty+=(my-ty)*.13;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(at);})();
-document.querySelectorAll('a,button,.pool-row,.chain-sel,.lp-pair,.net-item,.tick,.tab-btn,.wallet-opt').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='26px';cur.style.height='26px';cur.style.background='var(--pink)';trail.style.width='52px';trail.style.height='52px';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='14px';cur.style.height='14px';cur.style.background='var(--cyan)';trail.style.width='36px';trail.style.height='36px';});
-});
 
-// ── BACKGROUND PARTICLES ──
+// ── BACKGROUND BACKGROUND SYSTEM ──
 const pcanvas=document.getElementById('particles-canvas'),pctx=pcanvas.getContext('2d');
 function rC(){pcanvas.width=window.innerWidth;pcanvas.height=window.innerHeight;}
 rC();window.addEventListener('resize',rC);
 const pts=[];
-for(let i=0;i<60;i++)pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4,c:Math.random()>.5?'124,58,237':'6,182,212'});
-(function dp(){pctx.clearRect(0,0,pcanvas.width,pcanvas.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>pcanvas.width)p.vx*=-1;if(p.y<0||p.y>pcanvas.height)p.vy*=-1;pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle='rgba('+p.c+',.55)';pctx.fill();});for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){pctx.beginPath();pctx.moveTo(pts[i].x,pts[i].y);pctx.lineTo(pts[j].x,pts[j].y);pctx.strokeStyle='rgba(124,58,237,'+(0.12*(1-d/115))+')';pctx.lineWidth=.5;pctx.stroke();}}requestAnimationFrame(dp);})();
+for(let i=0;i<60;i++)pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.4,c:'6,182,212'});
+(function dp(){pctx.clearRect(0,0,pcanvas.width,pcanvas.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>pcanvas.width)p.vx*=-1;if(p.y<0||p.y>pcanvas.height)p.vy*=-1;pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle='rgba('+p.c+',.45)';pctx.fill();});requestAnimationFrame(dp);})();
 
-// ── INTERSECTION REVEAL ──
-const obsRev=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.12});
-document.querySelectorAll('.reveal,.infra-card,.stats-grid').forEach(el=>obsRev.observe(el));
-
-// ════════ WALLET ARCHITECTURE CORE & WEB3 INTEGRATION ════════
-let connectedWallet = {
-  address: null, shortAddr: null, providerName: null,
-  chainId: null, chainName: null, provider: null, isDemo: false
-};
+// ════════ SEPOLIA WEB3 CORE CORE LOGIC ════════
+let isWalletConnected = false;
+let connectedWallet = { address: null, shortAddr: null, providerName: null, chainId: null, provider: null, isDemo: false };
 let walletInternalState = { eth: 0, usdc: 0, reth: 0, stakedEth: 0 };
 let faucetUsed = false;
-
-const CHAIN_NAMES = {
-  1:'Ethereum', 11155111:'Sepolia', 137:'Polygon', 10:'Optimism',
-  42161:'Arbitrum', 8453:'Base', 43114:'Avalanche', 56:'BSC'
-};
+const SEPOLIA_CHAIN_ID_HEX = "0xaa36a7"; // 11155111
 
 function shortAddr(a){ return a.slice(0,6)+'…'+a.slice(-4); }
 
-// ─── MODAL CONTROLLERS ───
 function openWalletModal(){
   const ovl=document.getElementById('wallet-modal-ovl');
-  ovl.style.display='flex';
-  detectInstalledWallets();
+  ovl.style.display='flex'; detectInstalledWallets();
   requestAnimationFrame(()=>ovl.classList.add('open'));
 }
 function closeWalletModal(){
-  const ovl=document.getElementById('wallet-modal-ovl');
-  ovl.classList.remove('open');
+  const ovl=document.getElementById('wallet-modal-ovl'); ovl.classList.remove('open');
   setTimeout(()=>{ovl.style.display='none';},400);
 }
 document.getElementById('wm-close-btn').addEventListener('click',closeWalletModal);
 
-// ─── DETECT INSTALLED WALLETS EXTENSIONS ───
 function detectInstalledWallets(){
   const eth = window.ethereum;
   const hasMetaMask = !!(eth && (eth.isMetaMask||eth.providers?.some?.(p=>p.isMetaMask)));
-  const hasRabby    = !!(eth && eth.isRabby);
-  const hasOKX      = !!window.okxwallet;
-  const hasPhantom  = !!(window.phantom?.ethereum);
   setBadge('badge-metamask', hasMetaMask?'Detected':'Not installed', hasMetaMask);
-  setBadge('badge-rabby',    hasRabby?'Detected':'Not installed',    hasRabby);
-  setBadge('badge-okx',      hasOKX?'Detected':'Not installed',      hasOKX);
-  setBadge('badge-phantom',  hasPhantom?'Detected':'Not installed',  hasPhantom);
+  setBadge('badge-rabby', !!(eth && eth.isRabby)?'Detected':'Extension missing', !!(eth && eth.isRabby));
+  setBadge('badge-okx', !!window.okxwallet?'Detected':'Extension missing', !!window.okxwallet);
+  setBadge('badge-phantom', !!window.phantom?.ethereum?'Detected':'Extension missing', !!window.phantom?.ethereum);
 }
 function setBadge(id, text, ok){
   const el=document.getElementById(id);if(!el)return;
   el.textContent=text; el.className='wo-badge '+(ok?'badge-ok':'badge-none');
 }
 
-// ─── PROVIDERS LISTENERS ───
+// REGISTER SEPOLIA SELECTION HANDLERS
 document.getElementById('opt-metamask').addEventListener('click',()=>{
-  const eth=window.ethereum; if(!eth){showToast('MetaMask extension not found');return;}
-  const provider = eth.providers?.find?.(p=>p.isMetaMask) || eth; connectEVM(provider,'MetaMask');
+  const eth=window.ethereum; if(!eth){showToast('Install Metamask extension client');return;}
+  const provider = eth.providers?.find?.(p=>p.isMetaMask) || eth; connectSepoliaEVM(provider,'MetaMask');
 });
-document.getElementById('opt-rabby').addEventListener('click',()=>{
-  if(!window.ethereum?.isRabby){showToast('Rabby extension not found');return;}
-  connectEVM(window.ethereum,'Rabby');
-});
-document.getElementById('opt-okx').addEventListener('click',()=>{
-  if(!window.okxwallet){showToast('OKX Wallet extension not found');return;}
-  connectEVM(window.okxwallet,'OKX Wallet');
-});
-document.getElementById('opt-phantom').addEventListener('click',()=>{
-  if(!window.phantom?.ethereum){showToast('Phantom extension not found');return;}
-  connectEVM(window.phantom.ethereum,'Phantom');
-});
-document.getElementById('opt-demo').addEventListener('click',()=>{
-  closeWalletModal(); startScanAnimation('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045','Demo Mode',1,true);
-});
+document.getElementById('opt-rabby').addEventListener('click',()=>{ if(!window.ethereum?.isRabby){showToast('Rabby Node element undetected');return;} connectSepoliaEVM(window.ethereum,'Rabby'); });
+document.getElementById('opt-okx').addEventListener('click',()=>{ if(!window.okxwallet){showToast('OKX wallet component absent');return;} connectSepoliaEVM(window.okxwallet,'OKX'); });
+document.getElementById('opt-phantom').addEventListener('click',()=>{ if(!window.phantom?.ethereum){showToast('Phantom layer missing');return;} connectSepoliaEVM(window.phantom.ethereum,'Phantom'); });
+document.getElementById('opt-demo').addEventListener('click',()=>{ closeWalletModal(); startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96','Sepolia Sim Node',11155111,true); });
 
-// ─── REALTIME WEB3 METHOD ───
-function connectEVM(provider, name){
-  closeWalletModal(); showToast('Connecting via Web3 Node…');
-  provider.request({method:'eth_requestAccounts'}).then(accounts=>{
-    if(!accounts||!accounts[0]){showToast('Account tracking failed');return;}
-    provider.request({method:'eth_chainId'}).then(cid=>{
-      startScanAnimation(accounts[0], name, parseInt(cid,16), false, provider);
-    }).catch(()=>{ startScanAnimation(accounts[0], name, 1, false, provider); });
-  }).catch(err=>{ showToast('Connection handshake denied'); });
+// CONNECT & SWITCH TO SEPOLIA NETWORK
+async function connectSepoliaEVM(provider, name){
+  closeWalletModal();
+  try {
+    showToast('Pemicu autentikasi Web3...');
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    
+    // Verifikasi Jaringan: Paksa dompet beralih ke Ethereum Sepolia Testnet
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: SEPOLIA_CHAIN_ID_HEX }],
+      });
+    } catch (switchError) {
+      // Jika RPC Sepolia belum terdaftar di dompet (Error Code 4902)
+      if (switchError.code === 4902) {
+        try {
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: SEPOLIA_CHAIN_ID_HEX,
+              chainName: 'Sepolia Test Network',
+              nativeCurrency: { name: 'Sepolia ETH', symbol: 'ETH', decimals: 18 },
+              rpcUrls: ['https://rpc.ankr.com/eth_sepolia'],
+              blockExplorerUrls: ['https://sepolia.etherscan.io']
+            }],
+          });
+        } catch (addError) {
+          showToast('⚠ Gagal menambahkan konfigurasi node Sepolia');
+          return;
+        }
+      } else {
+        showToast('⚠ Handshake jaringan Sepolia ditolak dompet');
+        return;
+      }
+    }
+
+    startScanAnimation(accounts[0], name, 11155111, false, provider);
+  } catch (err) {
+    showToast('Handshake JSON-RPC ditolak oleh pengguna');
+  }
 }
 
-// ─── HUD IDENTITY SCANNING ANIMATION ───
-const SCAN_PHASES=['Resolving cryptography parameters…','Fetching realtime balances…','Verifying chain node score…','Connected ✓'];
+// HUDS STEPPER
+const SCAN_PHASES=['Membuka enkripsi parameter node…','Mengecek Jaringan Sepolia Testnet…','Sinkronisasi saldo Sepolia ETH…','Koneksi Stabil ✓'];
 let _scanTimer=null;
 function startScanAnimation(addr,walletName,chainId,isDemo,provider=null){
   const ovl=document.getElementById('scan-ovl');
@@ -863,7 +798,7 @@ function startScanAnimation(addr,walletName,chainId,isDemo,provider=null){
     }
     if(phaseEl)phaseEl.textContent=SCAN_PHASES[idx];
     if(barEl)barEl.style.width=Math.round((idx+1)/SCAN_PHASES.length*100)+'%';
-    idx++; _scanTimer=setTimeout(nextPhase,350);
+    idx++; _scanTimer=setTimeout(nextPhase,300);
   }
   nextPhase();
 }
@@ -871,57 +806,42 @@ function closeScanAnimation(){
   const ovl=document.getElementById('scan-ovl'); ovl.classList.remove('open');
   setTimeout(()=>ovl.style.display='none',400); clearTimeout(_scanTimer);
 }
-document.getElementById('scan-cancel-btn').addEventListener('click',()=> { closeScanAnimation(); showToast('Aborted'); });
+document.getElementById('scan-cancel-btn').addEventListener('click',()=> { closeScanAnimation(); showToast('Koneksi dibatalkan'); });
 
-// ─── SYNC CORE NODE ───
+// PENYELESAIAN INTEGRASI NODE DOMPET
 async function finalizeConnection(addr,walletName,chainId,isDemo,provider){
-  connectedWallet={ address:addr, shortAddr:shortAddr(addr), providerName:walletName, chainId, chainName:CHAIN_NAMES[chainId]||('Chain '+chainId), provider, isDemo };
+  isWalletConnected = true;
+  connectedWallet={ address:addr, shortAddr:shortAddr(addr), providerName:walletName, chainId, chainName:'Ethereum Sepolia', provider, isDemo };
 
-  try{
-    sessionStorage.setItem('nexus_addr',addr); sessionStorage.setItem('nexus_wallet',walletName);
-    sessionStorage.setItem('nexus_chain',String(chainId)); sessionStorage.setItem('nexus_demo',isDemo?'1':'0');
-  }catch(e){}
-
-  // INITIALIZE BALANCES CONDITION
+  const fbtn = document.getElementById('faucet-btn');
   if(isDemo){
-    // Demo Sandbox Mode: Menggunakan saldo simulasi awal + menyalakan kran faucet
-    walletInternalState.eth=3.2500;
-    walletInternalState.usdc=1000.00;
-    walletInternalState.reth=0;
-    walletInternalState.stakedEth=0;
-    
-    const fbtn = document.getElementById('faucet-btn');
-    if(fbtn) { fbtn.disabled = false; fbtn.textContent = "⚡ Claim Demo Faucet"; }
+    walletInternalState.eth=5.7512; // Saldo awal simulasi Sepolia
+    walletInternalState.usdc=2500.00;
+    if(fbtn) { fbtn.disabled = false; fbtn.textContent = "⚡ Claim Demo ETH"; }
   } else {
-    // Web3 Real Wallet Mode: Membaca data saldo asli dompet + mengunci tombol faucet
-    await queryRealtimeWeb3Balance();
-    walletInternalState.usdc = 0.00; // Akun sandbox terpisah
-    
-    const fbtn = document.getElementById('faucet-btn');
-    if(fbtn) { fbtn.disabled = true; fbtn.textContent = "🔒 Faucet Locked (Mainnet)"; }
+    await querySepoliaRealtimeBalance();
+    walletInternalState.usdc = 0.00;
+    if(fbtn) { fbtn.disabled = false; fbtn.textContent = "🌐 Open Third-Party Faucet"; }
   }
 
   onWalletConnected();
 
-  // Listeners perubahan akun ekstensi dompet asli
   if(provider && !isDemo){
     provider.on?.('accountsChanged', async accounts=>{
       if(!accounts||!accounts.length){disconnectWallet();return;}
       connectedWallet.address=accounts[0]; connectedWallet.shortAddr=shortAddr(accounts[0]);
       document.getElementById('wb-addr').textContent=connectedWallet.shortAddr;
       document.getElementById('nav-wallet-label').textContent=connectedWallet.shortAddr;
-      await queryRealtimeWeb3Balance();
+      await querySepoliaRealtimeBalance();
     });
-    provider.on?.('chainChanged', async cidHex=>{
-      const cid=parseInt(cidHex,16); connectedWallet.chainId=cid; connectedWallet.chainName=CHAIN_NAMES[cid]||('Chain '+cid);
-      document.getElementById('wb-network').textContent=connectedWallet.chainName;
-      await queryRealtimeWeb3Balance();
+    provider.on?.('chainChanged', async () => {
+      await querySepoliaRealtimeBalance();
     });
   }
 }
 
-// FETCH SALDO ASLI BLOCKCHAIN
-async function queryRealtimeWeb3Balance() {
+// BACA SALDO ASLI SEPOLIA BLOCKCHAIN VIA METAMASK NODE
+async function querySepoliaRealtimeBalance() {
   if (!connectedWallet.address || connectedWallet.isDemo || !connectedWallet.provider) return;
   try {
     const hexBal = await connectedWallet.provider.request({
@@ -929,10 +849,10 @@ async function queryRealtimeWeb3Balance() {
       params: [connectedWallet.address, 'latest']
     });
     const wei = parseInt(hexBal, 16);
-    walletInternalState.eth = wei / 1e18; // Transformasi bilangan besar ke pecahan desimal
+    walletInternalState.eth = wei / 1e18; // Konversi wei ke ETH
     updateWalletBar();
     calcSwap();
-  } catch(e) { console.error("Web3 balance fetching node failure:", e); }
+  } catch(e) { console.error("Gagal menarik saldo Sepolia asli:", e); }
 }
 
 function onWalletConnected(){
@@ -946,13 +866,12 @@ function onWalletConnected(){
   document.getElementById('wb-network').textContent=chainName;
 
   updateWalletBar();
-  showToast('✓ Connected via '+providerName);
 }
 
 function disconnectWallet(){
+  isWalletConnected = false;
   connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,chainName:null,provider:null,isDemo:false};
   walletInternalState={eth:0,usdc:0,reth:0,stakedEth:0}; faucetUsed=false;
-  try{sessionStorage.removeItem('nexus_addr');sessionStorage.removeItem('nexus_wallet');sessionStorage.removeItem('nexus_chain');sessionStorage.removeItem('nexus_demo');}catch(e){}
 
   const navBtn=document.getElementById('nav-wallet-btn');
   navBtn.classList.remove('connected');
@@ -960,54 +879,38 @@ function disconnectWallet(){
   document.getElementById('wb-connected').style.display='none';
   document.getElementById('wb-disconnected').style.display='flex';
   document.getElementById('wallet-bar').classList.remove('connected-state');
-  
-  const fbtn=document.getElementById('faucet-btn');
-  if(fbtn){fbtn.textContent='⚡ Faucet'; fbtn.disabled=true;}
 
-  updateWalletBar(); calcSwap(); showToast('Disconnected');
+  updateWalletBar(); calcSwap(); showToast('Node disconnected');
 }
 
-function restoreSession(){
-  try{
-    const addr=sessionStorage.getItem('nexus_addr');
-    const walletName=sessionStorage.getItem('nexus_wallet')||'Demo Mode';
-    const cid=parseInt(sessionStorage.getItem('nexus_chain')||'1');
-    const isDemo=(sessionStorage.getItem('nexus_demo')==='1');
-    if(addr && isDemo){
-      connectedWallet={ address:addr, shortAddr:shortAddr(addr), providerName:walletName, chainId:cid, chainName:CHAIN_NAMES[cid]||('Chain '+cid), provider:null, isDemo:true };
-      walletInternalState.eth=3.2500; walletInternalState.usdc=1000;
-      onWalletConnected();
-    }
-  }catch(e){}
-}
-
-// ═══ FAUCET LOGIC — RESTRICTED TO DEMO ONLY ═══
+// METODE KRAN FAUCET SEPOLIA ETH
 function claimFaucet(){
-  if(!connectedWallet.address) return;
-  if(!connectedWallet.isDemo) { showToast('Faucet only open for Demo Sandbox!'); return; }
-  if(faucetUsed){showToast('Claim limited: 24h cooldown.');return;}
+  if(!isWalletConnected) return;
   
-  walletInternalState.eth += 2.0000;
-  walletInternalState.usdc += 500.00;
-  faucetUsed=true;
-  
-  const btn=document.getElementById('faucet-btn');
-  if(btn){btn.textContent='✓ Deposited'; btn.disabled=true;}
-  updateWalletBar(); showToast('✓ +2 ETH & +500 USDC added!');
+  if(!connectedWallet.isDemo) {
+    // Dompet Asli: Arahkan ke penyedia kran pihak ketiga tepercaya (Google/Alchemy Sepolia Faucet) di tab baru
+    showToast('Membuka Sepolia Faucet resmi di tab baru...');
+    window.open('https://sepoliafaucet.com/', '_blank');
+  } else {
+    // Mode Demo: Berikan langsung saldo instan ke aplikasi internal
+    if(faucetUsed){showToast('Batas klaim demo tercapai untuk sesi ini.');return;}
+    walletInternalState.eth += 2.0000;
+    walletInternalState.usdc += 500.00;
+    faucetUsed=true;
+    const btn=document.getElementById('faucet-btn');
+    if(btn){btn.textContent='✓ Deposited'; btn.disabled=true;}
+    updateWalletBar(); showToast('✓ +2.0000 Sepolia ETH dimasukkan ke sandbox!');
+  }
 }
 
-// ═══ PRICES & DATA SYNC ═══
+// ═══ PRICES & CONVERSION LOGIC ═══
 let prices={eth:3248,btc:67420,sol:148.3,matic:.8812,usdc:1,usdt:1};
 let gasPrice=18;
 let gasHistory=Array.from({length:24},()=>12+Math.random()*20);
 let fromToken='ETH',toToken='USDC';
-let selectedPoolApy=.084,selectedPoolName='ETH Liquid Pool';
-let swapHistory=[],stakeHistory=[],liqPositions=[],bridgeFeedData=[];
-const bridgeChains=[{name:'Ethereum',icon:'🔷'},{name:'Polygon',icon:'🟣'},{name:'Arbitrum',icon:'🔵'},{name:'Optimism',icon:'🔴'},{name:'Base',icon:'🟦'},{name:'Avalanche',icon:'🔺'}];
-let bridgeFromIdx=0,bridgeToIdx=1;
-let liqChartObj=null,gasChartObj=null;
-const tokenColors={ETH:'#6f7cff',USDC:'#26a17b',BTC:'#f7931a',SOL:'#ab73ff',MATIC:'#8247e5',USDT:'#26a17b',rETH:'#d4a832'};
-const tokenCycle=['ETH','BTC','SOL','MATIC'],toTokenCycle=['USDC','USDT','ETH','BTC'];
+let selectedPoolApy=.084,selectedPoolName='Sepolia Staking Pool';
+const tokenColors={ETH:'#6f7cff',USDC:'#26a17b',BTC:'#f7931a',SOL:'#ab73ff',MATIC:'#8247e5'};
+const tokenCycle=['ETH','BTC','SOL','MATIC'],toTokenCycle=['USDC','ETH'];
 let fromIdx=0,toIdx=0;
 
 function updateWalletBar(){
@@ -1024,19 +927,10 @@ function updateWalletBar(){
 function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  const tabs=['swap','bridge','stake','liquidity','monitor'];
-  const ti=tabs.indexOf(name); if(ti>=0)document.querySelectorAll('.tab-btn')[ti].classList.add('active');
-  const panel=document.getElementById('panel-'+name);
-  if(panel){
-    panel.classList.add('active');
-    panel.querySelectorAll('.infra-card').forEach((c,i)=>{
-      c.style.opacity='0';c.style.transform='translateY(25px)';
-      setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*120);
-    });
-  }
-  if(name==='monitor')setTimeout(()=>{buildGasChart();buildLiveFeed();},60);
-  if(name==='liquidity')setTimeout(()=>buildLiqChart(),60);
-  if(name==='bridge'){calcBridge();buildBridgeFeed();}
+  document.getElementById('panel-'+name).classList.add('active');
+  event.target.classList.add('active');
+  if(name==='monitor') setTimeout(()=>buildGasChart(),60);
+  if(name==='liquidity') setTimeout(()=>buildLiqChart(),60);
 }
 
 function fetchPrices(){
@@ -1052,7 +946,7 @@ function fetchPrices(){
 }
 
 function updateTickerUI(d={}){
-  const map={eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'},btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'},sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'},matic:{pid:'tp-matic',cid:'tc-matic',p:prices.matic,key:'matic-network'}};
+  const map={eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'},btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'},sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'}};
   Object.values(map).forEach(m=>{
     const pe=document.getElementById(m.pid),ce=document.getElementById(m.cid);if(!pe)return;
     pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:2});
@@ -1063,10 +957,9 @@ function updateTickerUI(d={}){
 
 function updatePriceTable(d={}){
   const assets=[
-    {sym:'ETH',p:prices.eth,key:'ethereum',vol:'$18.4B',col:'#6f7cff'},
-    {sym:'BTC',p:prices.btc,key:'bitcoin',vol:'$42.1B',col:'#f7931a'},
-    {sym:'SOL',p:prices.sol,key:'solana',vol:'$3.2B',col:'#ab73ff'},
-    {sym:'MATIC',p:prices.matic,key:'matic-network',vol:'$380M',col:'#8247e5'}
+    {sym:'Sepolia ETH',p:prices.eth,key:'ethereum',vol:'$14.2M',col:'#6f7cff'},
+    {sym:'wBTC Sepolia',p:prices.btc,key:'bitcoin',vol:'$2.1M',col:'#f7931a'},
+    {sym:'Sepolia USDC',p:1,key:null,vol:'$38.4M',col:'#26a17b'}
   ];
   const tb=document.getElementById('price-table-body');if(!tb)return;
   tb.innerHTML=assets.map(a=>{
@@ -1075,227 +968,79 @@ function updatePriceTable(d={}){
   }).join('');
 }
 
-// ═══ SWAP EXECUTION ═══
-function getPrice(sym){if(sym==='ETH')return prices.eth;if(sym==='BTC')return prices.btc;if(sym==='SOL')return prices.sol;if(sym==='MATIC')return prices.matic;if(sym==='USDC'||sym==='USDT')return 1;if(sym==='rETH')return prices.eth*1.03;return 1;}
-function getWalletBal(sym){if(sym==='ETH')return walletInternalState.eth;if(sym==='USDC')return walletInternalState.usdc;if(sym==='rETH')return walletInternalState.reth;return 0;}
+// ═══ DEFI LAYOUT FUNCTIONAL ═══
+function getPrice(sym){if(sym==='ETH')return prices.eth;if(sym==='BTC')return prices.btc;if(sym==='SOL')return prices.sol;if(sym==='MATIC')return prices.matic;return 1;}
+function getWalletBal(sym){if(sym==='ETH')return walletInternalState.eth;if(sym==='USDC')return walletInternalState.usdc;return 0;}
 function updateSwapBals(){
-  const fs=document.getElementById('swap-from-bal-sym'),ts=document.getElementById('swap-to-bal-sym');
-  if(fs)fs.textContent=fromToken;if(ts)ts.textContent=toToken;
+  document.getElementById('swap-from-bal-sym').textContent=fromToken;
+  document.getElementById('swap-to-bal-sym').textContent=toToken;
   document.getElementById('swap-from-bal').textContent=fmt(getWalletBal(fromToken),4);
-  document.getElementById('swap-to-bal').textContent=fmt(getWalletBal(toToken),4);
+  document.getElementById('swap-to-bal').textContent=fmt(getWalletBal(toToken),2);
 }
 function calcSwap(){
   const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
   if(amt<=0){document.getElementById('swap-from-usd').textContent='$0.00';document.getElementById('swap-to-amt').value='';document.getElementById('swap-to-usd').textContent='$0.00';updateSwapBals();return;}
   const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0;
   document.getElementById('swap-from-usd').textContent=fmtUSD(usd);
-  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,toToken==='USDC'?2:6):'';
+  document.getElementById('swap-to-amt').value=toAmt>0?fmt(toAmt,toToken=='USDC'?2:4):'';
   document.getElementById('swap-to-usd').textContent=fmtUSD(usd);
   updateSwapBals();
 }
 function cycleFromToken(){fromIdx=(fromIdx+1)%tokenCycle.length;fromToken=tokenCycle[fromIdx];document.getElementById('from-sym').textContent=fromToken;document.getElementById('from-dot').style.background=tokenColors[fromToken];calcSwap();}
 function cycleToToken(){toIdx=(toIdx+1)%toTokenCycle.length;toToken=toTokenCycle[toIdx];document.getElementById('to-sym').textContent=toToken;document.getElementById('to-dot').style.background=tokenColors[toToken];calcSwap();}
-function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken];document.getElementById('to-dot').style.background=tokenColors[toToken];calcSwap();showToast('Tokens flipped');}
+function flipTokens(){[fromToken,toToken]=[toToken,fromToken];document.getElementById('from-sym').textContent=fromToken;document.getElementById('to-sym').textContent=toToken;document.getElementById('from-dot').style.background=tokenColors[fromToken];document.getElementById('to-dot').style.background=tokenColors[toToken];calcSwap();}
 
 function doSwap(){
-  if(!connectedWallet.address){showResult('swap-result','err','⚠ Connect wallet first!');return;}
+  if(!isWalletConnected){showResult('swap-result','err','⚠ Hubungkan node dompet Sepolia terlebih dahulu!');return;}
   const amt=parseFloat(document.getElementById('swap-from-amt').value)||0;
-  if(amt<=0){showResult('swap-result','err','⚠ Enter an amount to swap');return;}
-  if(amt>getWalletBal(fromToken)){showResult('swap-result','err','⚠ Insufficient '+fromToken+' balance');return;}
-  showResult('swap-result','load','Signing cryptography routing vectors…');
-  document.getElementById('swap-btn').disabled=true;
+  if(amt>getWalletBal(fromToken)){showResult('swap-result','err','⚠ Melebihi jumlah saldo '+fromToken+' yang tersedia.');return;}
+  showResult('swap-result','load','Membuat payload transaksi Sepolia Testnet…');
   setTimeout(async ()=>{
-    const fp=getPrice(fromToken),tp=getPrice(toToken),usd=amt*fp,toAmt=tp>0?usd/tp:0;
-    if(fromToken==='ETH')walletInternalState.eth-=amt;else if(fromToken==='USDC')walletInternalState.usdc-=amt;
-    if(toToken==='USDC')walletInternalState.usdc+=toAmt*.997;else if(toToken==='ETH')walletInternalState.eth+=toAmt*.997;
-    
-    // Sinkronisasi ulang data saldo dompet asli ke chain jika bukan demo
-    if(!connectedWallet.isDemo) await queryRealtimeWeb3Balance();
-    
-    const txh=randHex(),toFmt=fmt(toAmt*.997,toToken==='USDC'?2:6);
-    swapHistory.unshift({tx:txh,from:fmt(amt,4)+' '+fromToken,to:toFmt+' '+toToken,rate:'1 '+fromToken+' = '+fmt(fp/tp,4)+' '+toToken,status:'✓',time:nowTime()});
-    updateWalletBar();buildSwapHistory();
-    showResult('swap-result','ok','✓ Transaction broadcasted successfully.\n'+fmt(amt,4)+' '+fromToken+' → '+toFmt+' '+toToken+'\nTx: '+txh);
-    document.getElementById('swap-btn').disabled=false; document.getElementById('swap-from-amt').value=''; calcSwap();
-    showToast('✓ Swap complete!');
-  },1800);
-}
-function buildSwapHistory(){
-  const tb=document.getElementById('swap-history'),empty=document.getElementById('swap-hist-empty');if(!tb)return;
-  if(!swapHistory.length){tb.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  tb.innerHTML=swapHistory.slice(0,8).map(h=>`<tr><td class="td-c" style="font-size:.7rem">${h.tx}</td><td>${h.from}</td><td class="td-g">${h.to}</td><td style="color:var(--muted);font-size:.7rem">${h.rate}</td><td class="td-g">${h.status}</td><td style="color:var(--muted)">${h.time}</td></tr>`).join('');
+    if(fromToken==='ETH'){walletInternalState.eth-=amt; walletInternalState.usdc+=amt*prices.eth;}
+    else if(fromToken==='USDC'){walletInternalState.usdc-=amt; walletInternalState.eth+=amt/prices.eth;}
+    if(!connectedWallet.isDemo) await querySepoliaRealtimeBalance();
+    showResult('swap-result','ok','✓ Mock Transaksi Berhasil disimulasikan di Sepolia Layer.');
+    document.getElementById('swap-from-amt').value=''; calcSwap();
+  },1500);
 }
 
-// ═══ BRIDGE ═══
-function cycleBridgeFrom(){bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;if(bridgeFromIdx===bridgeToIdx)bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;const c=bridgeChains[bridgeFromIdx];document.getElementById('bridge-from-name').textContent=c.name;document.getElementById('bridge-from-icon').textContent=c.icon;calcBridge();}
-function cycleBridgeTo(){bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;if(bridgeToIdx===bridgeFromIdx)bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;const c=bridgeChains[bridgeToIdx];document.getElementById('bridge-to-name').textContent=c.name;document.getElementById('bridge-to-icon').textContent=c.icon;calcBridge();}
-function bridgeMax(){document.getElementById('bridge-amt').value=fmt(walletInternalState.eth,6);calcBridge();}
-function calcBridge(){
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0,fee=amt*.0005,receive=amt-fee,gasEst=gasPrice*21000/1e9;
-  document.getElementById('bridge-fee').textContent=fmtUSD(fee*prices.eth)+' (0.05%)';
-  document.getElementById('bridge-receive').textContent=fmt(receive,6)+' ETH';
-  document.getElementById('bridge-gas').textContent=fmt(gasEst,6)+' ETH (≈'+fmtUSD(gasEst*prices.eth)+')';
-  document.getElementById('bridge-eth-bal').textContent=fmt(walletInternalState.eth,4);
-  document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD(amt*prices.eth);
-}
-function doBridge(){
-  if(!connectedWallet.address){showResult('bridge-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('bridge-amt').value)||0;
-  if(amt<=0){showResult('bridge-result','err','⚠ Enter an amount');return;}
-  if(amt>walletInternalState.eth){showResult('bridge-result','err','⚠ Insufficient ETH');return;}
-  const toChain=bridgeChains[bridgeToIdx].name;
-  showResult('bridge-result','load','Initiating cross-chain relay structure to '+toChain+'…');
-  document.getElementById('bridge-btn').disabled=true;
-  setTimeout(async ()=>{
-    const receive=amt*.9995;walletInternalState.eth-=amt;
-    if(!connectedWallet.isDemo) await queryRealtimeWeb3Balance();
-    bridgeFeedData.unshift({from:bridgeChains[bridgeFromIdx].name,to:toChain,amt:fmt(receive,4)+' ETH',st:'✓',t:nowTime()});
-    updateWalletBar();calcBridge();buildBridgeFeed();
-    showResult('bridge-result','ok','✓ Bridge contract deployed.\nRelayed: '+fmt(receive,4)+' ETH to '+toChain);
-    document.getElementById('bridge-btn').disabled=false;document.getElementById('bridge-amt').value='';
-    showToast('✓ Bridge complete!');
-  },2200);
-}
-function buildBridgeFeed(){
-  const defaults=[{from:'Ethereum',to:'Polygon',amt:'2.4 ETH',st:'✓',t:'2m ago'},{from:'Arbitrum',to:'Base',amt:'0.8 ETH',st:'✓',t:'5m ago'}];
-  const all=[...bridgeFeedData,...defaults].slice(0,8);
-  const tb=document.getElementById('bridge-feed');if(!tb)return;
-  tb.innerHTML=all.map(b=>`<tr><td>${b.from}</td><td>${b.to}</td><td class="td-c">${b.amt}</td><td class="${b.st==='✓'?'td-g':'td-gold'}">${b.st}</td><td style="color:var(--muted)">${b.t}</td></tr>`).join('');
-}
+function bridgeMax(){ document.getElementById('bridge-amt').value=fmt(walletInternalState.eth,6); calcBridge(); }
+function calcBridge(){ document.getElementById('bridge-usd-val').textContent='≈ '+fmtUSD((parseFloat(document.getElementById('bridge-amt').value)||0)*prices.eth); }
+function doBridge(){ if(!isWalletConnected)return; showResult('bridge-result','ok','✓ Kontrak Bridge Sepolia Berhasil dipicu.'); }
+function calcStake(){ document.getElementById('stake-reth-preview').textContent=fmt((parseFloat(document.getElementById('stake-amt').value)||0)/1.03,4); }
+function doStake(){ if(!isWalletConnected)return; walletInternalState.reth+=(parseFloat(document.getElementById('stake-amt').value)||0)/1.03; walletInternalState.eth-=(parseFloat(document.getElementById('stake-amt').value)||0); updateWalletBar(); showResult('stake-result','ok','✓ Berhasil staking ke validator Sepolia.'); }
+function calcLiq(){}
+function doLiquidity(){ if(!isWalletConnected)return; showResult('liq-result','ok','✓ LP Supply ditambahkan.'); }
 
-// ═══ STAKE ═══
-function selectPool(el){
-  document.querySelectorAll('.pool-row').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');
-  selectedPoolApy=parseFloat(el.dataset.apy);selectedPoolName=el.querySelector('.pname').textContent;
-  calcStake();
-}
-function stakeMax(btnEl,pct){
-  document.querySelectorAll('.pct-btn').forEach(b=>b.classList.remove('pact'));if(btnEl)btnEl.classList.add('pact');
-  document.getElementById('stake-amt').value=fmt(walletInternalState.eth*pct/100,6);calcStake();
-}
-function calcStake(){
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  document.getElementById('stake-reth-preview').textContent=fmt(amt/1.03,4);
-  document.getElementById('stake-annual-preview').textContent=fmt(amt*selectedPoolApy,4);
-}
-function doStake(){
-  if(!connectedWallet.address){showResult('stake-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('stake-amt').value)||0;
-  if(amt<=0){showResult('stake-result','err','⚠ Enter staking amount');return;}
-  if(amt>walletInternalState.eth){showResult('stake-result','err','⚠ Insufficient ETH');return;}
-  showResult('stake-result','load','Depositing ETH into smart-vault layer…');
-  document.getElementById('stake-btn').disabled=true;
-  setTimeout(async ()=>{
-    const rethAmt=amt/1.03;walletInternalState.eth-=amt;walletInternalState.reth+=rethAmt;walletInternalState.stakedEth+=amt;
-    if(!connectedWallet.isDemo) await queryRealtimeWeb3Balance();
-    stakeHistory.unshift({tx:randHex(),amt:fmt(amt,4)+' ETH',pool:selectedPoolName,reth:fmt(rethAmt,4),t:nowTime()});
-    updateWalletBar();calcStake();updateStakeTable();buildStakeHistory();
-    showResult('stake-result','ok','✓ Liquid Staking completed.\nPool: '+selectedPoolName);
-    document.getElementById('stake-btn').disabled=false;document.getElementById('stake-amt').value='';
-  },2000);
-}
-function updateStakeTable(){
-  const pools=[{name:'ETH Liquid Pool',apy:'8.4%',tvl:'$420M',val:420,v:13205},{name:'Diversified Vault',apy:'6.2%',tvl:'$218M',val:218,v:6821}];
-  const tb=document.getElementById('stake-table');if(!tb)return;
-  tb.innerHTML=pools.map((p,i)=>{const myShare=i===0&&walletInternalState.stakedEth>0?(walletInternalState.stakedEth/p.val*100).toFixed(4)+'%':'0.0000%';return`<tr><td>${p.name}</td><td class="td-g">${p.apy}</td><td class="td-c">${p.tvl}</td><td style="color:var(--muted)">${p.v.toLocaleString()}</td><td class="td-gold">${myShare}</td></tr>`;}).join('');
-}
-function buildStakeHistory(){
-  const tb=document.getElementById('stake-history');if(!tb)return;
-  document.getElementById('stake-hist-empty').style.display=stakeHistory.length?'none':'block';
-  tb.innerHTML=stakeHistory.map(h=>`<tr><td class="td-c">${h.tx}</td><td>${h.amt}</td><td>${h.pool}</td><td class="td-gold">${h.reth}</td><td style="color:var(--muted)">${h.t}</td></tr>`).join('');
-}
-
-// ═══ LIQUIDITY ═══
-function calcLiq(){
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0,pair=document.getElementById('liq-pair-sel').value;
-  let paired=pair==='ETH/MATIC'?amt*(prices.eth/prices.matic):amt*prices.eth;
-  document.getElementById('liq-paired-amt').textContent=fmt(paired,2)+' '+(pair==='ETH/MATIC'?'MATIC':'USDC');
-  document.getElementById('liq-lp-tokens').textContent=fmt(amt*10.24,4)+' LP';
-}
-function doLiquidity(){
-  if(!connectedWallet.address){showResult('liq-result','err','⚠ Connect wallet first!');return;}
-  const amt=parseFloat(document.getElementById('liq-amt').value)||0;
-  if(amt<=0){showResult('liq-result','err','⚠ Enter parameter limits');return;}
-  if(amt>walletInternalState.eth){showResult('liq-result','err','⚠ Insufficient funding balance');return;}
-  showResult('liq-result','load','Injecting market liquidity to framework pairs…');
-  setTimeout(async ()=>{
-    walletInternalState.eth-=amt; if(!connectedWallet.isDemo) await queryRealtimeWeb3Balance();
-    liqPositions.push({pair:document.getElementById('liq-pair-sel').value,lp:fmt(amt*10.24,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,4)+' ETH'});
-    updateWalletBar();calcLiq();buildLiqPositions();
-    showResult('liq-result','ok','✓ LP position registered.');
-    document.getElementById('liq-btn').disabled=false;document.getElementById('liq-amt').value='';
-  },1900);
-}
-function buildLiqPositions(){
-  const tb=document.getElementById('liq-positions');if(!tb)return;
-  document.getElementById('liq-pos-empty').style.display=liqPositions.length?'none':'block';
-  tb.innerHTML=liqPositions.map(p=>`<tr><td>${p.pair}</td><td class="td-gold">${p.lp}</td><td class="td-c">${p.val}</td><td class="td-g">${p.fees}</td></tr>`).join('');
-}
-
-// ═══ CHARTS DATA ═══
+// ── CHARTS INTERACTION ──
 function buildLiqChart(){
-  const el=document.getElementById('liq-chart');if(!el)return;
+  const el=document.getElementById('liq-chart'); if(!el)return;
   if(liqChartObj)liqChartObj.destroy();
-  liqChartObj=new Chart(el,{type:'bar',data:{labels:['M','T','W','T','F','S','S'],datasets:[{data:[62,45,78,55,88,40,95],backgroundColor:'rgba(6,182,212,.35)',borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,.3)'},grid:{display:false}},y:{ticks:{color:'rgba(255,255,255,.3)'},grid:{display:false}}}}});
+  liqChartObj=new Chart(el,{type:'bar',data:{labels:['M','T','W','T','F','S','S'],datasets:[{data:[12,15,8,22,31,14,45],backgroundColor:'rgba(6,182,212,.35)'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
 }
 function buildGasChart(){
-  const el=document.getElementById('gas-chart');if(!el)return;
+  const el=document.getElementById('gas-chart'); if(!el)return;
   if(gasChartObj)gasChartObj.destroy();
-  gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map((_,i)=>i+'h'),datasets:[{data:gasHistory,backgroundColor:'rgba(6,182,212,.3)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}});
-}
-function updateGasUI(){
-  document.getElementById('gas-display').textContent=gasPrice;
-  document.getElementById('gas-slow').textContent=Math.max(1,gasPrice-3);
-  document.getElementById('gas-avg').textContent=gasPrice;
-  document.getElementById('gas-fast').textContent=gasPrice+4;
-  gasHistory.push(gasPrice);if(gasHistory.length>24)gasHistory.shift();
-  if(gasChartObj){gasChartObj.data.datasets[0].data=gasHistory; gasChartObj.update('none');}
+  gasChartObj=new Chart(el,{type:'bar',data:{labels:gasHistory.map((_,i)=>i+'h'),datasets:[{data:gasHistory,backgroundColor:'rgba(6,182,212,.3)'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}});
 }
 
-// ── TOAST DISP ──
-let toastTimer=null;
+const fmt=(n,d=4)=>Number(n).toFixed(d);
+const fmtUSD=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2});
 function showToast(msg){
   let t=document.querySelector('.nexus-toast'); if(!t){t=document.createElement('div');t.className='nexus-toast';document.body.appendChild(t);}
-  t.textContent=msg;t.style.opacity='1'; clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.opacity='0',2600);
+  t.textContent=msg;t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2600);
 }
 function showResult(id,type,msg){
   const el=document.getElementById(id);if(!el)return; el.className='result-box result-'+type;
   if(type==='load'){el.innerHTML='<div class="spinner"></div>'+msg;el.style.display='flex';}else{el.innerHTML=msg;el.style.display='block';}
 }
 
-// ── LIVE NETWORK TPS FEEDS ──
-function updateNetTPS(){
-  const nets=[['eth',[14,22]],['pol',[200,380]],['opt',[8,18]],['arb',[14,28]],['bas',[10,22]],['sol',[3000,4500]]];
-  nets.forEach(n=>{
-    const tps=(n[1][0]+Math.random()*(n[1][1]-n[1][0])).toFixed(1)+' TPS';
-    const nt=document.getElementById('nt-'+n[0]),bt=document.getElementById('bt-'+n[0]);
-    if(nt)nt.textContent=tps; if(bt)bt.textContent=tps;
-  });
-}
-
-// ── CORE INITIALIZATION ──
 window.addEventListener('DOMContentLoaded',()=>{
-  restoreSession(); fetchPrices(); updateStakeTable(); buildSwapHistory(); buildStakeHistory(); buildLiqPositions(); buildBridgeFeed(); updateNetTPS();
-  setTimeout(()=>{buildGasChart();buildLiqChart();},600);
-  
-  setInterval(fetchPrices,30000);
-  setInterval(()=>{gasPrice=Math.max(8,Math.round(gasPrice+(Math.random()-.5)*4));updateGasUI();calcSwap();},8000);
-  setInterval(updateNetTPS,4000);
-  
-  // REALTIME REFLECTION: Sinkronisasi ulang saldo dompet asli Web3 secara berkala (tiap 6 detik)
-  setInterval(async ()=>{ if(isWalletConnected && !connectedWallet.isDemo) await queryRealtimeWeb3Balance(); },6000);
-
-  // Live Activity feed generation
-  const el=document.getElementById('live-feed');
-  if(el){
-    setInterval(()=>{
-      const act=feedActs[Math.floor(Math.random()*feedActs.length)];
-      el.innerHTML=`<div class="feed-item"><div class="fd-dot" style="background:${act.c}"></div><div class="fd-action"><span style="color:${act.c}; font-size:10px; margin-right:5px;">${act.t}</span>${randAddr()} processed</div><div class="fd-amt" style="color:${act.c}">$${(Math.random()*2400).toFixed(2)}</div></div>` + el.innerHTML;
-    },4000);
-  }
-  // Setup click listener untuk navbar button pertama kali
+  fetchPrices(); setInterval(fetchPrices,25000);
+  // Sinkronisasi background interval untuk update konstan saldo Sepolia asli dompet (tiap 5 detik)
+  setInterval(async ()=>{ if(isWalletConnected && !connectedWallet.isDemo) await querySepoliaRealtimeBalance(); },5000);
   document.getElementById('nav-wallet-btn').onclick = openWalletModal;
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
 });
 </script>
 </body>
