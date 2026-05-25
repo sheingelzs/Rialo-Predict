@@ -724,7 +724,7 @@ footer{
 <div id="cursor-trail"></div>
 
 <div id="intro-overlay">
-  <video id="intro-video" autoplay muted playsinline>
+  <video id="intro-video" muted playsinline>
     <source src="https://raw.githubusercontent.com/sheingelzs/Rialo-Alpha-Core/main/videos/logo.mp4" type="video/mp4">
   </video>
   <button class="skip-intro-btn" id="skip-intro">SKIP INTRO ➔</button>
@@ -897,19 +897,47 @@ const skipBtn = document.getElementById('skip-intro');
 const mainWrapper = document.getElementById('main-wrapper');
 const topNav = document.getElementById('top-nav');
 
-// AUTO TRIGGER MAIN SITE (Langsung memutar video intro saat dimuat)
+// Flag kontrol transisi agar tidak terpanggil ganda
+let isMainSiteInitiated = false;
+
+// AUTO TRIGGER MAIN SITE dengan Penanganan Masalah Autoplay Modern
 window.addEventListener('DOMContentLoaded', () => {
-  introVideo.play().catch(err => {
-    console.log("Autoplay didorong browser ke mode fallback.");
-    initiateMainSite();
-  });
+  // Maksimalkan status muting di level properti engine video sebelum diputar
+  introVideo.muted = true;
+  introVideo.defaultMuted = true;
+  introVideo.load();
+
+  const playPromise = introVideo.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      console.log("Intro video diputar dengan sukses.");
+    }).catch(err => {
+      console.warn("Autoplay diblokir browser. Menyediakan sistem fallback klik manual.");
+      
+      // Mengubah teks petunjuk pada tombol skip agar lebih interaktif
+      skipBtn.innerHTML = "ENTER TERMINAL ➔";
+      
+      // Jika diblokir, buat seluruh overlay menjadi tombol klik untuk masuk
+      introOverlay.addEventListener('click', () => {
+        // Coba putar lagi, jika masih gagal langsung bypass transisi ke main site
+        introVideo.play().then(() => {
+          // Putar sebentar jika diinginkan, atau langsung panggil transisi
+          initiateMainSite();
+        }).catch(() => {
+          initiateMainSite();
+        });
+      }, { once: true });
+    });
+  }
 });
 
 // CINEMATIC TRANSITIONS KETIKA INTRO SELESAI / DI-SKIP
 function initiateMainSite() {
-  if (mainWrapper.style.visibility === 'visible') return;
+  if (isMainSiteInitiated) return;
+  isMainSiteInitiated = true;
 
-  // Memastikan scrollbar body langsung aktif kembali di situs utama
+  // Mengaktifkan kembali scrollbar halaman utama
   document.body.style.overflowY = 'auto';
 
   const exitTl = gsap.timeline({
@@ -919,10 +947,10 @@ function initiateMainSite() {
   });
 
   exitTl.to(introOverlay, {
-    scale: 1.1,
-    filter: "blur(20px)",
+    scale: 1.05,
+    filter: "blur(15px)",
     opacity: 0,
-    duration: 0.9,
+    duration: 0.8,
     ease: "power3.inOut"
   });
 
@@ -933,11 +961,12 @@ function initiateMainSite() {
     opacity: 1,
     duration: 0.5,
     onComplete: startHomeAnimations
-  }, "-=0.6");
+  }, "-=0.5");
 }
 
 introVideo.addEventListener('ended', initiateMainSite);
-skipBtn.addEventListener('click', () => {
+skipBtn.addEventListener('click', (e) => {
+  e.stopPropagation(); // Stop bubbling ke handler click overlay
   introVideo.pause();
   initiateMainSite();
 });
@@ -984,7 +1013,7 @@ document.addEventListener('mousemove', function(e) {
 })();
 
 function animateHeroParallax() {
-  if (window.innerWidth > 968 && heroContent && mainWrapper.style.visibility === 'visible') {
+  if (window.innerWidth > 968 && heroContent && isMainSiteInitiated) {
     currentMouseX += (targetMouseX - currentMouseX) * 0.08;
     currentMouseY += (targetMouseY - currentMouseY) * 0.08;
     heroContent.style.transform = `rotateY(${12 - currentMouseX}deg) rotateX(${4 + currentMouseY}deg)`;
@@ -1046,7 +1075,7 @@ for (var i = 0; i < 50; i++) {
     r:Math.random()*1.5+0.5, c:Math.random()>0.5?'124,58,237':'6,182,212' });
 }
 (function drawParticles() {
-  if (mainWrapper.style.visibility === 'visible') {
+  if (isMainSiteInitiated) {
     pctx.clearRect(0,0,pcanvas.width,pcanvas.height);
     pts.forEach(function(p) {
       p.x+=p.vx; p.y+=p.vy;
@@ -1089,7 +1118,6 @@ window.addEventListener('load', () => {
 // INTRO TIMELINE ANIMATION AFTER ENTRANCE
 function startHomeAnimations() {
   const introTl = gsap.timeline();
-  // FORCE FIX: Memastikan navbar terlihat penuh dan tergeser kembali ke posisi normal (y: 0)
   introTl.to(topNav, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
   introTl.fromTo(".hero-content",
     { opacity: 0, transform: "rotateY(30deg) rotateX(15deg) translateZ(-150px)" },
@@ -1103,14 +1131,13 @@ function startHomeAnimations() {
   );
 }
 
-// FALLBACK SAFETY: Jika GSAP atau video gagal memicu animasi, paksa navbar menyala dalam 2 detik
+// FALLBACK SAFETY: Perlindungan total jika loading video macet/lambat (Timeout dinaikkan ke 6 detik)
 setTimeout(() => {
-  if (mainWrapper.style.visibility !== 'visible') {
+  if (!isMainSiteInitiated) {
+    console.log("Bypass paksa dipicu oleh Safety Fallback Timeout.");
     initiateMainSite();
-  } else {
-    gsap.to(topNav, { opacity: 1, y: 0, duration: 0.5 });
   }
-}, 2000);
+}, 6000);
 
 // SCROLL ANIMATIONS ENGINE
 gsap.utils.toArray('.slide-left-card').forEach(card => {
@@ -1178,7 +1205,7 @@ document.querySelectorAll('.char-card').forEach(function(card) {
   });
 });
 
-// FIX: Nav link scroll handler
+// Nav link scroll handler
 document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(link) {
   link.addEventListener('click', function(e) {
     e.preventDefault();
