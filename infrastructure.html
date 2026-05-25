@@ -46,7 +46,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 #nav-wallet-label{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* WALLET MODAL */
-#wallet-modal-ovl{position:fixed;inset:0;z-index:10000;background:rgba(5,0,16,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .35s;}
+#wallet-modal-ovl{position fixed;inset:0;z-index:10000;background:rgba(5,0,16,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .35s;}
 #wallet-modal-ovl.show{display:flex;}
 #wallet-modal-ovl.open{opacity:1;}
 .wm-box{background:var(--dark3);border:1px solid rgba(124,58,237,.35);width:min(440px,94vw);position:relative;overflow:hidden;transform:translateY(24px) scale(.97);transition:transform .35s;}
@@ -149,7 +149,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .tab-btn.active{background:rgba(124,58,237,.15);color:#fff;border:1px solid rgba(124,58,237,.35);text-shadow:0 0 10px rgba(124,58,237,.5);}
 .tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 
-/* PANELS CONTAINER */
 .panel{display:none;opacity:0;transform:translateY(15px);will-change:opacity,transform;}
 .panel.active{display:block;}
 
@@ -783,7 +782,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // ── UTILS ──
-function fmt(n, d) { return isNaN(n) ? '0' : parseFloat(n).toFixed(d !== undefined ? d : 4); }
+function fmt(n, d) { return isNaN(n) ? '0.0000' : parseFloat(n).toFixed(d !== undefined ? d : 4); }
 function fmtUSD(n) { return isNaN(n) ? '$0.00' : '$' + parseFloat(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function randHex() { let h = '0x'; for(let i=0;i<12;i++) h+=Math.floor(Math.random()*16).toString(16); return h + '…' + Math.floor(Math.random()*0xffff).toString(16).padStart(4,'0'); }
 function randAddr() { let h = '0x'; for(let i=0;i<6;i++) h+=Math.floor(Math.random()*16).toString(16); return h+'…'+Array.from({length:4},()=>Math.floor(Math.random()*16).toString(16)).join(''); }
@@ -863,7 +862,7 @@ let isWalletConnected = false;
 let connectedWallet = { address:null, shortAddr:null, providerName:null, chainId:null, provider:null, isDemo:false };
 let walletState = { eth:0, usdc:0, reth:0, stakedEth:0 };
 
-// Variabel penampung offset akumulasi nilai transaksi loopback lokal
+// Akumulasi penyimpanan offset lokal agar tidak ter-overwrite oleh polling RPC murni
 let mockBalancesOffset = { usdc: 0, stakedEth: 0 };
 let faucetUsed = false;
 let swapHistory = [], stakeHistory = [], liqPositions = [], bridgeFeedData = [];
@@ -1124,50 +1123,71 @@ async function executeLoopbackTx(amountInEth, loadingElementId) {
   return receipt;
 }
 
-// ── DATA FEEDS & PRICES ──
+// ═══════════════════════════════════════════
+// ── DATA FEEDS REALTIME (CRYPTOCOMPARE) ──
+// ═══════════════════════════════════════════
 let prices = { eth:3248, btc:67420, sol:148.3, matic:0.88 };
 let gasPrice = 18;
 let gasHistory = Array.from({length:24}, () => 12 + Math.random()*20);
 let liqChartObj = null, gasChartObj = null;
 
+// FIX UTAMA: Mengalihkan feed data menggunakan endpoint publik CryptoCompare agar anti rate-limit
 function fetchPrices() {
-  fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana,matic-network&vs_currencies=usd&include_24hr_change=true')
+  fetch('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH,BTC,SOL,MATIC&tsyms=USD')
     .then(r => r.json())
-    .then(d => {
-      if(d.ethereum) prices.eth = d.ethereum.usd;
-      if(d.bitcoin) prices.btc = d.bitcoin.usd;
-      if(d.solana) prices.sol = d.solana.usd;
-      if(d['matic-network']) prices.matic = d['matic-network'].usd;
-      updateTickerUI(d); updatePriceTable(d); calcSwap(); updateWalletBar(); calculateMetrics();
+    .then(res => {
+      const data = res.RAW;
+      if(data) {
+        if(data.ETH) prices.eth = data.ETH.USD.PRICE || 3248;
+        if(data.BTC) prices.btc = data.BTC.USD.PRICE || 67420;
+        if(data.SOL) prices.sol = data.SOL.USD.PRICE || 148.3;
+        if(data.MATIC) prices.matic = data.MATIC.USD.PRICE || 0.88;
+      }
+      updateTickerUI(res.DISPLAY); 
+      updatePriceTable(res.DISPLAY); 
+      calcSwap(); 
+      updateWalletBar(); 
+      calculateMetrics();
       const el = document.getElementById('price-update-time'); if(el) el.textContent = nowTime();
-    }).catch(() => { updateTickerUI({}); updatePriceTable({}); });
+    }).catch((err) => { 
+      console.warn("API Error, utilizing hardcoded backups:", err);
+      updateTickerUI(null); 
+      updatePriceTable(null); 
+    });
 }
 
-function updateTickerUI(d) {
+function updateTickerUI(displayData) {
   const items = [
-    { pid:'tp-eth', cid:'tc-eth', p:prices.eth, key:'ethereum' },
-    { pid:'tp-btc', cid:'tc-btc', p:prices.btc, key:'bitcoin' },
-    { pid:'tp-sol', cid:'tc-sol', p:prices.sol, key:'solana' }
+    { pid:'tp-eth', cid:'tc-eth', p:prices.eth, key:'ETH' },
+    { pid:'tp-btc', cid:'tc-btc', p:prices.btc, key:'BTC' },
+    { pid:'tp-sol', cid:'tc-sol', p:prices.sol, key:'SOL' }
   ];
   items.forEach(m => {
     const pe = document.getElementById(m.pid), ce = document.getElementById(m.cid);
-    if(pe) pe.textContent = '$' + m.p.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    const chg = d[m.key] ? d[m.key].usd_24h_change : 0;
+    if(pe) pe.textContent = '$' + (m.p || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    
+    let chg = 0;
+    if(displayData && displayData[m.key] && displayData[m.key].USD) {
+      chg = parseFloat(displayData[m.key].USD.CHANGEPCT24HOUR) || 0;
+    }
     if(ce) { ce.textContent = (chg > 0 ? '+' : '') + chg.toFixed(2) + '%'; ce.className = 'tick-chg ' + (chg >= 0 ? 'up' : 'dn'); }
   });
   const gasEl = document.getElementById('tp-gas'); if(gasEl) gasEl.textContent = gasPrice;
 }
 
-function updatePriceTable(d) {
+function updatePriceTable(displayData) {
   const assets = [
-    { sym:'Sepolia ETH', p:prices.eth, key:'ethereum', vol:'$14.2M', col:'#6f7cff' },
-    { sym:'wBTC Sepolia', p:prices.btc, key:'bitcoin', vol:'$2.1M', col:'#f7931a' },
+    { sym:'Sepolia ETH', p:prices.eth, key:'ETH', vol:'$14.2M', col:'#6f7cff' },
+    { sym:'wBTC Sepolia', p:prices.btc, key:'BTC', vol:'$2.1M', col:'#f7931a' },
     { sym:'Sepolia USDC', p:1, key:null, vol:'$38.4M', col:'#26a17b' }
   ];
   const tb = document.getElementById('price-table-body'); if(!tb) return;
   tb.innerHTML = assets.map(a => {
-    const chg = (a.key && d[a.key]) ? d[a.key].usd_24h_change : 0;
-    return `<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:${a.col};display:inline-block"></span>${a.sym}</span></td><td style="color:#fff;font-family:'Orbitron',monospace;font-weight:700">$${a.p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="${chg>=0?'td-g':'td-red'}">${chg>0?'+':''}${chg.toFixed(2)}%</td><td style="color:var(--muted)">${a.vol}</td></tr>`;
+    let chg = 0;
+    if(displayData && a.key && displayData[a.key] && displayData[a.key].USD) {
+      chg = parseFloat(displayData[a.key].USD.CHANGEPCT24HOUR) || 0;
+    }
+    return `<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:${a.col};display:inline-block"></span>${a.sym}</span></td><td style="color:#fff;font-family:'Orbitron',monospace;font-weight:700">$${(a.p || 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td class="${chg>=0?'td-g':'td-red'}">${chg>0?'+':''}${chg.toFixed(2)}%</td><td style="color:var(--muted)">${a.vol}</td></tr>`;
   }).join('');
 }
 
@@ -1235,7 +1255,7 @@ async function doSwap() {
   try {
     const receipt = await executeLoopbackTx(amt, 'swap-result');
     
-    // Akumulasi saldo offset USDC lokal agar bertambah real-time di UI
+    // Akumulasi penambahan offset ke saldo USDC visual lokal
     const calculatedUsdcReceived = amt * prices.eth * 0.995;
     mockBalancesOffset.usdc += calculatedUsdcReceived;
     
@@ -1493,7 +1513,7 @@ function calculateMetrics() {
   const el = document.getElementById('analytics-volume'); const amt = parseFloat(el ? el.value : 0) || 0;
   const usdEl = document.getElementById('analytics-usd-value'); const impEl = document.getElementById('analytics-impact'); const minEl = document.getElementById('analytics-min-received');
   if(amt <= 0) { if(usdEl) usdEl.textContent='$0.00'; if(impEl) impEl.textContent='—'; if(minEl) minEl.textContent='—'; return; }
-  const totalUsd = amt * prices.eth; if(usdEl) usdEl.textContent = fmtUSD(totalUsd);
+  const totalUsd = amt * (prices.eth || 3248); if(usdEl) usdEl.textContent = fmtUSD(totalUsd);
   if(!isWalletConnected) { if(impEl) { impEl.textContent='Hubungkan wallet untuk kalkulasi'; impEl.className='td-red'; } return; }
   const priceImpact = (amt / (10000 + amt)) * 100; const minReceived = totalUsd * (1 - priceImpact/100) * 0.995;
   if(impEl) { impEl.textContent = priceImpact.toFixed(4)+'%'; impEl.className = priceImpact > 1 ? 'td-red' : 'td-g'; }
