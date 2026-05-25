@@ -109,7 +109,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .badge-none{background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);color:var(--muted);}
 .badge-demo{background:rgba(212,168,50,.1);border:1px solid rgba(212,168,50,.3);color:var(--gold);}
 .wm-divider{height:1px;background:rgba(124,58,237,.12);margin:1rem 0;}
-.wm-section-label{font-size:.6rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;font-family:'Orbitron',monospace;}
 .wm-footer{padding:.8rem 1.6rem;font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.1em;border-top:1px solid rgba(124,58,237,.1);}
 
 /* ── SCAN OVERLAY ── */
@@ -147,7 +146,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .breadcrumb a:hover{color:var(--cyan);}
 .breadcrumb span{color:var(--cyan);}
 
-/* ── JUPITER SPLINE INTEGRATION (FIXED ITEM BACKGROUND) ── */
+/* ── JUPITER SPLINE INTEGRATION ── */
 .jupiter-wrap {
   position: absolute;
   top: 50%;
@@ -157,7 +156,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   height: 500px;
   pointer-events: none;
   z-index: 1;
-  mix-blend-mode: screen; /* Hilangkan area hitam kaku bawaan kanvas */
+  mix-blend-mode: screen;
   -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 55%, transparent 70%);
   mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 55%, transparent 70%);
   opacity: 0;
@@ -193,8 +192,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .wb-connect-prompt{padding:.45rem 1.2rem;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:var(--purple);font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 .wb-connect-prompt:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.6);color:#fff;}
 .faucet-btn{padding:.5rem 1.2rem;background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.3);color:var(--green);font-family:'Rajdhani',sans-serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
-.faucet-btn:hover{background:rgba(0,232,122,.16);border-color:rgba(0,232,122,.5);}
-.faucet-btn:disabled{opacity:.4;pointer-events:none;}
+.faucet-btn:hover:not(:disabled){background:rgba(0,232,122,.16);border-color:rgba(0,232,122,.5);}
+.faucet-btn:disabled{opacity:.25;pointer-events:none;border-color:rgba(144,163,184,0.2);color:var(--muted);}
 .disconnect-btn{padding:.45rem 1rem;background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);color:rgba(255,100,100,.7);font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;margin-left:auto;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
 .disconnect-btn:hover{background:rgba(255,68,68,.14);border-color:rgba(255,68,68,.5);color:var(--red);}
 
@@ -216,7 +215,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .tab-btn.active{background:rgba(124,58,237,.15);color:#fff;border:1px solid rgba(124,58,237,.35);text-shadow:0 0 10px rgba(124,58,237,.5);}
 .tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 
-/* PATCHED: Smooth Panel Transitions Like Video */
 .panel{
   display:none;
   opacity:0;
@@ -231,7 +229,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
 @media(max-width:768px){.grid2{grid-template-columns:1fr;}}
 
-/* ── CARDS (PATCHED FOR ADVANCED 3D PARALLAX TILT) ── */
+/* ── CARDS ── */
 .infra-card{
   background:rgba(17,0,40,.55);
   border:1px solid rgba(124,58,237,.2);
@@ -255,7 +253,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .card-corner.tl{top:0;left:0;width:16px;height:16px;border-top:2px solid var(--purple);border-left:2px solid var(--purple);}
 .card-corner.br{bottom:0;right:0;width:16px;height:16px;border-bottom:2px solid var(--purple);border-right:2px solid var(--purple);}
 
-/* Push contents to layers inside 3D space */
 .infra-card > * {
   transform:translateZ(0px);
   transition:transform 0.3s ease;
@@ -341,6 +338,333 @@ select.inp{appearance:none;}
 .s-metric{background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.12);padding:12px 14px;}
 .s-mlabel{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
 .s-mval{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;}
+.s-msub{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+/* ── GAS MONITOR ── */
+.gas-big{font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;text-align:center;margin:1rem 0 .5rem;color:var(--cyan);text-shadow:0 0 30px rgba(6,182,212,.4);}
+.gas-tiers{display:flex;gap:12px;margin-bottom:1.2rem;}
+.gtier{flex:1;text-align:center;padding:10px;background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.12);}
+.gtier-lbl{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.gtier-val{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;}
+.gtier-t{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+/* ── LIVE FEED ── */
+.feed-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(124,58,237,.08);font-size:.78rem;}
+.feed-item:last-child{border-bottom:none;}
+.fd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.fd-action{flex:1;color:var(--text);}
+.fd-chain{font-size:.65rem;color:var(--muted);white-space:nowrap;}
+.fd-amt{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;white-space:nowrap;}
+.fd-ago{font-size:.65rem;color:var(--muted);white-space:nowrap;}
+
+footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid rgba(124,58,237,.2);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
+.footer-copy{color:var(--muted);font-size:.75rem;}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── MOBILE ── */
+@media(max-width:968px){
+  body{cursor:auto !important;}
+  #cursor,#cursor-trail{display:none !important;}
+  nav{padding:1.2rem 1.5rem;}
+  .nav-links{display:none;}
+  .page-hero{padding:6rem 1.5rem 2.5rem;}
+  .container{padding:2rem 1.5rem 4rem;}
+  .jupiter-wrap{width:260px;height:260px;right:-20px;top:40%;}
+  footer{padding:1.5rem;}
+  .tab-btn{font-size:.55rem;padding:10px 4px;}
+}
+@media(max-width:480px){
+  .jupiter-wrap{display:none;}
+  .gas-big{font-size:2.5rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="infrastructure-preloader">
+  <div class="preload-spinner"></div>
+  <div class="preload-text">Syncing Core Infrastructure</div>
+</div>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<canvas id="particles-canvas"></canvas>
+<div id="nexus-toast"></div>
+
+<div id="main-site-wrapper">
+
+  <div id="wallet-modal-ovl" role="dialog" aria-modal="true" aria-label="Connect Wallet">
+    <div class="wm-box">
+      <div class="wm-header">
+        <div>
+          <div class="wm-title">Connect Wallet</div>
+          <div class="wm-sub">// Select Sepolia testnet validator</div>
+        </div>
+        <button class="wm-close" id="wm-close-btn" aria-label="Close">✕</button>
+      </div>
+      <div class="wm-body">
+        <div class="wm-section-label">Browser Wallets</div>
+        <div class="wallet-opt" id="opt-metamask" tabindex="0" role="button">
+          <div class="wo-icon" style="background:rgba(245,130,32,.12)">🦊</div>
+          <div class="wo-info"><div class="wo-name">MetaMask</div><div class="wo-desc">EVM extension infrastructure</div></div>
+          <span class="wo-badge badge-none" id="badge-metamask">Checking…</span>
+        </div>
+        <div class="wallet-opt" id="opt-rabby" tabindex="0" role="button">
+          <div class="wo-icon" style="background:rgba(117,94,255,.12)">🐰</div>
+          <div class="wo-info"><div class="wo-name">Rabby</div><div class="wo-desc">Security-focused multi-node</div></div>
+          <span class="wo-badge badge-none" id="badge-rabby">Checking…</span>
+        </div>
+        <div class="wallet-opt" id="opt-okx" tabindex="0" role="button">
+          <div class="wo-icon" style="background:rgba(255,255,255,.06)">⬛</div>
+          <div class="wo-info"><div class="wo-name">OKX Wallet</div><div class="wo-desc">Advanced multi-chain layout</div></div>
+          <span class="wo-badge badge-none" id="badge-okx">Checking…</span>
+        </div>
+        <div class="wallet-opt" id="opt-phantom" tabindex="0" role="button">
+          <div class="wo-icon" style="background:rgba(171,115,255,.12)">👻</div>
+          <div class="wo-info"><div class="wo-name">Phantom</div><div class="wo-desc">Cross-realm account sync</div></div>
+          <span class="wo-badge badge-none" id="badge-phantom">Checking…</span>
+        </div>
+        <div class="wm-divider"></div>
+        <div class="wm-section-label">No Testnet Tokens? Try Demo</div>
+        <div class="wallet-opt" id="opt-demo" tabindex="0" role="button" style="border-color:rgba(212,168,50,.2)">
+          <div class="wo-icon" style="background:rgba(212,168,50,.1)">🧪</div>
+          <div class="wo-info"><div class="wo-name">Demo Sandbox Mode</div><div class="wo-desc">Simulated Sepolia environment with preloaded gas</div></div>
+          <span class="wo-badge badge-demo">Sepolia VM</span>
+        </div>
+      </div>
+      <div class="wm-footer">Node Client Connection via JSON-RPC Protocol Layer</div>
+    </div>
+  </div>
+
+  <div id="scan-ovl">
+    <div class="scan-box">
+      <button class="scan-cancel-btn" id="scan-cancel-btn">✕ Cancel</button>
+      <div class="scan-spinner"></div>
+      <div class="scan-title">Verifying Sepolia Node</div>
+      <div class="scan-addr" id="scan-addr-disp">0x0000…0000</div>
+      <div class="scan-phase" id="scan-phase-disp">Initializing…</div>
+      <div class="scan-bar-wrap"><div class="scan-bar-fill" id="scan-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <nav id="top-nav">
+    <a href="https://rialo-alpha-core.vercel.app/" class="logo">NEXUS</a>
+    <ul class="nav-links">
+      <li><a href="https://rialo-alpha-core.vercel.app/#explore">Explore</a></li>
+      <li><a href="https://rialo-alpha-core.vercel.app/#feature">Contributor</a></li>
+      <li><a href="https://rialo-alpha-core.vercel.app/#characters">ACCOUNT X</a></li>
+      <li><a href="./infrastructure.html" class="active-link">Infrastructure</a></li>
+      <li><a href="./flashloan.html" class="flash-link">Flash Loan</a></li>
+    </ul>
+    <button id="nav-wallet-btn" aria-label="Connect Wallet">
+      <span class="nav-wallet-dot"></span>
+      <span id="nav-wallet-label">Connect Wallet</span>
+    </button>
+  </nav>
+
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="grid-bg"></div>
+max-width:500px;}
+.breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.7rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
+.breadcrumb a:hover{color:var(--cyan);}
+.breadcrumb span{color:var(--cyan);}
+
+/* ── JUPITER SPLINE INTEGRATION (FIXED ITEM BACKGROUND) ── */
+.jupiter-wrap {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%) scale(1);
+  width: 500px;
+  height: 500px;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen; /* Hilangkan area hitam kaku bawaan kanvas */
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 55%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5) 55%, transparent 70%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.jupiter-wrap iframe {
+  width: 100%;
+  height: 110%;
+  margin-top: -5%;
+  border: none;
+  background: transparent !important;
+}
+.jupiter-protection-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: transparent;
+}
+
+/* ── CONTAINER ── */
+.container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:2rem 4rem 5rem;}
+
+/* ── WALLET BAR ── */
+.wallet-bar{display:flex;align-items:center;gap:1.5rem;padding:1rem 1.5rem;background:rgba(17,0,40,.35);border:1px solid rgba(124,58,237,.2);margin-bottom:2rem;flex-wrap:wrap;position:relative;overflow:hidden;transition:border-color .4s;}
+.wallet-bar.connected-state{border-color:rgba(0,232,122,.2);}
+.wallet-bar::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);animation:wbScan 4s linear infinite;}
+@keyframes wbScan{0%{left:-100%;}100%{left:100%;}}
+.wb-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+.wb-val{font-size:1rem;font-family:'Orbitron',monospace;font-weight:700;color:var(--cyan);}
+.wb-sep{width:1px;height:30px;background:rgba(124,58,237,.3);}
+.wb-token{display:flex;flex-direction:column;gap:2px;}
+.wb-sym{font-size:.65rem;color:var(--muted);letter-spacing:.1em;}
+.wb-connect-prompt{padding:.45rem 1.2rem;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);color:var(--purple);font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.wb-connect-prompt:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.6);color:#fff;}
+.faucet-btn{padding:.5rem 1.2rem;background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.3);color:var(--green);font-family:'Rajdhani',sans-serif;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.faucet-btn:hover:not(:disabled){background:rgba(0,232,122,.16);border-color:rgba(0,232,122,.5);}
+.faucet-btn:disabled{opacity:.25;pointer-events:none;border-color:rgba(144,163,184,0.2);color:var(--muted);}
+.disconnect-btn{padding:.45rem 1rem;background:rgba(255,68,68,.06);border:1px solid rgba(255,68,68,.2);color:rgba(255,100,100,.7);font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;margin-left:auto;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.disconnect-btn:hover{background:rgba(255,68,68,.14);border-color:rgba(255,68,68,.5);color:var(--red);}
+
+/* ── TICKER ── */
+.ticker-strip{display:flex;gap:8px;margin-bottom:2rem;overflow-x:auto;padding-bottom:4px;}
+.ticker-strip::-webkit-scrollbar{height:2px;}
+.ticker-strip::-webkit-scrollbar-thumb{background:var(--purple);}
+.tick{flex-shrink:0;padding:12px 16px;background:rgba(13,0,32,.4);border:1px solid rgba(124,58,237,.2);min-width:130px;transition:border-color .3s;}
+.tick:hover{border-color:rgba(6,182,212,.4);}
+.tick-sym{font-size:.65rem;color:var(--muted);letter-spacing:.1em;margin-bottom:4px;}
+.tick-price{font-size:1.1rem;color:var(--text);font-weight:700;font-family:'Orbitron',monospace;}
+.tick-chg{font-size:.7rem;margin-top:2px;}
+.up{color:var(--green);}.dn{color:var(--red);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:livePulse 1.4s infinite;margin-right:4px;vertical-align:middle;}
+
+/* ── TABS ── */
+.tabs-wrap{display:flex;gap:4px;background:rgba(5,0,16,.6);padding:4px;border:1px solid rgba(124,58,237,.2);border-radius:3px;margin-bottom:2rem;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:100px;padding:12px 8px;background:none;border:none;font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-radius:2px;transition:all .2s;}
+.tab-btn.active{background:rgba(124,58,237,.15);color:#fff;border:1px solid rgba(124,58,237,.35);text-shadow:0 0 10px rgba(124,58,237,.5);}
+.tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
+
+.panel{
+  display:none;
+  opacity:0;
+  transform:translateY(15px);
+  will-change:opacity,transform;
+}
+.panel.active{
+  display:block;
+}
+
+/* ── GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:768px){.grid2{grid-template-columns:1fr;}}
+
+/* ── CARDS ── */
+.infra-card{
+  background:rgba(17,0,40,.55);
+  border:1px solid rgba(124,58,237,.2);
+  padding:2rem;
+  position:relative;
+  overflow:visible;
+  opacity:0;
+  transform:translateY(30px);
+  transform-style:preserve-3d;
+  perspective:1000px;
+  will-change:transform,opacity;
+  transition:border-color .4s,background-color .4s;
+}
+.infra-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none;}
+.infra-card:hover{
+  border-color:rgba(6,182,212,.45);
+  background:rgba(13,0,32,.7);
+}
+.infra-card:hover::before{opacity:1;}
+.card-corner{position:absolute;transform:translateZ(20px);}
+.card-corner.tl{top:0;left:0;width:16px;height:16px;border-top:2px solid var(--purple);border-left:2px solid var(--purple);}
+.card-corner.br{bottom:0;right:0;width:16px;height:16px;border-bottom:2px solid var(--purple);border-right:2px solid var(--purple);}
+
+.infra-card > * {
+  transform:translateZ(0px);
+  transition:transform 0.3s ease;
+}
+.infra-card:hover .card-title { transform:translateZ(40px); }
+.infra-card:hover .card-sub { transform:translateZ(30px); }
+.infra-card:hover .table-wrap { transform:translateZ(25px); }
+
+.card-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:.4rem;color:var(--text);will-change:transform;}
+.card-sub{font-size:.75rem;color:var(--pink);letter-spacing:.08em;margin-bottom:1.5rem;opacity:.8;will-change:transform;}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;border:1px solid rgba(124,58,237,.2);background:rgba(5,0,16,.3);margin-top:10px;will-change:transform;}
+.rt-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.rt-table th{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:14px 16px;border-bottom:1px solid rgba(124,58,237,.2);background:rgba(124,58,237,.12);text-align:left;white-space:nowrap;}
+.rt-table td{padding:12px 16px;border-bottom:1px solid rgba(124,58,237,.08);color:var(--text);white-space:nowrap;transition:background .2s;}
+.rt-table tr:hover td{background:rgba(124,58,237,.08);}
+.rt-table tr:last-child td{border-bottom:none;}
+.td-g{color:var(--green);}.td-c{color:var(--cyan);}.td-gold{color:var(--gold);}.td-red{color:var(--red);}
+
+/* ── INPUTS ── */
+.field{margin-bottom:1rem;}
+.field-label{font-size:.65rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;}
+.input-row{display:flex;gap:8px;align-items:stretch;}
+.inp{flex:1;background:rgba(5,0,16,.6);border:1px solid rgba(124,58,237,.25);border-radius:2px;padding:10px 14px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--purple);box-shadow:0 0 8px rgba(124,58,237,.3);}
+.inp::placeholder{color:rgba(255,255,255,.15);}
+.token-pill{display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(5,0,16,.5);border:1px solid rgba(124,58,237,.2);white-space:nowrap;transition:all .2s;font-family:'Orbitron',monospace;font-size:.7rem;color:var(--text);}
+.token-pill:hover{border-color:var(--purple);color:var(--purple);}
+.tdot{width:8px;height:8px;border-radius:50%;}
+select.inp{appearance:none;}
+
+/* ── BUTTONS ── */
+.btn-main{width:100%;margin-top:1rem;padding:14px;border:none;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .3s;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);}
+.btn-cyan{background:var(--cyan);color:var(--dark);}
+.btn-cyan:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 0 12px rgba(6,182,212,.4);}
+.btn-green{background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.35);color:var(--green);}
+.btn-green:hover{background:rgba(0,232,122,.2);}
+.btn-gold{background:rgba(212,168,50,.12);border:1px solid rgba(212,168,50,.35);color:var(--gold);}
+.btn-gold:hover{background:rgba(212,168,50,.2);}
+.btn-purple{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;}
+.btn-purple:hover{opacity:.85;box-shadow:0 0 15px rgba(236,72,153,.35);}
+.btn-main:disabled{opacity:.38;pointer-events:none;}
+
+/* ── RESULT BOX ── */
+.result-box{margin-top:.8rem;padding:10px 14px;font-size:.8rem;line-height:1.8;display:none;font-family:'Orbitron',monospace;white-space:pre-wrap;}
+.result-ok{background:rgba(0,232,122,.05);border:1px solid rgba(0,232,122,.25);color:var(--green);}
+.result-err{background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.25);color:var(--red);}
+.result-load{background:rgba(124,58,237,.05);border:1px solid rgba(124,58,237,.25);color:#fff;display:flex!important;align-items:center;gap:8px;}
+.spinner{width:12px;height:12px;flex-shrink:0;border:1.5px solid rgba(124,58,237,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
+
+/* ── SWAP ── */
+.swap-div{display:flex;justify-content:center;margin:6px 0;}
+.flip-btn{width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.08);border:1px solid var(--pink);color:var(--pink);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .3s;}
+.flip-btn:hover{background:rgba(236,72,153,.15);transform:rotate(180deg);}
+
+/* ── POOL ── */
+.pool-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem;}
+.pool-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.12);transition:all .2s;}
+.pool-row:hover,.pool-row.selected{border-color:var(--purple);background:rgba(124,58,237,.06);}
+.pdot{width:8px;height:8px;border-radius:50%;}
+.pname{flex:1;font-size:.85rem;font-weight:600;}
+.papy{font-size:.65rem;color:var(--green);padding:2px 8px;background:rgba(0,232,122,.07);border:1px solid rgba(0,232,122,.2);}
+.ptvl{font-size:.65rem;color:var(--muted);width:65px;text-align:right;}
+
+/* ── PCT BTN ── */
+.pct-row{display:flex;gap:4px;margin:.6rem 0;}
+.pct-btn{flex:1;padding:7px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.12);color:var(--muted);font-family:'Orbitron',monospace;font-size:.6rem;transition:all .18s;}
+.pct-btn:hover,.pct-btn.pact{background:rgba(124,58,237,.14);border-color:var(--purple);color:#fff;}
+
+/* ── BRIDGE ── */
+.chain-row{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;}
+.chain-sel{flex:1;background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.15);padding:12px 14px;display:flex;align-items:center;gap:10px;transition:border-color .2s;}
+.chain-sel:hover{border-color:var(--purple);}
+.chain-icon{font-size:1.2rem;}
+.chain-name{font-size:.85rem;font-weight:600;}
+.chain-net{font-size:.65rem;color:var(--muted);}
+.chain-arr{color:var(--pink);font-size:1.2rem;animation:arrPulse 1.8s ease infinite;}
+@keyframes arrPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+/* ── STAKE METRICS ── */
+.s-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.2rem;}
+.s-metric{background:rgba(5,0,16,.4);border:1px solid rgba(124,58,237,.12);padding:12px 14px;}
+.s-mlabel{font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.s-mval{font-family:'Orbitron',monospace;font-size:11rem;font-weight:700;}
 .s-msub{font-size:.6rem;color:var(--muted);margin-top:2px;}
 
 /* ── GAS MONITOR ── */
@@ -1357,7 +1681,7 @@ document.getElementById('liq-btn').addEventListener('click',doLiquidity);
 function doLiquidity(){
   if(!isWalletConnected){ showResult('liq-result','err','⚠ Connect wallet first!'); return; }
   var el=document.getElementById('liq-amt'); var amt=parseFloat(el?el.value:0)||0;
-  if(amt<=0){ showResult('liq-result','err','⚠ Enter liquidity token metrics.'); return; } if(amt>walletState.eth){ showResult('liq-result','err','⚠ Insufficient volume.'); return; }
+  if(amt<=0){ showResult('liq-result','err','⚠ Enter liquidity token metrics.'); return; } if(amt>walletState.eth){ showResult('liq-result','err(--)'); return; }
   showResult('liq-result','load','Providing Pool liquidity…'); var pairEl=document.getElementById('liq-pair-sel'); var pair=pairEl?pairEl.value:'ETH/MATIC';
   setTimeout(async function(){
     walletState.eth-=amt; liqPositions.push({pair:pair,lp:fmt(amt*14.82,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,4)+' ETH'}); updateWalletBar(); calcLiq(); buildLiqPositions(); showResult('liq-result','ok','✓ LP matrix verified.'); if(el) el.value=''; showToast('✓ Liquidity Supplied');
@@ -1400,4 +1724,4 @@ window.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 </body>
-</html>
+</html> rapikan kode html ini dan perbaiki bagian potongan css / javascript yang terbelah di tengah-tengah tag section page hero tadi serta masukan update fungsional web3 riel dompet blockchain tadi ya dompet digital web3 nya
