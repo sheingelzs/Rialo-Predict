@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NEXUS — Sepolia Infrastructure</title>
+<title>NEXUS-Alpha-Core</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
 <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
 <style>
@@ -525,7 +525,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
         <div class="infra-card">
           <div class="card-corner tl"></div><div class="card-corner br"></div>
           <div class="card-title">Liquid Staking Vault</div>
-          <div class="card-sub">// Lock Sepolia ETH and generate simulated yield</div>
+          <div class="card-sub" style="color:var(--cyan)">// Real Ethereum Sepolia On-Chain Staking Gateway</div>
           <div class="s-metrics">
             <div class="s-metric"><div class="s-mlabel">Your Staked</div><div class="s-mval td-c" id="user-staked">0.0000</div><div class="s-msub">ETH Locked</div></div>
             <div class="s-metric"><div class="s-mlabel">Est. Rewards/yr</div><div class="s-mval td-g" id="user-rewards">0.0000</div><div class="s-msub">ETH annual</div></div>
@@ -537,13 +537,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
               <div class="pdot" style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></div>
               <span class="pname">Sepolia Staking Pool</span>
               <span class="papy">8.4% APY</span>
-              <span class="ptvl">$14M TVL</span>
-            </div>
-            <div class="pool-row" data-apy="0.062" role="button" tabindex="0">
-              <div class="pdot" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></div>
-              <span class="pname">Sandbox Diversified Vault</span>
-              <span class="papy">6.2% APY</span>
-              <span class="ptvl">$8.2M TVL</span>
+              <span class="ptvl">ON-CHAIN</span>
             </div>
           </div>
           <div class="field-label" style="margin-top:.5rem;">Amount to Stake</div>
@@ -564,7 +558,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
           <div class="card-sub">// Live staking data matrices</div>
           <div class="table-wrap">
             <table class="rt-table">
-              <thead><tr><th>Pool</th><th>APY</th><th>TVL</th><th>Validators</th><th>My Share</th></tr></thead>
+              <thead><tr><th>Pool</th><th>APY</th><th>Status</th><th>Network</th><th>My Share</th></tr></thead>
               <tbody id="stake-table"></tbody>
             </table>
           </div>
@@ -572,7 +566,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
             <div class="card-sub">// your staking history</div>
             <div class="table-wrap" style="margin-top:.5rem">
               <table class="rt-table">
-                <thead><tr><th>Tx Hash</th><th>Amount</th><th>Pool</th><th>rETH</th><th>Time</th></tr></thead>
+                <thead><tr><th>Tx Hash</th><th>Amount</th><th>Pool</th><th>rETH Generated</th><th>Time</th></tr></thead>
                 <tbody id="stake-history"></tbody>
               </table>
             </div>
@@ -701,6 +695,17 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
 'use strict';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// ═══════════════════════════════════════════
+// ── SMART CONTRACT CONFIGURATION ──
+// ═══════════════════════════════════════════
+// MASUKKAN ALAMAT CONTRACT SEPOLIA HASIL DEPLOY ANDA DISINI:
+const STAKING_CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"; 
+const STAKING_CONTRACT_ABI = [
+  "function deposit() external payable",
+  "function stakedBalances(address user) external view returns (uint256)",
+  "function withdraw(uint256 _amount) external"
+];
 
 // ── CINEMATIC INTRO ──
 window.addEventListener('load', () => {
@@ -854,36 +859,30 @@ gsap.utils.toArray('.infra-card').forEach(card => {
 });
 
 // ═══════════════════════════════════════════
-// ── WALLET STATE (FIX UTAMA) ──
+// ── WALLET & ON-CHAIN INFRASTRUCTURE ──
 // ═══════════════════════════════════════════
 let isWalletConnected = false;
 let connectedWallet = { address:null, shortAddr:null, providerName:null, chainId:null, provider:null, isDemo:false };
 let walletState = { eth:0, usdc:0, reth:0, stakedEth:0 };
 let faucetUsed = false;
 let swapHistory = [], stakeHistory = [], liqPositions = [], bridgeFeedData = [];
-let selectedPoolApy = 0.084; // FIX: deklarasi global
+let selectedPoolApy = 0.084;
 
 const SEPOLIA_CHAIN_ID_HEX = '0xaa36a7';
 
-// ── FIX: openWalletModal & closeWalletModal ──
 function openWalletModal() {
-  const ovl = document.getElementById('wallet-modal-ovl');
-  if(!ovl) return;
+  const ovl = document.getElementById('wallet-modal-ovl'); if(!ovl) return;
   detectInstalledWallets();
   ovl.style.display = 'flex';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => ovl.classList.add('open'));
-  });
+  requestAnimationFrame(() => { requestAnimationFrame(() => ovl.classList.add('open')); });
 }
 
 function closeWalletModal() {
-  const ovl = document.getElementById('wallet-modal-ovl');
-  if(!ovl) return;
+  const ovl = document.getElementById('wallet-modal-ovl'); if(!ovl) return;
   ovl.classList.remove('open');
   setTimeout(() => { ovl.style.display = 'none'; }, 380);
 }
 
-// ── Tombol Wallet ──
 document.getElementById('nav-wallet-btn').addEventListener('click', () => {
   if(isWalletConnected) disconnectWallet();
   else openWalletModal();
@@ -893,7 +892,6 @@ document.getElementById('wm-close-btn').addEventListener('click', closeWalletMod
 document.getElementById('wallet-modal-ovl').addEventListener('click', e => { if(e.target === e.currentTarget) closeWalletModal(); });
 document.getElementById('disconnect-btn').addEventListener('click', disconnectWallet);
 
-// ── Wallet Detection ──
 function detectInstalledWallets() {
   const eth = window.ethereum;
   const hasMM = !!(eth && (eth.isMetaMask || (eth.providers && eth.providers.some(p => p.isMetaMask))));
@@ -905,14 +903,11 @@ function detectInstalledWallets() {
 
 function setBadge(id, text, ok) {
   const el = document.getElementById(id); if(!el) return;
-  el.textContent = text;
-  el.className = 'wo-badge ' + (ok ? 'badge-ok' : 'badge-none');
+  el.textContent = text; el.className = 'wo-badge ' + (ok ? 'badge-ok' : 'badge-none');
 }
 
-// ── Wallet Option Clicks ──
 document.getElementById('opt-metamask').addEventListener('click', () => {
-  const eth = window.ethereum;
-  if(!eth) { showToast('Install MetaMask Extension dulu!'); return; }
+  const eth = window.ethereum; if(!eth) { showToast('Install MetaMask Extension!'); return; }
   const provider = (eth.providers && eth.providers.find(p => p.isMetaMask)) || eth;
   connectSepoliaEVM(provider, 'MetaMask');
 });
@@ -933,7 +928,6 @@ document.getElementById('opt-demo').addEventListener('click', () => {
   startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96', 'Demo Sandbox', 11155111, true, null);
 });
 
-// ── EVM Connection ──
 async function connectSepoliaEVM(windowProvider, name) {
   closeWalletModal();
   try {
@@ -956,9 +950,8 @@ async function connectSepoliaEVM(windowProvider, name) {
   }
 }
 
-// ── Scan Animation ──
 let _scanTimer = null;
-const SCAN_PHASES = ['Decrypting node parameters…', 'Checking Sepolia Testnet Network…', 'Synchronizing Sepolia ETH balance…', 'Connection Stable ✓'];
+const SCAN_PHASES = ['Decrypting node parameters…', 'Checking Sepolia Testnet Network…', 'Synchronizing Real-time Block-cluster…', 'Connection Stable ✓'];
 
 function startScanAnimation(addr, walletName, chainId, isDemo, provider) {
   const ovl = document.getElementById('scan-ovl');
@@ -978,7 +971,7 @@ function startScanAnimation(addr, walletName, chainId, isDemo, provider) {
     if(phaseEl) phaseEl.textContent = SCAN_PHASES[idx];
     if(barEl) barEl.style.width = Math.round((idx+1)/SCAN_PHASES.length*100) + '%';
     idx++;
-    _scanTimer = setTimeout(nextPhase, 450);
+    _scanTimer = setTimeout(nextPhase, 400);
   }
   nextPhase();
 }
@@ -990,10 +983,8 @@ function closeScanAnimation() {
   clearTimeout(_scanTimer);
   const barEl = document.getElementById('scan-bar-fill'); if(barEl) barEl.style.width = '0%';
 }
-
 document.getElementById('scan-cancel-btn').addEventListener('click', () => { closeScanAnimation(); showToast('Koneksi dibatalkan'); });
 
-// ── Finalize Connection ──
 async function finalizeConnection(addr, walletName, chainId, isDemo, windowProvider) {
   isWalletConnected = true;
   connectedWallet = { address:addr, shortAddr:shortAddr(addr), providerName:walletName, chainId, chainName:'Ethereum Sepolia', provider:windowProvider, isDemo };
@@ -1003,30 +994,39 @@ async function finalizeConnection(addr, walletName, chainId, isDemo, windowProvi
   if(isDemo) {
     walletState.eth = 5.7512; walletState.usdc = 2500.00; walletState.reth = 0; walletState.stakedEth = 0;
     if(fbtn) { fbtn.disabled = false; fbtn.textContent = '⚡ Claim Demo ETH'; fbtn.onclick = claimFaucet; }
+    onWalletConnected();
   } else {
-    try {
-      const browserProvider = new ethers.BrowserProvider(windowProvider);
-      const balance = await browserProvider.getBalance(addr);
-      walletState.eth = parseFloat(ethers.formatEther(balance));
-    } catch(e) { walletState.eth = 0; }
-    walletState.usdc = 120.50; walletState.reth = 0; walletState.stakedEth = 0;
     if(fbtn) { fbtn.disabled = true; fbtn.textContent = '🔒 Faucet (Demo Only)'; fbtn.onclick = null; }
+    await querySepoliaBalance();
+    onWalletConnected();
   }
-  onWalletConnected();
 }
 
-// ── Query Balance ──
+// ── SINKRONISASI SALDO NYATA DARI BLOCKCHAIN ──
 async function querySepoliaBalance() {
   if(!isWalletConnected || connectedWallet.isDemo || !connectedWallet.provider) return;
   try {
     const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
+    
+    // 1. Fetch real wallet ETH balance
     const balance = await browserProvider.getBalance(connectedWallet.address);
     walletState.eth = parseFloat(ethers.formatEther(balance));
+    
+    // 2. Fetch locked staking data from smart contract
+    if (STAKING_CONTRACT_ADDRESS !== "0x0000000000000000000000000000000000000000") {
+      const contract = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKING_CONTRACT_ABI, browserProvider);
+      const lockedWei = await contract.stakedBalances(connectedWallet.address);
+      walletState.stakedEth = parseFloat(ethers.formatEther(lockedWei));
+      walletState.reth = walletState.stakedEth * 0.98; // Liquid representation ratio
+    } else {
+      walletState.stakedEth = 0; walletState.reth = 0;
+    }
+    
+    walletState.usdc = 120.50; // Arbitrary stable layout token reference
     updateWalletBar(); calcSwap();
-  } catch(e) { console.warn('Balance fetch error:', e); }
+  } catch(e) { console.warn('On-chain sync error:', e); }
 }
 
-// ── onWalletConnected ──
 function onWalletConnected() {
   const navBtn = document.getElementById('nav-wallet-btn');
   const labelEl = document.getElementById('nav-wallet-label');
@@ -1049,10 +1049,9 @@ function onWalletConnected() {
   if(wStatus) { wStatus.textContent = 'CONNECTED (' + connectedWallet.providerName + ')'; wStatus.className = 'td-g'; }
 
   updateWalletBar(); updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); calculateMetrics();
-  showToast('✓ ' + connectedWallet.providerName + ' berhasil terhubung!');
+  showToast('✓ Node ' + connectedWallet.providerName + ' Active!');
 }
 
-// ── Disconnect ──
 function disconnectWallet() {
   isWalletConnected = false;
   connectedWallet = { address:null, shortAddr:null, providerName:null, chainId:null, provider:null, isDemo:false };
@@ -1082,17 +1081,15 @@ function disconnectWallet() {
   showToast('Node disconnected');
 }
 
-// ── Session Restore ──
 function checkSessionWallet() {
   try {
     const savedAddr = sessionStorage.getItem('rialo_addr');
     const savedWallet = sessionStorage.getItem('rialo_wallet');
     const savedDemo = sessionStorage.getItem('rialo_demo');
-    if(savedAddr) startScanAnimation(savedAddr, savedWallet || 'Wallet', 11155111, savedDemo === '1', null);
+    if(savedAddr) startScanAnimation(savedAddr, savedWallet || 'Wallet', 11155111, savedDemo === '1', window.ethereum);
   } catch(e) {}
 }
 
-// ── Faucet ──
 function claimFaucet() {
   if(!isWalletConnected) return;
   if(faucetUsed) { showToast('Demo claim limit tercapai.'); return; }
@@ -1102,7 +1099,6 @@ function claimFaucet() {
   updateWalletBar(); showToast('✓ 2 ETH + 500 USDC diklaim!');
 }
 
-// ── Update Wallet Bar ──
 function updateWalletBar() {
   const map = {
     'wb-eth': fmt(walletState.eth, 4),
@@ -1115,12 +1111,11 @@ function updateWalletBar() {
   };
   Object.entries(map).forEach(([k,v]) => { const el = document.getElementById(k); if(el) el.textContent = v; });
   updateSwapBals();
-  const bETH = document.getElementById('bridge-eth-bal');
-  if(bETH) bETH.textContent = fmt(walletState.eth, 4);
+  const bETH = document.getElementById('bridge-eth-bal'); if(bETH) bETH.textContent = fmt(walletState.eth, 4);
 }
 
 // ═══════════════════════════════════════════
-// ── PRICES ──
+// ── DATA FEEDS & PRICES ──
 // ═══════════════════════════════════════════
 let prices = { eth:3248, btc:67420, sol:148.3, matic:0.88 };
 let gasPrice = 18;
@@ -1169,7 +1164,7 @@ function updatePriceTable(d) {
 }
 
 // ═══════════════════════════════════════════
-// ── SWAP ──
+// ── ATOMIC TOKEN SWAP ──
 // ═══════════════════════════════════════════
 let fromToken = 'ETH', toToken = 'USDC';
 const tokenColors = { ETH:'#6f7cff', USDC:'#26a17b', BTC:'#f7931a', SOL:'#ab73ff', MATIC:'#8247e5' };
@@ -1255,7 +1250,7 @@ function buildSwapHistory() {
 }
 
 // ═══════════════════════════════════════════
-// ── BRIDGE (FIX: calcBridge) ──
+// ── CROSS-CHAIN BRIDGE RELAY ──
 // ═══════════════════════════════════════════
 const bridgeChains = [
   { name:'Sepolia', icon:'🔷' }, { name:'Polygon', icon:'🟣' },
@@ -1324,18 +1319,8 @@ function buildBridgeFeed() {
 }
 
 // ═══════════════════════════════════════════
-// ── STAKE (FIX: pool selection & preview) ──
+// ── ON-CHAIN LIQUID STAKING SYSTEM (REAL) ──
 // ═══════════════════════════════════════════
-document.querySelectorAll('.pool-row').forEach(row => {
-  row.addEventListener('click', () => {
-    document.querySelectorAll('.pool-row').forEach(r => r.classList.remove('selected'));
-    row.classList.add('selected');
-    selectedPoolApy = parseFloat(row.getAttribute('data-apy')) || 0.084;
-    calcStakePreview();
-    updateWalletBar();
-  });
-});
-
 document.getElementById('stake-amt').addEventListener('input', calcStakePreview);
 
 function calcStakePreview() {
@@ -1357,33 +1342,83 @@ document.querySelectorAll('.pct-btn').forEach(btn => {
 });
 
 document.getElementById('stake-btn').addEventListener('click', doStake);
-function doStake() {
+
+// ── EKSEKUSI INTEGRASI BLOCKCHAIN NYATA ──
+async function doStake() {
   if(!isWalletConnected) { showResult('stake-result','err','⚠ Hubungkan wallet terlebih dahulu!'); return; }
-  const amt = parseFloat(document.getElementById('stake-amt')?.value) || 0;
-  if(amt <= 0) { showResult('stake-result','err','⚠ Masukkan jumlah yang valid.'); return; }
-  if(amt > walletState.eth) { showResult('stake-result','err','⚠ Saldo ETH tidak mencukupi.'); return; }
-  showResult('stake-result','load','Depositing ke validator pool...');
-  setTimeout(() => {
-    walletState.eth -= amt;
-    walletState.stakedEth += amt;
-    const rethAmt = amt * 0.98;
-    walletState.reth += rethAmt;
-    const txh = randHex();
-    const poolName = document.querySelector('.pool-row.selected .pname')?.textContent || 'Staking Pool';
-    stakeHistory.unshift({ tx:txh, amt:fmt(amt,4)+' ETH', pool:poolName, reth:fmt(rethAmt,4), t:nowTime() });
-    updateWalletBar(); updateStakeTable(); buildStakeHistory();
-    showResult('stake-result','ok','✓ Stake berhasil!\nTx: '+txh+'\nDiterima: '+fmt(rethAmt,4)+' rETH\nAPY: '+(selectedPoolApy*100).toFixed(1)+'%');
-    document.getElementById('stake-amt').value = ''; calcStakePreview(); showToast('✓ Staking selesai!');
-  }, 1600);
+  
+  const amtInput = document.getElementById('stake-amt');
+  const amt = parseFloat(amtInput ? amtInput.value : 0) || 0;
+  
+  if(amt <= 0) { showResult('stake-result','err','⚠ Masukkan jumlah parameter nominal valid.'); return; }
+  if(amt > walletState.eth) { showResult('stake-result','err','⚠ Saldo Sepolia ETH Anda tidak mencukupi.'); return; }
+
+  // 1. Jika pengguna memilih mode simulasi (Demo Sandbox)
+  if (connectedWallet.isDemo) {
+    showResult('stake-result','load','[Sandbox Mode] Memproses deposit simulator...');
+    setTimeout(() => {
+      walletState.eth -= amt; walletState.stakedEth += amt; walletState.reth += (amt * 0.98);
+      const txh = randHex();
+      stakeHistory.unshift({ tx:txh, amt:fmt(amt,4)+' ETH', pool:'Sandbox Simulated Room', reth:fmt(amt*0.98,4), t:nowTime() });
+      updateWalletBar(); updateStakeTable(); buildStakeHistory();
+      showResult('stake-result','ok','✓ [Sandbox Sandbox] Staking berhasil!\nTx: '+txh);
+      if(amtInput) amtInput.value = ''; calcStakePreview();
+    }, 1200);
+    return;
+  }
+
+  // 2. Proteksi jika alamat smart contract belum dikonfigurasi
+  if (STAKING_CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
+    showResult('stake-result', 'err', '⚠ INTEGRATION ERROR: Ganti variabel STAKING_CONTRACT_ADDRESS di bagian script dengan alamat Smart Contract Solidity Anda terlebih dahulu.');
+    return;
+  }
+
+  // 3. Eksekusi Web3 On-Chain Transaksi Nyata
+  showResult('stake-result','load','Menunggu tanda tangan konfirmasi dari Web3 Extension...');
+  try {
+    const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
+    const signer = await browserProvider.getSigner();
+    
+    // Inisialisasi instance contract write mode
+    const contract = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKING_CONTRACT_ABI, signer);
+    const amountInWei = ethers.parseEther(amt.toString());
+
+    // Memanggil fungsi deposit() payable pada smart contract
+    const tx = await contract.deposit({ value: amountInWei });
+    
+    showResult('stake-result','load', `Transaksi disiarkan ke Sepolia! Menunggu konfirmasi block... <br><span style="font-size:11px;color:var(--cyan)">Hash: ${tx.hash}</span>`);
+    
+    // Tunggu transaksi selesai divalidasi oleh penambang (mined)
+    const receipt = await tx.wait();
+    
+    showToast('✓ Transaksi Berhasil Direkam!');
+    
+    stakeHistory.unshift({ 
+      tx: tx.hash.slice(0,6) + '…' + tx.hash.slice(-4), 
+      amt: fmt(amt,4) + ' ETH', 
+      pool: 'Sepolia Staking Pool', 
+      reth: fmt(amt * 0.98, 4), 
+      t: nowTime() 
+    });
+
+    // Panggil ulang blockchain untuk membaca saldo dompet & contract yang berubah secara mutakhir
+    await querySepoliaBalance();
+    buildStakeHistory();
+    updateStakeTable();
+    
+    showResult('stake-result','ok', `✓ Real Staking Sukses!<br>Block Cluster: ${receipt.blockNumber}<br>Gas Used: ${receipt.gasUsed.toString()}`);
+    if(amtInput) amtInput.value = ''; 
+    calcStakePreview();
+  } catch (err) {
+    console.error(err);
+    showResult('stake-result','err', `⚠ Transaksi Dibatalkan/Gagal: ${err.reason || err.message}`);
+  }
 }
 
 function updateStakeTable() {
-  const pools = [{ name:'Sepolia Staking Pool', apy:'8.4%', tvl:'$14.0M', val:14000, v:3912 }, { name:'Sandbox Diversified Vault', apy:'6.2%', tvl:'$8.2M', val:8200, v:1504 }];
   const tb = document.getElementById('stake-table'); if(!tb) return;
-  tb.innerHTML = pools.map((p,i) => {
-    const myShare = (i === 0 && walletState.stakedEth > 0) ? (walletState.stakedEth / p.val * 100).toFixed(4) + '%' : '0.0000%';
-    return `<tr><td>${p.name}</td><td class="td-g">${p.apy}</td><td class="td-c">${p.tvl}</td><td>${p.v.toLocaleString()}</td><td class="td-gold">${myShare}</td></tr>`;
-  }).join('');
+  const myShare = walletState.stakedEth > 0 ? fmt(walletState.stakedEth, 4) + ' ETH' : '0.0000 ETH';
+  tb.innerHTML = `<tr><td>NEXUS Sepolia Pool</td><td class="td-g">8.4% APY</td><td class="td-c">ACTIVE</td><td>JSON-RPC Layer</td><td class="td-gold" style="font-weight:700">${myShare}</td></tr>`;
 }
 
 function buildStakeHistory() {
@@ -1395,7 +1430,7 @@ function buildStakeHistory() {
 }
 
 // ═══════════════════════════════════════════
-// ── LIQUIDITY (FIX: calcLiq) ──
+// ── LIQUIDITY VECTORS ──
 // ═══════════════════════════════════════════
 function calcLiq() {
   const amt = parseFloat(document.getElementById('liq-amt')?.value) || 0;
@@ -1444,7 +1479,7 @@ function buildLiqPositions() {
 }
 
 // ═══════════════════════════════════════════
-// ── CHARTS ──
+// ── CHARTS INTERFACES ──
 // ═══════════════════════════════════════════
 function buildLiqChart() {
   const el = document.getElementById('liq-chart'); if(!el) return;
@@ -1470,7 +1505,6 @@ function updateGasUI() {
   if(gasChartObj?.data) { gasChartObj.data.datasets[0].data = gasHistory.slice(); gasChartObj.update('none'); }
 }
 
-// ── SLIPPAGE ──
 let slippageChartObj = null;
 function initSlippageChart(baseImpact) {
   const el = document.getElementById('slippage-chart'); if(!el) return;
@@ -1495,7 +1529,6 @@ function calculateMetrics() {
 }
 document.getElementById('analytics-volume').addEventListener('input', calculateMetrics);
 
-// ── LIVE FEED ──
 const feedActs = [{ t:'Swap', c:'#06b6d4' }, { t:'Bridge', c:'#d4a832' }, { t:'Stake', c:'#00e87a' }, { t:'Add LP', c:'#ab73ff' }];
 function buildLiveFeed() {
   const el = document.getElementById('live-feed'); if(!el) return;
@@ -1505,14 +1538,18 @@ function buildLiveFeed() {
   }).join('');
 }
 
-// ── INIT ──
+// ── INITIALIZER ──
 window.addEventListener('DOMContentLoaded', () => {
   fetchPrices();
   setInterval(fetchPrices, 30000);
   setInterval(updateGasUI, 8000);
-  setInterval(() => { if(isWalletConnected && !connectedWallet.isDemo) querySepoliaBalance(); }, 5000);
+  
+  // Pengecekan saldo on-chain berulang setiap 7 detik jika terhubung dompet asli
+  setInterval(() => { if(isWalletConnected && !connectedWallet.isDemo) querySepoliaBalance(); }, 7000);
+  
   updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); buildLiveFeed();
   calcBridge(); calcLiq(); calcStakePreview();
+  
   setInterval(() => {
     const el = document.getElementById('live-feed'); if(!el) return;
     const act = feedActs[Math.floor(Math.random()*feedActs.length)];
@@ -1521,6 +1558,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const children = el.querySelectorAll('.feed-item');
     if(children.length > 8) children[children.length-1].remove();
   }, 4000);
+  
   checkSessionWallet();
   init3DTiltCards();
 });
