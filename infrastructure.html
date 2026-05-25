@@ -6,6 +6,8 @@
 <title>NEXUS — Sepolia Infrastructure</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
 
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.95/build/spline-viewer.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -107,6 +109,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .badge-none{background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.15);color:var(--muted);}
 .badge-demo{background:rgba(212,168,50,.1);border:1px solid rgba(212,168,50,.3);color:var(--gold);}
 .wm-divider{height:1px;background:rgba(124,58,237,.12);margin:1rem 0;}
+.wm-section-label{font-size:.6rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;font-family:'Orbitron',monospace;}
 .wm-footer{padding:.8rem 1.6rem;font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.1em;border-top:1px solid rgba(124,58,237,.1);}
 
 /* ── SCAN OVERLAY ── */
@@ -129,11 +132,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 #nexus-toast.on{opacity:1;transform:translateY(0);}
 
 /* ── PAGE HERO ── */
-.page-hero{position:relative;min-height:45vh;display:flex;align-items:flex-end;padding:8rem 4rem 4rem;overflow:hidden;perspective:1000px;}
+.page-hero{position:relative;min-height:45vh;display:flex;align-items:flex-end;padding:8rem 4rem 4rem;overflow:hidden;perspective:2000px;}
 .page-hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 60% at 20% 50%,rgba(124,58,237,0.16) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 30%,rgba(6,182,212,0.12) 0%,transparent 60%);}
 .grid-bg{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(124,58,237,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.06) 1px,transparent 1px);background-size:60px 60px;}
 .scanline{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 4px);}
-.page-hero-content{position:relative;z-index:2;transform-style:preserve-3d;opacity:0;}
+.page-hero-content{position:relative;z-index:2;transform-style:preserve-3d;opacity:0;will-change:transform;}
 .hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.3rem 1rem;border:1px solid rgba(124,58,237,.4);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:1rem;background:rgba(124,58,237,.05);color:#fff;border-color:var(--purple);}
 .hero-tag::before{content:'';width:6px;height:6px;background:var(--pink);border-radius:50%;animation:blink 1.5s infinite;box-shadow:0 0 6px var(--pink);}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
@@ -167,8 +170,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
   border: none;
   background: transparent !important;
 }
-
-/* Hide branding overlay completely */
 .jupiter-protection-shield {
   position: absolute;
   inset: 0;
@@ -214,27 +215,60 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .tab-btn{flex:1;min-width:100px;padding:12px 8px;background:none;border:none;font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-radius:2px;transition:all .2s;}
 .tab-btn.active{background:rgba(124,58,237,.15);color:#fff;border:1px solid rgba(124,58,237,.35);text-shadow:0 0 10px rgba(124,58,237,.5);}
 .tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
-.panel{display:none;}
-.panel.active{display:block;}
+
+/* PATCHED: Smooth Panel Transitions Like Video */
+.panel{
+  display:none;
+  opacity:0;
+  transform:translateY(15px);
+  will-change:opacity,transform;
+}
+.panel.active{
+  display:block;
+}
 
 /* ── GRID ── */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
 @media(max-width:768px){.grid2{grid-template-columns:1fr;}}
 
-/* ── CARDS ── */
-.infra-card{background:rgba(17,0,40,.55);border:1px solid rgba(124,58,237,.2);padding:2rem;position:relative;overflow:hidden;opacity:0;transform:translateY(25px);transition:opacity .7s ease,transform .7s ease,border-color .4s;}
-.infra-card.visible{opacity:1;transform:translateY(0);}
+/* ── CARDS (PATCHED FOR ADVANCED 3D PARALLAX TILT) ── */
+.infra-card{
+  background:rgba(17,0,40,.55);
+  border:1px solid rgba(124,58,237,.2);
+  padding:2rem;
+  position:relative;
+  overflow:visible;
+  opacity:0;
+  transform:translateY(30px);
+  transform-style:preserve-3d;
+  perspective:1000px;
+  will-change:transform,opacity;
+  transition:border-color .4s,background-color .4s;
+}
 .infra-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,transparent 50%);opacity:0;transition:opacity .4s;pointer-events:none;}
-.infra-card:hover{border-color:rgba(236,72,153,.45);}
+.infra-card:hover{
+  border-color:rgba(6,182,212,.45);
+  background:rgba(13,0,32,.7);
+}
 .infra-card:hover::before{opacity:1;}
-.card-corner{position:absolute;}
+.card-corner{position:absolute;transform:translateZ(20px);}
 .card-corner.tl{top:0;left:0;width:16px;height:16px;border-top:2px solid var(--purple);border-left:2px solid var(--purple);}
 .card-corner.br{bottom:0;right:0;width:16px;height:16px;border-bottom:2px solid var(--purple);border-right:2px solid var(--purple);}
-.card-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:.4rem;color:var(--text);}
-.card-sub{font-size:.75rem;color:var(--pink);letter-spacing:.08em;margin-bottom:1.5rem;opacity:.8;}
+
+/* Push contents to layers inside 3D space */
+.infra-card > * {
+  transform:translateZ(0px);
+  transition:transform 0.3s ease;
+}
+.infra-card:hover .card-title { transform:translateZ(40px); }
+.infra-card:hover .card-sub { transform:translateZ(30px); }
+.infra-card:hover .table-wrap { transform:translateZ(25px); }
+
+.card-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:2px;margin-bottom:.4rem;color:var(--text);will-change:transform;}
+.card-sub{font-size:.75rem;color:var(--pink);letter-spacing:.08em;margin-bottom:1.5rem;opacity:.8;will-change:transform;}
 
 /* ── TABLE ── */
-.table-wrap{overflow-x:auto;border:1px solid rgba(124,58,237,.2);background:rgba(5,0,16,.3);margin-top:10px;}
+.table-wrap{overflow-x:auto;border:1px solid rgba(124,58,237,.2);background:rgba(5,0,16,.3);margin-top:10px;will-change:transform;}
 .rt-table{width:100%;border-collapse:collapse;font-size:.8rem;}
 .rt-table th{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:14px 16px;border-bottom:1px solid rgba(124,58,237,.2);background:rgba(124,58,237,.12);text-align:left;white-space:nowrap;}
 .rt-table td{padding:12px 16px;border-bottom:1px solid rgba(124,58,237,.08);color:var(--text);white-space:nowrap;transition:background .2s;}
@@ -325,10 +359,6 @@ select.inp{appearance:none;}
 .fd-chain{font-size:.65rem;color:var(--muted);white-space:nowrap;}
 .fd-amt{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;white-space:nowrap;}
 .fd-ago{font-size:.65rem;color:var(--muted);white-space:nowrap;}
-
-/* ── REVEAL ── */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.visible{opacity:1;transform:translateY(0);}
 
 footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid rgba(124,58,237,.2);padding:2rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
 .footer-logo{font-family:'Orbitron',monospace;font-weight:900;color:var(--cyan);letter-spacing:4px;font-size:1rem;}
@@ -787,7 +817,7 @@ footer{position:relative;z-index:2;background:var(--dark3);border-top:1px solid 
 gsap.registerPlugin(ScrollTrigger);
 
 // ══════════════════════════════════════════
-//  CINEMATIC TRANSITIONS ENGINE
+//  CINEMATIC INTRO TRANSITIONS ENGINE
 // ══════════════════════════════════════════
 window.addEventListener('load', () => {
   const preloader = document.getElementById('infrastructure-preloader');
@@ -796,25 +826,21 @@ window.addEventListener('load', () => {
   const introTl = gsap.timeline({
     onComplete: () => {
       if(preloader) preloader.style.display = 'none';
+      // Memicu inisialisasi awal animasi panel aktif
+      gsap.to(".panel.active", { opacity: 1, translateY: 0, duration: 0.5 });
     }
   });
 
-  // Fade out loader
   introTl.to(preloader, { opacity: 0, duration: 0.5, ease: "power2.inOut" });
   
-  // Reveal site structure
   introTl.to(mainWrapper, {
-    onStart: () => {
-      mainWrapper.style.visibility = 'visible';
-    },
+    onStart: () => { mainWrapper.style.visibility = 'visible'; },
     opacity: 1,
     duration: 0.4
   }, "-=0.2");
 
-  // Slide-down Navbar
   introTl.to("nav", { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, "-=0.1");
 
-  // Animate Hero Content & Planets
   introTl.fromTo(".page-hero-content", 
     { opacity: 0, y: 30, filter: "blur(10px)" }, 
     { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power4.out" },
@@ -829,7 +855,7 @@ window.addEventListener('load', () => {
 });
 
 // ══════════════════════════════════════════
-//  SMOOTH INTERPOLATED MOUSE PARALLAX
+//  SMOOTH INTERPOLATED MOUSE PARALLAX (HERO & JUPITER)
 // ══════════════════════════════════════════
 let currentX = 0, currentY = 0;
 let targetX = 0, targetY = 0;
@@ -855,7 +881,81 @@ document.addEventListener('mousemove', (e) => {
 })();
 
 // ══════════════════════════════════════════
-//  UTILITY FUNCTIONS
+//  ADVANCED INTERACTIVE 3D TILT ENGINE FOR CARDS
+// ══════════════════════════════════════════
+function init3DTiltCards() {
+  const cards = document.querySelectorAll('.infra-card');
+  cards.forEach(card => {
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Hitung koordinat rotasi sudut maks 12 derajat
+      tx = ((x - rect.width / 2) / (rect.width / 2)) * 12;
+      ty = ((y - rect.height / 2) / (rect.height / 2)) * -12;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      tx = 0; ty = 0;
+    });
+    
+    function updateTilt() {
+      cx += (tx - cx) * 0.1;
+      cy += (ty - cy) * 0.1;
+      card.style.transform = `rotateY(${cx}deg) rotateX(${cy}deg) translateY(0px)`;
+      requestAnimationFrame(updateTilt);
+    }
+    requestAnimationFrame(updateTilt);
+  });
+}
+
+// ══════════════════════════════════════════
+//  SMOOTH TAB FADE-TRANSITION SYSTEM
+// ══════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const currentActivePanel = document.querySelector('.panel.active');
+    const targetTab = btn.getAttribute('data-tab');
+    const targetPanel = document.getElementById('panel-' + targetTab);
+    
+    if (currentActivePanel === targetPanel) return;
+    
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Animasi keluar panel lama ala video referensi
+    gsap.to(currentActivePanel, {
+      opacity: 0,
+      translateY: -10,
+      duration: 0.25,
+      ease: "power2.in",
+      onComplete: () => {
+        currentActivePanel.classList.remove('active');
+        targetPanel.classList.add('active');
+        
+        // Atur posisi awal masuk panel baru
+        gsap.fromTo(targetPanel, 
+          { opacity: 0, translateY: 15 },
+          { opacity: 1, translateY: 0, duration: 0.4, ease: "power3.out" }
+        );
+        
+        // Re-inisialisasi chart bawaan tab
+        if(targetTab === 'monitor') setTimeout(buildGasChart, 30);
+        if(targetTab === 'liquidity') setTimeout(buildLiqChart, 30);
+        if(targetTab === 'analytics') setTimeout(calculateMetrics, 30);
+        
+        // Segarkan pemicu scroll trigger kartu-kartu baru
+        ScrollTrigger.refresh();
+      }
+    });
+  });
+});
+
+// ══════════════════════════════════════════
+//  UTILITY LOGIC METHODS
 // ══════════════════════════════════════════
 function fmt(n,d){
   if(n===null||n===undefined||isNaN(n)) return '0';
@@ -888,32 +988,18 @@ function shortAddr(a){
 
 var _toastTimer=null;
 function showToast(msg,dur){
-  var el=document.getElementById('nexus-toast');
-  if(!el) return;
-  el.textContent=msg;
-  el.classList.add('on');
-  clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(function(){el.classList.remove('on');},dur||3000);
+  var el=document.getElementById('nexus-toast'); if(!el) return;
+  el.textContent=msg; el.classList.add('on');
+  clearTimeout(_toastTimer); _toastTimer=setTimeout(function(){el.classList.remove('on');},dur||3000);
 }
 function showResult(id,type,msg){
-  var el=document.getElementById(id);
-  if(!el) return;
-  el.style.display=(type==='load'?'flex':'block');
-  el.className='result-box result-'+type;
-  if(type==='load'){
-    el.innerHTML='<div class="spinner"></div><span>'+msg+'</span>';
-  } else {
-    el.textContent=msg;
-  }
+  var el=document.getElementById(id); if(!el) return;
+  el.style.display=(type==='load'?'flex':'block'); el.className='result-box result-'+type;
+  if(type==='load'){ el.innerHTML='<div class="spinner"></div><span>'+msg+'</span>'; } else { el.textContent=msg; }
 }
-function hideResult(id){
-  var el=document.getElementById(id);
-  if(el) el.style.display='none';
-}
+function hideResult(id){ var el=document.getElementById(id); if(el) el.style.display='none'; }
 
-// ══════════════════════════════════════════
-//  DYNAMIC MOVEMENT CURSOR VIA RAF
-// ══════════════════════════════════════════
+// ── DINAMIS CURSOR ──
 var cur=document.getElementById('cursor');
 var trail=document.getElementById('cursor-trail');
 var mx=window.innerWidth/2, my=window.innerHeight/2, tx=mx, ty=my;
@@ -939,14 +1025,10 @@ document.querySelectorAll('a,button,input,select,.token-pill,.wallet-opt,.pool-r
   });
 });
 
-// ══════════════════════════════════════════
-//  PARTICLES
-// ══════════════════════════════════════════
+// ── PARTICLES ──
 var pcanvas=document.getElementById('particles-canvas');
 var pctx=pcanvas?pcanvas.getContext('2d'):null;
-function resizeCanvas(){
-  if(pcanvas){ pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; }
-}
+function resizeCanvas(){ if(pcanvas){ pcanvas.width=window.innerWidth; pcanvas.height=window.innerHeight; } }
 resizeCanvas(); window.addEventListener('resize',resizeCanvas);
 var pts=[];
 for(var pi=0;pi<60;pi++){
@@ -974,32 +1056,18 @@ for(var pi=0;pi<60;pi++){
   requestAnimationFrame(drawParticles);
 })();
 
-// ══════════════════════════════════════════
-//  SCROLL REVEAL (GSAP TRIGGER DRIVEN)
-// ══════════════════════════════════════════
+// ── SCROLL REVEAL DRIVEN VIA GSAP TRIGGER ──
 gsap.utils.toArray('.infra-card').forEach(card => {
-  gsap.fromTo(card, { y: 30, opacity: 0 }, { y: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 90%", end: "top 60%", scrub: 1 } });
+  gsap.fromTo(card, { y: 40, opacity: 0 }, { y: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 95%", end: "top 70%", scrub: 1 } });
 });
 
-// ══════════════════════════════════════════
-//  WALLET STATE LOGIC LAYERS
-// ══════════════════════════════════════════
+// ── WALLET NODES CONNECTION LAYERS ──
 var isWalletConnected=false;
 var connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,provider:null,isDemo:false};
 var walletState={eth:0,usdc:0,reth:0,stakedEth:0};
-var faucetUsed=false;
-var SEPOLIA_CHAIN_ID_HEX='0xaa36a7';
+var faucetUsed=false; var SEPOLIA_CHAIN_ID_HEX='0xaa36a7';
 var swapHistory=[]; var stakeHistory=[]; var liqPositions=[]; var bridgeFeedData=[];
 
-function openWalletModal(){
-  var ovl=document.getElementById('wallet-modal-ovl'); if(!ovl) return;
-  ovl.style.display='flex'; detectInstalledWallets();
-  requestAnimationFrame(function(){ ovl.classList.add('open'); });
-}
-function closeWalletModal(){
-  var ovl=document.getElementById('wallet-modal-ovl'); if(!ovl) return;
-  ovl.classList.remove('open'); setTimeout(function(){ ovl.style.display='none'; },400);
-}
 function detectInstalledWallets(){
   var eth=window.ethereum;
   var hasMM=!!(eth&&(eth.isMetaMask||(eth.providers&&eth.providers.some(function(p){return p.isMetaMask;}))));
@@ -1018,20 +1086,16 @@ document.getElementById('wallet-modal-ovl').addEventListener('click',function(e)
 
 document.getElementById('opt-metamask').addEventListener('click',function(){
   var eth=window.ethereum; if(!eth){showToast('Install MetaMask Extension');return;}
-  var provider=(eth.providers&&eth.providers.find(function(p){return p.isMetaMask;}))||eth;
-  connectSepoliaEVM(provider,'MetaMask');
+  var provider=(eth.providers&&eth.providers.find(function(p){return p.isMetaMask;}))||eth; connectSepoliaEVM(provider,'MetaMask');
 });
 document.getElementById('opt-rabby').addEventListener('click',function(){
-  if(!window.ethereum||!window.ethereum.isRabby){showToast('Rabby Node undetected');return;}
-  connectSepoliaEVM(window.ethereum,'Rabby');
+  if(!window.ethereum||!window.ethereum.isRabby){showToast('Rabby Node undetected');return;} connectSepoliaEVM(window.ethereum,'Rabby');
 });
 document.getElementById('opt-okx').addEventListener('click',function(){
-  if(!window.okxwallet){showToast('OKX Component absent');return;}
-  connectSepoliaEVM(window.okxwallet,'OKX');
+  if(!window.okxwallet){showToast('OKX Component absent');return;} connectSepoliaEVM(window.okxwallet,'OKX');
 });
 document.getElementById('opt-phantom').addEventListener('click',function(){
-  if(!window.phantom||!window.phantom.ethereum){showToast('Phantom layer missing');return;}
-  connectSepoliaEVM(window.phantom.ethereum,'Phantom');
+  if(!window.phantom||!window.phantom.ethereum){showToast('Phantom layer missing');return;} connectSepoliaEVM(window.phantom.ethereum,'Phantom');
 });
 document.getElementById('opt-demo').addEventListener('click',function(){
   closeWalletModal(); startScanAnimation('0x7777777F928373bCc9dDeDdEb03E53415D37aA96','Demo Sandbox',11155111,true,null);
@@ -1040,70 +1104,49 @@ document.getElementById('opt-demo').addEventListener('click',function(){
 async function connectSepoliaEVM(provider,name){
   closeWalletModal();
   try{
-    showToast('Triggering Web3 authentication…');
-    var accounts=await provider.request({method:'eth_requestAccounts'});
+    showToast('Triggering Web3 authentication…'); var accounts=await provider.request({method:'eth_requestAccounts'});
     if(!accounts||!accounts.length){showToast('No accounts returned');return;}
-    try{
+    try {
       await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:SEPOLIA_CHAIN_ID_HEX}]});
-    }catch(switchErr){
+    } catch(switchErr) {
       if(switchErr.code===4902){
         try{
           await provider.request({method:'wallet_addEthereumChain',params:[{
-            chainId:SEPOLIA_CHAIN_ID_HEX,
-            chainName:'Sepolia Test Network',
-            nativeCurrency:{name:'Sepolia ETH',symbol:'ETH',decimals:18},
-            rpcUrls:['https://rpc.ankr.com/eth_sepolia'],
-            blockExplorerUrls:['https://sepolia.etherscan.io']
+            chainId:SEPOLIA_CHAIN_ID_HEX, chainName:'Sepolia Test Network', nativeCurrency:{name:'Sepolia ETH',symbol:'ETH',decimals:18}, rpcUrls:['https://rpc.ankr.com/eth_sepolia'], blockExplorerUrls:['https://sepolia.etherscan.io']
           }]});
         }catch(addErr){showToast('⚠ Failed to add Sepolia node');return;}
-      }else if(switchErr.code===4001){
-        showToast('⚠ Network switch rejected');return;
-      }
+      }else if(switchErr.code===4001){ showToast('⚠ Network switch rejected');return; }
     }
     startScanAnimation(accounts[0],name,11155111,false,provider);
   }catch(err){
-    if(err.code===4001) showToast('Connection cancelled by user');
-    else showToast('JSON-RPC handshake failed');
+    if(err.code===4001) showToast('Connection cancelled by user'); else showToast('JSON-RPC handshake failed');
   }
 }
 
-var _scanTimer=null;
-var SCAN_PHASES=['Decrypting node parameters…','Checking Sepolia Testnet Network…','Synchronizing Sepolia ETH balance…','Connection Stable ✓'];
+var _scanTimer=null; var SCAN_PHASES=['Decrypting node parameters…','Checking Sepolia Testnet Network…','Synchronizing Sepolia ETH balance…','Connection Stable ✓'];
 
 function startScanAnimation(addr,walletName,chainId,isDemo,provider){
-  var ovl=document.getElementById('scan-ovl');
-  var addrEl=document.getElementById('scan-addr-disp');
-  var phaseEl=document.getElementById('scan-phase-disp');
-  var barEl=document.getElementById('scan-bar-fill');
-  if(!ovl) return;
-  ovl.style.display='flex'; requestAnimationFrame(function(){ ovl.classList.add('open'); });
+  var ovl=document.getElementById('scan-ovl'); var addrEl=document.getElementById('scan-addr-disp'); var phaseEl=document.getElementById('scan-phase-disp'); var barEl=document.getElementById('scan-bar-fill');
+  if(!ovl) return; ovl.style.display='flex'; requestAnimationFrame(function(){ ovl.classList.add('open'); });
   if(addrEl) addrEl.textContent=shortAddr(addr);
   var idx=0;
   function nextPhase(){
-    if(idx>=SCAN_PHASES.length){
-      setTimeout(function(){ closeScanAnimation(); finalizeConnection(addr,walletName,chainId,isDemo,provider); },300);
-      return;
-    }
-    if(phaseEl) phaseEl.textContent=SCAN_PHASES[idx];
-    if(barEl) barEl.style.width=Math.round((idx+1)/SCAN_PHASES.length*100)+'%';
+    if(idx>=SCAN_PHASES.length){ setTimeout(function(){ closeScanAnimation(); finalizeConnection(addr,walletName,chainId,isDemo,provider); },300); return; }
+    if(phaseEl) phaseEl.textContent=SCAN_PHASES[idx]; if(barEl) barEl.style.width=Math.round((idx+1)/SCAN_PHASES.length*100)+'%';
     idx++; _scanTimer=setTimeout(nextPhase,420);
   }
   nextPhase();
 }
 function closeScanAnimation(){
   var ovl=document.getElementById('scan-ovl'); if(!ovl) return;
-  ovl.classList.remove('open'); setTimeout(function(){ ovl.style.display='none'; },400);
-  clearTimeout(_scanTimer);
+  ovl.classList.remove('open'); setTimeout(function(){ ovl.style.display='none'; },400); clearTimeout(_scanTimer);
   var barEl=document.getElementById('scan-bar-fill'); if(barEl) barEl.style.width='0%';
 }
 document.getElementById('scan-cancel-btn').addEventListener('click',function(){ closeScanAnimation(); showToast('Connection cancelled'); });
 
 async function finalizeConnection(addr,walletName,chainId,isDemo,provider){
-  isWalletConnected=true;
-  connectedWallet={address:addr,shortAddr:shortAddr(addr),providerName:walletName,chainId:chainId,chainName:'Ethereum Sepolia',provider:provider,isDemo:isDemo};
-  try{
-    sessionStorage.setItem('rialo_addr',addr); sessionStorage.setItem('rialo_wallet',walletName); sessionStorage.setItem('rialo_demo',isDemo?'1':'0');
-  }catch(e){}
+  isWalletConnected=true; connectedWallet={address:addr,shortAddr:shortAddr(addr),providerName:walletName,chainId:chainId,chainName:'Ethereum Sepolia',provider:provider,isDemo:isDemo};
+  try{ sessionStorage.setItem('rialo_addr',addr); sessionStorage.setItem('rialo_wallet',walletName); sessionStorage.setItem('rialo_demo',isDemo?'1':'0'); }catch(e){}
 
   var fbtn=document.getElementById('faucet-btn');
   if(isDemo){
@@ -1111,10 +1154,7 @@ async function finalizeConnection(addr,walletName,chainId,isDemo,provider){
     if(fbtn){ fbtn.disabled=false; fbtn.textContent='⚡ Claim Demo ETH'; fbtn.onclick=claimFaucet; }
   }else{
     await querySepoliaBalance(); walletState.usdc=0; walletState.reth=0; walletState.stakedEth=0;
-    if(fbtn){
-      fbtn.disabled=false; fbtn.textContent='🌐 Open Faucet';
-      fbtn.onclick=function(){ window.open('https://sepoliafaucet.com/','_blank'); showToast('Opening official Sepolia Faucet…'); };
-    }
+    if(fbtn){ fbtn.disabled=false; fbtn.textContent='🌐 Open Faucet'; fbtn.onclick=function(){ window.open('https://sepoliafaucet.com/','_blank'); showToast('Opening official Sepolia Faucet…'); }; }
   }
   onWalletConnected();
 }
@@ -1128,268 +1168,129 @@ async function querySepoliaBalance(){
 }
 
 function onWalletConnected(){
-  var navBtn=document.getElementById('nav-wallet-btn');
-  var labelEl=document.getElementById('nav-wallet-label');
-  var dot=document.querySelector('#nav-wallet-btn .nav-wallet-dot');
-  var wbDis=document.getElementById('wb-disconnected');
-  var wbCon=document.getElementById('wb-connected');
-  var wbBar=document.getElementById('wallet-bar');
-  var wbAddr=document.getElementById('wb-addr');
-  var wbNet=document.getElementById('wb-network');
-  var wStatus=document.getElementById('analytics-wallet-status');
+  var navBtn=document.getElementById('nav-wallet-btn'); var labelEl=document.getElementById('nav-wallet-label'); var dot=document.querySelector('#nav-wallet-btn .nav-wallet-dot');
+  var wbDis=document.getElementById('wb-disconnected'); var wbCon=document.getElementById('wb-connected'); var wbBar=document.getElementById('wallet-bar');
+  var wbAddr=document.getElementById('wb-addr'); var wbNet=document.getElementById('wb-network'); var wStatus=document.getElementById('analytics-wallet-status');
 
-  if(navBtn) navBtn.classList.add('connected');
-  if(labelEl) labelEl.textContent=connectedWallet.shortAddr;
+  if(navBtn) navBtn.classList.add('connected'); if(labelEl) labelEl.textContent=connectedWallet.shortAddr;
   if(dot){ dot.style.background='var(--green)'; dot.style.boxShadow='0 0 8px var(--green)'; }
-  if(wbDis) wbDis.style.display='none';
-  if(wbCon) wbCon.style.display='flex';
-  if(wbBar) wbBar.classList.add('connected-state');
-  if(wbAddr) wbAddr.textContent=connectedWallet.shortAddr;
-  if(wbNet) wbNet.textContent=connectedWallet.chainName;
+  if(wbDis) wbDis.style.display='none'; if(wbCon) wbCon.style.display='flex'; if(wbBar) wbBar.classList.add('connected-state');
+  if(wbAddr) wbAddr.textContent=connectedWallet.shortAddr; if(wbNet) wbNet.textContent=connectedWallet.chainName;
   if(wStatus){ wStatus.textContent='CONNECTED ('+connectedWallet.providerName+')'; wStatus.className='td-g'; }
 
-  updateWalletBar(); updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); calculateMetrics();
-  showToast('✓ '+connectedWallet.providerName+' connected');
+  updateWalletBar(); updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); calculateMetrics(); showToast('✓ '+connectedWallet.providerName+' connected');
 }
 
 function disconnectWallet(){
-  isWalletConnected=false;
-  connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,provider:null,isDemo:false};
+  isWalletConnected=false; connectedWallet={address:null,shortAddr:null,providerName:null,chainId:null,provider:null,isDemo:false};
   walletState={eth:0,usdc:0,reth:0,stakedEth:0}; faucetUsed=false; swapHistory=[]; stakeHistory=[]; liqPositions=[]; bridgeFeedData=[];
-
   try{ sessionStorage.removeItem('rialo_addr'); sessionStorage.removeItem('rialo_wallet'); sessionStorage.removeItem('rialo_demo'); }catch(e){}
 
-  var navBtn=document.getElementById('nav-wallet-btn');
-  var labelEl=document.getElementById('nav-wallet-label');
-  var dot=document.querySelector('#nav-wallet-btn .nav-wallet-dot');
-  var wbDis=document.getElementById('wb-disconnected');
-  var wbCon=document.getElementById('wb-connected');
-  var wbBar=document.getElementById('wallet-bar');
-  var fbtn=document.getElementById('faucet-btn');
-  var wStatus=document.getElementById('analytics-wallet-status');
+  var navBtn=document.getElementById('nav-wallet-btn'); var labelEl=document.getElementById('nav-wallet-label'); var dot=document.querySelector('#nav-wallet-btn .nav-wallet-dot');
+  var wbDis=document.getElementById('wb-disconnected'); var wbCon=document.getElementById('wb-connected'); var wbBar=document.getElementById('wallet-bar');
+  var fbtn=document.getElementById('faucet-btn'); var wStatus=document.getElementById('analytics-wallet-status');
 
-  if(navBtn) navBtn.classList.remove('connected');
-  if(labelEl) labelEl.textContent='Connect Wallet';
+  if(navBtn) navBtn.classList.remove('connected'); if(labelEl) labelEl.textContent='Connect Wallet';
   if(dot){ dot.style.background='var(--muted)'; dot.style.boxShadow='none'; }
-  if(wbCon) wbCon.style.display='none';
-  if(wbDis) wbDis.style.display='flex';
-  if(wbBar) wbBar.classList.remove('connected-state');
+  if(wbCon) wbCon.style.display='none'; if(wbDis) wbDis.style.display='flex'; if(wbBar) wbBar.classList.remove('connected-state');
   if(fbtn){ fbtn.textContent='⚡ Faucet Node'; fbtn.disabled=true; fbtn.onclick=null; }
   if(wStatus){ wStatus.textContent='OFFLINE'; wStatus.className='td-red'; }
 
-  updateWalletBar(); calcSwap(); updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions();
-  showToast('Node disconnected');
+  updateWalletBar(); calcSwap(); updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); showToast('Node disconnected');
 }
 
-function checkSessionWallet(){
-  try{
-    var savedAddr=sessionStorage.getItem('rialo_addr');
-    var savedWallet=sessionStorage.getItem('rialo_wallet');
-    var savedDemo=sessionStorage.getItem('rialo_demo');
-    if(savedAddr){ startScanAnimation(savedAddr,savedWallet||'Wallet',11155111,savedDemo==='1',null); }
-  }catch(e){}
-}
-
-function claimFaucet(){
-  if(!isWalletConnected) return;
-  if(faucetUsed){ showToast('Demo claim limit reached.'); return; }
-  walletState.eth+=2.0; walletState.usdc+=500.0; faucetUsed=true;
-  var btn=document.getElementById('faucet-btn'); if(btn){ btn.textContent='✓ Deposited'; btn.disabled=true; }
-  updateWalletBar(); showToast('✓ Data supplied!');
-}
+function checkSessionWallet(){ try{ var savedAddr=sessionStorage.getItem('rialo_addr'); var savedWallet=sessionStorage.getItem('rialo_wallet'); var savedDemo=sessionStorage.getItem('rialo_demo'); if(savedAddr){ startScanAnimation(savedAddr,savedWallet||'Wallet',11155111,savedDemo==='1',null); } }catch(e){} }
+function claimFaucet(){ if(!isWalletConnected) return; if(faucetUsed){ showToast('Demo claim limit reached.'); return; } walletState.eth+=2.0; walletState.usdc+=500.0; faucetUsed=true; var btn=document.getElementById('faucet-btn'); if(btn){ btn.textContent='✓ Deposited'; btn.disabled=true; } updateWalletBar(); showToast('✓ Data supplied!'); }
 
 function updateWalletBar(){
-  var els={
-    'wb-eth': fmt(walletState.eth,4), 'wb-usdc': fmt(walletState.usdc,2), 'wb-reth': fmt(walletState.reth,4),
-    'user-staked': fmt(walletState.stakedEth,4), 'user-reth-disp': fmt(walletState.reth,4),
-    'user-rewards': fmt(walletState.stakedEth*selectedPoolApy,4), 'stake-total-usd': fmtUSD(walletState.stakedEth*prices.eth)
-  };
-  Object.keys(els).forEach(function(k){
-    var el=document.getElementById(k); if(el) el.textContent=els[k];
-  });
-  updateSwapBals();
+  var els={'wb-eth': fmt(walletState.eth,4), 'wb-usdc': fmt(walletState.usdc,2), 'wb-reth': fmt(walletState.reth,4), 'user-staked': fmt(walletState.stakedEth,4), 'user-reth-disp': fmt(walletState.reth,4), 'user-rewards': fmt(walletState.stakedEth*selectedPoolApy,4), 'stake-total-usd': fmtUSD(walletState.stakedEth*prices.eth)};
+  Object.keys(els).forEach(function(k){ var el=document.getElementById(k); if(el) el.textContent=els[k]; }); updateSwapBals();
 }
 
-document.getElementById('nav-wallet-btn').addEventListener('click',function(){ if(!isWalletConnected) openWalletModal(); else disconnectWallet(); });
-document.getElementById('wb-connect-btn').addEventListener('click',openWalletModal);
-document.getElementById('disconnect-btn').addEventListener('click',disconnectWallet);
-
-// ══════════════════════════════════════════
-//  PRICE DATA & PIPELINES
-// ══════════════════════════════════════════
+// ── PRICE DATA ORACLE ──
 var prices={eth:3248,btc:67420,sol:148.3,matic:0.88};
 var gasPrice=18; var gasHistory=Array.from({length:24},function(){ return 12+Math.random()*20; });
 var liqChartObj=null, gasChartObj=null;
 
 function fetchPrices(){
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,solana,matic-network&vs_currencies=usd&include_24hr_change=true')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.ethereum) prices.eth=d.ethereum.usd;
-      if(d.bitcoin) prices.btc=d.bitcoin.usd;
-      if(d.solana) prices.sol=d.solana.usd;
-      if(d['matic-network']) prices.matic=d['matic-network'].usd;
+    .then(function(r){ return r.json(); }).then(function(d){
+      if(d.ethereum) prices.eth=d.ethereum.usd; if(d.bitcoin) prices.btc=d.bitcoin.usd; if(d.solana) prices.sol=d.solana.usd; if(d['matic-network']) prices.matic=d['matic-network'].usd;
       updateTickerUI(d); updatePriceTable(d); calcSwap(); updateWalletBar(); calculateMetrics();
       var el=document.getElementById('price-update-time'); if(el) el.textContent=nowTime();
-    })
-    .catch(function(){ updateTickerUI({}); updatePriceTable({}); });
+    }).catch(function(){ updateTickerUI({}); updatePriceTable({}); });
 }
 
 function updateTickerUI(d){
-  var map={
-    eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'},
-    btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'},
-    sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'}
-  };
+  var map={eth:{pid:'tp-eth',cid:'tc-eth',p:prices.eth,key:'ethereum'}, btc:{pid:'tp-btc',cid:'tc-btc',p:prices.btc,key:'bitcoin'}, sol:{pid:'tp-sol',cid:'tc-sol',p:prices.sol,key:'solana'}};
   Object.values(map).forEach(function(m){
-    var pe=document.getElementById(m.pid), ce=document.getElementById(m.cid); if(!pe) return;
-    pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-    var chg=d[m.key]?d[m.key].usd_24h_change:0;
-    if(ce){ ce.textContent=(chg>0?'+':'')+chg.toFixed(2)+'%'; ce.className='tick-chg '+(chg>=0?'up':'dn'); }
+    var pe=document.getElementById(m.pid), ce=document.getElementById(m.cid); if(!pe) return; pe.textContent='$'+m.p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    var chg=d[m.key]?d[m.key].usd_24h_change:0; if(ce){ ce.textContent=(chg>0?'+':'')+chg.toFixed(2)+'%'; ce.className='tick-chg '+(chg>=0?'up':'dn'); }
   });
   var gasEl=document.getElementById('tp-gas'); if(gasEl) gasEl.textContent=gasPrice;
 }
 
 function updatePriceTable(d){
-  var assets=[
-    {sym:'Sepolia ETH',p:prices.eth,key:'ethereum',vol:'$14.2M',col:'#6f7cff'},
-    {sym:'wBTC Sepolia',p:prices.btc,key:'bitcoin',vol:'$2.1M',col:'#f7931a'},
-    {sym:'Sepolia USDC',p:1,key:null,vol:'$38.4M',col:'#26a17b'}
-  ];
+  var assets=[{sym:'Sepolia ETH',p:prices.eth,key:'ethereum',vol:'$14.2M',col:'#6f7cff'}, {sym:'wBTC Sepolia',p:prices.btc,key:'bitcoin',vol:'$2.1M',col:'#f7931a'}, {sym:'Sepolia USDC',p:1,key:null,vol:'$38.4M',col:'#26a17b'}];
   var tb=document.getElementById('price-table-body'); if(!tb) return;
   tb.innerHTML=assets.map(function(a){
     var chg=(a.key&&d[a.key])?d[a.key].usd_24h_change:0;
-    return '<tr>'
-      +'<td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:'+a.col+';display:inline-block"></span>'+a.sym+'</span></td>'
-      +'<td style="color:#fff;font-family:\'Orbitron\',monospace;font-weight:700">$'+a.p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td>'
-      +'<td class="'+(chg>=0?'td-g':'td-red')+'">'+(chg>0?'+':'')+chg.toFixed(2)+'%</td>'
-      +'<td style="color:var(--muted)">'+a.vol+'</td>'
-      +'</tr>';
+    return '<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:'+a.col+';display:inline-block"></span>'+a.sym+'</span></td><td style="color:#fff;font-family:\'Orbitron\',monospace;font-weight:700">$'+a.p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</td><td class="'+(chg>=0?'td-g':'td-red')+'">'+(chg>0?'+':'')+chg.toFixed(2)+'%</td><td style="color:var(--muted)">'+a.vol+'</td></tr>';
   }).join('');
 }
 
-// ══════════════════════════════════════════
-//  TAB PANEL LOGIC
-// ══════════════════════════════════════════
-document.querySelectorAll('.tab-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
-    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-    btn.classList.add('active');
-    var tab=btn.getAttribute('data-tab'); var panel=document.getElementById('panel-'+tab);
-    if(panel) panel.classList.add('active');
-    if(tab==='monitor') setTimeout(buildGasChart,60);
-    if(tab==='liquidity') setTimeout(buildLiqChart,60);
-    if(tab==='analytics') setTimeout(calculateMetrics,60);
-  });
-});
-
-// ══════════════════════════════════════════
-//  SWAP SYSTEM CORE
-// ══════════════════════════════════════════
+// ── SWAP CONTROLLER LAYER ──
 var fromToken='ETH', toToken='USDC';
 var tokenColors={ETH:'#6f7cff',USDC:'#26a17b',BTC:'#f7931a',SOL:'#ab73ff',MATIC:'#8247e5'};
 var tokenCycle=['ETH','BTC','SOL','MATIC']; var toTokenCycle=['USDC','ETH'];
 var fromIdx=0, toIdx=0;
 
-function getPrice(sym){
-  if(sym==='ETH') return prices.eth; if(sym==='BTC') return prices.btc;
-  if(sym==='SOL') return prices.sol; if(sym==='MATIC') return prices.matic; return 1;
-}
+function getPrice(sym){ if(sym==='ETH') return prices.eth; if(sym==='BTC') return prices.btc; if(sym==='SOL') return prices.sol; if(sym==='MATIC') return prices.matic; return 1; }
 function getWalletBal(sym){ if(sym==='ETH') return walletState.eth; if(sym==='USDC') return walletState.usdc; return 0; }
 function updateSwapBals(){
-  var bsym=document.getElementById('swap-from-bal-sym'); if(bsym) bsym.textContent=fromToken;
-  var tsym=document.getElementById('swap-to-bal-sym'); if(tsym) tsym.textContent=toToken;
-  var fb=document.getElementById('swap-from-bal'); if(fb) fb.textContent=fmt(getWalletBal(fromToken),4);
-  var tb=document.getElementById('swap-to-bal'); if(tb) tb.textContent=fmt(getWalletBal(toToken),2);
+  var bsym=document.getElementById('swap-from-bal-sym'); if(bsym) bsym.textContent=fromToken; var tsym=document.getElementById('swap-to-bal-sym'); if(tsym) tsym.textContent=toToken;
+  var fb=document.getElementById('swap-from-bal'); if(fb) fb.textContent=fmt(getWalletBal(fromToken),4); var tb=document.getElementById('swap-to-bal'); if(tb) tb.textContent=fmt(getWalletBal(toToken),2);
 }
 function calcSwap(){
   var amtEl=document.getElementById('swap-from-amt'); var amt=parseFloat(amtEl?amtEl.value:0)||0;
   var fusd=document.getElementById('swap-from-usd'); var toAmt=document.getElementById('swap-to-amt'); var tusd=document.getElementById('swap-to-usd');
-  if(amt<=0){
-    if(fusd) fusd.textContent='$0.00'; if(toAmt) toAmt.value=''; if(tusd) tusd.textContent='$0.00'; updateSwapBals(); return;
-  }
+  if(amt<=0){ if(fusd) fusd.textContent='$0.00'; if(toAmt) toAmt.value=''; if(tusd) tusd.textContent='$0.00'; updateSwapBals(); return; }
   var fp=getPrice(fromToken), tp=getPrice(toToken); var usd=amt*fp, toAmtVal=(tp>0?usd/tp:0);
-  if(fusd) fusd.textContent=fmtUSD(usd); if(toAmt) toAmt.value=toAmtVal>0?fmt(toAmtVal,toToken==='USDC'?2:4):''; if(tusd) tusd.textContent=fmtUSD(usd);
-  updateSwapBals();
+  if(fusd) fusd.textContent=fmtUSD(usd); if(toAmt) toAmt.value=toAmtVal>0?fmt(toAmtVal,toToken==='USDC'?2:4):''; if(tusd) tusd.textContent=fmtUSD(usd); updateSwapBals();
 }
 
-var swapFromAmtEl=document.getElementById('swap-from-amt');
-if(swapFromAmtEl) swapFromAmtEl.addEventListener('input',calcSwap);
+var swapFromAmtEl=document.getElementById('swap-from-amt'); if(swapFromAmtEl) swapFromAmtEl.addEventListener('input',calcSwap);
 
-document.getElementById('from-token-pill').addEventListener('click',function(){
-  fromIdx=(fromIdx+1)%tokenCycle.length; fromToken=tokenCycle[fromIdx];
-  var sym=document.getElementById('from-sym'); if(sym) sym.textContent=fromToken;
-  var dot=document.getElementById('from-dot'); if(dot) dot.style.background=tokenColors[fromToken]||'#fff';
-  calcSwap();
-});
-document.getElementById('to-token-pill').addEventListener('click',function(){
-  toIdx=(toIdx+1)%toTokenCycle.length; toToken=toTokenCycle[toIdx];
-  var sym=document.getElementById('to-sym'); if(sym) sym.textContent=toToken;
-  var dot=document.getElementById('to-dot'); if(dot) dot.style.background=tokenColors[toToken]||'#fff';
-  calcSwap();
-});
-document.getElementById('flip-btn').addEventListener('click',function(){
-  var tmp=fromToken; fromToken=toToken; toToken=tmp;
-  var fs=document.getElementById('from-sym'); if(fs) fs.textContent=fromToken;
-  var ts=document.getElementById('to-sym'); if(ts) ts.textContent=toToken;
-  var fd=document.getElementById('from-dot'); if(fd) fd.style.background=tokenColors[fromToken]||'#fff';
-  var td=document.getElementById('to-dot'); if(td) td.style.background=tokenColors[toToken]||'#fff';
-  calcSwap();
-});
+document.getElementById('from-token-pill').addEventListener('click',function(){ fromIdx=(fromIdx+1)%tokenCycle.length; fromToken=tokenCycle[fromIdx]; var sym=document.getElementById('from-sym'); if(sym) sym.textContent=fromToken; var dot=document.getElementById('from-dot'); if(dot) dot.style.background=tokenColors[fromToken]||'#fff'; calcSwap(); });
+document.getElementById('to-token-pill').addEventListener('click',function(){ toIdx=(toIdx+1)%toTokenCycle.length; toToken=toTokenCycle[toIdx]; var sym=document.getElementById('to-sym'); if(sym) sym.textContent=toToken; var dot=document.getElementById('to-dot'); if(dot) dot.style.background=tokenColors[toToken]||'#fff'; calcSwap(); });
+document.getElementById('flip-btn').addEventListener('click',function(){ var tmp=fromToken; fromToken=toToken; toToken=tmp; var fs=document.getElementById('from-sym'); if(fs) fs.textContent=fromToken; var ts=document.getElementById('to-sym'); if(ts) ts.textContent=toToken; var fd=document.getElementById('from-dot'); if(fd) fd.style.background=tokenColors[fromToken]||'#fff'; var td=document.getElementById('to-dot'); if(td) td.style.background=tokenColors[toToken]||'#fff'; calcSwap(); });
 document.getElementById('swap-btn').addEventListener('click',doSwap);
 
 function doSwap(){
   if(!isWalletConnected){ showResult('swap-result','err','⚠ Connect wallet first!'); return; }
   var amtEl=document.getElementById('swap-from-amt'); var amt=parseFloat(amtEl?amtEl.value:0)||0;
-  if(amt<=0){ showResult('swap-result','err','⚠ Enter a valid amount.'); return; }
-  if(amt>getWalletBal(fromToken)){ showResult('swap-result','err','⚠ Exceeds available assets.'); return; }
+  if(amt<=0){ showResult('swap-result','err','⚠ Enter a valid amount.'); return; } if(amt>getWalletBal(fromToken)){ showResult('swap-result','err','⚠ Exceeds available assets.'); return; }
   showResult('swap-result','load','Generating Sepolia payload…');
   setTimeout(async function(){
     var fp=getPrice(fromToken), tp=getPrice(toToken); var usd=amt*fp, toAmtVal=tp>0?usd/tp:0;
-    if(fromToken==='ETH'){ walletState.eth-=amt; walletState.usdc+=amt*prices.eth; }
-    else if(fromToken==='USDC'){ walletState.usdc-=amt; walletState.eth+=amt/prices.eth; }
+    if(fromToken==='ETH'){ walletState.eth-=amt; walletState.usdc+=amt*prices.eth; } else if(fromToken==='USDC'){ walletState.usdc-=amt; walletState.eth+=amt/prices.eth; }
     var txh=randHex(); var toFmt=fmt(toAmtVal*.997,toToken==='USDC'?2:6);
     swapHistory.unshift({tx:txh,from:fmt(amt,4)+' '+fromToken,to:toFmt+' '+toToken,rate:'1 '+fromToken+' = '+fmt(fp/tp,4)+' '+toToken,status:'✓',time:nowTime()});
-    updateWalletBar(); buildSwapHistory(); showResult('swap-result','ok','✓ Handshake payload deployed.');
-    if(amtEl) amtEl.value=''; calcSwap(); showToast('✓ Swap Complete');
+    updateWalletBar(); buildSwapHistory(); showResult('swap-result','ok','✓ Handshake payload deployed.'); if(amtEl) amtEl.value=''; calcSwap(); showToast('✓ Swap Complete');
   },1500);
 }
 function buildSwapHistory(){
   var tb=document.getElementById('swap-history'); var empty=document.getElementById('swap-hist-empty'); if(!tb) return;
-  if(!swapHistory.length){ tb.innerHTML=''; if(empty) empty.style.display='block'; return; }
-  if(empty) empty.style.display='none';
-  tb.innerHTML=swapHistory.slice(0,5).map(function(h){
-    return '<tr><td class="td-c">'+h.tx+'</td><td>'+h.from+'</td><td class="td-g">'+h.to+'</td><td>'+h.rate+'</td><td class="td-g">'+h.status+'</td><td>'+h.time+'</td></tr>';
-  }).join('');
+  if(!swapHistory.length){ tb.innerHTML=''; if(empty) empty.style.display='block'; return; } if(empty) empty.style.display='none';
+  tb.innerHTML=swapHistory.slice(0,5).map(function(h){ return '<tr><td class="td-c">'+h.tx+'</td><td>'+h.from+'</td><td class="td-g">'+h.to+'</td><td>'+h.rate+'</td><td class="td-g">'+h.status+'</td><td>'+h.time+'</td></tr>'; }).join('');
 }
 
-// ══════════════════════════════════════════
-//  BRIDGE SECTION
-// ══════════════════════════════════════════
-var bridgeChains=[{name:'Ethereum Mainnet',icon:'🔷'},{name:'Polygon',icon:'🟣'},{name:'Arbitrum',icon:'🔵'},{name:'Optimism',icon:'🔴'},{name:'Base',icon:'🟦'}];
-var bridgeFromIdx=0, bridgeToIdx=1;
-
-document.getElementById('bridge-from-sel').addEventListener('click',function(){
-  bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length; if(bridgeFromIdx===bridgeToIdx) bridgeFromIdx=(bridgeFromIdx+1)%bridgeChains.length;
-  var c=bridgeChains[bridgeFromIdx]; var n=document.getElementById('bridge-from-name'); if(n) n.textContent=c.name;
-  var i=document.getElementById('bridge-from-icon'); if(i) i.textContent=c.icon; calcBridge();
-});
-document.getElementById('bridge-to-sel').addEventListener('click',function(){
-  bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length; if(bridgeToIdx===bridgeFromIdx) bridgeToIdx=(bridgeToIdx+1)%bridgeChains.length;
-  var c=bridgeChains[bridgeToIdx]; var n=document.getElementById('bridge-to-name'); if(n) n.textContent=c.name;
-  var i=document.getElementById('bridge-to-icon'); if(i) i.textContent=c.icon; calcBridge();
-});
-document.getElementById('bridge-max-btn').addEventListener('click',function(){
-  var el=document.getElementById('bridge-amt'); if(el) el.value=fmt(walletState.eth,6); calcBridge();
-});
-
-var bridgeAmtEl=document.getElementById('bridge-amt');
-if(bridgeAmtEl) bridgeAmtEl.addEventListener('input',calcBridge);
+// ── BRIDGE OPERATIONS ──
+document.getElementById('bridge-max-btn').addEventListener('click',function(){ var el=document.getElementById('bridge-amt'); if(el) el.value=fmt(walletState.eth,6); calcBridge(); });
+var bridgeAmtEl=document.getElementById('bridge-amt'); if(bridgeAmtEl) bridgeAmtEl.addEventListener('input',calcBridge);
 
 function calcBridge(){
-  var el=document.getElementById('bridge-amt'); var amt=parseFloat(el?el.value:0)||0;
-  var fee=amt*.0005, receive=amt-fee, gasEst=gasPrice*21000/1e9;
+  var el=document.getElementById('bridge-amt'); var amt=parseFloat(el?el.value:0)||0; var fee=amt*.0005, receive=amt-fee, gasEst=gasPrice*21000/1e9;
   var bfee=document.getElementById('bridge-fee'); if(bfee) bfee.textContent=amt>0?fmtUSD(fee*prices.eth)+' (0.05%)':'—';
   var brec=document.getElementById('bridge-receive'); if(brec) brec.textContent=amt>0?fmt(receive,6)+' ETH':'—';
   var bgas=document.getElementById('bridge-gas'); if(bgas) bgas.textContent=amt>0?fmt(gasEst,6)+' ETH':'—';
@@ -1400,215 +1301,102 @@ document.getElementById('bridge-btn').addEventListener('click',doBridge);
 function doBridge(){
   if(!isWalletConnected){ showResult('bridge-result','err','⚠ Connect wallet first!'); return; }
   var el=document.getElementById('bridge-amt'); var amt=parseFloat(el?el.value:0)||0;
-  if(amt<=0){ showResult('bridge-result','err','⚠ Enter volume.'); return; }
-  if(amt>walletState.eth){ showResult('bridge-result','err','⚠ Insufficient balance.'); return; }
+  if(amt<=0){ showResult('bridge-result','err','⚠ Enter volume.'); return; } if(amt>walletState.eth){ showResult('bridge-result','err','⚠ Insufficient balance.'); return; }
   var toChain=bridgeChains[bridgeToIdx].name; showResult('bridge-result','load','Relaying to '+toChain+'…');
   setTimeout(async function(){
-    var receive=amt*.9995; walletState.eth-=amt;
-    bridgeFeedData.unshift({from:'Sepolia',to:toChain,amt:fmt(receive,4)+' ETH',st:'✓',t:nowTime()});
-    updateWalletBar(); calcBridge(); buildBridgeFeed(); showResult('bridge-result','ok','✓ Bridge signature confirmed.');
-    if(el) el.value=''; showToast('✓ Pipeline complete');
+    var receive=amt*.9995; walletState.eth-=amt; bridgeFeedData.unshift({from:'Sepolia',to:toChain,amt:fmt(receive,4)+' ETH',st:'✓',t:nowTime()});
+    updateWalletBar(); calcBridge(); buildBridgeFeed(); showResult('bridge-result','ok','✓ Bridge signature confirmed.'); if(el) el.value=''; showToast('✓ Pipeline complete');
   },2200);
 }
 function buildBridgeFeed(){
-  var defaults=[{from:'Sepolia',to:'Polygon',amt:'2.4000 ETH',st:'✓',t:'2m ago'},{from:'Sepolia',to:'Arbitrum',amt:'0.8500 ETH',st:'✓',t:'5m ago'}];
-  var all=bridgeFeedData.concat(defaults).slice(0,5); var tb=document.getElementById('bridge-feed'); if(!tb) return;
+  var defaults=[{from:'Sepolia',to:'Polygon',amt:'2.4000 ETH',st:'✓',t:'2m ago'},{from:'Sepolia',to:'Arbitrum',amt:'0.8500 ETH',st:'✓',t:'5m ago'}]; var all=bridgeFeedData.concat(defaults).slice(0,5); var tb=document.getElementById('bridge-feed'); if(!tb) return;
   tb.innerHTML=all.map(function(b){ return '<tr><td>'+b.from+'</td><td>'+b.to+'</td><td class="td-c">'+b.amt+'</td><td class="td-g">'+b.st+'</td><td>'+b.t+'</td></tr>'; }).join('');
 }
 
-// ══════════════════════════════════════════
-//  STAKE OPERATIONS
-// ══════════════════════════════════════════
+// ── STAKING LAYERS ──
 var selectedPoolApy=0.084; var selectedPoolName='Sepolia Staking Pool';
-
-document.querySelectorAll('.pool-row').forEach(function(el){
-  el.addEventListener('click',function(){
-    document.querySelectorAll('.pool-row').forEach(function(p){ p.classList.remove('selected'); }); el.classList.add('selected');
-    selectedPoolApy=parseFloat(el.dataset.apy); var pname=el.querySelector('.pname'); selectedPoolName=pname?pname.textContent:'Pool'; calcStake();
-  });
-});
-document.querySelectorAll('.pct-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    var pct=parseInt(btn.getAttribute('data-pct')); var sa=document.getElementById('stake-amt'); if(sa) sa.value=fmt(walletState.eth*pct/100,6); calcStake();
-  });
-});
-
-var stakeAmtEl=document.getElementById('stake-amt');
-if(stakeAmtEl) stakeAmtEl.addEventListener('input',calcStake);
+document.querySelectorAll('.pool-row').forEach(function(el){ el.addEventListener('click',function(){ document.querySelectorAll('.pool-row').forEach(function(p){ p.classList.remove('selected'); }); el.classList.add('selected'); selectedPoolApy=parseFloat(el.dataset.apy); var pname=el.querySelector('.pname'); selectedPoolName=pname?pname.textContent:'Pool'; calcStake(); }); });
+document.querySelectorAll('.pct-btn').forEach(function(btn){ btn.addEventListener('click',function(){ var pct=parseInt(btn.getAttribute('data-pct')); var sa=document.getElementById('stake-amt'); if(sa) sa.value=fmt(walletState.eth*pct/100,6); calcStake(); }); });
+var stakeAmtEl=document.getElementById('stake-amt'); if(stakeAmtEl) stakeAmtEl.addEventListener('input',calcStake);
 
 function calcStake(){
   var el=document.getElementById('stake-amt'); var amt=parseFloat(el?el.value:0)||0;
-  var rp=document.getElementById('stake-reth-preview'); if(rp) rp.textContent=fmt(amt/1.03,4);
-  var ap=document.getElementById('stake-annual-preview'); if(ap) ap.textContent=fmt(amt*selectedPoolApy,4);
+  var rp=document.getElementById('stake-reth-preview'); if(rp) rp.textContent=fmt(amt/1.03,4); var ap=document.getElementById('stake-annual-preview'); if(ap) ap.textContent=fmt(amt*selectedPoolApy,4);
 }
 document.getElementById('stake-btn').addEventListener('click',doStake);
 
 function doStake(){
   if(!isWalletConnected){ showResult('stake-result','err','⚠ Connect wallet first!'); return; }
   var el=document.getElementById('stake-amt'); var amt=parseFloat(el?el.value:0)||0;
-  if(amt<=0){ showResult('stake-result','err','⚠ Enter staking size.'); return; }
-  if(amt>walletState.eth){ showResult('stake-result','err','⚠ Insufficient balance.'); return; }
+  if(amt<=0){ showResult('stake-result','err','⚠ Enter staking size.'); return; } if(amt>walletState.eth){ showResult('stake-result','err','⚠ Insufficient balance.'); return; }
   showResult('stake-result','load','Depositing ETH...');
   setTimeout(async function(){
-    var rethAmt=amt/1.03; walletState.eth-=amt; walletState.reth+=rethAmt; walletState.stakedEth+=amt;
-    stakeHistory.unshift({tx:randHex(),amt:fmt(amt,4)+' ETH',pool:selectedPoolName,reth:fmt(rethAmt,4),t:nowTime()});
-    updateWalletBar(); calcStake(); updateStakeTable(); buildStakeHistory(); showResult('stake-result','ok','✓ Staking successful.');
-    if(el) el.value=''; showToast('✓ Vault Stake Confirmed');
+    var rethAmt=amt/1.03; walletState.eth-=amt; walletState.reth+=rethAmt; walletState.stakedEth+=amt; stakeHistory.unshift({tx:randHex(),amt:fmt(amt,4)+' ETH',pool:selectedPoolName,reth:fmt(rethAmt,4),t:nowTime()});
+    updateWalletBar(); calcStake(); updateStakeTable(); buildStakeHistory(); showResult('stake-result','ok','✓ Staking successful.'); if(el) el.value=''; showToast('✓ Vault Stake Confirmed');
   },2000);
 }
 function updateStakeTable(){
-  var pools=[{name:'Sepolia Staking Pool',apy:'8.4%',tvl:'$14.0M',val:14,v:3912},{name:'Sandbox Diversified Vault',apy:'6.2%',tvl:'$8.2M',val:8.2,v:1504}];
-  var tb=document.getElementById('stake-table'); if(!tb) return;
-  tb.innerHTML=pools.map(function(p,i){
-    var myShare=(i===0&&walletState.stakedEth>0)?(walletState.stakedEth/(p.val*1000)*100).toFixed(4)+'%':'0.0000%';
-    return '<tr><td>'+p.name+'</td><td class="td-g">'+p.apy+'</td><td class="td-c">'+p.tvl+'</td><td>'+p.v.toLocaleString()+'</td><td class="td-gold">'+myShare+'</td></tr>';
-  }).join('');
+  var pools=[{name:'Sepolia Staking Pool',apy:'8.4%',tvl:'$14.0M',val:14,v:3912},{name:'Sandbox Diversified Vault',apy:'6.2%',tvl:'$8.2M',val:8.2,v:1504}]; var tb=document.getElementById('stake-table'); if(!tb) return;
+  tb.innerHTML=pools.map(function(p,i){ var myShare=(i===0&&walletState.stakedEth>0)?(walletState.stakedEth/(p.val*1000)*100).toFixed(4)+'%':'0.0000%'; return '<tr><td>'+p.name+'</td><td class="td-g">'+p.apy+'</td><td class="td-c">'+p.tvl+'</td><td>'+p.v.toLocaleString()+'</td><td class="td-gold">'+myShare+'</td></tr>'; }).join('');
 }
 function buildStakeHistory(){
-  var tb=document.getElementById('stake-history'); var empty=document.getElementById('stake-hist-empty'); if(!tb) return;
-  if(empty) empty.style.display=stakeHistory.length?'none':'block';
+  var tb=document.getElementById('stake-history'); var empty=document.getElementById('stake-hist-empty'); if(!tb) return; if(empty) empty.style.display=stakeHistory.length?'none':'block';
   tb.innerHTML=stakeHistory.map(function(h){ return '<tr><td class="td-c">'+h.tx+'</td><td>'+h.amt+'</td><td>'+h.pool+'</td><td class="td-gold">'+h.reth+'</td><td>'+h.t+'</td></tr>'; }).join('');
 }
 
-// ══════════════════════════════════════════
-//  LIQUIDITY PROVIDER LOGIC
-// ══════════════════════════════════════════
+// ── LP CONFIGS ──
 var liqAmtEl=document.getElementById('liq-amt'); if(liqAmtEl) liqAmtEl.addEventListener('input',calcLiq);
 var liqPairEl=document.getElementById('liq-pair-sel'); if(liqPairEl) liqPairEl.addEventListener('change',calcLiq);
 
 function calcLiq(){
-  var el=document.getElementById('liq-amt'); var amt=parseFloat(el?el.value:0)||0;
-  var pairEl=document.getElementById('liq-pair-sel'); var pair=pairEl?pairEl.value:'ETH/MATIC';
-  var paired=pair==='ETH/MATIC'?amt*(prices.eth/prices.matic):amt*prices.eth;
-  var paEl=document.getElementById('liq-paired-amt'); if(paEl) paEl.textContent=amt>0?fmt(paired,2)+' '+(pair==='ETH/MATIC'?'MATIC':'USDT'):'—';
-  var lpEl=document.getElementById('liq-lp-tokens'); if(lpEl) lpEl.textContent=amt>0?fmt(amt*14.82,4)+' LP':'—';
+  var el=document.getElementById('liq-amt'); var amt=parseFloat(el?el.value:0)||0; var pairEl=document.getElementById('liq-pair-sel'); var pair=pairEl?pairEl.value:'ETH/MATIC'; var paired=pair==='ETH/MATIC'?amt*(prices.eth/prices.matic):amt*prices.eth;
+  var paEl=document.getElementById('liq-paired-amt'); if(paEl) paEl.textContent=amt>0?fmt(paired,2)+' '+(pair==='ETH/MATIC'?'MATIC':'USDT'):'—'; var lpEl=document.getElementById('liq-lp-tokens'); if(lpEl) lpEl.textContent=amt>0?fmt(amt*14.82,4)+' LP':'—';
 }
 document.getElementById('liq-btn').addEventListener('click',doLiquidity);
 
 function doLiquidity(){
   if(!isWalletConnected){ showResult('liq-result','err','⚠ Connect wallet first!'); return; }
   var el=document.getElementById('liq-amt'); var amt=parseFloat(el?el.value:0)||0;
-  if(amt<=0){ showResult('liq-result','err','⚠ Enter liquidity token metrics.'); return; }
-  if(amt>walletState.eth){ showResult('liq-result','err','⚠ Insufficient volume.'); return; }
-  showResult('liq-result','load','Providing Pool liquidity…');
-  var pairEl=document.getElementById('liq-pair-sel'); var pair=pairEl?pairEl.value:'ETH/MATIC';
+  if(amt<=0){ showResult('liq-result','err','⚠ Enter liquidity token metrics.'); return; } if(amt>walletState.eth){ showResult('liq-result','err','⚠ Insufficient volume.'); return; }
+  showResult('liq-result','load','Providing Pool liquidity…'); var pairEl=document.getElementById('liq-pair-sel'); var pair=pairEl?pairEl.value:'ETH/MATIC';
   setTimeout(async function(){
-    walletState.eth-=amt; liqPositions.push({pair:pair,lp:fmt(amt*14.82,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,4)+' ETH'});
-    updateWalletBar(); calcLiq(); buildLiqPositions(); showResult('liq-result','ok','✓ LP matrix verified.');
-    if(el) el.value=''; showToast('✓ Liquidity Supplied');
+    walletState.eth-=amt; liqPositions.push({pair:pair,lp:fmt(amt*14.82,4),val:fmtUSD(amt*2*prices.eth),fees:fmt(amt*.003,4)+' ETH'}); updateWalletBar(); calcLiq(); buildLiqPositions(); showResult('liq-result','ok','✓ LP matrix verified.'); if(el) el.value=''; showToast('✓ Liquidity Supplied');
   },1900);
 }
 function buildLiqPositions(){
-  var tb=document.getElementById('liq-positions'); var empty=document.getElementById('liq-pos-empty'); if(!tb) return;
-  if(empty) empty.style.display=liqPositions.length?'none':'block';
+  var tb=document.getElementById('liq-positions'); var empty=document.getElementById('liq-pos-empty'); if(!tb) return; if(empty) empty.style.display=liqPositions.length?'none':'block';
   tb.innerHTML=liqPositions.map(function(p){ return '<tr><td>'+p.pair+'</td><td class="td-gold">'+p.lp+'</td><td class="td-c">'+p.val+'</td><td class="td-g">'+p.fees+'</td></tr>'; }).join('');
 }
 
-// ══════════════════════════════════════════
-//  CHARTS RENDER ENGINE
-// ══════════════════════════════════════════
-function buildLiqChart(){
-  var el=document.getElementById('liq-chart'); if(!el) return;
-  if(liqChartObj){ liqChartObj.destroy(); }
-  liqChartObj=new Chart(el,{
-    type:'bar',
-    data:{ labels:['M','T','W','T','F','S','S'], datasets:[{data:[12,15,8,22,31,14,45],backgroundColor:'rgba(124,58,237,.4)',borderRadius:2}] },
-    options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}
-  });
-}
-function buildGasChart(){
-  var el=document.getElementById('gas-chart'); if(!el) return;
-  if(gasChartObj){ gasChartObj.destroy(); }
-  gasChartObj=new Chart(el,{
-    type:'bar',
-    data:{ labels:gasHistory.map(function(_,i){ return i+'h'; }), datasets:[{data:gasHistory.slice(),backgroundColor:'rgba(6,182,212,.3)',borderRadius:2}] },
-    options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}}
-  });
-}
-function updateGasUI(){
-  var g=gasPrice+Math.floor((Math.random()-.5)*4); if(g>0&&g<500) gasPrice=g;
-  var gd=document.getElementById('gas-display'); if(gd) gd.textContent=gasPrice;
-  var gs=document.getElementById('gas-slow'); if(gs) gs.textContent=Math.max(1,gasPrice-3);
-  var ga=document.getElementById('gas-avg'); if(ga) ga.textContent=gasPrice;
-  var gf=document.getElementById('gas-fast'); if(gf) gf.textContent=gasPrice+4;
-  var tg=document.getElementById('tp-gas'); if(tg) tg.textContent=gasPrice;
-  gasHistory.push(gasPrice); if(gasHistory.length>24) gasHistory.shift();
-  if(gasChartObj&&gasChartObj.data){ gasChartObj.data.datasets[0].data=gasHistory.slice(); gasChartObj.update('none'); }
-}
+// ── CHARTS RENDER PIPELINES ──
+function buildLiqChart(){ var el=document.getElementById('liq-chart'); if(!el) return; if(liqChartObj){ liqChartObj.destroy(); } liqChartObj=new Chart(el,{ type:'bar', data:{ labels:['M','T','W','T','F','S','S'], datasets:[{data:[12,15,8,22,31,14,45],backgroundColor:'rgba(124,58,237,.4)',borderRadius:2}] }, options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}} }); }
+function buildGasChart(){ var el=document.getElementById('gas-chart'); if(!el) return; if(gasChartObj){ gasChartObj.destroy(); } gasChartObj=new Chart(el,{ type:'bar', data:{ labels:gasHistory.map(function(_,i){ return i+'h'; }), datasets:[{data:gasHistory.slice(),backgroundColor:'rgba(6,182,212,.3)',borderRadius:2}] }, options:{responsive:true,maintainAspectRatio:false,scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}}} }); }
+function updateGasUI(){ var g=gasPrice+Math.floor((Math.random()-.5)*4); if(g>0&&g<500) gasPrice=g; var gd=document.getElementById('gas-display'); if(gd) gd.textContent=gasPrice; var gs=document.getElementById('gas-slow'); if(gs) gs.textContent=Math.max(1,gasPrice-3); var ga=document.getElementById('gas-avg'); if(ga) ga.textContent=gasPrice; var gf=document.getElementById('gas-fast'); if(gf) gf.textContent=gasPrice+4; var tg=document.getElementById('tp-gas'); if(tg) tg.textContent=gasPrice; gasHistory.push(gasPrice); if(gasHistory.length>24) gasHistory.shift(); if(gasChartObj&&gasChartObj.data){ gasChartObj.data.datasets[0].data=gasHistory.slice(); gasChartObj.update('none'); } }
 
-// ══════════════════════════════════════════
-//  MATHEMATICAL SLIPPAGE MONITOR
-// ══════════════════════════════════════════
+// ── MATH MODEL SLIPPAGE DATA ──
 var slippageChartObj=null;
-function initSlippageChart(baseImpact){
-  var el=document.getElementById('slippage-chart'); if(!el) return;
-  if(slippageChartObj){ slippageChartObj.destroy(); }
-  slippageChartObj=new Chart(el,{
-    type:'line',
-    data:{
-      labels:['1 ETH','10 ETH','50 ETH','100 ETH','500 ETH'],
-      datasets:[{ label:'Price Impact %', data:[baseImpact,baseImpact*1.5,baseImpact*3,baseImpact*6,baseImpact*12], borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.05)', borderWidth:2,fill:true,tension:.4,pointRadius:2 }]
-    },
-    options:{ responsive:true,maintainAspectRatio:false, scales:{x:{display:true,grid:{display:false}},y:{display:false}}, plugins:{legend:{display:false}} }
-  });
-}
+function initSlippageChart(baseImpact){ var el=document.getElementById('slippage-chart'); if(!el) return; if(slippageChartObj){ slippageChartObj.destroy(); } slippageChartObj=new Chart(el,{ type:'line', data:{ labels:['1 ETH','10 ETH','50 ETH','100 ETH','500 ETH'], datasets:[{ label:'Price Impact %', data:[baseImpact,baseImpact*1.5,baseImpact*3,baseImpact*6,baseImpact*12], borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.05)', borderWidth:2,fill:true,tension:.4,pointRadius:2 }] }, options:{ responsive:true,maintainAspectRatio:false, scales:{x:{display:true,grid:{display:false}},y:{display:false}}, plugins:{legend:{display:false}} } }); }
 function calculateMetrics(){
-  var el=document.getElementById('analytics-volume'); var amt=parseFloat(el?el.value:0)||0;
-  var usdEl=document.getElementById('analytics-usd-value'); var impEl=document.getElementById('analytics-impact'); var minEl=document.getElementById('analytics-min-received');
-  if(amt<=0){ if(usdEl) usdEl.textContent='$0.00'; if(impEl) impEl.textContent='—'; if(minEl) minEl.textContent='—'; return; }
-  var totalUsdValue=amt*prices.eth; if(usdEl) usdEl.textContent=fmtUSD(totalUsdValue);
-  if(!isWalletConnected){ if(impEl){ impEl.textContent='Connect Node to Calculate'; impEl.className='td-red'; } return; }
+  var el=document.getElementById('analytics-volume'); var amt=parseFloat(el?el.value:0)||0; var usdEl=document.getElementById('analytics-usd-value'); var impEl=document.getElementById('analytics-impact'); var minEl=document.getElementById('analytics-min-received');
+  if(amt<=0){ if(usdEl) usdEl.textContent='$0.00'; if(impEl) impEl.textContent='—'; if(minEl) minEl.textContent='—'; return; } var totalUsdValue=amt*prices.eth; if(usdEl) usdEl.textContent=fmtUSD(totalUsdValue); if(!isWalletConnected){ if(impEl){ impEl.textContent='Connect Node to Calculate'; impEl.className='td-red'; } return; }
   var poolLiquidity=10000; var priceImpact=(amt/(poolLiquidity+amt))*100; var minReceived=(totalUsdValue*(1-(priceImpact/100)))*.995;
-  if(impEl){ impEl.textContent=priceImpact.toFixed(4)+'%'; impEl.className=priceImpact>1?'td-red':'td-g'; }
-  if(minEl) minEl.textContent=fmtUSD(minReceived);
-  initSlippageChart(priceImpact);
+  if(impEl){ impEl.textContent=priceImpact.toFixed(4)+'%'; impEl.className=priceImpact>1?'td-red':'td-g'; } if(minEl) minEl.textContent=fmtUSD(minReceived); initSlippageChart(priceImpact);
 }
-var analyticsVolEl=document.getElementById('analytics-volume');
-if(analyticsVolEl) analyticsVolEl.addEventListener('input',calculateMetrics);
+var analyticsVolEl=document.getElementById('analytics-volume'); if(analyticsVolEl) analyticsVolEl.addEventListener('input',calculateMetrics);
 
-// ══════════════════════════════════════════
-//  LIVE CLUSTER activity FEED
-// ══════════════════════════════════════════
+// ── LIVE STREAM FEEDS ──
 var feedActs=[{t:'Swap',c:'#06b6d4'},{t:'Bridge',c:'#d4a832'},{t:'Stake',c:'#00e87a'},{t:'Add LP',c:'#ab73ff'}];
-function buildLiveFeed(){
-  var el=document.getElementById('live-feed'); if(!el) return;
-  var items=Array.from({length:5},function(_,i){
-    var act=feedActs[Math.floor(Math.random()*feedActs.length)];
-    return '<div class="feed-item">'
-      +'<div class="fd-dot" style="background:'+act.c+'"></div>'
-      +'<div class="fd-action"><span style="color:'+act.c+';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">'+act.t+'</span>'+randAddr()+'</div>'
-      +'<div class="fd-chain">Sepolia Node</div>'
-      +'<div class="fd-amt" style="color:'+act.c+'">$'+(Math.random()*4000+100).toFixed(2)+'</div>'
-      +'<div class="fd-ago">'+(i*4+2)+'s ago</div>'
-      +'</div>';
-  });
-  el.innerHTML=items.join('');
-}
+function buildLiveFeed(){ var el=document.getElementById('live-feed'); if(!el) return; var items=Array.from({length:5},function(_,i){ var act=feedActs[Math.floor(Math.random()*feedActs.length)]; return '<div class="feed-item"><div class="fd-dot" style="background:'+act.c+'"></div><div class="fd-action"><span style="color:'+act.c+';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">'+act.t+'</span>'+randAddr()+'</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:'+act.c+'">$'+(Math.random()*4000+100).toFixed(2)+'</div><div class="fd-ago">'+(i*4+2)+'s ago</div></div>'; }); el.innerHTML=items.join(''); }
 
-// ══════════════════════════════════════════
-//  DOM EVENT SETUP & LOOP INITS
-// ══════════════════════════════════════════
+// ── EVENT LOOPS ──
 window.addEventListener('DOMContentLoaded',function(){
-  fetchPrices(); setInterval(fetchPrices,30000); setInterval(updateGasUI,8000);
-  setInterval(async function(){ if(isWalletConnected&&!connectedWallet.isDemo) await querySepoliaBalance(); },5000);
-
+  fetchPrices(); setInterval(fetchPrices,30000); setInterval(updateGasUI,8000); setInterval(async function(){ if(isWalletConnected&&!connectedWallet.isDemo) await querySepoliaBalance(); },5000);
   updateStakeTable(); buildSwapHistory(); buildBridgeFeed(); buildLiqPositions(); buildLiveFeed();
-
-  setInterval(function(){
-    var el=document.getElementById('live-feed'); if(!el) return;
-    var act=feedActs[Math.floor(Math.random()*feedActs.length)];
-    var item='<div class="feed-item">'
-      +'<div class="fd-dot" style="background:'+act.c+'"></div>'
-      +'<div class="fd-action"><span style="color:'+act.c+';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">'+act.t+'</span>'+randAddr()+'</div>'
-      +'<div class="fd-chain">Sepolia Node</div>'
-      +'<div class="fd-amt" style="color:'+act.c+'">$'+(Math.random()*1500).toFixed(2)+'</div>'
-      +'<div class="fd-ago">just now</div>'
-      +'</div>';
-    el.innerHTML=item+el.innerHTML;
-    var children=el.querySelectorAll('.feed-item'); if(children.length>8) children[children.length-1].remove();
-  },4000);
-
+  setInterval(function(){ var el=document.getElementById('live-feed'); if(!el) return; var act=feedActs[Math.floor(Math.random()*feedActs.length)]; var item='<div class="feed-item"><div class="fd-dot" style="background:'+act.c+'"></div><div class="fd-action"><span style="color:'+act.c+';font-size:11px;font-weight:700;margin-right:5px;text-transform:uppercase">'+act.t+'</span>'+randAddr()+'</div><div class="fd-chain">Sepolia Node</div><div class="fd-amt" style="color:'+act.c+'">$'+(Math.random()*1500).toFixed(2)+'</div><div class="fd-ago">just now</div></div>'; el.innerHTML=item+el.innerHTML; var children=el.querySelectorAll('.feed-item'); if(children.length>8) children[children.length-1].remove(); },4000);
   calcBridge(); calcLiq(); checkSessionWallet();
+  
+  // Memulai mesin interaktif 3D Tilt & transisi GSAP setelah dokumen siap
+  init3DTiltCards();
 });
 </script>
 </body>
