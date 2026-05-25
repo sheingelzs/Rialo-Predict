@@ -124,7 +124,7 @@ a[href*="spline.design"],
   transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s;
 }
 
-/* NAVBAR */
+/* NAVBAR - FIX: Default opacity diatur via script agar tidak mati total jika fallback aktif */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
@@ -733,7 +733,7 @@ footer{
 <div id="main-wrapper">
   <canvas id="particles-canvas"></canvas>
 
-  <nav>
+  <nav id="top-nav">
     <div class="logo">NEXUS</div>
     <ul class="nav-links">
       <li><a href="#explore">Explore</a></li>
@@ -756,7 +756,6 @@ footer{
 
     <div class="hero-wrapper">
       <div class="hero-content">
-        <!-- RIALO TELAH DIGANTI MENJADI NEXUS -->
         <h1 class="hero-title-3d">
           <span class="title-welcome">WELCOME TO THE</span>
           <span class="title-core-focus">NEXUS ALPHA CORE</span>
@@ -896,11 +895,12 @@ const introOverlay = document.getElementById('intro-overlay');
 const introVideo = document.getElementById('intro-video');
 const skipBtn = document.getElementById('skip-intro');
 const mainWrapper = document.getElementById('main-wrapper');
+const topNav = document.getElementById('top-nav');
 
 // AUTO TRIGGER MAIN SITE (Langsung memutar video intro saat dimuat)
 window.addEventListener('DOMContentLoaded', () => {
   introVideo.play().catch(err => {
-    console.log("Autoplay dengan suara diblokir oleh browser. Memulai fallback situs utama.");
+    console.log("Autoplay didorong browser ke mode fallback.");
     initiateMainSite();
   });
 });
@@ -908,6 +908,9 @@ window.addEventListener('DOMContentLoaded', () => {
 // CINEMATIC TRANSITIONS KETIKA INTRO SELESAI / DI-SKIP
 function initiateMainSite() {
   if (mainWrapper.style.visibility === 'visible') return;
+
+  // Memastikan scrollbar body langsung aktif kembali di situs utama
+  document.body.style.overflowY = 'auto';
 
   const exitTl = gsap.timeline({
     onComplete: () => {
@@ -1086,7 +1089,8 @@ window.addEventListener('load', () => {
 // INTRO TIMELINE ANIMATION AFTER ENTRANCE
 function startHomeAnimations() {
   const introTl = gsap.timeline();
-  introTl.to("nav", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+  // FORCE FIX: Memastikan navbar terlihat penuh dan tergeser kembali ke posisi normal (y: 0)
+  introTl.to(topNav, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
   introTl.fromTo(".hero-content",
     { opacity: 0, transform: "rotateY(30deg) rotateX(15deg) translateZ(-150px)" },
     { opacity: 1, transform: "rotateY(12deg) rotateX(4deg) translateZ(0)", duration: 1, ease: "cubic-bezier(0.16, 1, 0.3, 1)" },
@@ -1098,6 +1102,15 @@ function startHomeAnimations() {
     "-=0.8"
   );
 }
+
+// FALLBACK SAFETY: Jika GSAP atau video gagal memicu animasi, paksa navbar menyala dalam 2 detik
+setTimeout(() => {
+  if (mainWrapper.style.visibility !== 'visible') {
+    initiateMainSite();
+  } else {
+    gsap.to(topNav, { opacity: 1, y: 0, duration: 0.5 });
+  }
+}, 2000);
 
 // SCROLL ANIMATIONS ENGINE
 gsap.utils.toArray('.slide-left-card').forEach(card => {
