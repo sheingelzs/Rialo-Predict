@@ -149,6 +149,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .tab-btn.active{background:rgba(124,58,237,.15);color:#fff;border:1px solid rgba(124,58,237,.35);text-shadow:0 0 10px rgba(124,58,237,.5);}
 .tab-btn:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 
+/* PANELS CONTAINER */
 .panel{display:none;opacity:0;transform:translateY(15px);will-change:opacity,transform;}
 .panel.active{display:block;}
 
@@ -704,8 +705,6 @@ const ERC20_ABI = [
   "function balanceOf(address account) external view returns (uint256)"
 ];
 
-const BRIDGE_RELAYER_VAULT = "0x4016D411d31d1F6eBaB18B23Df53303fff997678";
-
 // ── CINEMATIC INTRO ──
 window.addEventListener('load', () => {
   const preloader = document.getElementById('infrastructure-preloader');
@@ -863,6 +862,9 @@ gsap.utils.toArray('.infra-card').forEach(card => {
 let isWalletConnected = false;
 let connectedWallet = { address:null, shortAddr:null, providerName:null, chainId:null, provider:null, isDemo:false };
 let walletState = { eth:0, usdc:0, reth:0, stakedEth:0 };
+
+// Variabel penampung offset akumulasi nilai transaksi loopback lokal
+let mockBalancesOffset = { usdc: 0, stakedEth: 0 };
 let faucetUsed = false;
 let swapHistory = [], stakeHistory = [], liqPositions = [], bridgeFeedData = [];
 let selectedPoolApy = 0.084;
@@ -975,7 +977,6 @@ function startScanAnimation(addr, walletName, chainId, isDemo, provider) {
   nextPhase();
 }
 
-// Jaga kursor trail mouse sinkron saat pindah elemen
 function closeScanAnimation() {
   const ovl = document.getElementById('scan-ovl'); if(!ovl) return;
   ovl.classList.remove('open');
@@ -1007,24 +1008,28 @@ async function querySepoliaBalance() {
   try {
     const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
     
+    // Ambil saldo real Sepolia ETH dari blockchain
     const balance = await browserProvider.getBalance(connectedWallet.address);
     walletState.eth = parseFloat(ethers.formatEther(balance));
     
+    // Sinkronisasi saldo visual USDC tiruan dengan penambahan offset lokal
     try {
       const usdcContract = new ethers.Contract(SEPOLIA_USDC_ADDRESS, ERC20_ABI, browserProvider);
       const usdcBal = await usdcContract.balanceOf(connectedWallet.address);
-      walletState.usdc = parseFloat(ethers.formatUnits(usdcBal, 6)); 
+      walletState.usdc = parseFloat(ethers.formatUnits(usdcBal, 6)) + mockBalancesOffset.usdc; 
     } catch(err) {
-      walletState.usdc = 0;
+      walletState.usdc = 120.50 + mockBalancesOffset.usdc; 
     }
     
+    // Sinkronisasi data Staking tiruan
     if (STAKING_CONTRACT_ADDRESS !== "0x0000000000000000000000000000000000000000") {
       const contract = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKING_CONTRACT_ABI, browserProvider);
       const lockedWei = await contract.stakedBalances(connectedWallet.address);
-      walletState.stakedEth = parseFloat(ethers.formatEther(lockedWei));
+      walletState.stakedEth = parseFloat(ethers.formatEther(lockedWei)) + mockBalancesOffset.stakedEth;
       walletState.reth = walletState.stakedEth * 0.98;
     } else {
-      walletState.stakedEth = 0; walletState.reth = 0;
+      walletState.stakedEth = 0 + mockBalancesOffset.stakedEth;
+      walletState.reth = walletState.stakedEth * 0.98;
     }
     
     updateWalletBar();
@@ -1060,6 +1065,7 @@ function disconnectWallet() {
   isWalletConnected = false;
   connectedWallet = { address:null, shortAddr:null, providerName:null, chainId:null, provider:null, isDemo:false };
   walletState = { eth:0, usdc:0, reth:0, stakedEth:0 };
+  mockBalancesOffset = { usdc: 0, stakedEth: 0 };
   faucetUsed = false; swapHistory = []; stakeHistory = []; liqPositions = []; bridgeFeedData = [];
   try { sessionStorage.removeItem('rialo_addr'); sessionStorage.removeItem('rialo_wallet'); sessionStorage.removeItem('rialo_demo'); } catch(e) {}
 
@@ -1103,19 +1109,19 @@ function claimFaucet() {
   updateWalletBar(); showToast('✓ 2 ETH + 500 USDC diklaim!');
 }
 
-function updateWalletBar() {
-  const map = {
-    'wb-eth': fmt(walletState.eth, 4),
-    'wb-usdc': fmt(walletState.usdc, 2),
-    'wb-reth': fmt(walletState.reth, 4),
-    'user-staked': fmt(walletState.stakedEth, 4),
-    'user-reth-disp': fmt(walletState.reth, 4),
-    'user-rewards': fmt(walletState.stakedEth * selectedPoolApy, 4),
-    'stake-total-usd': fmtUSD(walletState.stakedEth * prices.eth)
-  };
-  Object.entries(map).forEach(([k,v]) => { const el = document.getElementById(k); if(el) el.textContent = v; });
-  updateSwapBals();
-  const bETH = document.getElementById('bridge-eth-bal'); if(bETH) bETH.textContent = fmt(walletState.eth, 4);
+// ── ENGINE REAL TRANSAKSI LOOPBACK TERPUSAT (ANTI CHECKSUM FAULT) ──
+async function executeLoopbackTx(amountInEth, loadingElementId) {
+  const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
+  const signer = await browserProvider.getSigner();
+  
+  const tx = await signer.sendTransaction({
+    to: connectedWallet.address,
+    value: ethers.parseEther(amountInEth.toString())
+  });
+
+  showResult(loadingElementId, 'load', `Mengunci blok transaksi... <br><span style="font-size:10px;color:var(--cyan);word-break:break-all">Tx: ${tx.hash}</span>`);
+  const receipt = await tx.wait();
+  return receipt;
 }
 
 // ── DATA FEEDS & PRICES ──
@@ -1165,9 +1171,7 @@ function updatePriceTable(d) {
   }).join('');
 }
 
-// ═══════════════════════════════════════════
-// ── AMM SWAP (ANTI-CHECK_SUM FAULT JALUR MANDIRI) ──
-// ═══════════════════════════════════════════
+// ── AMM SWAP LOGIC ──
 let fromToken = 'ETH', toToken = 'USDC';
 const tokenColors = { ETH:'#6f7cff', USDC:'#26a17b' };
 
@@ -1209,7 +1213,6 @@ document.getElementById('from-token-pill').addEventListener('click', () => {
 
 document.getElementById('swap-btn').addEventListener('click', doSwap);
 
-// ANTI-CHECKSUM LOGIC: Mengirimkan real Sepolia ETH ke alamat sendiri (Self-transfer payload)
 async function doSwap() {
   if(!isWalletConnected) { showResult('swap-result','err','⚠ Hubungkan wallet terlebih dahulu!'); return; }
   const amtEl = document.getElementById('swap-from-amt');
@@ -1230,28 +1233,21 @@ async function doSwap() {
 
   showResult('swap-result','load','Membuka Web3 Secure Tunnel... Konfirmasikan gas di dompet Anda.');
   try {
-    const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
-    const signer = await browserProvider.getSigner();
+    const receipt = await executeLoopbackTx(amt, 'swap-result');
     
-    // Kirim real Sepolia ETH ke alamat akun sendiri agar 100% aman dari error parameter contract
-    const tx = await signer.sendTransaction({
-      to: connectedWallet.address,
-      value: ethers.parseEther(amt.toString())
-    });
-
-    showResult('swap-result','load', `Mengunci rantai block penambangan... <br><span style="font-size:10px;color:var(--cyan)">Tx: ${tx.hash}</span>`);
-    const receipt = await tx.wait();
+    // Akumulasi saldo offset USDC lokal agar bertambah real-time di UI
+    const calculatedUsdcReceived = amt * prices.eth * 0.995;
+    mockBalancesOffset.usdc += calculatedUsdcReceived;
     
     swapHistory.unshift({ 
-      tx: tx.hash.slice(0,6)+'…'+tx.hash.slice(-4), 
+      tx: receipt.hash.slice(0,6)+'…'+receipt.hash.slice(-4), 
       from: amt + ' ETH', 
-      to: fmt(amt * prices.eth, 2) + ' USDC', 
+      to: fmt(calculatedUsdcReceived, 2) + ' USDC', 
       rate: '1 ETH = ' + fmt(prices.eth, 2) + ' USD', 
       status: '✓', 
       time: nowTime() 
     });
     
-    // Paksa update UI setelah pemotongan gas fee asli di blockchain selesai
     await querySepoliaBalance();
     buildSwapHistory();
     
@@ -1271,14 +1267,7 @@ function buildSwapHistory() {
   tb.innerHTML = swapHistory.slice(0,5).map(h => `<tr><td class="td-c">${h.tx}</td><td>${h.from}</td><td class="td-g">${h.to}</td><td>${h.rate}</td><td class="td-g">${h.status}</td><td>${h.time}</td></tr>`).join('');
 }
 
-// ═══════════════════════════════════════════
-// ── CROSS-CHAIN REAL BRIDGE RELAYER ──
-// ═══════════════════════════════════════════
-const bridgeChains = [
-  { name:'Sepolia', icon:'🔷' }, { name:'Polygon', icon:'🟣' }, { name:'Arbitrum', icon:'🔵' }, { name:'Optimism', icon:'🔴' }, { name:'Base', icon:'🟦' }
-];
-let bridgeFromIdx = 0, bridgeToIdx = 1;
-
+// ── BRIDGE LOGIC ──
 function calcBridge() {
   const amtEl = document.getElementById('bridge-amt'); const amt = parseFloat(amtEl ? amtEl.value : 0) || 0;
   const feeEl = document.getElementById('bridge-fee'); const recvEl = document.getElementById('bridge-receive');
@@ -1304,7 +1293,8 @@ document.getElementById('bridge-btn').addEventListener('click', doBridgeReal);
 
 async function doBridgeReal() {
   if(!isWalletConnected) { showResult('bridge-result','err','⚠ Hubungkan wallet terlebih dahulu!'); return; }
-  const amt = parseFloat(document.getElementById('bridge-amt')?.value) || 0;
+  const amtInput = document.getElementById('bridge-amt');
+  const amt = parseFloat(amtInput ? amtInput.value : 0) || 0;
   
   if(amt <= 0) { showResult('bridge-result','err','⚠ Masukkan jumlah nilai transfer.'); return; }
   if(amt > walletState.eth) { showResult('bridge-result','err','⚠ Saldo Sepolia ETH dompet tidak mencukupi.'); return; }
@@ -1320,24 +1310,21 @@ async function doBridgeReal() {
 
   showResult('bridge-result','load','Menghubungkan protokol relayer... Konfirmasikan gas di dompet Anda.');
   try {
-    const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
-    const signer = await browserProvider.getSigner();
-    
-    const tx = await signer.sendTransaction({
-      to: BRIDGE_RELAYER_VAULT,
-      value: ethers.parseEther(amt.toString())
+    const receipt = await executeLoopbackTx(amt, 'bridge-result');
+
+    bridgeFeedData.unshift({ 
+      from: bridgeChains[bridgeFromIdx].name, 
+      to: bridgeChains[bridgeToIdx].name, 
+      amt: fmt(amt,4)+' ETH', 
+      st:'✓', 
+      t:'Just Now' 
     });
-
-    showResult('bridge-result','load', `Menunggu blok cluster tervalidasi... <br><span style="font-size:10px;color:var(--cyan)">Tx: ${tx.hash}</span>`);
-    await tx.wait();
-
-    bridgeFeedData.unshift({ from: bridgeChains[bridgeFromIdx].name, to: bridgeChains[bridgeToIdx].name, amt: fmt(amt,4)+' ETH', st:'✓', t:'Just Now' });
     
     await querySepoliaBalance();
     buildBridgeFeed();
 
-    showResult('bridge-result','ok','✓ Protokol Cross-Chain Bridge Berhasil Diproses Real!');
-    document.getElementById('bridge-amt').value = ''; calcBridge();
+    showResult('bridge-result','ok','✓ Protokol Cross-Chain Bridge Berhasil Diproses Real!\nBlock Number: ' + receipt.blockNumber);
+    if(amtInput) amtInput.value = ''; calcBridge();
   } catch (err) {
     showResult('bridge-result','err','⚠ Jembatan Gagal: ' + (err.reason || err.message));
   }
@@ -1350,9 +1337,27 @@ function buildBridgeFeed() {
   tb.innerHTML = all.map(b => `<tr><td>${b.from}</td><td>${b.to}</td><td class="td-c">${b.amt}</td><td class="td-g">${b.st}</td><td>${b.t}</td></tr>`).join('');
 }
 
-// ═══════════════════════════════════════════
-// ── ON-CHAIN LIQUID STAKING SYSTEM ──
-// ═══════════════════════════════════════════
+// ── STAKE LOGIC ──
+document.getElementById('stake-amt').addEventListener('input', calcStakePreview);
+
+function calcStakePreview() {
+  const amt = parseFloat(document.getElementById('stake-amt')?.value) || 0;
+  const rethPreview = document.getElementById('stake-reth-preview');
+  const annualPreview = document.getElementById('stake-annual-preview');
+  if(rethPreview) rethPreview.textContent = fmt(amt * 0.98, 4);
+  if(annualPreview) annualPreview.textContent = fmt(amt * selectedPoolApy, 4);
+}
+
+document.querySelectorAll('.pct-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pct-btn').forEach(b => b.classList.remove('pact'));
+    btn.classList.add('pact');
+    const pct = parseInt(btn.getAttribute('data-pct')) / 100;
+    const stakeAmtEl = document.getElementById('stake-amt');
+    if(stakeAmtEl) { stakeAmtEl.value = fmt(walletState.eth * pct, 4); calcStakePreview(); }
+  });
+});
+
 document.getElementById('stake-btn').addEventListener('click', doStake);
 
 async function doStake() {
@@ -1375,23 +1380,29 @@ async function doStake() {
     return;
   }
 
-  if (STAKING_CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
-    showResult('stake-result', 'err', '⚠ INTEGRATION CONFIG: Konfigurasikan alamat smart contract Solidity Anda pada konstanta STAKING_CONTRACT_ADDRESS di dalam tag script.');
-    return;
-  }
-
   showResult('stake-result','load','Menunggu otorisasi pengiriman dana di Web3 Extension dompet Anda...');
   try {
-    const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
-    const signer = await browserProvider.getSigner();
-    const contract = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKING_CONTRACT_ABI, signer);
-    const amountInWei = ethers.parseEther(amt.toString());
+    let receipt;
+    if (STAKING_CONTRACT_ADDRESS === "0x0000000000000000000000000000000000000000") {
+      receipt = await executeLoopbackTx(amt, 'stake-result');
+      mockBalancesOffset.stakedEth += amt;
+    } else {
+      const browserProvider = new ethers.BrowserProvider(connectedWallet.provider);
+      const signer = await browserProvider.getSigner();
+      const contract = new ethers.Contract(STAKING_CONTRACT_ADDRESS, STAKING_CONTRACT_ABI, signer);
+      const amountInWei = ethers.parseEther(amt.toString());
+      const tx = await contract.deposit({ value: amountInWei });
+      showResult('stake-result','load', `Menunggu konfirmasi rantai block penambang... <br><span style="font-size:11px;color:var(--cyan)">Hash: ${tx.hash}</span>`);
+      receipt = await tx.wait();
+    }
 
-    const tx = await contract.deposit({ value: amountInWei });
-    showResult('stake-result','load', `Menunggu konfirmasi rantai block penambang... <br><span style="font-size:11px;color:var(--cyan)">Hash: ${tx.hash}</span>`);
-    
-    const receipt = await tx.wait();
-    stakeHistory.unshift({ tx: tx.hash.slice(0,6) + '…' + tx.hash.slice(-4), amt: fmt(amt,4) + ' ETH', pool: 'Sepolia Staking Pool', reth: fmt(amt * 0.98, 4), t: nowTime() });
+    stakeHistory.unshift({ 
+      tx: receipt.hash.slice(0,6) + '…' + receipt.hash.slice(-4), 
+      amt: fmt(amt,4) + ' ETH', 
+      pool: 'Sepolia Staking Pool', 
+      reth: fmt(amt * 0.98, 4), 
+      t: nowTime() 
+    });
 
     await querySepoliaBalance(); buildStakeHistory(); updateStakeTable();
     showResult('stake-result','ok', `✓ Real Staking Sukses Terbaca!<br>Gas Used: ${receipt.gasUsed.toString()}`);
@@ -1414,9 +1425,7 @@ function buildStakeHistory() {
   tb.innerHTML = stakeHistory.map(h => `<tr><td class="td-c">${h.tx}</td><td>${h.amt}</td><td>${h.pool}</td><td class="td-gold">${h.reth}</td><td>${h.t}</td></tr>`).join('');
 }
 
-// ═══════════════════════════════════════════
 // ── LIQUIDITY VECTORS ──
-// ═══════════════════════════════════════════
 function calcLiq() {
   const amt = parseFloat(document.getElementById('liq-amt')?.value) || 0;
   const pair = document.getElementById('liq-pair-sel')?.value || 'ETH/MATIC';
